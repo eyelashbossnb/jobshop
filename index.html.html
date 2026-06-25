@@ -1,0 +1,3116 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>睫老闆美妝百貨線上訂購系統</title>
+    <style>
+        :root {
+            --primary-color: #4A3B32; /* 濃郁深焙咖啡/黑巧色 */
+            --accent-color: #967259; /* 經典焦糖烤布蕾色 */
+            --bg-color: #F5F0EA; /* 溫柔質感淺奶茶色 */
+            --text-color: #2D221E; /* 深焦糖褐 */
+            --card-bg: #FFFFFF; /* 乾淨純白卡片 */
+            --border-radius: 16px; /* 俐落網美卡片弧度 */
+            --shadow: 0 10px 30px rgba(74, 59, 50, 0.04);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px 10px;
+            color: var(--text-color);
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 90% 10%, rgba(150, 114, 89, 0.07) 0%, transparent 40%),
+                radial-gradient(circle at 10% 85%, rgba(74, 59, 50, 0.05) 0%, transparent 35%);
+        }
+
+        body::before {
+            content: "🌿";
+            position: fixed;
+            font-size: 140px;
+            opacity: 0.06;
+            left: -30px;
+            top: 20%;
+            pointer-events: none;
+            transform: rotate(25deg);
+            z-index: 0;
+        }
+
+        body::after {
+            content: "✨";
+            position: fixed;
+            font-size: 80px;
+            opacity: 0.08;
+            right: 20px;
+            bottom: 15%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.96); 
+            padding: 35px 24px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            box-sizing: border-box;
+            border: 1px solid #E6DDD3;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        @media (min-width: 600px) {
+            .header-bar {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        #userAuthArea {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            width: 100%;
+            justify-content: center;
+        }
+
+        @media (min-width: 600px) {
+            #userAuthArea {
+                width: auto;
+            }
+        }
+
+        .btn-login-trigger, 
+        #userAuthArea button.btn-trigger {
+            background: #D5C7B5 !important;
+            color: #4A3B32 !important;          
+            border: none !important;
+            padding: 10px 16px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        .btn-login-trigger:hover,
+        #userAuthArea button.btn-trigger:hover {
+            background: #C2B3A0 !important;
+            transform: translateY(-1px);
+        }
+
+        #showLoginBtn {
+            background: var(--primary-color) !important;
+            color: #FFFFFF !important;                  
+            box-shadow: 0 4px 12px rgba(74, 59, 50, 0.2);
+        }
+
+        #showLoginBtn:hover {
+            background: #362A24 !important;
+        }
+
+        .user-welcome-status {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-color);
+            background: #EFE6DC;
+            border: 1px solid #D5C7B5;
+            padding: 8px 16px;
+            border-radius: 30px;
+        }
+
+        .notice {
+            background: #FDFBF9;
+            border: 1px solid #E6DDD3;
+            padding: 16px;
+            border-left: 5px solid var(--accent-color);
+            border-radius: 12px;
+            font-size: 13.5px;
+            color: #5C4D44;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        .category-container {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #E6DDD3;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .category-container::-webkit-scrollbar {
+            height: 5px;
+        }
+        .category-container::-webkit-scrollbar-thumb {
+            background-color: #D5C7B5;
+            border-radius: 10px;
+        }
+
+        .category-btn {
+            white-space: nowrap;
+            padding: 10px 20px;
+            background: #FFFFFF;
+            color: #5C4D44;
+            border: 1px solid #E6DDD3;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .category-btn:hover {
+            background: #F5F0EA;
+            color: var(--primary-color);
+        }
+
+        .category-btn.active {
+            background: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(74, 59, 50, 0.2);
+        }
+
+        .product-section-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #EFE6DC;              
+            color: var(--primary-color);      
+            padding: 14px 18px;
+            font-weight: 700;
+            font-size: 15px;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .product-section-toggle:hover {
+            background: #E2D7C9;
+        }
+
+        .product-subsection-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #FFFFFF;
+            color: #5C4D44;
+            padding: 10px 16px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            border-left: 3px solid #C4B5A5;   
+            cursor: pointer;
+        }
+
+        .section-content-block, .subsection-content-block {
+            padding: 5px 10px;
+        }
+
+        .toggle-icon {
+            font-size: 12px;
+            color: #5C4D44;
+            background: transparent;
+            padding: 0;
+            box-shadow: none;
+        }
+
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 8px;
+            border-bottom: 1px solid #EFE6DC;
+            gap: 15px;
+        }
+
+        .prod-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text-color);
+            word-break: break-all;
+        }
+
+        .prod-price {
+            color: var(--accent-color);
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+        .variant-selector {
+            margin-top: 8px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid #E6DDD3;
+            font-size: 13px;
+            color: #5C4D44;
+            background-color: #FFF;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .stock-tag {
+            font-size: 11px;
+            background: #EFE6DC;
+            color: var(--primary-color);
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-left: 6px;
+            font-weight: 600;
+        }
+
+        .stock-out-tag,
+        span[id^="stock-container-"] .stock-out-tag,
+        .product-item .stock-out-tag {
+            font-size: 12px !important;
+            background: transparent !important; 
+            color: #E53E3E !important;          
+            padding: 0 !important;              
+            border-radius: 0 !important;
+            margin-left: 6px !important;
+            font-weight: 700 !important;
+            display: inline-block !important;
+            box-shadow: none !important;        
+        }
+
+        .qty-box {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #F5F0EA;
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid #E6DDD3;
+        }
+
+        .qty-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: #FFFFFF;
+            color: var(--primary-color);
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(74, 59, 50, 0.08);
+            transition: all 0.2s;
+        }
+
+        .qty-btn:hover:not(:disabled) {
+            background: var(--primary-color);
+            color: #FFF;
+        }
+
+        .qty-btn:disabled {
+            background: transparent;
+            color: #CBD5E0;
+            cursor: not-allowed;
+        }
+
+        .qty-input {
+            width: 36px;
+            height: 30px;
+            text-align: center;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .form-group {
+            margin-top: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 13.5px;
+            color: var(--text-color);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #E6DDD3;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 14px;
+            color: var(--text-color);
+            background: #FFF;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 59, 50, 0.1);
+        }
+
+        .summary-box {
+            background: #F5F0EA;
+            border: 1px solid #E6DDD3;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-box::after {
+            content: "✨";
+            position: absolute;
+            right: 15px;
+            bottom: 10px;
+            font-size: 30px;
+            opacity: 0.15;
+        }
+
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #5C4D44;
+        }
+
+        .total-line {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            border-top: 1px dashed #E6DDD3;
+            padding-top: 14px;
+            margin-top: 5px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: #D5C7B5;
+            color: #4A3B32;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            transition: all 0.25s ease;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-color);
+            color: #FFF;
+            transform: translateY(-1px);
+        }
+
+        #btn-submit {
+            background: var(--primary-color) !important;
+            box-shadow: 0 6px 20px rgba(74, 59, 50, 0.2);
+            color: #FFFFFF !important;
+        }
+        #btn-submit:hover {
+            background: #362A24 !important;
+        }
+
+        .login-overlay, .query-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(45, 34, 30, 0.35); 
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-box, .query-box {
+            background: #FFFFFF;
+            border-radius: var(--border-radius);
+            padding: 32px 24px;
+            width: 90%;
+            max-width: 380px;
+            box-shadow: 0 20px 50px rgba(74, 59, 50, 0.15);
+            position: relative;
+            box-sizing: border-box;
+            animation: fadeInModal 0.3s ease;
+        }
+
+        .query-box {
+            max-width: 500px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .close-login-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 22px;
+            color: #D5C7B5;
+            cursor: pointer;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+        .close-login-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .order-card {
+            background: #F5F0EA;
+            border: 1px solid #E6DDD3;
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        @keyframes fadeInModal {
+            from { opacity: 0;
+            transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="loginSection" class="login-overlay">
+    <div class="login-box">
+        <span class="close-login-btn" onclick="toggleLoginModal(false)">&times;</span>
+        <h3 style="text-align:center; color:var(--primary-color); margin-top:0;">🔑 會員登入</h3>
+        <p style="font-size:13px; color:#666; text-align:center;">輸入會員/批發商帳密，解鎖專屬折數與儲值金餘額</p>
+        <div class="form-group">
+            <label>手機號碼 (帳號)</label>
+            <input type="tel" id="loginPhone" placeholder="請輸入註冊手機">
+        </div>
+   
+        <div class="form-group" style="margin-bottom:20px;">
+            <label>密碼</label>
+            <input type="password" id="loginPassword" placeholder="請輸入密碼">
+        </div>
+        <button onclick="verifyMember()" id="loginBtn" class="btn-submit" style="margin-top:0;">驗證登入</button>
+    </div>
+</div>
+
+<div id="querySection" class="query-overlay">
+    <div class="query-box">
+        <span class="close-login-btn" onclick="toggleQueryModal(false)">&times;</span>
+        <h3 style="text-align:center;
+        color:var(--primary-color); margin-top:0;">📦 歷史訂單查詢</h3>
+        <div class="form-group" style="display: flex; gap: 8px;
+        align-items: flex-end;">
+            <div style="flex: 1;">
+                <label>輸入訂購人手機號碼</label>
+                <input type="tel" id="queryPhone" placeholder="請輸入手機號碼">
+            </div>
+            <button onclick="fetchOrders()" id="queryBtn" class="btn-submit" style="margin-top:0;
+            width:auto; padding:11px 20px; font-size:15px;">查詢</button>
+        </div>
+        <hr style="border:0;
+        border-top:1px solid #e2e8f0; margin-top:20px;">
+        <div id="orderResultArea">
+            <p style="text-align:center;
+            color:#94a3b8; font-size:14px; margin-top:20px;">請輸入手機號碼進行查詢</p>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="mainSystem">
+    <div class="header-bar">
+        <h1>睫老闆美妝百貨線上訂購系統</h1>
+        <div id="userAuthArea" style="display: flex;
+        gap: 6px; align-items: center;">
+            <button class="btn-trigger btn-login-trigger" style="background:#475569;" onclick="toggleQueryModal(true)">📦 查詢訂單</button>
+            <button class="btn-trigger btn-login-trigger" id="showLoginBtn" onclick="toggleLoginModal(true)">🔑 會員登入</button>
+        </div>
+    </div>
+
+    <div class="notice">
+        ✨ 歡迎光臨！目前顯示為 <b>【商品原價】</b><br>
+        🔒 <b>批發商與VIP老客戶：</b>請點擊右上角「會員登入」即可全自動切換至您的專屬折扣！<br>
+        🚚 <b>運費規範：</b>滿 NT 3,000 元(含)以上享本島/外島常溫與 7-11 免運，指定黑貓 NT 60<br>
+        ⚠️ <b>未滿 NT 
+        3,000 元運費判定：</b>常溫宅配 NT 100、7-11店到店 NT 38~60、指定黑貓 NT 160、低溫包裹依大小計費。
+    </div>
+
+    <label style="font-weight: bold; font-size: 14px;
+    display: block; margin-bottom: 8px;">請選擇商品分類：</label>
+    <div class="category-container" id="category-area">
+        <button class="category-btn" id="btn-cat-10" onclick="selectCategory('10')">🌟本周優惠🌟</button>
+	<button class="category-btn active" id="btn-cat-00" onclick="selectCategory('00')">美睫款式專區</button>
+        <button class="category-btn" id="btn-cat-01" onclick="selectCategory('01')">美睫周邊耗材</button>
+        <button class="category-btn" id="btn-cat-02" onclick="selectCategory('02')">美甲商品</button>
+        <button class="category-btn" id="btn-cat-03" onclick="selectCategory('03')">頂級熱蠟商品總區</button>
+        <button class="category-btn" id="btn-cat-04" onclick="selectCategory('04')">紋繡商品</button>
+        <button class="category-btn" id="btn-cat-05" onclick="selectCategory('05')">醫美保養商品</button>
+        <button class="category-btn" id="btn-cat-06" onclick="selectCategory('06')">美妝內衣商品</button>
+        <button class="category-btn" id="btn-cat-07" onclick="selectCategory('07')">耳穴採耳商品</button>
+        <button class="category-btn" id="btn-cat-09" onclick="selectCategory('09')">🔥 出清5折專區</button>
+        <button class="category-btn" id="btn-cat-08" onclick="selectCategory('08')">購買會籍</button>
+    </div>
+
+    <div id="product-area"></div>
+
+    <div id="receiverInfoSection">
+        <h3 style="margin-top: 30px;
+        border-top: 1px solid #e2e8f0; padding-top: 20px;">👤 收件人資訊</h3>
+        <div class="form-group"><label>收件人姓名 *</label><input type="text" id="name" placeholder="請輸入姓名" required></div>
+        <div class="form-group"><label>聯絡電話 *</label><input type="tel" id="phone" placeholder="請輸入手機號碼" required></div>
+        <div class="form-group"><label>LINE ID *</label><input type="text" id="lineid" placeholder="請輸入LINE ID" required></div>
+        <div class="form-group"><label>公司抬頭 (發票用)</label><input type="text" id="company_title" placeholder="如需開立三聯式發票請填寫"></div>
+        <div class="form-group"><label>統一編號 (發票用)</label><input type="text" id="company_vat" placeholder="如需發票請輸入 8 位數統編"></div>
+        <div class="form-group">
+            <label>配送方式 *</label>
+            <select id="shipping_method" onchange="onShippingOrPaymentChange()">
+                <option value="常溫宅配">常溫宅配</option>
+                <option value="7-11 店到店">7-11 店到店</option>
+                <option value="指定黑貓">指定黑貓</option>
+                <option value="黑貓低溫">黑貓低溫</option>
+                <option value="門市自取">門市自取</option>
+            </select>
+        </div>
+        <div class="form-group"><label id="shipping_label">配送地址 *</label><input type="text" id="address" placeholder="請輸入完整地址" required></div>
+        <div class="form-group">
+            <label>付款方式 *</label>
+            <select id="payment" onchange="updateTotal()">
+                <option value="銀行轉帳匯款">銀行轉帳匯款</option>
+                <option value="儲值金扣款">儲值金扣款</option>
+                <option value="貨到付款">貨到付款</option>
+            </select>
+        </div>
+
+        <div class="summary-box">
+            <div class="summary-line" style="font-weight: bold;
+            color: #1F4E79;"><span>商品總數：</span><span id="txt-total-qty">共 0 樣商品</span></div>
+            <div class="summary-line"><span>商品小計：</span><span id="txt-subtotal">NT 0</span></div>
+            <div class="summary-line"><span>運費金額：</span><span id="txt-shipping">NT 0</span></div>
+            <div class="summary-line total-line" style="border-bottom: 1px dashed #fca5a5;
+            padding-bottom: 8px;"><span>最終總金額：</span><span id="txt-total">NT 0</span></div>
+            <div class="summary-line" id="panel-wallet-check" style="display: none;
+            margin-top: 8px; font-size: 13px; font-weight: bold;">
+                <span>儲值金查核狀態：</span><span id="txt-wallet-status" style="color: #27ae60;">尚未選用</span>
+            </div>
+        </div>
+
+        <button id="btn-submit" class="btn-submit" onclick="sendOrder()">確認送出訂單</button>
+    </div>
+
+</div>
+
+<form id="hiddenGoogleForm" method="POST" action="https://docs.google.com/forms/d/e/1FAIpQLSfIVso_yR8RkWgr68BzT_CoUlV0GeljLZfSPkygbKUFqBCWzQ/formResponse" target="hidden_iframe" style="display:none;">
+    <input type="hidden" name="entry.742467873" id="g-name"><input type="hidden" name="entry.1615976068" id="g-phone">
+    <input type="hidden" name="entry.374327552" id="g-level"><input type="hidden" name="entry.2107598238" id="g-details">
+    <input type="hidden" name="entry.1848318229" id="g-subtotal"><input type="hidden" name="entry.1783804519" id="g-shipping">
+    <input type="hidden" 
+    name="entry.1159160303" id="g-total"><input type="hidden" name="entry.411814122" id="g-lineid"><input type="hidden" name="entry.933239600" id="g-address"><input type="hidden" name="entry.58806919" id="g-payment">
+    <input type="hidden" name="entry.1837831989" id="g-company-title"><input type="hidden" name="entry.1837831989" id="g-company-vat"><input type="hidden" name="entry.405723101" id="g-orderno">
+</form>
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+<script>
+    const gasLoginUrl = "https://script.google.com/macros/s/AKfycbzWySHUFLJ_F6SyMjcPRYxVmJnExOhe7IbIGjd1uxXxrtHuJ-DUSArF-x2-EzTGVpg/exec";
+    const productData = [
+        // ======= 🌟 美睫款式系列矩陣 (分類代碼 '00') =======
+        { 
+            id: "E1_UNDER", 
+            category: "00", 
+            section: "👁️ 美睫熱銷毛款",
+            subsection: "🔹 黑耀魔幻羽扇系列",
+            name: "第二代黑耀魔幻羽扇 (下睫毛)", 
+            isEyelash: true, 
+            curls: ["J"], 
+            thicknesses: ["0.07", "0.10"], 
+            lengths: [
+                { val: "MIX 5-7mm", p100: 150 }
+            ]
+        },
+        { 
+            id: "E1_UP", 
+            category: "00", 
+            section: "👁️ 美睫熱銷毛款",
+            subsection: "🔹 黑耀魔幻羽扇系列",
+            name: "第二代黑耀魔幻羽扇 (上睫毛)", 
+            isEyelash: true, 
+            curls: ["J", "B", "C", "D"], 
+            thicknesses: ["0.07", "0.10", "0.15"], 
+            lengths: [
+                { val: "MIX 8-14mm", p100: 290 },
+                { val: "MIX 9-12mm", p100: 290 },
+                { val: "8mm", p100: 290, excludeCurl: ["J"] },
+                { val: "9mm", p100: 290, excludeCurl: ["J"] },
+                { val: "10mm", p100: 290, excludeCurl: ["J"] },
+                { val: "11mm", p100: 290, excludeCurl: ["J"] },
+                { val: "12mm", p100: 290, excludeCurl: ["J"] },
+                { val: "13mm", p100: 290, excludeCurl: ["J"] },
+                { val: "14mm", p100: 290, excludeCurl: ["J"] },
+                { val: "15mm", p100: 290, excludeCurl: ["J"] }
+            ] 
+        },
+        { 
+            id: "E5_UNDER", 
+            category: "00", 
+            section: "👁️ 美睫熱銷毛款",
+            subsection: "🔹 頂級人造水貂絲系列",
+            name: "第二代頂級人造水貂絲(下睫毛)", 
+            isEyelash: true, 
+            curls: ["J"], 
+            thicknesses: ["0.07", "0.10"], 
+            lengths: [
+                { val: "MIX 5-7mm", p100: 150 }
+            ]
+        },
+        { 
+            id: "E5_UP", 
+            category: "00", 
+            section: "👁️ 美睫熱銷毛款",
+            subsection: "🔹 頂級人造水貂絲系列",
+            name: "第二代頂級人造水貂絲(上睫毛)", 
+            isEyelash: true, 
+            curls: ["J", "B", "C", "D"], 
+            thicknesses: ["0.07", "0.10", "0.15"], 
+            lengths: [
+                { val: "MIX 8-14mm", p100: 290 },
+                { val: "MIX 9-12mm", p100: 290 },
+                { val: "8mm", p100: 290, excludeCurl: ["J"] },
+                { val: "9mm", p100: 290, excludeCurl: ["J"] },
+                { val: "10mm", p100: 290, excludeCurl: ["J"] },
+                { val: "11mm", p100: 290, excludeCurl: ["J"] },
+                { val: "12mm", p100: 290, excludeCurl: ["J"] },
+                { val: "13mm", p100: 290, excludeCurl: ["J"] },
+                { val: "14mm", p100: 290, excludeCurl: ["J"] },
+                { val: "15mm", p100: 290, excludeCurl: ["J"] }
+            ] 
+        },
+        { 
+            id: "E6_UP", 
+            category: "00", 
+            section: "👁️ 美睫熱銷毛款",
+            subsection: "🔹 頂級人造水貂絲系列",
+            name: "第二代頂級人造水貂絲(咖啡)", 
+            isEyelash: true, 
+            curls: ["B", "C", "D"], 
+            thicknesses: ["0.07", "0.10", "0.15"], 
+            lengths: [
+                { val: "MIX 7-14mm", p100: 290 },
+                { val: "MIX 9-12mm", p100: 290 }
+            ] 
+        },
+        { 
+            id: "E7_UP", 
+            category: "00", 
+            section: "👁️ 美睫熱銷毛款",
+            subsection: "🔹 凱莉絲花園層次毛系列",
+            name: "凱莉絲花園-層次(黑)", 
+            isEyelash: true, 
+            curls: ["J", "B", "C", "D", "O"], 
+            thicknesses: ["0.07"], 
+            lengths: [
+                { val: "MIX 7-14mm", p100: 410, excludeCurl: ["O"] },
+                { val: "7-9mm", p100: 410, excludeCurl: ["J", "O"] },
+                { val: "8-10mm", p100: 410, excludeCurl: ["J", "O"] },
+                { val: "9-11mm", p100: 410, excludeCurl: ["J", "O"] },
+                { val: "10-12mm", p100: 410, excludeCurl: ["J", "O"] },
+                { val: "11-13mm", p100: 410, excludeCurl: ["J", "O"] },
+                { val: "12-14mm", p100: 410, excludeCurl: ["J", "O"] },
+                { val: "MIX 7-13mm", p100: 410, excludeCurl: ["J", "B", "C", "D"] }
+            ] 
+        },
+        { 
+            id: "E8_UP", 
+            category: "00", 
+            section: "👁️ 美睫熱銷毛款",
+            subsection: "🔹 凱莉絲花園層次毛系列",
+            name: "凱莉絲花園-層次(咖啡)", 
+            isEyelash: true, 
+            curls: ["J", "B", "C", "D"], 
+            thicknesses: ["0.07"], 
+            lengths: [
+                { val: "MIX 7-14mm", p100: 410 },
+                { val: "7-9mm", p100: 410, excludeCurl: ["J"] },
+                { val: "8-10mm", p100: 410, excludeCurl: ["J"] },
+                { val: "9-11mm", p100: 410, excludeCurl: ["J"] },
+                { val: "10-12mm", p100: 410, excludeCurl: ["J"] },
+                { val: "11-13mm", p100: 410, excludeCurl: ["J"] },
+                { val: "12-14mm", p100: 410, excludeCurl: ["J"] }
+            ] 
+        },
+        { 
+            id: "E9_UP", 
+            category: "00", 
+            section: "☁️ 輕盈輕量毛款",
+            subsection: "🔹 0.03 絲柔/輕量扁毛",
+            name: "0.03輕盈無感絲柔毛", 
+            isEyelash: true, 
+            curls: ["B", "C", "D", "O"], 
+            thicknesses: ["0.03"], 
+            lengths: [
+                { val: "MIX 8-13mm", p100: 295, excludeCurl: ["O"] },
+                { val: "MIX 9-12mm", p100: 295, excludeCurl: ["O"] },
+                { val: "8mm", p100: 295, excludeCurl: ["O"] },
+                { val: "9mm", p100: 295, excludeCurl: ["O"] },
+                { val: "10mm", p100: 295, excludeCurl: ["O"] },
+                { val: "11mm", p100: 295, excludeCurl: ["O"] },
+                { val: "12mm", p100: 295, excludeCurl: ["O"] },
+                { val: "13mm", p100: 295, excludeCurl: ["O"] },
+                { val: "MIX 8-13mm", p100: 295, excludeCurl: ["B", "C", "D"] }
+            ] 
+        },
+        { 
+            id: "E10_UP", 
+            category: "00", 
+            section: "🍀 多葉草/快開爆濃毛款",
+            subsection: "🔹 完美豐盈多葉草系列",
+            name: "完美豐盈三葉草", 
+            isEyelash: true, 
+            curls: ["C", "D"], 
+            thicknesses: ["0.07"], 
+            lengths: [
+                { val: "MIX 8-13mm", p100: 390 }
+            ] 
+        },
+        { 
+            id: "E11_UP", 
+            category: "00", 
+            section: "🍀 多葉草/快開爆濃毛款",
+            subsection: "🔹 完美豐盈多葉草系列",
+            name: "完美豐盈四葉草", 
+            isEyelash: true, 
+            curls: ["C", "D"], 
+            thicknesses: ["0.07"], 
+            lengths: [
+                { val: "MIX 8-13mm", p100: 390 }
+            ] 
+        },
+        { 
+            id: "E12_UP", 
+            category: "00", 
+            section: "🍀 多葉草/快開爆濃毛款",
+            subsection: "🔹 完美豐盈多葉草系列",
+            name: "完美豐盈五葉草", 
+            isEyelash: true, 
+            curls: ["C", "D"], 
+            thicknesses: ["0.07"], 
+            lengths: [
+                { val: "MIX 8-13mm", p100: 410 }
+            ] 
+        },
+        { 
+            id: "E13_UP", 
+            category: "00", 
+            section: "🍀 多葉草/快開爆濃毛款",
+            subsection: "🔹 雙層W毛與PLAY YY系列",
+            name: "完美豐盈雙層W毛", 
+            isEyelash: true, 
+            curls: ["C", "D"], 
+            thicknesses: ["0.07"], 
+            lengths: [
+                { val: "MIX 8-13mm", p100: 410 }
+            ] 
+        },
+        { 
+            id: "E14_UP", 
+            category: "00", 
+            section: "🍀 多葉草/快開爆濃毛款",
+            subsection: "🔹 雙層W毛與PLAY YY系列",
+            name: "2代 PLAY YY毛", 
+            isEyelash: true, 
+            curls: ["B", "C", "D", "O"], 
+            thicknesses: ["0.07"], 
+            lengths: [
+                { val: "MIX 8-13mm", p100: 410, excludeCurl: ["B", "O"] },
+                { val: "8mm", p100: 410, excludeCurl: ["B", "O"] },
+                { val: "9mm", p100: 410, excludeCurl: ["B", "O"] },
+                { val: "10mm", p100: 410, excludeCurl: ["B", "O"] },
+                { val: "11mm", p100: 410, excludeCurl: ["B", "O"] },
+                { val: "12mm", p100: 410, excludeCurl: ["B", "O"] },
+                { val: "13mm", p100: 410, excludeCurl: ["B", "O"] },
+                { val: "MIX 8-13mm", p100: 410, excludeCurl: ["C", "D"] }
+            ] 
+        },
+        { 
+            id: "E15_UP", 
+            category: "00", 
+            section: "✨ 眸若星晨/網網紅山茶花款",
+            subsection: "🔹 完美茶花與羽絲絨系列",
+            name: "完美茶花(黑)", 
+            isEyelash: true, 
+            curls: ["B", "C", "D"], 
+            thicknesses: ["0.07"], 
+            lengths: [
+                { val: "MIX", p100: 490 },
+                { val: "7-9mm", p100: 490 },
+                { val: "8-10mm", p100: 490 },
+                { val: "9-11mm", p100: 490 },
+                { val: "10-12mm", p100: 490 },
+                { val: "11-13mm", p100: 490 },
+                { val: "12-14mm", p100: 490 },
+                { val: "13-15mm", p100: 490 }
+            ] 
+        },
+        { 
+            id: "E16_UP", 
+            category: "00", 
+            section: "✨ 眸若星晨/網網紅山茶花款",
+            subsection: "🔹 完美茶花與羽絲絨系列",
+            name: "眸若星晨羽絲絨(0.07)", 
+            isEyelash: true, 
+            curls: ["C", "D"], 
+            thicknesses: ["0.07"], 
+            lengths: [
+                { val: "MIX", p100: 265 },
+                { val: "8mm", p100: 265 },
+                { val: "9mm", p100: 265 },
+                { val: "10mm", p100: 265 },
+                { val: "11mm", p100: 265 },
+                { val: "12mm", p100: 265 },
+                { val: "13mm", p100: 265 }
+            ] 
+        },
+        { 
+            id: "E17_UP", 
+            category: "00", 
+            section: "✨ 眸若星晨/網網紅山茶花款",
+            subsection: "🔹 特殊大翹度 U 捲專區",
+            name: "眸若星晨羽絲絨(0.07) 翹度 : U", 
+            isEyelash: true, 
+            curls: ["U"], 
+            thicknesses: ["0.07"], 
+            lengths: [
+                { val: "MIX", p100: 410 },
+                { val: "8mm", p100: 410 },
+                { val: "9mm", p100: 410 },
+                { val: "10mm", p100: 410 },
+                { val: "11mm", p100: 410 },
+                { val: "12mm", p100: 410 },
+                { val: "13mm", p100: 410 }
+            ] 
+        },
+        { 
+            id: "E18_UP", 
+            category: "00", 
+            section: "✨ 眸若星晨/網網紅山茶花款",
+            subsection: "🔹 黑瞳4D羽蝶系列",
+            name: "黑瞳4D羽蝶(0.07)", 
+            isEyelash: true, 
+            curls: ["C", "D"], 
+            thicknesses: ["0.07"], 
+            lengths: [
+                { val: "MIX", p100: 265 },
+                { val: "8mm", p100: 265 },
+                { val: "9mm", p100: 265 },
+                { val: "10mm", p100: 265 },
+                { val: "11mm", p100: 265 },
+                { val: "12mm", p100: 265 },
+                { val: "13mm", p100: 265 }
+            ] 
+        },
+        { 
+            id: "E19_UP", 
+            category: "00", 
+            section: "✨ 眸若星晨/網網紅山茶花款",
+            subsection: "🔹 特殊大翹度 U 捲專區",
+            name: "黑瞳4D羽蝶(0.07) 翹度:U", 
+            isEyelash: true, 
+            curls: ["U"], 
+            thicknesses: ["0.07"], 
+            lengths: [
+                { val: "MIX", p100: 410 },
+                { val: "8mm", p100: 410 },
+                { val: "9mm", p100: 410 },
+                { val: "10mm", p100: 410 },
+                { val: "11mm", p100: 410 },
+                { val: "12mm", p100: 410 },
+                { val: "13mm", p100: 410 }
+            ] 
+        },
+        { 
+            id: "E20_UP", 
+            category: "00", 
+            section: "☁️ 輕盈輕量毛款",
+            subsection: "🔹 0.03 絲柔/輕量扁毛",
+            name: "2代美瞳線超輕量扁毛", 
+            isEyelash: true, 
+            curls: ["B", "C", "D", "O"], 
+            thicknesses: ["0.15"], 
+            lengths: [
+                { val: "MIX 8-14mm", p100: 390, excludeCurl: ["O"] },
+                { val: "8mm", p100: 390, excludeCurl: ["D", "O"] },
+                { val: "9mm", p100: 390, excludeCurl: ["D", "O"] },
+                { val: "10mm", p100: 390, excludeCurl: ["D", "O"] },
+                { val: "11mm", p100: 390, excludeCurl: ["D", "O"] },
+                { val: "12mm", p100: 390, excludeCurl: ["D", "O"] },
+                { val: "13mm", p100: 390, excludeCurl: ["D", "O"] },
+                { val: "MIX 8-13mm", p100: 390, excludeCurl: ["B", "C", "D"] }
+            ] 
+        },
+        { 
+            id: "E21_UP", 
+            category: "00", 
+            section: "🌈 睛艷第五大道彩色毛款",
+            subsection: "🔹 炫彩多色與單色混搭",
+            name: "睛艷第五大道(全彩)", 
+            isEyelash: true, 
+            curls: ["B"], 
+            thicknesses: ["0.15", "0.07"], 
+            lengths: [
+                { val: "10-12mm", p100: 226 }
+            ] 
+        },
+        { 
+            id: "E22_UP", 
+            category: "00", 
+            section: "🌈 睛艷第五大道彩色毛款",
+            subsection: "🔹 炫彩多色與單色混搭",
+            name: "睛艷第五大道彩毛(單色)", 
+            isEyelash: true, 
+            curls: ["C"], 
+            thicknesses: ["0.07"], 
+            lengths: [
+                { val: "蜜桃紅 (MIX 9-13mm)", p100: 115 },
+                { val: "經典紅 (MIX 9-13mm)", p100: 115 },
+                { val: "冰雪藍 (MIX 9-13mm)", p100: 115 },
+                { val: "孔雀藍 (MIX 9-13mm)", p100: 115 },
+                { val: "浪漫紫 (MIX 9-13mm)", p100: 115 }
+            ] 
+        },
+
+        // ======= 01 美睫商品 =======
+        { id: "A2", category: "01", section: "🧪 美睫膠水/卸除劑", name: "韓國Mild初學黑膠/5G", p100: 450 },
+        { id: "A3", category: "01", section: "🧪 美睫膠水/卸除劑", name: "韓國PRO專業美睫黑膠/5G", p100: 450 },
+        { id: "A4", category: "01", section: "🧪 美睫膠水/卸除劑", name: "韓國HighSpeed極速黑膠/5G", p100: 450 },
+        { id: "A5", category: "01", section: "🧪 美睫膠水/卸除劑", name: "韓國零秒出手神速黑膠/5G", p100: 450 },
+        { id: "A6", category: "01", section: "🧪 美睫膠水/卸除劑", name: "韓國IU黑膠/5G", p100: 450 },
+        { id: "A10", category: "01", section: "🧪 美睫膠水/卸除劑", name: "日本低調黑膠/5G", p100: 590 },
+        { id: "A11", category: "01", section: "🧪 美睫膠水/卸除劑", name: "日本武士黑膠/5G", p100: 590 },
+        { id: "A12", category: "01", section: "🧪 美睫膠水/卸除劑", name: "日本藝妓黑膠/5G", p100: 590 },
+        { id: "A13", category: "01", section: "🧪 美睫膠水/卸除劑", name: "日本雷神黑膠/5G", p100: 550 },
+        { id: "A16", category: "01", section: "🧪 美睫膠水/卸除劑", name: "第二代特效無毒卸除凝膠/10G", p100: 350 },
+        { id: "A17", category: "01", section: "🧪 美睫膠水/卸除劑", name: "瞬效溫和菁萃卸除凝膠/15G", p100: 410 },
+        { id: "A21", category: "01", section: "🧪 美睫膠水/卸除劑", name: "瞬效溫和菁萃卸膠膏/15G", p100: 290 },
+        { id: "A30", category: "01", section: "🧪 美睫膠水/卸除劑", name: "韓國雙效強化持久劑/15G", p100: 390 },
+        { id: "A31", category: "01", section: "✨ 清潔/保養", name: "眉睫再生精華液/6ml", p100: 330 },
+        { id: "A32", category: "01", section: "✨ 清潔/保養", name: "睫毛記憶定型雨衣/6ml", p100: 330 },
+        { id: "A61", category: "01", section: "✨ 清潔/保養", name: "69D開花睫毛防護雨衣/6ml", p100: 330 },
+        { id: "A53", category: "01", section: "✨ 清潔/保養", name: "法國玫瑰植萃潔顏慕斯/150ml", p100: 330 },
+        { id: "A59", category: "01", section: "✨ 清潔/保養", name: "美睫專用卸妝清潔QQ棉片/2片/10包", p100: 160 },
+        { id: "A60", category: "01", section: "✨ 清潔/保養", name: "美睫專用卸妝清潔QQ棉片/2片/22包", p100: 330 },
+        { id: "A64", category: "01", section: "✨ 清潔/保養", name: "一擦即淨保濕卸妝棉片/25片(罐)", p100: 200 },
+        { id: "A65", category: "01", section: "✨ 清潔/保養", name: "一擦即淨保濕卸妝棉片/50片(包)", p100: 300 },
+        { id: "A58", category: "01", section: "✨ 清潔/保養", name: "高效去蛋白清潔液/100ml", p100: 95 },
+        { id: "A70", category: "01", section: "✨ 清潔/保養", name: "超薄U型切口眼膜(對稱)/50對", p100: 350 },
+        { id: "A74", category: "01", section: "✨ 清潔/保養", name: "超薄型眼膜(對稱)/50對", p100: 350 },
+        { id: "A76", category: "01", section: "✨ 清潔/保養", name: "超薄卸睫專用眼膜(左右眼)/50對", p100: 350 },
+        { id: "A78", category: "01", section: "✨ 清潔/保養", name: "美睫專用迷你型眼膜(對稱)/100對", p100: 150 },
+        { id: "A79", category: "01", section: "🛠️ 夾子系列", name: "朵朵花開大七神夾", p100: 350 },
+        { id: "A80", category: "01", section: "🛠️ 夾子系列", name: "6D．9DQ將神夾", p100: 300 },
+        { id: "A81", category: "01", section: "🛠️ 夾子系列", name: "6D．9D開花神夾", p100: 300 },
+        { id: "A82", category: "01", section: "🛠️ 夾子系列", name: "6D．9D大花神夾", p100: 300 },
+        { id: "A83", category: "01", section: "🛠️ 夾子系列", name: "弧形海豚撥毛神夾", p100: 350 },
+        { id: "A85", category: "01", section: "🛠️ 夾子系列", name: "專業美睫V型細夾", p100: 200 },
+        { id: "A86", category: "01", section: "🛠️ 夾子系列", name: "專業美睫J型彎夾", p100: 200 },
+        { id: "A87", category: "01", section: "🛠️ 夾子系列", name: "All in one秒開神夾", p100: 20 },
+        { id: "A93", category: "01", section: "🛠️ 夾子系列", name: "鈦省力萬用神夾", p100: 550 },
+        { id: "A101", category: "01", section: "📦 周邊商品", name: "專利磁片頭巾/65CM(包頭款)", p100: 250 },
+        { id: "A103", category: "01", section: "📦 周邊商品", name: "專利磁片輕量頭巾(貼頭款)", p100: 250 },
+        { id: "A107", category: "01", section: "📦 周邊商品", name: "睫毛量尺磁片/長型 5片", p100: 80 },
+        { id: "A108", category: "01", section: "📦 周邊商品", name: "睫毛量尺磁片/方型 4片", p100: 80 },
+        { id: "A109", category: "01", section: "📦 周邊商品", name: "睫毛量尺軟片/10片送2片(無磁性)", p100: 100 },
+        { id: "A110", category: "01", section: "📦 周邊商品", name: "磁片收納盒(方型)", p100: 15 },
+        { id: "A119", category: "01", section: "📦 周邊商品", name: "磁片收納盒(長型)", p100: 15 },
+        { id: "A111", category: "01", section: "📦 周邊商品", name: "美睫黑膠專用玉石", p100: 100 },
+        { id: "A112", category: "01", section: "📦 周邊商品", name: "美睫黑膠專用水晶台", p100: 100, variants: [{ color: "透明", sheetName: "A112美睫黑膠專用水晶台(透明)" }, { color: "粉色", sheetName: "A112美睫黑膠專用水晶台(粉色)" }] },
+        { id: "二合一長方形水晶台", category: "01", section: "📦 周邊商品", name: "二合一長方形水晶台", p100: 150 },
+        { id: "A117", category: "01", section: "📦 周邊商品", name: "U形水晶台", p100: 160 },
+        { id: "A116", category: "01", section: "📦 周邊商品", name: "長度分類矽膠墊片", p100: 150 },
+        { id: "A124", category: "01", section: "📦 周邊商品", name: "美容頭巾-藍", p100: 50 },
+        { id: "A125", category: "01", section: "📦 周邊商品", name: "美容頭巾-粉", p100: 50 },
+        { id: "A126", category: "01", section: "📦 周邊商品", name: "美容頭巾-紫", p100: 50 },
+        { id: "A129", category: "01", section: "📦 周邊商品", name: "美睫專用黑膠貼紙(大)/60入", p100: 105 },
+        { id: "A135", category: "01", section: "📦 周邊商品", name: "拋棄式專業美睫刷(黑)/100支", p100: 125 },
+        { id: "A151", category: "01", section: "📦 周邊商品", name: "專業接睫卸除棉籤(大)/100支", p100: 75 },
+        { id: "A153", category: "01", section: "📦 周邊商品", name: "專業接睫卸除棉籤(小)/100支", p100: 75 },
+        { id: "A154", category: "01", section: "📦 周邊商品", name: "專業接睫卸除棉籤(長)/100支", p100: 105 },
+        { id: "A165", category: "01", section: "📦 周邊商品", name: "卸除棉棒100支/黑", p100: 200 },
+        { id: "A166", category: "01", section: "📦 周邊商品", name: "洗臉海綿12條/黃", p100: 50 },
+        { id: "A167", category: "01", section: "📦 周邊商品", name: "洗臉海綿12條/粉", p100: 50 },
+        { id: "A171", category: "01", section: "📦 周邊商品", name: "美睫專用紙膠帶/2捲", p100: 32 },
+        { id: "A172", category: "01", section: "📦 周邊商品", name: "美睫專用紙膠帶/24捲", p100: 350 },
+        { id: "B80", category: "01", section: "📦 周邊商品", name: "不鏽鋼膠帶台", p100: 135 },
+        { id: "A185", category: "01", section: "📦 周邊商品", name: "膠囊式風扇", p100: 240 },
+        { id: "A190", category: "01", section: "📦 周邊商品", name: "美睫專用膠水100入-平杯", p100: 105, variants: [{ color: "透明", sheetName: "A190美睫專用膠水100入-平杯(透明)" }, { color: "桃色", sheetName: "A190美睫專用膠水100入-平杯(桃色)" }] },
+        { id: "A191", category: "01", section: "📦 周邊商品", name: "美睫專用膠水100入-淺杯", p100: 105 },
+        { id: "A192", category: "01", section: "📦 周邊商品", name: "膠水戒指100入-無分隔", p100: 150 },
+        { id: "A193", category: "01", section: "📦 周邊商品", name: "膠水戒指100入-分隔式", p100: 150 },
+        { id: "A196", category: "01", section: "📦 周邊商品", name: "心型開花膠水戒指100入/粉", p100: 150 },
+        { id: "A199", category: "01", section: "📦 周邊商品", name: "一秒開花膠水杯", p100: 120 },
+        { id: "A212", category: "01", section: "📦 周邊商品", name: "荷葉圍裙-黑", p100: 525 },
+        { id: "A214", category: "01", section: "📦 周邊商品", name: "蕾絲花邊蝴蝶結圍裙/黑", p100: 525 },
+        { id: "A221", category: "01", section: "📦 周邊商品", name: "顧客紀錄表/100張", p100: 150 },
+        { id: "A222", category: "01", section: "📦 周邊商品", name: "顧客諮詢同意書表/100張", p100: 150 },
+        { id: "A223", category: "01", section: "📦 周邊商品", name: "3D嫁接練習本/100張", p100: 150 },
+        { id: "A224", category: "01", section: "📦 周邊商品", name: "保養小卡/100張", p100: 80 },
+        { id: "A237", category: "01", section: "📦 周邊商品", name: "頂級真皮收納套(單支)", p100: 75 },
+        { id: "A245", category: "01", section: "📦 周邊商品", name: "美睫專用練習假睫毛-50根/10副", p100: 120 },
+        { id: "A246", category: "01", section: "📦 周邊商品", name: "美睫專用練習假睫毛-78根/5副", p100: 100 },
+        { id: "A247", category: "01", section: "📦 周邊商品", name: "化妝棉-1000片", p100: 180 },
+        { id: "A249", category: "01", section: "📦 周邊商品", name: "萬能黏土50G/綠", p100: 105 },
+        { id: "A250", category: "01", section: "📦 周邊商品", name: "SPA刷", p100: 80 },
+        { id: "A251", category: "01", section: "📦 周邊商品", name: "卸睫專用刷", p100: 30 },
+        { id: "A252", category: "01", section: "📦 周邊商品", name: "卸睫輔助棒(雙頭)", p100: 30 },
+        { id: "A253", category: "01", section: "📦 周邊商品", name: "AD1工具專用清除膠劑/10ml", p100: 40 },
+        { id: "A254", category: "01", section: "📦 周邊商品", name: "美睫鑷子清潔劑/10ml", p100: 40 },
+        { id: "A256", category: "01", section: "📦 周邊商品", name: "溫/濕度計-粉/黑", p100: 200 },
+        { id: "A257", category: "01", section: "📦 周邊商品", name: "USB冰箱", p100: 500 },
+        { id: "A258", category: "01", section: "📦 周邊商品", name: "放大鏡(內內附5組鏡片)", p100: 365 },
+        { id: "A272", category: "01", section: "📦 周邊商品", name: "睫毛SPA專用慕斯瓶/50ml", p100: 39 },
+        { id: "A275", category: "01", section: "📦 周邊商品", name: "萬用尖夾保護套/20入", p100: 60 },
+        { id: "A308", category: "01", section: "📦 周邊商品", name: "美容假人頭", p100: 320 },
+        { id: "A310", category: "01", section: "📦 周邊商品", name: "推頭式洗眼瓶", p100: 30 },
+        { id: "B56", category: "01", section: "📦 周邊商品", name: "36格睫毛盒收納架", p100: 1500 },
+        { id: "B71", category: "01", section: "📦 周邊商品", name: "包裝OPP袋(2.5*11CM)/100入", p100: 25 },
+        { id: "B72", category: "01", section: "📦 周邊商品", name: "包裝OPP袋(10*10CM)/A.粉紅雪花", p100: 50 },
+        { id: "B73", category: "01", section: "📦 周邊商品", name: "包裝OPP袋(10*10CM)/B.粉紅蝴蝶結", p100: 50 },
+        { id: "B74", category: "01", section: "📦 周邊商品", name: "包裝OPP袋(10*10CM)/C.粉色玫瑰花環", p100: 50 },
+        { id: "FE15_OLD", category: "01", section: "📦 周邊商品", name: "檢定考試用待消毒袋/垃圾袋", p100: 50 },
+        { id: "B1", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "呵護美睫清潔/保養海報", p100: 30 },
+        { id: "B2", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "睫毛生長週期海報", p100: 30 },
+        { id: "B3", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "法式輕柔孔雀羽海報", p100: 30 },
+        { id: "B4", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "獨創枕型輕量燕尾睫海報", p100: 30 },
+        { id: "B5", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "美睫款式介紹海報", p100: 30 },
+        { id: "B6", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "凱莉絲花園海報", p100: 30 },
+        { id: "B7", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "潔顏慕斯/Oil Free卸妝水海報", p100: 30 },
+        { id: "B8", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "美睫專用卸妝清潔QQ棉片海報", p100: 30 },
+        { id: "B9", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "養護液/定型雨衣/69D雨衣海報", p100: 30 },
+        { id: "B10", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "奢華手工真貂毛海報", p100: 30 },
+        { id: "B11", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "完美茶花海報", p100: 30 },
+        { id: "B12", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "魔法渲染漸層睫毛/晴艷自由大道海報", p100: 30 },
+        { id: "B13", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "黑耀魔幻羽扇/頂級人造水貂絲海報", p100: 30 },
+        { id: "B14", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "美睫線超輕量扁毛海報", p100: 30 },
+        { id: "B15", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "EASY花海報", p100: 30 },
+        { id: "B16", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "麥斯雅花園海報", p100: 30 },
+        { id: "B17", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "黑瞳4D羽蝶/眸若星晨羽絲絨海報", p100: 30 },
+        { id: "B18", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "一擦即淨保濕卸妝棉片海報", p100: 30 },
+        { id: "B19", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "0.03輕盈無感絲柔毛海報", p100: 30 },
+        { id: "B20", category: "01", section: "🖼️ 海報系列(A2:42cm×59cm)", name: "2代PLAY YY毛 完美豐盈輕量羽后W毛海報", p100: 30 },
+
+        // ======= 02 美甲商品 =======
+        { id: "P21", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "🔵 圓筆系列", name: "#1 圓筆 (規格 4*7)", p100: 150 },
+        { id: "P22", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "🔵 圓筆系列", name: "#2 圓筆 (規格 5*8)", p100: 150 },
+        { id: "P23", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "🔵 圓筆系列", name: "#3 圓筆 (規格 6*9)", p100: 150 },
+        { id: "P24", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "🔵 圓筆系列", name: "#4 圓筆 (規格 7*10)", p100: 150 },
+        { id: "P25", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "📐 斜口筆系列", name: "#1 斜口筆 (規格 3*5)", p100: 150 },
+        { id: "P26", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "📐 斜口筆系列", name: "#2 斜口筆 (規格 4*6)", p100: 150 },
+        { id: "P27", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "📐 斜口筆系列", name: "#3 斜口筆 (規格 5*7)", p100: 150 },
+        { id: "P28", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "📐 斜口筆系列", name: "#4 斜口筆 (規格 6*8)", p100: 150 },
+        { id: "P29", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "⏹️ 平筆系列", name: "#1 平筆 (規格 3*5)", p100: 150 },
+        { id: "P30", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "⏹️ 平筆系列", name: "#2 平筆 (規格 4*6)", p100: 150 },
+        { id: "P31", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "⏹️ 平筆系列", name: "#3 平筆 (規格 5*7)", p100: 150 },
+        { id: "P32", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "⏹️ 平筆系列", name: "#4 平筆 (規格 6*8)", p100: 150 },
+        { id: "P33", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "〰️ 線筆系列", name: "#3 線筆 (規格 3)", p100: 150 },
+        { id: "P34", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "〰️ 線筆系列", name: "#5 線筆 (規格 5)", p100: 150 },
+        { id: "P35", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "〰️ 線筆系列", name: "#7 線筆 (規格 7)", p100: 150 },
+        { id: "P36", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "〰️ 線筆系列", name: "#10 線筆 (規格 10)", p100: 150 },
+        { id: "P39", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "〰️ 線筆系列", name: "#15 線筆 (規格 15)", p100: 150 },
+        { id: "P40", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "〰️ 線筆系列", name: "#25 線筆 (規格 25)", p100: 150 },
+        { id: "P37", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "👑 專業彩繪筆", name: "專業貂毛粉雕筆 (規格 3*11)", p100: 350 },
+        { id: "P41", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "👑 專業彩繪筆", name: "凝膠彩繪筆 ART NO.1", p100: 200 },
+        { id: "P38", category: "02", section: "🖌️ 專業美甲筆刷區", subsection: "👑 專業彩繪筆", name: "頂級貂毛水晶筆 (規格 7*22)", p100: 680 },
+        { id: "R17", category: "02", section: "💅 美甲周邊商品區", subsection: "💧 美甲保養專區", name: "指緣滋養油", p100: 130 },
+        { id: "B10", category: "02", section: "💅 美甲周邊商品區", subsection: "⚡ 美甲燈具", name: "6W 迷你LED燈 (白)", p100: 416 },
+        { id: "B22", category: "02", section: "💅 美甲周邊商品區", subsection: "⚡ 美甲燈具", name: "6W LED貝殼美甲燈", p100: 1050 },
+        { id: "B23", category: "02", section: "💅 美甲周邊商品區", subsection: "⚡ 美甲燈具", name: "36W天使燈UV+LED", p100: 4800 },
+        { id: "S1", category: "02", section: "💅 美甲周邊商品區", subsection: "💅 磨棒耗材", name: "S1海綿磨砂棒 (規格:100/180綠)", p100: 86 },
+        { id: "S3", category: "02", section: "💅 美甲周邊商品區", subsection: "💅 磨棒耗材", name: "S3超彈力磨棒 (規格:100/100藍)", p100: 56 },
+        { id: "S4", category: "02", section: "💅 美甲周邊商品區", subsection: "💅 磨棒耗材", name: "S4超彈力磨棒 (規格:150/150紫)", p100: 56 },
+        { id: "S5", category: "02", section: "💅 美甲周邊商品區", subsection: "💅 磨棒耗材", name: "S5超彈力磨棒 (規格:180/180粉)", p100: 56 },
+        { id: "S7", category: "02", section: "💅 美甲周邊商品區", subsection: "💅 磨棒耗材", name: "S7真甲木片 (規格:180/240 1.2MM)", p100: 28 },
+        { id: "S8", category: "02", section: "💅 美甲周邊商品區", subsection: "💅 磨棒耗材", name: "S8拋光棒", p100: 36 },
+        { id: "S9", category: "02", section: "💅 美甲周邊商品區", subsection: "💅 磨棒耗材", name: "S9圓形磨腳器 (規格:80/150)", p100: 108 },
+        { id: "S12", category: "02", section: "💅 美甲周邊商品區", subsection: "💅 磨棒耗材", name: "S12特級磨腳器 (規格:120/180)", p100: 136 },
+        { id: "S10", category: "02", section: "💅 美甲周邊商品區", subsection: "💅 磨棒耗材", name: "S10替換砂紙 (規格:80G)", p100: 26 },
+        { id: "S11", category: "02", section: "💅 美甲周邊商品區", subsection: "💅 磨棒耗材", name: "S11替換砂紙 (規格:150G)", p100: 26 },
+        
+        // ======= 03 頂級熱蠟商品總區 =======
+        { id: "F2", category: "03", section: "🌟 頂級熱蠟系列", name: "純淨蜂蜜Q彈潤白軟蠟", p100: 580 },
+        { id: "F3", category: "03", section: "🌟 頂級熱蠟系列", name: "美肌蘆薈Q彈潤白軟蠟", p100: 580 },
+        { id: "F4", category: "03", section: "🌟 頂級熱蠟系列", name: "粉紅玫瑰複合精華硬蠟", p100: 680 },
+        { id: "F5", category: "03", section: "🌟 頂級熱蠟系列", name: "植萃美肌閃鑽COOL蠟-粉鑽", p100: 750 },
+        { id: "F6", category: "03", section: "🌟 頂級熱蠟系列", name: "植萃美肌閃鑽COOL蠟-藍鑽", p100: 750 },
+        { id: "F8", category: "03", section: "🌟 頂級熱蠟系列", name: "全效修護硬蠟-巴西香草白", p100: 680 },
+        { id: "F9", category: "03", section: "🌟 頂級熱蠟系列", name: "全效修護硬蠟-巴西藍甘菊", p100: 680 },
+        { id: "F10", category: "03", section: "🌟 頂級熱蠟系列", name: "全效修護硬蠟-超彈力竹炭黑", p100: 680 },
+        { id: "F50", category: "03", section: "🧴 熱蠟裸肌保養系列", name: "極效修護複方精油15ml", p100: 600 },
+        { id: "F60", category: "03", section: "🧴 熱蠟裸肌保養系列", name: "玫瑰淨化私密潔淨慕斯200ml", p100: 580 },
+        { id: "F62", category: "03", section: "🧴 熱蠟裸肌保養系列", name: "完美呵護私密淨化噴霧20ml", p100: 390 },
+        { id: "F63", category: "03", section: "🧴 熱蠟裸肌保養系列", name: "SPA私密淨白去角質凝露100ml", p100: 650 },
+        { id: "F64", category: "03", section: "🧴 熱蠟裸肌保養系列", name: "寵愛私密彈力亮白霜30ml", p100: 590 },
+        { id: "F65", category: "03", section: "🧴 熱蠟裸肌保養系列", name: "頂級植萃肌膚潔淨噴霧230ml", p100: 750 },
+        { id: "F66", category: "03", section: "🧴 熱蠟裸肌保養系列", name: "玫瑰美肌精萃滋養油230ml", p100: 1180 },
+        { id: "F67", category: "03", section: "🧴 熱蠟裸肌保養系列", name: "玫瑰菁萃鎮定舒緩乳液230ml", p100: 950 },
+        { id: "F68", category: "03", section: "🧴 熱蠟裸肌保養系列", name: "玫瑰菁萃鎮定舒緩乳液1000ml", p100: 1500 },
+        { id: "F109", category: "03", section: "🔌 熱蠟機/鍋爐系列", name: "單鍋爐熔蠟機", p100: 600 },
+        { id: "F110", category: "03", section: "🔌 熱蠟機/鍋爐系列", name: "雙鍋爐熔蠟機", p100: 1900 },
+        { id: "F111", category: "03", section: "🔌 熱蠟機/鍋爐系列", name: "雙鍋爐内鍋加蓋組合", p100: 260 },
+        { id: "F112", category: "03", section: "🔌 熱蠟機/鍋爐系列", name: "雙鍋爐大內鍋", p100: 160 },
+        { id: "F113", category: "03", section: "🔌 熱蠟機/鍋爐系列", name: "鍋爐內鍋鍋蓋", p100: 110 },
+        { id: "F114", category: "03", section: "🔌 熱蠟機/鍋爐系列", name: "單鍋爐小內鍋", p100: 120 },
+        { id: "F116", category: "03", section: "🔌 熱蠟機/鍋爐系列", name: "超級不沾黏熱蠟內鍋-黑", p100: 175 },
+        { id: "F101", category: "03", section: "💅 巴拿芬保養蠟系列", name: "典雅紫櫻花巴拿芬護膚蠟", p100: 250 },
+        { id: "F102", category: "03", section: "💅 巴拿芬保養蠟系列", name: "巴拿芬蠟恆溫熔蠟機", p100: 1200 },
+        { id: "F103", category: "03", section: "💅 巴拿芬保養蠟系列", name: "巴拿芬棉質保溫手套", p100: 130 },
+        { id: "F104", category: "03", section: "💅 巴拿芬保養蠟系列", name: "巴拿芬棉質保溫腳套", p100: 130 },
+        { id: "FA1", category: "03", section: "🌿 海藻矽晶保養系列", name: "海藻矽晶煥膚組", p100: 3120 },
+        { id: "FA3", category: "03", section: "🌿 海藻矽晶保養系列", name: "單入海藻矽晶組", p100: 650 },
+        { id: "F150", category: "03", section: "🛏️ 毛巾/浴巾系列", name: "美容專用純棉浴袍", p100: 1050 },
+        { id: "F151", category: "03", section: "🛏️ 毛巾/浴巾系列", name: "美容專用純棉浴巾", p100: 720 },
+        { id: "F154", category: "03", section: "🛏️ 毛巾/浴巾系列", name: "美容專用純棉包頭巾", p100: 180 },
+        { id: "F215", category: "03", section: "🧻 拋棄式床單/鋪巾系列", name: "30G平舖式床單10張(粉)", p100: 125 },
+        { id: "F220", category: "03", section: "🧻 拋棄式床單/鋪巾系列", name: "方形十字趴枕巾100張(粉)", p100: 120 },
+        { id: "F198", category: "03", section: "🛠️ 熱蠟周邊商品", name: "熱蠟專用木棒(大)100支", p100: 60 },
+        { id: "F199", category: "03", section: "🛠️ 熱蠟周邊商品", name: "熱蠟專用木棒(중)100支", p100: 50 },
+        { id: "F200", category: "03", section: "🛠️ 熱蠟周邊商品", name: "熱蠟專用木棒(小)100支", p100: 40 },
+        { id: "F203", category: "03", section: "🛠️ 熱蠟周邊商品", name: "拋棄式梳子100入", p100: 120 },
+        { id: "F207", category: "03", section: "🛠️ 熱蠟周邊商品", name: "黏毛布100片/入", p100: 75 },
+        { id: "F208", category: "03", section: "🛠️ 熱蠟周邊商品", name: "拋棄式洗臉巾 100張/入", p100: 125 },
+        { id: "FB50", category: "03", section: "🛠️ 熱蠟周邊商品", name: "方形熔蠟機防汙墊20張/入(小)", p100: 80 },
+        { id: "FB51", category: "03", section: "🛠️ 熱蠟周邊商品", name: "方形熔蠟機防汙墊50張/入(小)", p100: 180 },
+        { id: "FB52", category: "03", section: "🛠️ 熱蠟周邊商品", name: "方形熔蠟機防汙墊20張/入(大)", p100: 80 },
+        { id: "FB53", category: "03", section: "🛠️ 熱蠟周邊商品", name: "方形熔蠟機防汙墊50張/入(大)", p100: 180 },
+        { id: "F226", category: "03", section: "🛠️ 熱蠟周邊商品", name: "金屬刮刀", p100: 60 },
+        { id: "F232", category: "03", section: "🛠️ 熱蠟周邊商品", name: "不鏽鋼剪刀14公分", p100: 150 },
+        { id: "F236", category: "03", section: "🛠️ 熱蠟周邊商品", name: "扇子", p100: 20 },
+        { id: "F246", category: "03", section: "🛠️ 熱蠟周邊商品", name: "熱蠟保養小卡(雙面款)100張/入", p100: 80 },
+        { id: "FB1", category: "03", section: "🛠️ 熱蠟周邊商品", name: "熱蠟美體紀錄表(雙面款)100/入", p100: 150 },
+        { id: "FB2", category: "03", section: "🛠️ 熱蠟周邊商品", name: "熱蠟顧客資料表100/入", p100: 150 },
+        { id: "FE6", category: "03", section: "💄 美容周邊商品", name: "透明分裝小圓盒5G(10/入)", p100: 40 },
+        { id: "FE7", category: "03", section: "💄 美容周邊商品", name: "透明分裝小圓盒10G(10/入)", p100: 50 },
+        { id: "FE15", category: "03", section: "💄 美容周邊商品", name: "考試用待消毒/垃圾袋", p100: 50 },
+        { id: "G57", category: "03", section: "💄 美容周邊商品", name: "美容玻璃皿", p100: 25 },
+        { id: "FA50", category: "03", section: "💄 美容周邊商品", name: "海藻矽晶保養小卡100張/入", p100: 80 },
+        
+        // ======= 04 紋繡商品清單 =======
+        { id: "TA1", category: "04", section: "🧴 德國頂級植萃美顏色乳 10ML", name: "色乳-01 魅力黑灰", p100: 450 },
+        { id: "TA2", category: "04", section: "🧴 德國頂級植萃美顏色乳 10ML", name: "色乳-02 焦糖深棕", p100: 450 },
+        { id: "TA3", category: "04", section: "🧴 德國頂級植萃美顏色乳 10ML", name: "色乳-03 深邃灰棕", p100: 450 },
+        { id: "TA4", category: "04", section: "🧴 德國頂級植萃美顏色乳 10ML", name: "色乳-04 亞麻淺棕", p100: 450 },
+        { id: "TA5", category: "04", section: "🧴 德國頂級植萃美顏色乳 10ML", name: "色乳-11 翡翠綠棕", p100: 450 },
+        { id: "TA6", category: "04", section: "🧴 德國頂級植萃美顏色乳 10ML", name: "色乳-12 經典橙棕", p100: 450 },
+        { id: "TA7", category: "04", section: "🧴 德國頂級植萃美顏色乳 10ML", name: "色乳-50 極致黑", p100: 450 },
+        { id: "TA8", category: "04", section: "🧴 德國頂級植萃美顏色乳 10ML", name: "色乳-61 赫本女伶", p100: 450 },
+        { id: "TA9", category: "04", section: "🧴 德國頂級植萃美顏色乳 10ML", name: "色乳-62 閨密好友", p100: 450 },
+        { id: "TA10", category: "04", section: "🧴 德國頂級植萃美顏色乳 10ML", name: "色乳-63 誘惑蜜桃", p100: 450 },
+        { id: "TA11", category: "04", section: "🧴 德國頂級植萃美顏色乳 10ML", name: "色乳-64 粉霧玫瑰", p100: 450 },
+        { id: "TA12", category: "04", section: "🧴 德國頂級植萃美顏色乳 10ML", name: "色乳-66 粉紅芭比", p100: 450 },
+        { id: "TA13", category: "04", section: "🧪 德國頂級植萃美顏色乳 3ML", name: "色乳-01 魅力黑灰3ML", p100: 180 },
+        { id: "TA14", category: "04", section: "🧪 德國頂級植萃美顏色乳 3ML", name: "色乳-02 焦糖深棕3ML", p100: 180 },
+        { id: "TA15", category: "04", section: "🧪 德國頂級植萃美顏色乳 3ML", name: "色乳-03 深邃灰棕3ML", p100: 180 },
+        { id: "TA16", category: "04", section: "🧪 德國頂級植萃美顏色乳 3ML", name: "色乳-04 亞麻淺棕3ML", p100: 180 },
+        { id: "TA17", category: "04", section: "🧪 德國頂級植萃美顏色乳 3ML", name: "色乳-50 極致黑3ML", p100: 180 },
+        { id: "TA18", category: "04", section: "🧪 德國頂級植萃美顏色乳 3ML", name: "色乳-61 赫本女伶3ML", p100: 180 },
+        { id: "TA19", category: "04", section: "🧪 德國頂級植萃美顏色乳 3ML", name: "色乳-62 閨密好友3ML", p100: 180 },
+        { id: "TA20", category: "04", section: "🧪 德國頂級植萃美顏色乳 3ML", name: "色乳-63 誘惑蜜桃3ML", p100: 180 },
+        { id: "TA21", category: "04", section: "🧪 德國頂級植萃美顏色乳 3ML", name: "色乳-64 粉霧玫瑰3ML", p100: 180 },
+        { id: "TA22", category: "04", section: "🧪 德國頂級植萃美顏色乳 3ML", name: "色乳-66 粉紅芭比3ML", p100: 180 },
+        { id: "TC1", category: "04", section: "⚙️ 專業核心儀器機器系列", name: "紋繡原裝全智能紋繡機-金", p100: 12800 },
+        { id: "TC2", category: "04", section: "⚙️ 專業核心儀器機器系列", name: "紋繡原裝全智能紋繡機-銀", p100: 12800 },
+        { id: "TC4", category: "04", section: "⚙️ 專業核心儀器機器系列", name: "德國V6變速紋綉機", p100: 4250 },
+        { id: "TC5", category: "04", section: "⚙️ 專業核心儀器機器系列", name: "德國六段變速輕巧紋繡機-金/黑", p100: 2750 },
+        { id: "TC9", category: "04", section: "⚙️ 專業核心儀器機器系列", name: "德國無線四段變速紋繡機-金", p100: 4500 },
+        { id: "TC12", category: "04", section: "⚙️ 專業核心儀器機器系列", name: "紋繡五段速智能腕表免麻儀", p100: 9900 },
+        { id: "TC13", category: "04", section: "⚙️ 專業核心儀器機器系列", name: "紋繡極靜多功能紋繡機-銀色", p100: 2800 },
+        { id: "TF35", category: "04", section: "🛷 免麻儀與腕表專用全拋針系列", name: "免麻儀全拋針(0.18)單針-5入", p100: 125 },
+        { id: "TF36", category: "04", section: "🛷 免麻儀與腕表專用全拋針系列", name: "免麻儀全拋針(0.25)單針-5入", p100: 125 },
+        { id: "TF38", category: "04", section: "🛷 免麻儀與腕表專用全拋針系列", name: "免麻儀全拋針(0.30)3圓針-5入", p100: 125 },
+        { id: "TF48", category: "04", section: "🛷 免麻儀與腕表專用全拋針系列", name: "免麻儀全拋針(0.35)單針-5入", p100: 125 },
+        { id: "TF49", category: "04", section: "🛷 免麻儀與腕表專用全拋針系列", name: "免麻儀全拋針(0.30)三排針-5入", p100: 125 },
+        { id: "TF50", category: "04", section: "🛷 免麻儀與腕表專用全拋針系列", name: "免麻儀全拋針(0.30)五排針-5入", p100: 125 },
+        { id: "TF40", category: "04", section: "🛷 免麻儀與腕表專用全拋針系列", name: "腕表儀全拋針 0.18單針-5入", p100: 125 },
+        { id: "TF41", category: "04", section: "🛷 免麻儀與腕表專用全拋針系列", name: "腕表儀全拋針 0.25單針-5入", p100: 125 },
+        { id: "TF42", category: "04", section: "🛷 免麻儀與腕表專用全拋針系列", name: "腕表儀全拋針 0.30單針-5入", p100: 125 },
+        { id: "TF43", category: "04", section: "🛷 免麻儀與腕表專用全拋針系列", name: "腕表儀全拋針 0.35單針-5入", p100: 125 },
+        { id: "TF44", category: "04", section: "🛷 免麻儀與腕表專用全拋針系列", name: "腕表儀全拋針 3圓針-5入", p100: 125 },
+        { id: "TF45", category: "04", section: "🛷 免麻儀與腕表專用全拋針系列", name: "腕表儀全拋針 5圓針-5入", p100: 125 },
+        { id: "TF46", category: "04", section: "🛷 免麻儀與腕表專用全拋針系列", name: "腕表儀全拋針 7排針-5入", p100: 125 },
+        { id: "TF47", category: "04", section: "🛷 免麻儀與腕表專用全拋針系列", name: "腕表儀全拋針 X15針-5入", p100: 150 },
+        { id: "TD4", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "鑽石手工紋繡筆-銀", p100: 250 },
+        { id: "TD7", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "全能雙頭紋繡手工筆-紅色", p100: 120 },
+        { id: "TD8", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "全能雙頭紋繡手工筆-藍色", p100: 120 },
+        { id: "TD10", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "雙頭紋繡手工筆-淺藍", p100: 180 },
+        { id: "TD11", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "雙頭紋繡手工筆-青綠", p100: 180 },
+        { id: "TD12", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "雙頭紋繡手工筆-桃粉", p100: 180 },
+        { id: "TD13", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "雙頭紋繡手工筆-紫", p100: 180 },
+        { id: "TD14", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "小腰一字手工筆-亮黃", p100: 120 },
+        { id: "TD15", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "小腰一字手工筆-銀灰", p100: 120 },
+        { id: "TD16", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "小腰一字手工筆-紅", p100: 120 },
+        { id: "TD17", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "小腰一字手工筆-淺粉", p100: 120 },
+        { id: "TD18", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "新圓口手工筆-藍色", p100: 80 },
+        { id: "TD19", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "新圓口手工筆-紅色", p100: 80 },
+        { id: "TD20", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "新圓口手工筆-銀色", p100: 80 },
+        { id: "TD28", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "雙頭水晶紋繡手工筆-紫", p100: 120 },
+        { id: "TD29", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "雙頭水晶紋繡手工筆-白", p100: 120 },
+        { id: "TD30", category: "04", section: "✒️ 專業手工紋繡操作筆系列", name: "雙頭水晶紋繡手工筆-黃", p100: 120 },
+        { id: "TE1", category: "04", section: "📐 一般手工常備針片系列", name: "飄霧眉針片(0.25)12針-5入", p100: 125 },
+        { id: "TE2", category: "04", section: "📐 一般手工常備針片系列", name: "飄霧眉針片(0.25)14針-5入", p100: 125 },
+        { id: "TE3", category: "04", section: "📐 一般手工常備針片系列", name: "神奇四俠霧眉針-5入", p100: 125 },
+        { id: "TE4", category: "04", section: "📐 一般手工常備針片系列", name: "神奇六俠霧眉針-5入", p100: 125 },
+        { id: "TE5", category: "04", section: "📐 一般手工常備針片系列", name: "白皮萬能繡針片-5入", p100: 150 },
+        { id: "TE6", category: "04", section: "📐 一般手工常備針片系列", name: "白皮高低弧14針-5入", p100: 125 },
+        { id: "TE7", category: "04", section: "📐 一般手工常備針片系列", name: "黃皮雙排霧眉針9針-5入", p100: 125 },
+        { id: "TE8", category: "04", section: "📐 一般手工常備針片系列", name: "黃皮雙排霧眉針15針-5入", p100: 125 },
+        { id: "TE9", category: "04", section: "📐 一般手工常備針片系列", name: "單排彎彎繡針片14針-5入", p100: 125 },
+        { id: "TE10", category: "04", section: "📐 一般手工常備針片系列", name: "單排彎彎繡針片18針-5入", p100: 125 },
+        { id: "TE11", category: "04", section: "📐 一般手工常備針片系列", name: "雙排彎彎繡白皮15針-5入", p100: 125 },
+        { id: "TE12", category: "04", section: "📐 一般手工常備針片系列", name: "三排彎彎繡針片16針-5入", p100: 150 },
+        { id: "TE15", category: "04", section: "📐 一般手工常備針片系列", name: "白皮收口打霧-7圓針-5入", p100: 100 },
+        { id: "TE16", category: "04", section: "📐 一般手工常備針片系列", name: "白皮收口打霧-9圓針-5入", p100: 100 },
+        { id: "TE17", category: "04", section: "📐 一般手工常備針片系列", name: "白皮散口打霧-5圓針-5入", p100: 125 },
+        { id: "TE18", category: "04", section: "📐 一般手工常備針片系列", name: "紅皮散口-3圓針-5入", p100: 100 },
+        { id: "TE20", category: "04", section: "📐 一般手工常備針片系列", name: "紅皮散口-7圓針-5入", p100: 100 },
+        { id: "TE21", category: "04", section: "📐 一般手工常備針片系列", name: "紅皮散口-9圓針-5入", p100: 100 },
+        { id: "TE22", category: "04", section: "📐 一般手工常備針片系列", name: "紅皮散口-17圓針-5入", p100: 125 },
+        { id: "TE23", category: "04", section: "📐 一般手工常備針片系列", name: "紅皮散口-21圓針-5入", p100: 125 },
+        { id: "TE24", category: "04", section: "📐 一般手工常備針片系列", name: "紅皮(0.20)平頭12針-5入", p100: 125 },
+        { id: "TE25", category: "04", section: "📐 一般手工常備針片系列", name: "紅皮(0.20)平頭14針-5入", p100: 125 },
+        { id: "TE26", category: "04", section: "📐 一般手工常備針片系列", name: "白皮(0.25)7針-5入", p100: 100 },
+        { id: "TE27", category: "04", section: "📐 一般手工常備針片系列", name: "白皮(0.18)14針-5入", p100: 125 },
+        { id: "TE28", category: "04", section: "📐 一般手工常備針片系列", name: "白皮(0.20)半圓18針-5入", p100: 125 },
+        { id: "TE29", category: "04", section: "📐 一般手工常備針片系列", name: "白皮(0.20)半圓21針-5入", p100: 125 },
+        { id: "TE30", category: "04", section: "📐 一般手工常備針片系列", name: "白皮(0.25)U型16針-5入", p100: 125 },
+        { id: "TE31", category: "04", section: "📐 一般手工常備針片系列", name: "白皮(0.25)U型18針-5入", p100: 125 },
+        { id: "TE32", category: "04", section: "📐 一般手工常備針片系列", name: "藍皮(0.20)7針-5入", p100: 125 },
+        { id: "TE33", category: "04", section: "📐 一般手工常備針片系列", name: "藍皮(0.20)12針-5入", p100: 125 },
+        { id: "TE34", category: "04", section: "📐 一般手工常備針片系列", name: "藍皮(0.20)14針-5入", p100: 125 },
+        { id: "TE35", category: "04", section: "📐 一般手工常備針片系列", name: "藍皮(0.20)17針-5入", p100: 125 },
+        { id: "TE36", category: "04", section: "📐 一般手工常備針片系列", name: "藍皮(0.20)18針(髮際線)5入", p100: 125 },
+        { id: "TE37", category: "04", section: "📐 一般手工常備針片系列", name: "藍皮(0.20)21針(髮際線)5入", p100: 125 },
+        { id: "TE38", category: "04", section: "📐 一般手工常備針片系列", name: "綠皮(0.18)16針(髮際線)5入", p100: 125 },
+        { id: "TE39", category: "04", section: "📐 一般手工常備針片系列", name: "輕氧針7針/19針一代大螺紋0.5-5入", p100: 300 },
+        { id: "TE40", category: "04", section: "📐 一般手工常備針片系列", name: "輕氧針7針/19針二代小螺紋0.4-5入", p100: 300 },
+        { id: "TE42", category: "04", section: "📐 一般手工常備針片系列", name: "白皮20mm收口打霧-3圓針-5入", p100: 125 },
+        { id: "TE43", category: "04", section: "📐 一般手工常備針片系列", name: "白皮30mm散口打霧-5圓針-5入", p100: 125 },
+        { id: "TE44", category: "04", section: "📐 一般手工常備針片系列", name: "黑皮25mm收口打霧-3圓針-5入匠心", p100: 125 },
+        { id: "TE45", category: "04", section: "📐 一般手工常備針片系列", name: "黑皮25mm散口打霧-5圓針-5入匠心", p100: 125 },
+        { id: "TF2", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "第三代夏夢針3圓針-5入", p100: 250 },
+        { id: "TF3", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "第三代夏夢針5排針-5入", p100: 250 },
+        { id: "TF4", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "第三代夏夢針7排針-5入", p100: 250 },
+        { id: "TF5", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "機器針頭0.35單針-5入", p100: 100 },
+        { id: "TF6", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "機器針頭0.35收口3圓針-5入", p100: 100 },
+        { id: "TF7", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "機器針頭0.35收口5圓針-5入", p100: 100 },
+        { id: "TF8", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "機器針頭0.35收口7圓針-5入", p100: 100 },
+        { id: "TF9", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "機器針頭0.35-5排針-5入", p100: 100 },
+        { id: "TF10", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "機器針頭0.35-7排針-5入", p100: 100 },
+        { id: "TF11", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "小螺旋全拋式一體針鈍針-5入", p100: 125 },
+        { id: "TF15", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "小螺旋全拋式一體針5排針-5入", p100: 125 },
+        { id: "TF16", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "小螺旋全拋式一體針7排針-5入", p100: 125 },
+        { id: "TF18", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "大螺旋全拋式一體針-鈍針-5入", p100: 125 },
+        { id: "TF19", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "大螺旋全拋式一體針-3圓-5入", p100: 125 },
+        { id: "TF20", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "大螺旋全拋式一體針-7排-5入", p100: 125 },
+        { id: "TF21", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "卡扣奈米晶片-孕睫方型-5入", p100: 300 },
+        { id: "TF22", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "卡扣奈米晶片-駐顏圓針-5入", p100: 300 },
+        { id: "TF23", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "卡扣全拋式一體針-鈍針", p100: 300 },
+        { id: "TF24", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "卡扣全拋式一體針-單針", p100: 300 },
+        { id: "TF25", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "卡扣全拋式一體針-3圓", p100: 300 },
+        { id: "TF26", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "卡扣全拋式一體針-5圓", p100: 300 },
+        { id: "TF27", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "卡扣全拋式一體針-5排", p100: 300 },
+        { id: "TF28", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "卡扣全拋式一體針-7排", p100: 300 },
+        { id: "TF29", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "通用螺旋全拋式一體針-鈍針", p100: 125 },
+        { id: "TF30", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "通用螺旋全拋式一體針-單針", p100: 125 },
+        { id: "TF31", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "通用螺旋全拋式一體針-3圓針", p100: 125 },
+        { id: "TF32", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "通用螺旋全拋式一體針-5圓針", p100: 125 },
+        { id: "TF39", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "通用螺旋全拋式一體針-3排針", p100: 125 },
+        { id: "TF33", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "通用螺旋全拋式一體針-5排針", p100: 125 },
+        { id: "TF34", category: "04", section: "🔗 通用/卡扣一體式機器針片系列", name: "通用螺旋全拋式一體針-7排針", p100: 125 },
+        { id: "TG1", category: "04", section: "🎯 精準機器配備針帽系列", name: "開口針帽20入-單針", p100: 60 },
+        { id: "TG2", category: "04", section: "🎯 精準機器配備針帽系列", name: "開口針帽20入-3圓", p100: 60 },
+        { id: "TG3", category: "04", section: "🎯 精準機器配備針帽系列", name: "開口針帽20入-5圓", p100: 60 },
+        { id: "TG4", category: "04", section: "🎯 精準機器配備針帽系列", name: "開口針帽20入-5排", p100: 60 },
+        { id: "TG5", category: "04", section: "🎯 精準機器配備針帽系列", name: "開口針帽20入-7排", p100: 60 },
+        { id: "TG6", category: "04", section: "🎯 精準機器配備針帽系列", name: "大號針帽20入-單針", p100: 60 },
+        { id: "TG7", category: "04", section: "🎯 精準機器配備針帽系列", name: "大號針帽20入-3圓", p100: 60 },
+        { id: "TG8", category: "04", section: "🎯 精準機器配備針帽系列", name: "大號針帽20入-5圓", p100: 60 },
+        { id: "TG10", category: "04", section: "🎯 精準機器配備針帽系列", name: "大號針帽20入-7排", p100: 60 },
+        { id: "TG11", category: "04", section: "🎯 精準機器配備針帽系列", name: "雙針機針帽20入-單針", p100: 120 },
+        { id: "TG12", category: "04", section: "🎯 精準機器配備針帽系列", name: "雙針機針帽20入-3圓", p100: 120 },
+        { id: "TG13", category: "04", section: "🎯 精準機器配備針帽系列", name: "雙針機針帽20入-7排", p100: 120 },
+        { id: "TH1", category: "04", section: "🥊 仿生練習專用系列工具", name: "可更替眉唇模塊紋繡假人頭", p100: 370 },
+        { id: "TH2", category: "04", section: "🥊 仿生練習專用系列工具", name: "更替用眉唇模塊/1組", p100: 125 },
+        { id: "TH3", category: "04", section: "🥊 仿生練習專用系列工具", name: "紋繡漂眉仿真練習眼部軟皮", p100: 160 },
+        { id: "TH4", category: "04", section: "🥊 仿生練習專用系列工具", name: "紋繡漂唇仿真練習唇部軟皮", p100: 160 },
+        { id: "TH5", category: "04", section: "🥊 仿生練習專用系列工具", name: "紋繡空白練習皮", p100: 100 },
+        { id: "TH6", category: "04", section: "🥊 仿生練習專用系列工具", name: "黃色眉眼唇練習皮", p100: 60 },
+        { id: "TH7", category: "04", section: "🥊 仿生練習專用系列工具", name: "藍色眉眼唇練習皮", p100: 60 },
+        { id: "TH8", category: "04", section: "🥊 仿生練習專用系列工具", name: "韓式眉眼唇練習皮", p100: 60 },
+        { id: "TH9", category: "04", section: "🥊 仿生練習專用系列工具", name: "韓式經典眉練習皮", p100: 60 },
+        { id: "TH10", category: "04", section: "🥊 仿生練習專用系列工具", name: "韓式一字眉(平眉)練習皮", p100: 60 },
+        { id: "TH11", category: "04", section: "🥊 仿生練習專用系列工具", name: "韓式矽膠乳模", p100: 300 },
+        { id: "TH12", category: "04", section: "🥊 仿生練習專用系列工具", name: "韓式矽膠全臉練習皮", p100: 80 },
+        { id: "TH13", category: "04", section: "🥊 仿生練習專用系列工具", name: "矽膠真人臉部練習皮-三角臉型", p100: 150 },
+        { id: "TH14", category: "04", section: "🥊 仿生練習專用系列工具", name: "矽膠真人臉部練習皮-菱型臉", p100: 150 },
+        { id: "TH15", category: "04", section: "🥊 仿生練習專用系列工具", name: "矽膠真人臉部練習皮-鵝蛋臉", p100: 150 },
+        { id: "TH16", category: "04", section: "🥊 仿生練習專用系列工具", name: "矽膠練習眉卡", p100: 80 },
+        { id: "TH22", category: "04", section: "🥊 仿生練習專用系列工具", name: "白色韓式一字眉練習皮", p100: 60 },
+        { id: "TH23", category: "04", section: "🥊 仿生練習專用系列工具", name: "白色韓式標準眉練習皮", p100: 60 },
+        { id: "TH26", category: "04", section: "🥊 仿生練習專用系列工具", name: "高級唇部眉眼練習皮", p100: 200 },
+        { id: "TH27", category: "04", section: "🥊 仿生練習專用系列工具", name: "高級眉眼練習皮", p100: 200 },
+        { id: "TH28", category: "04", section: "🥊 仿生練習專用系列工具", name: "高級全臉練習皮", p100: 200 },
+        { id: "TH29", category: "04", section: "🥊 仿生練習專用系列工具", name: "高級空白練習皮", p100: 200 },
+        { id: "TH30", category: "04", section: "🥊 仿生練習專用系列工具", name: "5D立體仿真練習嘟嘟唇", p100: 60 },
+        { id: "TH31", category: "04", section: "🥊 仿生練習專用系列工具", name: "線條野生眉練習皮", p100: 80 },
+        { id: "TJ1", category: "04", section: "💎 專業色料架與工作托盤系列", name: "紋繡機架-圓通款(透明)", p100: 150 },
+        { id: "TJ2", category: "04", section: "💎 專業色料架與工作托盤系列", name: "紋繡機架-圓通款(黑)", p100: 150 },
+        { id: "TJ4", category: "04", section: "💎 專業色料架與工作托盤系列", name: "手工筆水晶筆筒(粉色)", p100: 75 },
+        { id: "TJ5", category: "04", section: "💎 專業色料架與工作托盤系列", name: "手工筆水晶筆筒(透明)", p100: 75 },
+        { id: "TJ7", category: "04", section: "💎 專業色料架與工作托盤系列", name: "弓形色料架", p100: 80 },
+        { id: "TJ8", category: "04", section: "💎 專業色料架與工作托盤系列", name: "圓型色料架", p100: 100 },
+        { id: "TJ9", category: "04", section: "💎 專業色料架與工作托盤系列", name: "圓型色料架-可旋轉", p100: 200 },
+        { id: "TJ12", category: "04", section: "💎 專業色料架與工作托盤系列", name: "紋繡色料筆托架-紅", p100: 65 },
+        { id: "TJ14", category: "04", section: "💎 專業色料架與工作托盤系列", name: "紋繡色料筆托架-粉紫", p100: 65 },
+        { id: "TJ15", category: "04", section: "💎 專業色料架與工作托盤系列", name: "天藍色料筆托架", p100: 65 },
+        { id: "TK1", category: "04", section: "🥤 戒指色料杯與吸色海綿系列", name: "戒指色料杯-大(無分隔)", p100: 150 },
+        { id: "TK2", category: "04", section: "🥤 戒指色料杯與吸色海綿系列", name: "戒指色料杯-大(有分隔)", p100: 150 },
+        { id: "TK3", category: "04", section: "🥤 戒指色料杯與吸色海綿系列", name: "戒指色料杯-中(無分隔)", p100: 150 },
+        { id: "TK4", category: "04", section: "🥤 戒指色料杯與吸色海綿系列", name: "矽膠色料杯(中)100入", p100: 100 },
+        { id: "TK5", category: "04", section: "🥤 戒指色料杯與吸色海綿系列", name: "矽膠色料杯(小)100入", p100: 100 },
+        { id: "TK6", category: "04", section: "🥤 戒指色料杯與吸色海綿系列", name: "紋繡色料杯(大)100入", p100: 100 },
+        { id: "TK7", category: "04", section: "🥤 戒指色料杯與吸色海綿系列", name: "紋繡色料杯(忠)100入", p100: 100 },
+        { id: "TK8", category: "04", section: "🥤 戒指色料杯與吸色海綿系列", name: "紋繡色料杯(小)", p100: 100 },
+        { id: "TK9", category: "04", section: "🥤 戒指色料杯與吸色海綿系列", name: "紋繡色料海綿杯50入-白色", p100: 450 },
+        { id: "TK10", category: "04", section: "🥤 戒指色料杯與吸色海綿系列", name: "紋繡黑色海綿戒指20入", p100: 250 },
+        { id: "TB1", category: "04", section: "🌿 專用修護鎖色與去角質精華", name: "紋繡眉眼唇專用鎖色精華", p100: 390 },
+        { id: "TB3", category: "04", section: "🌿 專用修護鎖色與去角質精華", name: "紋繡唇部持久留色修復精華", p100: 600 },
+        { id: "TB4", category: "04", section: "🌿 專用修護鎖色與去角質精華", name: "紋繡唇部護理去角質霜", p100: 390 },
+        { id: "TL6", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "纹繡拉線眉筆-黑", p100: 80 },
+        { id: "TL7", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "纹繡拉線眉筆-深咖", p100: 80 },
+        { id: "TL8", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "纹繡拉線眉筆-淺咖", p100: 80 },
+        { id: "TL9", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "纹繡拉線眉筆-灰", p100: 80 },
+        { id: "TL10", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "紋繡定位筆/1.0mm", p100: 60 },
+        { id: "TL11", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "紋繡雙頭定位筆", p100: 80 },
+        { id: "TL12", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "紋繡專用測量眉尺/新款測量眉(頭)尺", p100: 60 },
+        { id: "TL15", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "經典眉卡/刻度一字眉卡", p100: 100 },
+        { id: "TL18", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "平衡尺", p100: 180 },
+        { id: "TL19", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "黃金比例對稱測量尺", p100: 390 },
+        { id: "TL20", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "韓式標準眉刻度尺", p100: 60 },
+        { id: "TL21", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "紋繡定位魔力擦拭筆", p100: 100 },
+        { id: "TL23", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "紋繡冰敷袋(不挑款)", p100: 40 },
+        { id: "TL28", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "拋棄式頭套50入", p100: 60 },
+        { id: "TL29", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "拋棄式頭套100入", p100: 100 },
+        { id: "TL30", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "8號不鏽鋼消毒罐/小號不鏽鋼腰盤", p100: 85 },
+        { id: "TL31", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "小號不鏽鋼腰盤", p100: 85 },
+        { id: "TL32", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "紋繡保鮮膜-42*200mm", p100: 80 },
+        { id: "TL35", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "紋繡雙層加厚棉片500入", p100: 250 },
+        { id: "TL36", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "木頭棉籤100入", p100: 25 },
+        { id: "TL40", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "手指套100入", p100: 80 },
+        { id: "TL41", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "色料攪拌器-白色", p100: 250 },
+        { id: "TL42", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "色料攪拌器-黑色", p100: 250 },
+        { id: "TL47", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "替換攪拌棒(黑)10入", p100: 25 },
+        { id: "TL48", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "計時器-藍色", p100: 110 },
+        { id: "TL50", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "計時器-粉色", p100: 110 },
+        { id: "TL57", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "紋繡保養小卡-眉眼", p100: 80 },
+        { id: "TL58", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "紋繡保養小卡-唇", p100: 80 },
+        { id: "TL59", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "紋繡保養小卡-乳暈髮線", p100: 80 },
+        { id: "TL60", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "紋繡客戶紀錄表(雙面款)/同意書", p100: 150 },
+        { id: "TL61", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "紋繡客戶同意書/紀錄表", p100: 150 },
+        { id: "TL62", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "修眉刀片-10入", p100: 60 },
+        { id: "TL63", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "紋繡眉型定位墨線", p100: 120 },
+        { id: "TL64", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "紋繡定位筆-白色", p100: 60 },
+        { id: "TL65", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "木質眉筆削筆器", p100: 55 },
+        { id: "G36", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "鑽石攪拌棒-透明", p100: 60 },
+        { id: "G37", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "鑽石攪拌棒-粉色", p100: 60 },
+        { id: "F208", category: "04", section: "🛠 必備精準定位周邊耗材商品", name: "拋棄式洗臉巾-100張/包", p100: 125 },
+
+        // ======= 05 醫美保養商品 =======
+        { id: "DC2", category: "05", section: "🧴 超涵水角鯊烯保濕系列", name: "超涵水角鯊烯保濕美肌露", p100: 650 },
+        { id: "DD2", category: "05", section: "🧴 超涵水角鯊烯保濕系列", name: "超涵水角鯊烯保濕雙效精粹", p100: 1680 },
+        { id: "DG2", category: "05", section: "🧴 超涵水角鯊烯保濕系列", name: "超涵水角鯊烯保濕面膜(五入裝)", p100: 399 },
+
+        // ======= 06 美妝內衣商品 =======
+        { id: "D19", category: "06", section: "💄 美妝筆類", name: "奢華優雅抗暈眼影筆-古銅金", p100: 74 },
+        { id: "D20", category: "06", section: "💄 美妝筆類", name: "奢華優雅抗暈眼影筆-玫瑰金", p100: 74 },
+        { id: "D22", category: "06", section: "💄 美妝筆類", name: "奢華優雅抗暈眼影筆-嬰兒粉", p100: 74 },
+        { id: "D23", category: "06", section: "💄 美妝筆類", name: "奢華優雅抗暈眼影筆-焦糖棕", p100: 74 },
+        { id: "D24", category: "06", section: "💄 美妝筆類", name: "奢華優雅抗暈眼影筆-魔力紅", p100: 74 },
+        { id: "D25", category: "06", section: "💄 美妝筆類", name: "奢華優雅抗暈眼影筆-蜜糖橘", p100: 74 },
+        { id: "D26", category: "06", section: "💄 美妝筆類", name: "奢華優雅抗暈眼影筆-微醺紫", p100: 74 },
+        { id: "D30", category: "06", section: "💄 美妝筆類", name: "局部橡皮擦修妝筆", p100: 149 },
+        { id: "D58", category: "06", section: "💄 美妝筆類", name: "BAD GIRLS極速成型抗淚眼線液", p100: 180 },
+        { id: "D61", category: "06", section: "💄 美妝筆類", name: "超防水旋轉免削式眉膠筆-淺棕", p100: 99 },
+        { id: "D62", category: "06", section: "💄 美妝筆類", name: "超防水旋轉免削式眉膠筆-深棕", p100: 99 },
+        { id: "D91", category: "06", section: "💄 美妝筆類", name: "超防水旋轉免削式眉膠筆-奶茶棕", p100: 99 },
+        { id: "D93", category: "06", section: "💄 美妝筆類", name: "超防水旋轉免削式眉膠筆-亞麻棕", p100: 99 },
+        { id: "D71", category: "06", section: "💄 美妝筆類", name: "超防水旋轉免削式眼膠筆-深黑", p100: 99 },
+        { id: "D72", category: "06", section: "💄 美妝筆類", name: "超防水旋轉免削式眼膠筆-深棕", p100: 99 },
+        { id: "D77", category: "06", section: "💄 美妝筆類", name: "EX1.5MM極細防水眼線膠筆-深黑色", p100: 149 },
+        { id: "D78", category: "06", section: "💄 美妝筆類", name: "EX1.5MM極細防水眼線膠筆-咖啡", p100: 149 },
+        { id: "D82", category: "06", section: "💄 美妝筆類", name: "完美持久可削旋轉式眼膠筆-甜蜜深棕", p100: 74 },
+        { id: "D83", category: "06", section: "💄 美妝筆類", name: "完美持久可削旋轉式眼膠筆-星燦銀白", p100: 74 },
+        { id: "D84", category: "06", section: "💄 美妝筆類", name: "完美持久可削旋轉式眼膠筆-優雅銀棕", p100: 74 },
+        { id: "D85", category: "06", section: "💄 美妝筆類", name: "完美持久可削旋轉式眼膠筆-搖滾銀黑", p100: 74 },
+        { id: "D86", category: "06", section: "💄 美妝筆類", name: "完美持久可削旋轉式眼膠筆-蜜糖金棕", p100: 74 },
+        { id: "D1", category: "06", section: "🛠️ 周邊耗材", name: "假睫毛残膠刷具乾洗清潔液 100ml", p100: 350 },
+        { id: "D51", category: "06", section: "🛠️ 周邊耗材", name: "假睫毛殘膠刷具乾洗清潔液30ml", p100: 120 },
+        { id: "D2", category: "06", section: "🛠️ 周邊耗材", name: "假睫毛專用輔助器(黑色)", p100: 60 },
+        { id: "D3", category: "06", section: "🛠️ 周邊耗材", name: "尖頭小剪刀", p100: 30 },
+        { id: "D5", category: "06", section: "🛠️ 周邊耗材", name: "假睫毛專用斜口夾", p100: 60 },
+        { id: "D6", category: "06", section: "🛠️ 周邊耗材", name: "迷你假睫毛專用斜口夾", p100: 30 },
+        { id: "D7", category: "06", section: "🛠️ 周邊耗材", name: "完美零死角廣角睫毛夾", p100: 80 },
+        { id: "D8", category: "06", section: "🛠️ 周邊耗材", name: "專業打薄修眉剪刀", p100: 60 },
+        { id: "D10", category: "06", section: "🛠️ 周邊耗材", name: "溫和眼唇卸除液 100ml", p100: 150 },
+        { id: "D60", category: "06", section: "🛠️ 周邊耗材", name: "溫和眼唇卸除液 30ml", p100: 80 },
+        { id: "D32", category: "06", section: "🛠️ 周邊耗材", name: "EX52超長效假睫毛黏著劑 6ml", p100: 99 },
+        { id: "D38", category: "06", section: "🛠️ 周邊耗材", name: "假睫毛黏著劑專用卸除液 6ml", p100: 99 },
+        { id: "D41", category: "06", section: "🛠️ 周邊耗材", name: "粉紅愛心多功能收納盒", p100: 20 },
+        { id: "D55", category: "06", section: "🛠️ 周邊耗材", name: "超完美2way假睫毛專用輔助夾", p100: 149 },
+        { id: "D140", category: "06", section: "🛠️ 周邊耗材", name: "刷具清潔墊(不挑色)", p100: 49 },
+        { id: "D13", category: "06", section: "👀 雙眼皮貼系列", name: "隱形無痕網狀雙眼皮貼 70回 月牙形", p100: 95 },
+        { id: "D14", category: "06", section: "👀 雙眼皮貼系列", name: "隱形無痕網狀雙眼皮貼 140回 月牙形", p100: 160 },
+        { id: "D15", category: "06", section: "👀 雙眼皮貼系列", name: "隱形無痕網狀雙眼皮貼 60回 半月形", p100: 95 },
+        { id: "D16", category: "06", section: "👀 雙眼皮貼系列", name: "隱形無痕網狀雙眼皮貼 96回 彎月形", p100: 95 },
+        { id: "D17", category: "06", section: "👀 雙眼皮貼系列", name: "隱形回痕網狀雙眼皮貼 120回 半月形", p100: 160 },
+        { id: "D18", category: "06", section: "👀 雙眼皮貼系列", name: "隱形無痕網狀雙眼皮貼 180回 彎月形", p100: 160 },
+        { id: "D152", category: "06", section: "👀 雙眼皮貼系列", name: "長效透氣雙眼皮貼 M號48回", p100: 39 },
+        { id: "D155", category: "06", section: "👀 雙眼皮貼系列", name: "長效透氣雙眼皮貼 M號160回", p100: 80 },
+        { id: "D157", category: "06", section: "👀 雙眼皮貼系列", name: "雙面式雙眼皮貼M號36回", p100: 39 },
+        { id: "D158", category: "06", section: "👀 雙眼皮貼系列", name: "雙面式雙眼皮貼L號36回", p100: 39 },
+        { id: "D159", category: "06", section: "👀 雙眼皮貼系列", name: "雙面式雙眼皮貼M號96回", p100: 80 },
+        { id: "D160", category: "06", section: "👀 雙眼皮貼系列", name: "雙面式雙眼皮貼L號90回", p100: 80 },
+        { id: "D161", category: "06", section: "👀 雙眼皮貼系列", name: "極細纖維無痕雙眼皮膠條20回", p100: 39 },
+        { id: "D162", category: "06", section: "👀 雙眼皮貼系列", name: "極細纖維無痕雙眼皮膠條60回", p100: 80 },
+        { id: "D171", category: "06", section: "👀 雙眼皮貼系列", name: "OK蹦裸色隱形雙眼皮貼S號40枚", p100: 39 },
+        { id: "D172", category: "06", section: "👀 雙眼皮貼系列", name: "OK蹦裸色隱形雙眼皮貼M號40枚", p100: 39 },
+        { id: "D173", category: "06", section: "👀 雙眼皮貼系列", name: "OK蹦裸色隱形雙眼皮貼L號32枚", p100: 39 },
+        { id: "D174", category: "06", section: "👀 雙眼皮貼系列", name: "OK蹦裸色隱形雙眼皮貼S號120枚", p100: 95 },
+        { id: "D175", category: "06", section: "👀 雙眼皮貼系列", name: "OK蹦裸色隱形雙眼皮貼M號120枚", p100: 95 },
+        { id: "D176", category: "06", section: "👀 雙眼皮貼系列", name: "OK蹦裸色隱形雙眼皮貼L號96枚", p100: 95 },
+        { id: "D177", category: "06", section: "👀 雙眼皮貼系列", name: "OK蹦裸色隱形雙眼皮貼S號240枚", p100: 160 },
+        { id: "D178", category: "06", section: "👀 雙眼皮貼系列", name: "OK蹦裸色隱形雙眼皮貼M號240枚", p100: 160 },
+        { id: "D179", category: "06", section: "👀 雙眼皮貼系列", name: "OK蹦裸色隱形雙眼皮貼L號192枚", p100: 160 },
+        { id: "D180", category: "06", section: "👀 雙眼皮貼系列", name: "秒變大眼持久隱形雙眼皮貼 S號80貼", p100: 39 },
+        { id: "D181", category: "06", section: "👀 雙眼皮貼系列", name: "秒變大眼持久隱形雙眼皮貼 M號80貼", p100: 39 },
+        { id: "D182", category: "06", section: "👀 雙眼皮貼系列", name: "秒變大眼持久隱形雙眼皮貼 L號80貼", p100: 39 },
+        { id: "D183", category: "06", section: "👀 雙眼皮貼系列", name: "秒變大眼持久隱形雙眼皮貼 橄欖型80貼", p100: 39 },
+        { id: "D184", category: "06", section: "👀 雙眼皮貼系列", name: "秒變大眼持久隱形雙眼皮貼 S號240貼", p100: 160 },
+        { id: "D185", category: "06", section: "👀 雙眼皮貼系列", name: "秒變大眼持久隱形雙眼皮貼 M號240貼", p100: 160 },
+        { id: "D186", category: "06", section: "👀 雙眼皮貼系列", name: "秒變大眼持久隱形雙眼皮貼 L號240貼", p100: 160 },
+        { id: "D187", category: "06", section: "👀 雙眼皮貼系列", name: "秒變大眼持久隱形雙眼皮貼 橄欖型240貼", p100: 160 },
+        { id: "A51", category: "06", section: "👁️ 假睫毛", subsection: "(尖尾系列)-單副", name: "尖尾1", p100: 20 },
+        { id: "A53_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(尖尾系列)-單副", name: "尖尾3", p100: 20 },
+        { id: "A56", category: "06", section: "👁️ 假睫毛", subsection: "(尖尾系列)-單副", name: "尖尾6", p100: 20 },
+        { id: "A57", category: "06", section: "👁️ 假睫毛", subsection: "(尖尾系列)-單副", name: "尖尾7", p100: 20 },
+        { id: "A58_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(尖尾系列)-單副", name: "尖尾8", p100: 20 },
+        { id: "A60_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(尖尾系列)-單副", name: "尖尾9", p100: 20 },
+        { id: "A20", category: "06", section: "👁️ 假睫毛", subsection: "(公主系列)-十副(盒裝)", name: "交叉1", p100: 99 },
+        { id: "A21_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(公主系列)-十副(盒裝)", name: "交叉2", p100: 99 },
+        { id: "A22", category: "06", section: "👁️ 假睫毛", subsection: "(公主系列)-十副(盒裝)", name: "交叉3(六副)", p100: 99 },
+        { id: "A25", category: "06", section: "👁️ 假睫毛", subsection: "(公主系列)-十副(盒裝)", name: "交叉6", p100: 99 },
+        { id: "A26", category: "06", section: "👁️ 假睫毛", subsection: "(公主系列)-十副(盒裝)", name: "交叉6黑", p100: 199 },
+        { id: "A27", category: "06", section: "👁️ 假睫毛", subsection: "(公主系列)-十副(盒裝)", name: "交叉7", p100: 199 },
+        { id: "A30_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(公主系列)-十副(盒裝)", name: "交叉8黑", p100: 99 },
+        { id: "A70_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(公主系列)-單副", name: "公主交叉1", p100: 20 },
+        { id: "A71", category: "06", section: "👁️ 假睫毛", subsection: "(公主系列)-單副", name: "公主交叉2", p100: 20 },
+        { id: "A72", category: "06", section: "👁️ 假睫毛", subsection: "(公主系列)-單副", name: "公主交叉3", p100: 20 },
+        { id: "A73", category: "06", section: "👁️ 假睫毛", subsection: "(公主系列)-單副", name: "公主交叉5", p100: 20 },
+        { id: "A74_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(公主系列)-單副", name: "公主交叉5黑", p100: 20 },
+        { id: "A75", category: "06", section: "👁️ 假睫毛", subsection: "(公主系列)-單副", name: "公主交叉6", p100: 20 },
+        { id: "A77", category: "06", section: "👁️ 假睫毛", subsection: "(公主系列)-單副", name: "公主交叉7", p100: 20 },
+        { id: "A79_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(公主系列)-單副", name: "公主交叉8", p100: 20 },
+        { id: "A80_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(公主系列)-單副", name: "公主交叉8黑", p100: 20 },
+        { id: "A32_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(自然系列)-十副(盒裝)", name: "自然712", p100: 180 },
+        { id: "A33", category: "06", section: "👁️ 假睫毛", subsection: "(自然系列)-十副(盒裝)", name: "自然715", p100: 180 },
+        { id: "A34", category: "06", section: "👁️ 假睫毛", subsection: "(自然系列)-十副(盒裝)", name: "自然720", p100: 180 },
+        { id: "A36_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(自然系列)-十副(盒裝)", name: "自然728", p100: 180 },
+        { id: "A35", category: "06", section: "👁️ 假睫毛", subsection: "(自然系列)-十副(盒裝)", name: "自然交叉4", p100: 99 },
+        { id: "B38_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(自然系列)-十副(盒裝)", name: "自然交叉7", p100: 180 },
+        { id: "A37", category: "06", section: "👁️ 假睫毛", subsection: "(自然系列)-十副(盒裝)", name: "下睫毛", p100: 99 },
+        { id: "A81_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(自然系列)-單副", name: "自然711", p100: 20 },
+        { id: "A82_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(自然系列)-單副", name: "自然712", p100: 20 },
+        { id: "A83_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(自然系列)-單副", name: "自然715", p100: 20 },
+        { id: "A84", category: "06", section: "👁️ 假睫毛", subsection: "(自然系列)-單副", name: "自然720", p100: 120 },
+        { id: "A86_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(自然系列)-單副", name: "自然728", p100: 20 },
+        { id: "A85", category: "06", section: "👁️ 假睫毛", subsection: "(自然系列)-單副", name: "自然交叉4", p100: 20 },
+        { id: "A88", category: "06", section: "👁️ 假睫毛", subsection: "(自然系列)-單副", name: "自然交叉7", p100: 20 },
+        { id: "A87_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(自然系列)-單副", name: "下睫毛", p100: 20 },
+        { id: "A40", category: "06", section: "👁️ 假睫毛", subsection: "(舞台系列)-六副(盒裝)", name: "舞台M9", p100: 99 },
+        { id: "A90", category: "06", section: "👁️ 假睫毛", subsection: "(舞台系列)-單副", name: "舞台M9", p100: 17 },
+        { id: "E03", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透715", p100: 99 },
+        { id: "E06", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透715咖", p100: 99 },
+        { id: "E04", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透728", p100: 199 },
+        { id: "E07", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透728 咖", p100: 199 },
+        { id: "E09", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透叉4咖", p100: 99 },
+        { id: "E02", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透叉7", p100: 199 },
+        { id: "E05", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透叉7咖", p100: 99 },
+        { id: "E10", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透叉5", p100: 99 },
+        { id: "E31", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透M1", p100: 99 },
+        { id: "E12", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-six一副(盒裝)", name: "透M2", p100: 99 },
+        { id: "E13", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透M3", p100: 99 },
+        { id: "E14", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透M4", p100: 199 },
+        { id: "E15", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透M4咖", p100: 99 },
+        { id: "E17", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透101", p100: 199 },
+        { id: "E18", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透101咖", p100: 199 },
+        { id: "E19", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透102", p100: 99 },
+        { id: "E20", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透103", p100: 99 },
+        { id: "E21", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透104", p100: 199 },
+        { id: "E22", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透105", p100: 99 },
+        { id: "E23", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透106", p100: 99 },
+        { id: "E32", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "透107", p100: 99 },
+        { id: "E24", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "下201", p100: 199 },
+        { id: "E27", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "下203", p100: 199 },
+        { id: "E28", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "下203咖", p100: 99 },
+        { id: "E29", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "下204", p100: 99 },
+        { id: "E30", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-六副(盒裝)", name: "下205", p100: 17 },
+        { id: "E53_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透715", p100: 17 },
+        { id: "E56_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透715咖", p100: 17 },
+        { id: "E54", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透728", p100: 35 },
+        { id: "E57", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透728咖", p100: 35 },
+        { id: "E52", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗線系列)-單副", name: "透叉7", p100: 35 },
+        { id: "E55", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透叉7咖", p100: 17 },
+        { id: "E60", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透叉5", p100: 17 },
+        { id: "E61_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透叉8", p100: 17 },
+        { id: "E81", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透M1", p100: 17 },
+        { id: "E62", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透M2", p100: 17 },
+        { id: "E63", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透M3", p100: 17 },
+        { id: "E64", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透M4", p100: 35 },
+        { id: "E65", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透M4咖", p100: 17 },
+        { id: "E67", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透101", p100: 35 },
+        { id: "E68", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透101咖", p100: 35 },
+        { id: "E69", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透102", p100: 17 },
+        { id: "E70", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透103", p100: 17 },
+        { id: "E71", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透104", p100: 35 },
+        { id: "E72", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透105", p100: 17 },
+        { id: "E73", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透106", p100: 17 },
+        { id: "E82", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "透107", p100: 17 },
+        { id: "E74", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "下201", p100: 35 },
+        { id: "E75", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "下201咖", p100: 17 },
+        { id: "E76", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "下202", p100: 17 },
+        { id: "E77", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "下203", p100: 35 },
+        { id: "E78", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "下203咖", p100: 17 },
+        { id: "E80_FAKE", category: "06", section: "👁️ 假睫毛", subsection: "(透明梗系列)-單副", name: "下205", p100: 17 },
+        { id: "BR01", category: "06", section: "🖌️ 高級手工刷具系列", name: "1 大蜜粉刷(羊毛)", p100: 200 },
+        { id: "BR02", category: "06", section: "🖌️ 高級手工刷具系列", name: "2 斜腮紅刷(羊毛)", p100: 200 },
+        { id: "BR03", category: "06", section: "🖌️ 高級手工刷具系列", name: "3 大眼影刷(馬鬃毛)", p100: 144 },
+        { id: "BR04", category: "06", section: "🖌️ 高級手工刷具系列", name: "4 中眼影刷(貂毛)", p100: 136 },
+        { id: "BR05", category: "06", section: "🖌️ 高級手工刷具系列", name: "5 小眼影刷(貂毛)", p100: 128 },
+        { id: "BR06", category: "06", section: "🖌️ 高級手工刷具系列", name: "6 唇刷(貂毛)", p100: 96 },
+        { id: "BR07", category: "06", section: "🖌️ 高級手工刷具系列", name: "7 斜眉刷(貂毛)", p100: 96 },
+        { id: "BR08", category: "06", section: "🖌️ 高級手工刷具系列", name: "8 螺旋眉睫刷(人造纖維)", p100: 64 },
+        { id: "BR09", category: "06", section: "🖌️ 高級手工刷具系列", name: "9 刷具收納包", p100: 120 },
+        { id: "BR10", category: "06", section: "🖌️ 高級手工刷具系列", name: "10 Lijay手工專業刷具8件組", p100: 780 },
+
+	// ======= 07 耳穴採耳商品 =======
+        { id: "DE1", category: "07", section: "👂 耳穴採耳商品", subsection: "🎋 竹柄系列", name: "竹柄鵝毛棒(大頭)/10支", p100: 120 },
+        { id: "DE2", category: "07", section: "👂 耳穴採耳商品", subsection: "🎋 竹柄系列", name: "竹柄鵝毛棒(中頭)/10支", p100: 120 },
+        { id: "DE3", category: "07", section: "👂 耳穴採耳商品", subsection: "🎋 竹柄系列", name: "竹柄鵝毛棒(小頭)/10支", p100: 120 },
+        { id: "DE4", category: "07", section: "👂 耳穴採耳商品", subsection: "🎋 竹柄系列", name: "竹柄雞毛棒 / 5支", p100: 80 },
+        { id: "DE5", category: "07", section: "👂 耳穴採耳商品", subsection: "🎋 竹柄系列", name: "竹柄分叉馬尾棒 / 5支", p100: 150 },
+        { id: "DE13", category: "07", section: "👂 耳穴採耳商品", subsection: "🎋 竹柄系列", name: "手工打磨竹耳勺(小頭2.5mm) / 5支", p100: 150 },
+        { id: "DE6", category: "07", section: "👂 耳穴採耳商品", subsection: "⚪ 銀針系列", name: "銀針鵝毛棒(中頭) / 5支", p100: 150 },
+        { id: "DE7", category: "07", section: "👂 耳穴採耳商品", subsection: "⚪ 銀針系列", name: "銀針加密鵝毛棒 / 5支", p100: 180 },
+        { id: "DE8", category: "07", section: "👂 耳穴採耳商品", subsection: "⚪ 銀針系列", name: "銀針雞毛棒(中頭) / 5支", p100: 150 },
+        { id: "DE9", category: "07", section: "👂 耳穴採耳商品", subsection: "⚪ 銀針系列", name: "銀針鶴毛棒 / 5支", p100: 150 },
+        { id: "DE20", category: "07", section: "👂 耳穴採耳商品", subsection: "⚪ 銀針系列", name: "神仙手孔雀毛 / 5支", p100: 180 },
+        { id: "DE21", category: "07", section: "👂 耳穴採耳商品", subsection: "⚪ 銀針系列", name: "銀針大孔雀毛 / 5支", p100: 180 },
+        { id: "DE22", category: "07", section: "👂 耳穴採耳商品", subsection: "⚪ 銀針系列", name: "銀針小孔雀毛 / 5支", p100: 180 },
+        { id: "DE25", category: "07", section: "👂 耳穴採耳商品", subsection: "⚪ 銀針系列", name: "銀針鴕鳥毛(紫色)/ 5支", p100: 150 },
+        { id: "DE26", category: "07", section: "👂 耳穴採耳商品", subsection: "⚪ 銀針系列", name: "銀針鴕鳥毛(桃紅色)/ 5支", p100: 150 },
+        { id: "DE40", category: "07", section: "👂 耳穴採耳商品", subsection: "⚪ 銀針系列", name: "銀針按摩軟環 / 5支", p100: 150 },
+        { id: "DE10", category: "07", section: "👂 耳穴採耳商品", subsection: "♻️ 拋棄式 銀針系列", name: "拋棄式銀針鵝毛棒/ 5支", p100: 150 },
+        { id: "DE11", category: "07", section: "👂 耳穴採耳商品", subsection: "♻️ 拋棄式 銀針系列", name: "拋棄式採耳三件組(鵝毛.雞毛.耳勺)/ 5支", p100: 180 },
+        { id: "DE12", category: "07", section: "👂 耳穴採耳商品", subsection: "♻️ 拋棄式 銀針系列", name: "拋棄式銀針雞毛棒/ 5支", p100: 150 },
+        { id: "DE30", category: "07", section: "👂 耳穴採耳商品", subsection: "🔩 不鏽鋼系列", name: "不鏽鋼耳震音叉(小號)", p100: 190 },
+        { id: "DE31", category: "07", section: "👂 耳穴採耳商品", subsection: "🔩 不鏽鋼系列", name: "25mm加長金色耳震音叉(128HZ)", p100: 300 },
+        { id: "DE32", category: "07", section: "👂 耳穴採耳商品", subsection: "🔩 不鏽鋼系列", name: "不銹鋼防滑柄薄嘴彎耳勺 /5支", p100: 150 },
+        { id: "DE33", category: "07", section: "👂 耳穴採耳商品", subsection: "🔩 不鏽鋼系列", name: "不銹鋼防滑薄柄嘴直耳勺 /5支", p100: 150 },
+        { id: "DE34", category: "07", section: "👂 耳穴採耳商品", subsection: "🔩 不鏽鋼系列", name: "不銹鋼防滑柄彈性軟扒(小號) /5支", p100: 150 },
+        { id: "DE35", category: "07", section: "👂 耳穴採耳商品", subsection: "🔩 不鏽鋼系列", name: "不銹鋼防滑柄彈性多功能硬扒 /5支", p100: 150 },
+        { id: "DE36", category: "07", section: "👂 耳穴採耳商品", subsection: "🔩 不鏽鋼系列", name: "不銹鋼防滑柄加長耳勺 /5支", p100: 180 },
+        { id: "DE37", category: "07", section: "👂 耳穴採耳商品", subsection: "🔩 不鏽鋼系列", name: "不銹鋼防滑柄按摩圓頭(蘑菇頭) /5支", p100: 150 },
+        { id: "DE38", category: "07", section: "👂 耳穴採耳商品", subsection: "🔩 不鏽鋼系列", name: "不鏽鋼刮耳器(雲刀) /5支", p100: 150 },
+        { id: "DE39", category: "07", section: "👂 耳穴採耳商品", subsection: "🔩 不鏽鋼系列", name: "不鏽鋼搓花柄耳鈎 /5支", p100: 180 },
+        { id: "DG1", category: "07", section: "👂 耳穴採耳商品", subsection: "💡 手持充電式採耳燈系列", name: "手持充電式採耳燈(玫瑰金)", p100: 500 },
+        { id: "DG2", category: "07", section: "👂 耳穴採耳商品", subsection: "💡 手持充電式採耳燈系列", name: "手持充電式採耳燈(香檳金)", p100: 500 },
+        { id: "DG3", category: "07", section: "👂 耳穴採耳商品", subsection: "💡 手持充電式採耳燈系列", name: "手持充電式採耳燈(銀色)", p100: 500 },
+        { id: "DE41", category: "07", section: "👂 耳穴採耳商品", subsection: "💨 耳道吹球系列", name: "耳道吹塵球 / 5入", p100: 180 },
+
+        // ======= 🔥 出清5折專區 (分類代碼 '09') =======
+        { 
+            id: "OUT_E1_UP", 
+            category: "09", 
+            section: "⚡ 經典美睫款式",
+            subsection: "🔸 單尺寸經典系列",
+            name: "第二代黑耀魔幻羽扇 (捲翹J單尺寸)", 
+            isEyelash: true, 
+            curls: ["J"], 
+            thicknesses: ["0.07", "0.10", "0.15"], 
+            lengths: [
+                { val: "8mm", p100: 290 }, { val: "9mm", p100: 290 }, { val: "10mm", p100: 290 }, { val: "11mm", p100: 290 },
+                { val: "12mm", p100: 290 }, { val: "13mm", p100: 290 }, { val: "14mm", p100: 290 }, { val: "15mm", p100: 290 }
+            ] 
+        },
+        { 
+            id: "OUT_E5_UP_BLK", 
+            category: "09", 
+            section: "⚡ 經典美睫款式",
+            subsection: "🔸 單尺寸經典系列",
+            name: "第二代頂級人造水貂絲 (捲翹J單尺寸-黑)", 
+            isEyelash: true, 
+            curls: ["J"], 
+            thicknesses: ["0.07", "0.10", "0.15"], 
+            lengths: [
+                { val: "8mm", p100: 290 }, { val: "9mm", p100: 290 }, { val: "10mm", p100: 290 }, { val: "11mm", p100: 290 },
+                { val: "12mm", p100: 290 }, { val: "13mm", p100: 290 }, { val: "14mm", p100: 290 }, { val: "15mm", p100: 290 }
+          ] 
+        },
+        { 
+            id: "OUT_E5_UP_BRN", 
+            category: "09", 
+            section: "⚡ 經典美睫款式",
+            subsection: "🔸 單尺寸經典系列",
+            name: "第二代頂級人造水貂絲 (單尺寸-咖)", 
+            isEyelash: true, 
+            curls: ["J", "B", "C", "D"], 
+            thicknesses: ["0.07", "0.10", "0.15"], 
+            lengths: [
+                { val: "8mm", p100: 290 }, { val: "9mm", p100: 290 }, { val: "10mm", p100: 290 }, { val: "11mm", p100: 290 },
+                { val: "12mm", p100: 290 }, { val: "13mm", p100: 290 }, { val: "14mm", p100: 290 }, { val: "15mm", p100: 290 }
+            ] 
+        },
+        { 
+            id: "OUT_MINK", 
+            category: "09", 
+            section: "⚡ 經典美睫款式",
+            subsection: "🔸 奢華進階系列",
+            name: "奢華手工真貂毛 (單尺寸)", 
+            isEyelash: true, 
+            curls: ["J", "B", "C", "D"], 
+            thicknesses: ["單一粗度"], 
+            lengths: [
+                { val: "MIX 8-14mm", p100: 720 }, { val: "8mm", p100: 720 }, { val: "9mm", p100: 720 }, { val: "10mm", p100: 720 },
+                { val: "11mm", p100: 720 }, { val: "12mm", p100: 720 }, { val: "13mm", p100: 720 }, { val: "14mm", p100: 720 }
+            ] 
+        },
+        { 
+            id: "OUT_LPLUS", 
+            category: "09", 
+            section: "⚡ 經典美睫款式",
+            subsection: "🔸 奢華進階系列",
+            name: "L+絕翹天后 (粗細0.10)", 
+            isEyelash: true, 
+            curls: ["L+"], 
+            thicknesses: ["0.10"], 
+            lengths: [
+                { val: "MIX綜合", p100: 410 }
+            ] 
+        },
+        { 
+            id: "OUT_GARDEN_BLK", 
+            category: "09", 
+            section: "🍂 精緻層次毛款式",
+            subsection: "🔸 凱莉絲花園層次系列",
+            name: "凱莉絲花園-層次(黑) J翹度單尺寸", 
+            isEyelash: true, 
+            curls: ["J"], 
+            thicknesses: ["0.07"], 
+            lengths: [
+                { val: "7-9mm", p100: 410 }, { val: "8-10mm", p100: 410 }, { val: "9-11mm", p100: 410 },
+                { val: "10-12mm", p100: 410 }, { val: "11-13mm", p100: 410 }, { val: "12-14mm", p100: 410 }
+            ] 
+        },
+        { 
+            id: "OUT_GARDEN_BRN", 
+            category: "09", 
+            section: "🍂 精緻層次毛款式",
+            subsection: "🔸 凱莉絲花園層次系列",
+            name: "凱莉絲花園-層次(咖) J翹度單尺寸", 
+            isEyelash: true, 
+            curls: ["J"], 
+            thicknesses: ["0.07"], 
+            lengths: [
+                { val: "7-9mm", p100: 410 }, { val: "8-10mm", p100: 410 }, { val: "9-11mm", p100: 410 },
+                { val: "10-12mm", p100: 410 }, { val: "11-13mm", p100: 410 }, { val: "12-14mm", p100: 410 }
+        ] 
+        },
+        { 
+            id: "OUT_CAMELLIA", 
+            category: "09", 
+            section: "🍂 精緻層次毛款式",
+            subsection: "🔸 爆濃開花茶花系列",
+            name: "完美茶花(黑) 粗細0.05", 
+            isEyelash: true, 
+            curls: ["B", "C", "D"], 
+            thicknesses: ["0.05"], 
+            lengths: [
+                { val: "MIX綜合", p100: 490 }, { val: "7-9mm", p100: 490 }, { val: "8-10mm", p100: 490 }, { val: "9-11mm", p100: 490 },
+                { val: "10-12mm", p100: 490 }, { val: "11-13mm", p100: 490 }, { val: "12-14mm", p100: 490 }, { val: "13-15mm", p100: 490 }
+            ] 
+        },
+        { 
+            id: "OUT_CAMELLIA_BRN", 
+            category: "09", 
+            section: "🍂 精緻層次毛款式",
+            subsection: "🔸 爆濃開花茶花系列",
+            name: "完美茶花(咖)", 
+            isEyelash: true, 
+            curls: ["B", "C", "D", "U"], 
+            thicknesses: ["0.05", "0.07"], 
+            lengths: [
+                { val: "MIX綜合", p100: 490 }, 
+                { val: "MIX綜合(奇數)", p100: 490 }, 
+                { val: "7-9mm", p100: 490 }, 
+                { val: "8-10mm", p100: 490 }, 
+                { val: "9-11mm", p100: 490 },
+                { val: "10-12mm", p100: 490 }, 
+                { val: "11-13mm", p100: 490 }, 
+                { val: "12-14mm", p100: 490 }, 
+                { val: "13-15mm", p100: 490 }
+            ] 
+        },
+        { 
+            id: "OUT_MASYA", 
+            category: "09", 
+            section: "🍂 精緻層次毛款式",
+            subsection: "🔸 爆濃開花茶花系列",
+            name: "麥斯雅花園 粗細0.07", 
+            isEyelash: true, 
+            curls: ["J", "B", "C", "D"], 
+            thicknesses: ["0.07"], 
+            lengths: [
+                { val: "7-8-9mm", p100: 410 }, { val: "8-10-12mm", p100: 410 }, { val: "9-11-13mm", p100: 410 }, { val: "10-12-14mm", p100: 410 }
+            ] 
+        },
+        { 
+            id: "OUT_EASY_2L", 
+            category: "09", 
+            section: "🍂 精緻層次毛款式",
+            subsection: "🔸 Easy花免技法開花系列",
+            name: "Easy花(黑)-兩層", 
+            isEyelash: true, 
+            curls: ["J", "B", "C", "D"], 
+            thicknesses: ["0.05", "0.07"], 
+            lengths: [
+                { val: "MIX綜合", p100: 410 }, { val: "7-8mm", p100: 410 }, { val: "9-10mm", p100: 410 }, { val: "11-12mm", p100: 410 }, { val: "13-14mm", p100: 410 }
+            ] 
+        },
+        { 
+            id: "OUT_EASY_3L", 
+            category: "09", 
+            section: "🍂 精緻層次毛款式",
+            subsection: "🔸 Easy花免技法開花系列",
+            name: "Easy花(黑)-0.05三層", 
+            isEyelash: true, 
+            curls: ["J", "B", "C", "D"], 
+            thicknesses: ["0.05"], 
+            lengths: [
+                { val: "MIX綜合", p100: 410 }, { val: "7-9mm", p100: 410 }, { val: "9-11mm", p100: 410 }, { val: "11-13mm", p100: 410 }
+            ] 
+        },
+        { 
+            id: "OUT_PEACOCK_3支", 
+            category: "09", 
+            section: "💃 輕盈時尚朵毛款式",
+            subsection: "🔸 法式輕柔孔雀羽系列",
+            name: "法式輕柔孔雀羽-朵毛(黑/3根)", 
+            isEyelash: true, 
+            curls: ["B", "C", "D", "U"], 
+            thicknesses: ["3根朵毛"], 
+            lengths: [
+                { val: "8-10mm", p100: 410 }, { val: "9-11mm", p100: 410 }, { val: "10-12mm", p100: 410 }, { val: "11-13mm", p100: 410 }, { val: "12-14mm", p100: 410 }
+            ] 
+        },
+        { 
+            id: "OUT_PEACOCK_5支_BLK", 
+            category: "09", 
+            section: "💃 輕盈時尚朵毛款式",
+            subsection: "🔸 法式輕柔孔雀羽系列",
+            name: "法式輕柔孔雀羽-朵毛(5根-黑)", 
+            isEyelash: true, 
+            curls: ["J", "B", "C", "D", "U"], 
+            thicknesses: ["5根朵毛"], 
+            lengths: [
+                { val: "8-10mm", p100: 290 }, { val: "9-11mm", p100: 290 }, { val: "10-12mm", p100: 290 }, { val: "11-13mm", p100: 290 }, { val: "12-14mm", p100: 290 }
+            ] 
+        },
+        { 
+            id: "OUT_PEACOCK_5支_BRN", 
+            category: "09", 
+            section: "💃 輕盈時尚朵毛款式",
+            subsection: "🔸 法式輕柔孔雀羽系列",
+            name: "法式輕柔孔雀羽-朵毛(5根-咖)", 
+            isEyelash: true, 
+            curls: ["J", "B", "C", "D", "U"], 
+            thicknesses: ["5根朵毛"], 
+            lengths: [
+                { val: "8-10mm", p100: 290 }, { val: "9-11mm", p100: 290 }, { val: "10-12mm", p100: 290 }, { val: "11-13mm", p100: 290 }, { val: "12-14mm", p100: 290 }
+ ] 
+        },
+        { 
+            id: "OUT_PEACOCK_7支", 
+            category: "09", 
+            section: "💃 輕盈時尚朵毛款式",
+            subsection: "🔸 法式輕柔孔雀羽系列",
+            name: "法式輕柔孔雀羽-朵毛(黑/7根)", 
+            isEyelash: true, 
+            curls: ["J", "B", "C", "D", "U"], 
+            thicknesses: ["7根朵毛"], 
+            lengths: [
+                { val: "8-10mm", p100: 350 }, { val: "9-11mm", p100: 350 }, { val: "10-12mm", p100: 350 }, { val: "11-13mm", p100: 350 }, { val: "12-14mm", p100: 350 }
+            ] 
+        },
+        // ===== 🌟 任選3盒優惠分類 =====
+        {
+            id: "OUT_GRADIENT_3PCS",
+            category: "09",
+            section: "🎁 任選3盒超值優惠專區",
+            subsection: "漸層睫毛",
+            name: "魔法渲染漸層睫毛(限時任選3盒)",
+            isEyelash: true,
+            isBundle: true,
+            bundleType: "gradient",
+            curls: ["J", "B", "C"],
+            thicknesses: ["0.07", "0.15"],
+            lengths: [
+                { val: "MIX 8-14mm(紅)", p100: 410 },
+                { val: "MIX 8-14mm(藍)", p100: 410 },
+                { val: "MIX 8-14mm(紫)", p100: 410 },
+                { val: "MIX 8-14mm(咖)", p100: 410 }
+            ]
+        },
+        {
+            id: "OUT_AVENUE5_3PCS",
+            category: "09",
+            section: "🎁 任選3盒超值優惠專區",
+            subsection: "彩色毛款",
+            name: "睛艷第五大道-藍色/紫色(限時任選3盒)",
+            isEyelash: true,
+            isBundle: true,
+            bundleType: "avenue5",
+            curls: ["J", "B", "C"],
+            thicknesses: ["0.07", "0.15"],
+            lengths: [
+                { val: "MIX 8-14mm(藍)", p100: 410 }, 
+                { val: "MIX 8-14mm(紫)", p100: 410 }
+            ]
+        },
+// ======= 08 其餘分類 =======
+        { id: "V1", category: "08", section: "", name: "凱莉VIP+ 會籍", p100: 6000 },
+        { id: "V2", category: "08", section: "", name: "柏金VIP+ 會籍", p100: 36000 },
+        { id: "V3", category: "08", section: "", name: "頂級VIP+ 會籍", p100: 98000 },
+
+// ======= 10 本周優惠商品 (新上架) =======
+        { id: "SP01", category: "10", section: "", name: "目前還沒有活動喔~", p100: 0 }
+    ];
+    const discountRates = { 'default': 1.0, 'normal': 0.9, 'kylie': 0.8, 'platinum': 0.72, 'top': 0.68, 'depA': 0.68, 'depB': 0.58, 'depC': 0.63, 'depc': 0.63 };
+    const specialDiscountIds = [
+        "A31", "A32", "A61", "A53", "A59", "A60", "A64", "A65",
+        "F50", "F60", "F62", "F63", "F64", "F65", "F66", "F67", "F68", "FA1", "FA3",
+        "DC2", "DD2", "DG2",
+        "D10", "D60", "D1", "D51"
+    ];
+    const specialRates = {
+        'default': 0.8,   // 未登入 (8折)
+        'normal': 0.56,   // 會員 (5.6折)
+        'kylie': 0.48,    // 凱莉 (4.8折)
+        'depA': 0.48,     // 儲值/業務68批發 (4.8折)
+        'platinum': 0.43, // 柏金 (4.3折)
+        'depC': 0.43,     // 加盟63批發 (4.3折)
+        'depc': 0.43, 
+        'top': 0.38,      // 頂級 (3.8折)
+        'depB': 0.38      // 加盟58批發 (3.8折)
+    };
+    let currentLevel = 'default'; 
+    let currentCategory = '00'; 
+    let quantities = {};
+    let selectedVariantsTemp = {};
+    let selectedEyelashTemp = {};
+    let userWalletBalance = -1;
+    let userLoggedInPhone = "";
+    let productStock = {};
+
+    function initQuantities() {
+        let savedQuantities = {};
+        try {
+            savedQuantities = JSON.parse(localStorage.getItem('cart_quantities') || '{}');
+        } catch(e) { savedQuantities = {}; }
+
+        productData.forEach(p => {
+            if (p.variants) {
+                p.variants.forEach(v => {
+                    let k = p.id + "_" + v.sheetName;
+                    quantities[k] = savedQuantities[k] !== undefined ? parseInt(savedQuantities[k], 10) : 0;
+                });
+            } else if (p.isEyelash) {
+                p.curls.forEach(c => {
+                    p.thicknesses.forEach(t => {
+                        p.lengths.forEach(l => {
+                            if (l.excludeCurl && l.excludeCurl.includes(c)) return;
+                            let sheetName = `${p.name}(${c}-${t}-${l.val})`;
+                            let k = p.id + "_" + sheetName;
+                            quantities[k] = savedQuantities[k] !== undefined ? parseInt(savedQuantities[k], 10) : 0;
+                        });
+                    });
+                });
+            } else {
+                quantities[p.id] = savedQuantities[p.id] !== undefined ? parseInt(savedQuantities[p.id], 10) : 0;
+            }
+        });
+    }
+
+    function saveQuantitiesToStorage() {
+        localStorage.setItem('cart_quantities', JSON.stringify(quantities));
+    }
+
+    function clearQuantitiesStorage() {
+        localStorage.removeItem('cart_quantities');
+        for (let key in quantities) { quantities[key] = 0; }
+    }
+
+    function loadInventory(callback) {
+        fetch(`${gasLoginUrl}?action=getInventory&_cb=${new Date().getTime()}`)
+            .then(res => res.json())
+            .then(resObj => {
+                if (resObj.success) {
+                    productStock = resObj.stock;
+                    
+                    productData.forEach(p => {
+                        if (p.isEyelash) {
+                            renderEyelashTable(p.id);
+                            return;
+                        }
+
+                        let currentSelectedSheetName = p.name;
+                        if (p.variants) {
+                            let savedValue = selectedVariantsTemp[p.id] || p.variants[0].sheetName;
+                            currentSelectedSheetName = savedValue;
+                        }
+
+                        let maxStock = 999;
+                        let cleanKey = currentSelectedSheetName.trim().replace(/\s+/g, "");
+                        
+                        let foundKey = Object.keys(productStock).find(k => {
+                            let kClean = k.trim().replace(/\s+/g, "");
+                            return kClean === cleanKey;
+                        });
+
+                        if (foundKey && productStock[foundKey] !== undefined) {
+                            maxStock = productStock[foundKey];
+                        } else if (p.variants) {
+                            let currentVariantObj = p.variants.find(v => v.sheetName === currentSelectedSheetName);
+                            let colorText = currentVariantObj ? currentVariantObj.color : "";
+                            let fuzzyKey = Object.keys(productStock).find(k => k.includes(p.id) && k.includes(colorText));
+                            if (fuzzyKey && productStock[fuzzyKey] !== undefined) {
+                                maxStock = productStock[fuzzyKey];
+                            } else if (productStock[p.id] !== undefined) {
+                                maxStock = productStock[p.id];
+                            }
+                        } else if (productStock[p.id] !== undefined) {
+                            maxStock = productStock[p.id];
+                        }
+
+                        const stockContainer = document.getElementById(`stock-container-${p.id}`);
+                        if (stockContainer) {
+                            if (maxStock === 0) {
+                                stockContainer.innerHTML = `<span class="stock-out-tag" id="stock-tag-${p.id}">已售罄 Out of Stock</span>`;
+                            } else {
+                                stockContainer.innerHTML = `<span class="stock-tag" id="stock-tag-${p.id}">庫存: ${maxStock}</span>`;
+                            }
+                        }
+
+                        let qtyKey = p.variants ? (p.id + "_" + currentSelectedSheetName) : p.id;
+                        const inputField = document.getElementById(`input-${p.id}`);
+                        if (inputField) {
+                            if (maxStock === 0) {
+                                inputField.value = 0;
+                                inputField.disabled = true;
+                            } else {
+                                inputField.disabled = false;
+                                if (quantities[qtyKey] > maxStock) {
+                                    quantities[qtyKey] = maxStock;
+                                    saveQuantitiesToStorage();
+                                }
+                                inputField.value = quantities[qtyKey];
+                            }
+                        }
+                        const plusBtn = document.getElementById(`plus-${p.id}`);
+                        if (plusBtn) {
+                            plusBtn.disabled = maxStock === 0 || (quantities[qtyKey] >= maxStock);
+                        }
+                    });
+                    restoreAccordionState();
+
+                    if(callback) callback(); 
+                }
+            }).catch(e => {
+                console.log("庫存同步失敗", e);
+                if(callback) callback();
+            });
+    }
+
+    function toggleLoginModal(show) { document.getElementById('loginSection').style.display = show ? 'flex' : 'none'; }
+    function toggleQueryModal(show) {
+        document.getElementById('querySection').style.display = show ? 'flex' : 'none';
+        if (show && userLoggedInPhone) { document.getElementById('queryPhone').value = userLoggedInPhone; }
+    }
+
+    function updateAuthUI(name, level, balance, phone) {
+        const levelNames = { 'normal': '一般會員', 'kylie': '凱莉VIP+', 'platinum': '柏金VIP+', 'top': '頂級VIP+', 'depA': '儲值商A', 'depB': '儲值商B', 'depC': '儲值商C', 'depc': '儲商C' };
+        let levelText = levelNames[level] || '認證會員';
+        document.getElementById('userAuthArea').innerHTML = `
+            <button class="btn-trigger btn-login-trigger" style="background:#475569;" onclick="toggleQueryModal(true)">📦 查詢訂單</button>
+            <span class="user-welcome-status">✨ ${name} [${levelText}] ｜ 儲值金：NT ${balance}</span>
+            <button class="btn-trigger btn-login-trigger" style="background:#e74c3c; margin-left: 4px;" onclick="logoutMember()">🚪 登出</button>
+        `;
+        
+        document.getElementById('name').value = name; 
+        document.getElementById('phone').value = phone;
+        if (localStorage.getItem('saved_customer_lineid')) document.getElementById('lineid').value = localStorage.getItem('saved_customer_lineid');
+        if (localStorage.getItem('saved_customer_address')) document.getElementById('address').value = localStorage.getItem('saved_customer_address');
+        if (localStorage.getItem('saved_customer_title')) document.getElementById('company_title').value = localStorage.getItem('saved_customer_title');
+        if (localStorage.getItem('saved_customer_vat')) document.getElementById('company_vat').value = localStorage.getItem('saved_customer_vat');
+    }
+
+    function logoutMember() {
+        if (confirm("確定要登出目前的會員帳號嗎？")) {
+            localStorage.removeItem('member_phone');
+            localStorage.removeItem('member_level');
+            localStorage.removeItem('member_balance');
+            localStorage.removeItem('member_name');
+            
+            localStorage.removeItem('saved_customer_name');
+            localStorage.removeItem('saved_customer_phone');
+            localStorage.removeItem('saved_customer_lineid');
+            localStorage.removeItem('saved_customer_address');
+            localStorage.removeItem('saved_customer_title');
+            localStorage.removeItem('saved_customer_vat');
+            localStorage.removeItem('saved_customer_shipping');
+            localStorage.removeItem('saved_customer_payment');
+            
+            document.getElementById('name').value = "";
+            document.getElementById('phone').value = "";
+            document.getElementById('lineid').value = "";
+            document.getElementById('address').value = "";
+            document.getElementById('company_title').value = "";
+            document.getElementById('company_vat').value = "";
+            document.getElementById('shipping_method').selectedIndex = 0;
+            document.getElementById('payment').selectedIndex = 0;
+            onShippingOrPaymentChange();
+
+            window.location.reload();
+        }
+    }
+function verifyMember() {
+        const phone = document.getElementById('loginPhone').value.trim();
+        const password = document.getElementById('loginPassword').value.trim();
+        const btn = document.getElementById('loginBtn');
+        if (!phone || !password) { alert("請輸入完整的帳號密碼！"); return; }
+        btn.innerText = "驗證中..."; btn.disabled = true;
+        fetch(`${gasLoginUrl}?action=login&phone=${encodeURIComponent(phone)}&password=${encodeURIComponent(password)}&_cb=${new Date().getTime()}`)
+            .then(res => res.json())
+            .then(response => {
+                if (response.success) {
+                    currentLevel = response.level; userWalletBalance = parseInt(response.balance || "0", 10); userLoggedInPhone = phone;
+                    
+                    localStorage.setItem('member_phone', phone);
+                    localStorage.setItem('member_level', response.level);
+                    localStorage.setItem('member_balance', response.balance || "0");
+                    localStorage.setItem('member_name', response.name);
+
+                    toggleLoginModal(false);
+                    updateAuthUI(response.name, currentLevel, userWalletBalance, phone);
+                    
+                    if (localStorage.getItem('saved_customer_lineid')) document.getElementById('lineid').value = localStorage.getItem('saved_customer_lineid');
+                    if (localStorage.getItem('saved_customer_address')) document.getElementById('address').value = localStorage.getItem('saved_customer_address');
+                    if (localStorage.getItem('saved_customer_title')) document.getElementById('company_title').value = localStorage.getItem('saved_customer_title');
+                    if (localStorage.getItem('saved_customer_vat')) document.getElementById('company_vat').value = localStorage.getItem('saved_customer_vat');
+                    if (localStorage.getItem('saved_customer_shipping')) document.getElementById('shipping_method').value = localStorage.getItem('saved_customer_shipping');
+                    if (localStorage.getItem('saved_customer_payment')) document.getElementById('payment').value = localStorage.getItem('saved_customer_payment');
+                    onShippingOrPaymentChange();
+
+                    render(); updateTotal();
+                    
+                    // 🌟【自動检查過期提示】
+                    if (response.msg && (response.msg.includes("過期") || response.msg.includes("逾期"))) {
+                        alert(`⚠️ 提示：\n${response.msg}`);
+                    } else {
+                        alert(`🎉 歡迎您，${response.name}！\n已成功變更專屬折扣價格。`);
+                    }
+                } else {
+                    alert("❌ " + response.msg);
+                    btn.innerText = "驗證登入"; btn.disabled = false;
+                }
+            }).catch(err => { alert("連線失敗"); btn.innerText = "驗證登入"; btn.disabled = false; });
+    }
+
+    function fetchOrders() {
+        const phone = document.getElementById('queryPhone').value.trim();
+        const resultArea = document.getElementById('orderResultArea');
+        const btn = document.getElementById('queryBtn');
+        if (!phone) { alert("請輸入手機號碼！"); return; }
+        btn.innerText = "搜尋中..."; btn.disabled = true;
+        resultArea.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b;">正在努力撈取歷史訂單中...</div>';
+        fetch(`${gasLoginUrl}?action=queryOrders&phone=${encodeURIComponent(phone)}&_cb=${new Date().getTime()}`)
+            .then(res => res.json())
+            .then(response => {
+                btn.innerText = "查詢"; btn.disabled = false;
+                if (response.success) {
+                    if (!response.orders || response.orders.length === 0) { resultArea.innerHTML = '<p style="text-align:center; color:#e74c3c;">❌ 查無訂單紀錄。</p>'; return; }
+                    let html = "";
+                    response.orders.forEach(order => {
+                        let formattedDetails = order.details ? order.details.replace(/\n/g, '<br>') : "無明細";
+                        html += `
+                            <div class="order-card">
+                                <div class="order-card-header"><span>🆔 單號：${order.orderNo}</span><span class="status-badge">${order.status}</span></div>
+                                <div style="font-size:12px; color:#64748b; margin-bottom:8px;">📅 下單時間：${order.timestamp}</div>
+                                <div style="background:#fff; padding:10px; border-radius:6px; border:1px solid #e2e8f0; margin-bottom:8px; max-height:120px; overflow-y:auto; font-size:13px;"><b>訂購明細：</b><br>${formattedDetails}</div>
+                                <div>💰 <b>應付總額：</b> <span style="color:#e74c3c; font-weight:bold;">${order.total}</span></div>
+                            </div>`;
+                    });
+                    resultArea.innerHTML = html;
+                }
+            }).catch(err => { btn.innerText = "查詢"; btn.disabled = false; });
+    }
+
+    function selectCategory(catId) {
+        currentCategory = catId;
+        localStorage.setItem('last_active_category', catId); 
+        const btns = document.querySelectorAll('.category-btn');
+        
+        btns.forEach((btn) => {
+            if(btn.id === `btn-cat-${catId}`) { 
+                btn.classList.add('active'); 
+            } else { 
+                btn.classList.remove('active'); 
+            }
+        });
+        render();
+    }
+
+    function getCalculatedPrice(product, basePrice) {
+        let price = (basePrice !== undefined) ? basePrice : product.p100;
+
+        if (product.category === "08") return price;
+
+        if (product.category === "07") {
+            if (currentLevel === 'default' || currentLevel === 'normal' || currentLevel === 'kylie') {
+                return Math.round(product.p100 * 0.50); 
+            } else {
+                return Math.round(product.p100 * 0.30); 
+            }
+        }
+        
+        if (product.isBundle && (product.id === "OUT_GRADIENT_3PCS" || product.id === "OUT_AVENUE5_3PCS")) {
+            let totalBundleQty = 0;
+            const prefix = product.id + "_";
+            for (let key in quantities) {
+                if (key.indexOf(prefix) === 0 && quantities[key] > 0) {
+                    totalBundleQty += quantities[key];
+                }
+            }
+            let isQualifiedMember = (currentLevel !== 'default');
+            if (totalBundleQty >= 3 && isQualifiedMember) {
+                if (product.id === "OUT_GRADIENT_3PCS") {
+                    return 153; 
+                } else if (product.id === "OUT_AVENUE5_3PCS") {
+                    return Math.round(499 / 3); 
+                }
+            }
+            if (currentLevel === 'default' || currentLevel === 'normal' || currentLevel === 'kylie') {
+                return Math.round(410 * 0.50);
+            } else {
+                return Math.round(410 * 0.30);
+            }
+        }
+        
+        if (product.category === "09" || product.category === "02") {
+            if (currentLevel === 'default' || currentLevel === 'normal' || currentLevel === 'kylie') {
+                return Math.round(price * 0.50);
+            } else {
+                return Math.round(price * 0.30);
+            }
+        }
+   
+        if (specialDiscountIds.includes(product.id)) {
+            const specRate = specialRates[currentLevel] !== undefined ? specialRates[currentLevel] : 1.0;
+            return Math.round(price * specRate);
+        }
+
+        const rate = discountRates[currentLevel] || 1.0;
+        return Math.round(price * rate);
+    }
+
+    function toggleBlockSection(blockId, sectionName) {
+        const block = document.getElementById(blockId);
+        const icon = document.getElementById('icon-' + blockId);
+        if (block.style.display === "block") { 
+            block.style.display = "none";
+            icon.innerText = "點擊展開 ➕"; 
+            localStorage.removeItem(`sec_open_${currentCategory}_${sectionName}`);
+        } else { 
+            block.style.display = "block";
+            icon.innerText = "點擊收起 ➖"; 
+            localStorage.setItem(`sec_open_${currentCategory}_${sectionName}`, "true"); 
+        }
+    }
+
+    function toggleSubBlockSection(subBlockId, subKey) {
+        const block = document.getElementById(subBlockId);
+        const icon = document.getElementById('subicon-' + subBlockId);
+        if (block.style.display === "block") { 
+            block.style.display = "none";
+            if (icon) icon.innerText = "➕"; 
+            localStorage.removeItem(`sub_open_${currentCategory}_${subKey}`);
+        } else { 
+            block.style.display = "block";
+            if (icon) icon.innerText = "➖"; 
+            localStorage.setItem(`sub_open_${currentCategory}_${subKey}`, "true"); 
+        }
+    }
+
+    function restoreAccordionState() {
+        document.querySelectorAll('.section-content-block').forEach(block => {
+            const toggleDiv = block.previousURI || block.previousElementSibling;
+            if (toggleDiv && toggleDiv.getAttribute('onclick')) {
+                const clickAttr = toggleDiv.getAttribute('onclick');
+                const matchSec = clickAttr.match(/'([^']+)',\s*'([^']+)'/);
+                if (matchSec) {
+                    const blockId = matchSec[1]; const secName = matchSec[2];
+                    if (localStorage.getItem(`sec_open_${currentCategory}_${secName}`) === "true") {
+                        block.style.display = "block";
+                        const icon = document.getElementById('icon-' + blockId);
+                        if (icon) icon.innerText = "點擊收起 ➖";
+                    } else {
+                        block.style.display = "none";
+                        const icon = document.getElementById('icon-' + blockId);
+                        if (icon) icon.innerText = "點擊展開 ➕";
+                    }
+                }
+            }
+        });
+        document.querySelectorAll('.subsection-content-block').forEach(subBlock => {
+            const subToggleDiv = subBlock.previousElementSibling;
+            if (subToggleDiv && subToggleDiv.getAttribute('onclick')) {
+                const clickAttr = subToggleDiv.getAttribute('onclick');
+                const matchSub = clickAttr.match(/'([^']+)',\s*'([^']+)'/);
+                if (matchSub) {
+                    const subBlockId = matchSub[1]; const subKey = matchSub[2];
+                    if (localStorage.getItem(`sub_open_${currentCategory}_${subKey}`) === "true") {
+                        subBlock.style.display = "block";
+                        const subIcon = document.getElementById('subicon-' + subBlockId);
+                        if (subIcon) subIcon.innerText = "➖";
+                    } else {
+                        subBlock.style.display = "none";
+                        const subIcon = document.getElementById('subicon-' + subBlockId);
+                        if (subIcon) subIcon.innerText = "➕";
+                    }
+                }
+            }
+        });
+    }
+
+    function onEyelashFilterChange(id, type, value) {
+        if (!selectedEyelashTemp[id]) selectedEyelashTemp[id] = {};
+        selectedEyelashTemp[id][type] = value;
+        renderEyelashTable(id);
+    }
+
+    function renderEyelashTable(id) {
+        const p = productData.find(prod => prod.id === id);
+        const container = document.getElementById(`eyelash-table-container-${id}`);
+        if (!p || !container) return;
+
+        let currentSel = selectedEyelashTemp[id];
+        let c = currentSel.curl;
+        let t = currentSel.thickness;
+
+        let listHtml = "";
+
+        p.lengths.forEach(l => {
+            if (l.excludeCurl && l.excludeCurl.includes(c)) return;
+
+            let sheetName = `${p.name}(${c}-${t}-${l.val})`;
+            let qtyKey = id + "_" + sheetName;
+            
+            let finalPrice = getCalculatedPrice(p, l.p100);
+            let maxStock = 999;
+            let cleanKey = sheetName.trim().replace(/\s+/g, "");
+            let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
+            if (foundKey && productStock[foundKey] !== undefined) {
+                maxStock = productStock[foundKey];
+            }
+
+            let stockHtml = "";
+            let disablePlus = quantities[qtyKey] >= maxStock ? "disabled" : "";
+            let disableInput = "";
+            if (maxStock === 0) {
+                stockHtml = `<span class="stock-out-tag">已售罄</span>`;
+                disablePlus = "disabled"; disableInput = "disabled";
+                quantities[qtyKey] = 0; 
+            } else {
+                stockHtml = `<span class="stock-tag">庫存: ${maxStock}</span>`;
+            }
+
+            if (quantities[qtyKey] > maxStock) quantities[qtyKey] = maxStock;
+            let currentQty = quantities[qtyKey] || 0;
+
+            let priceDisplayHtml = `NT ${finalPrice} / 盒`;
+            if (p.category === "09" || p.category === "02") {
+                if (p.isBundle) {
+                    priceDisplayHtml = `<span style="color: #ef4444; font-size:12px; font-weight:bold;">[活動品] NT ${finalPrice} / 盒 (任選滿3盒自動享特惠價)</span>`;
+                } else {
+                    priceDisplayHtml = `<span style="text-decoration: line-through; color: #94a3b8; font-size: 12px; margin-right: 5px;">原價: NT ${l.p100}</span> <span style="color: #e74c3c;">特惠價: NT ${finalPrice}</span>`;
+                }
+            }
+
+            listHtml += `
+                <div class="product-item" style="padding: 10px 0; border-bottom: 1px dashed #e2e8f0;">
+                    <div>
+                        <div style="font-weight: bold; font-size: 14px;">長度：${l.val} ${stockHtml}</div>
+                        <div class="prod-price">${priceDisplayHtml}</div>
+                    </div>
+                    <div class="qty-box">
+                        <button class="qty-btn" style="width:28px; height:28px; font-size:14px;" onclick="modifyEyelashQtyDirect('${id}', '${c}', '${t}', '${l.val}', -1)">-</button>
+                        <input type="text" class="qty-input" style="width:40px; height:24px; font-size:14px;" id="input-${id}-${l.val}" value="${currentQty}" ${disableInput} onchange="handleEyelashManualInputDirect('${id}', '${c}', '${t}', '${l.val}')">
+                        <button class="qty-btn" style="width:28px; height:28px; font-size:14px;" id="plus-${id}-${l.val}" ${disablePlus} onclick="modifyEyelashQtyDirect('${id}', '${c}', '${t}', '${l.val}', 1)">+</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = listHtml;
+    }
+
+    function modifyEyelashQtyDirect(id, c, t, lengthVal, change) {
+        const p = productData.find(prod => prod.id === id);
+        let sheetName = `${p.name}(${c}-${t}-${lengthVal})`;
+        let qtyKey = id + "_" + sheetName;
+
+        let maxStock = 999;
+        let cleanKey = sheetName.trim().replace(/\s+/g, "");
+        let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
+        if (foundKey && productStock[foundKey] !== undefined) maxStock = productStock[foundKey];
+
+        if (change > 0 && quantities[qtyKey] >= maxStock) {
+            alert("抱歉，該現貨規格已達上限庫存量囉！");
+            return;
+        }
+        quantities[qtyKey] = Math.max(0, (quantities[qtyKey] || 0) + change);
+        
+        saveQuantitiesToStorage();
+        if (p.isBundle) {
+            render();
+        } else {
+            renderEyelashTable(id);
+        }
+        updateTotal();
+    }
+
+    function handleEyelashManualInputDirect(id, c, t, lengthVal) {
+        const inputField = document.getElementById(`input-${id}-${lengthVal}`);
+        if (!inputField) return;
+        const p = productData.find(prod => prod.id === id);
+        let sheetName = `${p.name}(${c}-${t}-${lengthVal})`;
+        let qtyKey = id + "_" + sheetName;
+
+        let maxStock = 999;
+        let cleanKey = sheetName.trim().replace(/\s+/g, "");
+        let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
+        if (foundKey && productStock[foundKey] !== undefined) maxStock = productStock[foundKey];
+        let inputValue = parseInt(inputField.value.trim(), 10);
+        if (isNaN(inputValue) || inputValue < 0) {
+            alert("請輸入正確的數量唷！");
+            quantities[qtyKey] = 0;
+        } else if (inputValue > maxStock) {
+            alert(`⚠️ 庫存不足！該現貨剩餘最大庫存為 ${maxStock} 件！`);
+            quantities[qtyKey] = maxStock;
+        } else {
+            quantities[qtyKey] = inputValue;
+        }
+        
+        saveQuantitiesToStorage();
+        if (p.isBundle) {
+            render();
+        } else {
+            renderEyelashTable(id);
+        }
+        updateTotal();
+    }
+
+    function render() {
+        const area = document.getElementById('product-area');
+        if (!area) return; area.innerHTML = '';
+        const filteredProducts = productData.filter(p => p.category === currentCategory);
+        if(filteredProducts.length === 0) { area.innerHTML = '<div style="text-align:center; color:#94a3b8; padding:30px;">此大項分類目前尚無商品細項。</div>'; return; }
+
+        let blockMap = {}; 
+        let subBlockMap = {};
+        let secCounter = 0;
+        let subCounter = 0;
+
+        filteredProducts.forEach(p => {
+            let currentBlockContainer = area;
+
+            if (p.section) {
+                if (!blockMap[p.section]) {
+                    secCounter++;
+                    const uniqueBlockId = `block-sec-${currentCategory}-${secCounter}`;
+                    const toggleDiv = document.createElement('div');
+                    toggleDiv.className = 'product-section-toggle'; 
+                    toggleDiv.setAttribute('onclick', `toggleBlockSection('${uniqueBlockId}', '${p.section}')`);
+                    toggleDiv.innerHTML = `<span>${p.section}</span><span class="toggle-icon" id="icon-${uniqueBlockId}">點擊展開 ➕</span>`;
+                    area.appendChild(toggleDiv);
+
+                    const contentDiv = document.createElement('div'); 
+                    contentDiv.className = 'section-content-block'; 
+                    contentDiv.id = uniqueBlockId;
+                    area.appendChild(contentDiv); 
+                    blockMap[p.section] = contentDiv;
+                }
+                currentBlockContainer = blockMap[p.section];
+            }
+
+            if (p.section && p.subsection) {
+                const subKey = p.section + "-->" + p.subsection;
+                if (!subBlockMap[subKey]) {
+                    subCounter++;
+                    const uniqueSubBlockId = `block-sub-${currentCategory}-${subCounter}`;
+                    const subToggleDiv = document.createElement('div');
+                    subToggleDiv.className = 'product-subsection-toggle';
+                    subToggleDiv.setAttribute('onclick', `toggleSubBlockSection('${uniqueSubBlockId}', '${subKey}')`);
+                    subToggleDiv.innerHTML = `<span>${p.subsection}</span><span id="subicon-${uniqueSubBlockId}" style="font-size:12px; font-weight:bold; color:var(--primary-color);">➕</span>`;
+                    currentBlockContainer.appendChild(subToggleDiv);
+                    
+                    const subContentDiv = document.createElement('div');
+                    subContentDiv.className = 'subsection-content-block';
+                    subContentDiv.id = uniqueSubBlockId;
+                    currentBlockContainer.appendChild(subContentDiv);
+                    subBlockMap[subKey] = subContentDiv;
+                }
+                currentBlockContainer = subBlockMap[subKey];
+            }
+
+            if (p.isEyelash) {
+                if (!selectedEyelashTemp[p.id]) {
+                    selectedEyelashTemp[p.id] = { curl: p.curls[0], thickness: p.thicknesses[0] };
+                }
+                let curlOptions = p.curls.map(c => `<option value="${c}" ${selectedEyelashTemp[p.id].curl === c ? 'selected' : ''}>${c} 捲</option>`).join('');
+                let thicknessOptions = p.thicknesses.map(t => `<option value="${t}" ${selectedEyelashTemp[p.id].thickness === t ? 'selected' : ''}>${t} 粗度</option>`).join('');
+
+                const div = document.createElement('div');
+                div.className = 'product-item';
+                div.style.flexDirection = 'column'; div.style.alignItems = 'stretch';
+                div.style.background = '#fff'; div.style.padding = '10px'; div.style.borderRadius = '8px';
+                div.style.marginTop = '10px';
+                div.innerHTML = `
+                    <div style="margin-bottom: 5px;">
+                        <div style="font-weight:bold; font-size:14px; color:var(--primary-color);">👁️ 款式：${p.name}</div>
+                        <div style="display:flex; gap:10px; margin-top:6px; margin-bottom: 4px;">
+                            <select style="padding:4px 8px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; font-size:13px; width:auto;" onchange="onEyelashFilterChange('${p.id}', 'curl', this.value)">
+                                ${curlOptions}
+                            </select>
+                            <select style="padding:4px 8px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; font-size:13px; width:auto;" onchange="onEyelashFilterChange('${p.id}', 'thickness', this.value)">
+                                ${thicknessOptions}
+                            </select>
+                        </div>
+                    </div>
+                    <div id="eyelash-table-container-${p.id}" style="background:#fff; border-top:1px solid #edf2f7; padding-top:2px;"></div>
+                `;
+                currentBlockContainer.appendChild(div);
+                renderEyelashTable(p.id);
+                return;
+            }
+
+            let variantHtml = "";
+            let currentSelectedSheetName = p.name;
+            let qtyKey = p.id;
+
+            if(p.variants && p.variants.length > 0) {
+                let savedValue = selectedVariantsTemp[p.id] || p.variants[0].sheetName;
+                selectedVariantsTemp[p.id] = savedValue;
+
+                variantHtml = `<select class="variant-selector" id="variant-${p.id}" onchange="onVariantChange('${p.id}')">`;
+                p.variants.forEach(v => {
+                    let selectedAttr = (v.sheetName === savedValue) ? "selected" : "";
+                    variantHtml += `<option value="${v.sheetName}" ${selectedAttr}>規格: ${v.color}</option>`;
+                });
+                variantHtml += `</select>`;
+                
+                currentSelectedSheetName = savedValue;
+                qtyKey = p.id + "_" + currentSelectedSheetName;
+            }
+
+            let finalPrice = getCalculatedPrice(p);
+            let maxStock = 999;
+            let cleanKey = currentSelectedSheetName.trim().replace(/\s+/g, "");
+            let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
+            if (p.variants && foundKey && productStock[foundKey] !== undefined) {
+                maxStock = productStock[foundKey];
+            } else if (p.variants) {
+                let currentVariantObj = p.variants.find(v => v.sheetName === currentSelectedSheetName);
+                let colorText = currentVariantObj ? currentVariantObj.color : "";
+                let fuzzyKey = Object.keys(productStock).find(k => k.includes(p.id) && k.includes(colorText));
+                if (fuzzyKey && productStock[fuzzyKey] !== undefined) {
+                    maxStock = productStock[fuzzyKey];
+                } else if (productStock[p.id] !== undefined) {
+                    maxStock = productStock[p.id];
+                }
+            } else if (productStock[p.id] !== undefined) {
+                maxStock = productStock[p.id];
+            }
+
+            let stockHtml = "";
+            let disablePlus = quantities[qtyKey] >= maxStock ? "disabled" : "";
+            let disableInput = "";
+            if (maxStock === 0) {
+                stockHtml = `<span class="stock-out-tag" id="stock-container-${p.id}">已售罄</span>`;
+                disablePlus = "disabled"; disableInput = "disabled";
+                quantities[qtyKey] = 0; 
+            } else {
+                stockHtml = `<span class="stock-tag" id="stock-container-${p.id}">庫存: ${maxStock}</span>`;
+            }
+
+            if (quantities[qtyKey] > maxStock) {
+                quantities[qtyKey] = maxStock;
+            }
+
+            let priceDisplayHtml = `NT ${finalPrice} / 單位`;
+            if (p.category === "07" || p.category === "09" || p.category === "02" || specialDiscountIds.includes(p.id)) {
+                priceDisplayHtml = `<span style="text-decoration: line-through; color: #94a3b8; font-size: 12px; margin-right: 5px;">原價: NT ${p.p100}</span> <span style="color: #e74c3c;">折後價: NT ${finalPrice}</span>`;
+            }
+
+            const div = document.createElement('div');
+            div.className = 'product-item';
+            div.innerHTML = `
+                <div>
+                    <div class="prod-name">[${p.id}] ${p.name} ${p.category === '09' ? '<span style="color:#ef4444; font-size:11px;">(出清特惠)</span>':''} <span>${stockHtml}</span></div>
+                    ${variantHtml}
+                    <div class="prod-price">${priceDisplayHtml}</div>
+                </div>
+                <div class="qty-box">
+                    <button class="qty-btn" onclick="modifyQty('${p.id}', -1)">-</button>
+                    <input type="text" class="qty-input" id="input-${p.id}" value="${quantities[qtyKey]}" ${disableInput} onchange="handleManualInput('${p.id}')">
+                    <button class="qty-btn" id="plus-${p.id}" ${disablePlus} onclick="modifyQty('${p.id}', 1)">+</button>
+                </div>
+            `;
+            currentBlockContainer.appendChild(div);
+        });
+
+        restoreAccordionState();
+    }
+
+    function onVariantChange(id) {
+        const select = document.getElementById(`variant-${id}`);
+        if (!select) return;
+        selectedVariantsTemp[id] = select.value;
+        render();
+        loadInventory();
+    }
+
+    function modifyQty(id, change) {
+        const p = productData.find(prod => prod.id === id);
+        let qtyKey = id;
+        let targetSheetName = p.name;
+        if(p.variants) {
+            targetSheetName = selectedVariantsTemp[id] || p.variants[0].sheetName;
+            qtyKey = id + "_" + targetSheetName;
+        }
+        
+        let maxStock = 999;
+        let cleanKey = targetSheetName.trim().replace(/\s+/g, "");
+        let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
+        if (foundKey && productStock[foundKey] !== undefined) {
+            maxStock = productStock[foundKey];
+        } else if (productStock[id] !== undefined) {
+            maxStock = productStock[id];
+        }
+
+        if (change > 0 && quantities[qtyKey] >= maxStock) {
+            alert("抱歉，該規格已達目前的現場最大庫存量囉！");
+            return;
+        }
+        quantities[qtyKey] = Math.max(0, quantities[qtyKey] + change);
+        
+        saveQuantitiesToStorage();
+        
+        const inputField = document.getElementById(`input-${id}`);
+        if (inputField) inputField.value = quantities[qtyKey];
+        const plusBtn = document.getElementById(`plus-${id}`);
+        if (plusBtn) { plusBtn.disabled = quantities[qtyKey] >= maxStock; }
+        updateTotal();
+    }
+
+    function handleManualInput(id) {
+        const inputField = document.getElementById(`input-${id}`);
+        if (!inputField) return;
+        const p = productData.find(prod => prod.id === id);
+        let qtyKey = id;
+        let targetSheetName = p.name;
+        if(p.variants) {
+            targetSheetName = selectedVariantsTemp[id] || p.variants[0].sheetName;
+            qtyKey = id + "_" + targetSheetName;
+        }
+        
+        let maxStock = 999;
+        let cleanKey = targetSheetName.trim().replace(/\s+/g, "");
+        let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
+        if (foundKey && productStock[foundKey] !== undefined) {
+            maxStock = productStock[foundKey];
+        } else if (productStock[id] !== undefined) {
+            maxStock = productStock[id];
+        }
+
+        let inputValue = parseInt(inputField.value.trim(), 10);
+        if (isNaN(inputValue) || inputValue < 0) {
+            alert("請輸入正確的購買數量唷！");
+            quantities[qtyKey] = 0; inputField.value = 0;
+        } else if (inputValue > maxStock) {
+            alert(`⚠️ 庫存不足！該規格的現場最大剩餘庫存為 ${maxStock} 件，已自動幫您調整為最大值！`);
+            quantities[qtyKey] = maxStock; inputField.value = maxStock;
+        } else {
+            quantities[qtyKey] = inputValue;
+        }
+        
+        saveQuantitiesToStorage();
+        const plusBtn = document.getElementById(`plus-${id}`);
+        if (plusBtn) { plusBtn.disabled = quantities[qtyKey] >= maxStock; }
+        updateTotal();
+    }
+
+    function updateTotal() {
+        let subtotal = 0;
+        let totalQty = 0; 
+        
+        productData.forEach(p => {
+            if (p.isEyelash) {
+                p.curls.forEach(c => {
+                    p.thicknesses.forEach(t => {
+                        p.lengths.forEach(l => {
+                            if (l.excludeCurl && l.excludeCurl.includes(c)) return;
+
+                            let sheetName = `${p.name}(${c}-${t}-${l.val})`;
+                            let k = p.id + "_" + sheetName;
+                            if (quantities[k] > 0) {
+                                let finalPrice = getCalculatedPrice(p, l.p100);
+                                subtotal += quantities[k] * finalPrice;
+                                totalQty += quantities[k];
+                            }
+                        });
+                    });
+                });
+            } else if(p.variants) {
+                let finalPrice = getCalculatedPrice(p);
+                p.variants.forEach(v => {
+                    let k = p.id + "_" + v.sheetName;
+                    if(quantities[k]) {
+                        subtotal += quantities[k] * finalPrice;
+                        totalQty += quantities[k];
+                    }
+                });
+            } else {
+                let finalPrice = getCalculatedPrice(p);
+                subtotal += quantities[p.id] * finalPrice; 
+                totalQty += quantities[p.id]; 
+            }
+        });
+        const shippingMethod = document.getElementById('shipping_method').value;
+        const paymentMethod = document.getElementById('payment').value;
+        let shipping = 0; let isLowTemp = false;
+        if (subtotal > 0) {
+            if (shippingMethod === "門市自取") { shipping = 0; } 
+            else if (subtotal >= 3000) { 
+                if (shippingMethod === "常溫宅配" || shippingMethod === "7-11 店到店") shipping = 0;
+                else if (shippingMethod === "指定黑貓") shipping = 60; 
+                else if (shippingMethod === "黑貓低溫") isLowTemp = true;
+            } else { 
+                if (shippingMethod === "常溫宅配") shipping = 100;
+                else if (shippingMethod === "指定黑貓") shipping = 160; 
+                else if (shippingMethod === "7-11 店到店") shipping = (paymentMethod === "貨到付款") ? 38 : 60; 
+                else if (shippingMethod === "黑貓低溫") isLowTemp = true;
+            }
+        }
+
+        let finalTotalAmount = subtotal + (isLowTemp ? 0 : shipping);
+        document.getElementById('txt-total-qty').innerText = `共 ${totalQty} 樣商品`;
+        document.getElementById('txt-subtotal').innerText = `NT ${subtotal}`;
+        
+        if (isLowTemp) {
+            document.getElementById('txt-shipping').innerText = "依包裹大小計算";
+            document.getElementById('txt-total').innerText = `NT ${subtotal} + 低溫運費`;
+        } else {
+            document.getElementById('txt-shipping').innerText = (shipping === 0) ? "免運費" : `NT ${shipping}`;
+            document.getElementById('txt-total').innerText = `NT ${finalTotalAmount}`;
+        }
+
+        const walletPanel = document.getElementById('panel-wallet-check');
+        const walletStatusText = document.getElementById('txt-wallet-status');
+        if (paymentMethod === "儲值金扣款") {
+            walletPanel.style.display = "flex";
+            if (userWalletBalance === -1) { walletStatusText.innerText = "❌ 請先登入會員以核對餘額"; walletStatusText.style.color = "#e74c3c"; } 
+            else if (userWalletBalance < finalTotalAmount) { walletStatusText.innerText = `❌ 餘額不足 (尚差 ${finalTotalAmount - userWalletBalance} 元)`; walletStatusText.style.color = "#e74c3c"; } 
+            else { walletStatusText.innerText = `✅ 餘額充足 (剩餘 ${userWalletBalance - finalTotalAmount} 元)`; walletStatusText.style.color = "#27ae60"; }
+        } else { walletPanel.style.display = "none"; }
+    }
+
+    function onShippingOrPaymentChange() {
+        const method = document.getElementById('shipping_method').value;
+        const label = document.getElementById('shipping_label'); const input = document.getElementById('address');
+        if (method === "7-11 店到店") { label.innerText = "7-11 門市名稱與店號 *"; input.placeholder = "請輸入 7-11 門市名稱及 6 位數店號"; } 
+        else if (method === "門市自取") { label.innerText = "自取時間與備註 *"; input.placeholder = "例如：預計週三下午 3 點自取"; } 
+        else { label.innerText = "配送地址 *"; input.placeholder = "請輸入完整地址"; }
+        updateTotal();
+    }
+
+    function generateOrderNo() {
+        const now = new Date();
+        return `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${Math.floor(1000 + Math.random() * 9000)}`;
+    }
+
+    function sendOrder() {
+        const name = document.getElementById('name').value;
+        const phone = document.getElementById('phone').value; 
+        const lineid = document.getElementById('lineid').value;
+        const shippingMethod = document.getElementById('shipping_method').value; 
+        const address = document.getElementById('address').value; 
+        const payment = document.getElementById('payment').value;
+        const companyTitle = document.getElementById('company_title').value; 
+        const companyVat = document.getElementById('company_vat').value;
+
+        if (!name || !phone || !lineid || !address) { alert("請務必填寫收件人資訊欄位！"); return; }
+        
+        let hasSelectedItems = false;
+        for(let key in quantities) {
+            if(quantities[key] > 0) hasSelectedItems = true;
+        }
+        if (!hasSelectedItems) { alert("您尚未挑選任何商品喔！"); return; }
+
+        localStorage.setItem('saved_customer_name', name);
+        localStorage.setItem('saved_customer_phone', phone);
+        localStorage.setItem('saved_customer_lineid', lineid);
+        localStorage.setItem('saved_customer_address', address);
+        localStorage.setItem('saved_customer_shipping', shippingMethod);
+        localStorage.setItem('saved_customer_payment', payment);
+        localStorage.setItem('saved_customer_title', companyTitle);
+        localStorage.setItem('saved_customer_vat', companyVat);
+
+        const submitBtn = document.getElementById('btn-submit');
+        submitBtn.style.background = "#94a3b8";
+        submitBtn.innerText = "⏳ 正在處理訂單..."; 
+        submitBtn.disabled = true;
+        let outOfStockItems = []; let details = ""; let finalCheckAmount = 0;
+        productData.forEach(p => {
+            if (p.isEyelash) {
+                p.curls.forEach(c => {
+                    p.thicknesses.forEach(t => {
+                        p.lengths.forEach(l => {
+                            if (l.excludeCurl && l.excludeCurl.includes(c)) return;
+
+                            let sheetName = `${p.name}(${c}-${t}-${l.val})`;
+                            let k = p.id + "_" + sheetName;
+                            if (quantities[k] > 0) { let realLatestStock = 999;
+                                let cleanKey = sheetName.trim().replace(/\s+/g, "");
+                                let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
+                                if (foundKey && productStock[foundKey] !== undefined) realLatestStock = productStock[foundKey];
+
+                                if (quantities[k] > realLatestStock) {
+                                    outOfStockItems.push(`【${sheetName}】(僅剩 ${realLatestStock} 件，您填寫了 ${quantities[k]} 件)`);
+                                }
+                                let finalPrice = getCalculatedPrice(p, l.p100);
+                                details += `[${p.id}]${sheetName} ($${finalPrice}) x ${quantities[k]} \n`;
+                                finalCheckAmount += finalPrice * quantities[k];
+                            }
+                        });
+                    });
+                });
+            } else if(p.variants) {
+                p.variants.forEach(v => {
+                    let k = p.id + "_" + v.sheetName;
+                    if(quantities[k] > 0) {
+                        let realLatestStock = 999;
+                        let cleanKey = v.sheetName.trim().replace(/\s+/g, "");
+                        let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
+
+                        if (foundKey && productStock[foundKey] !== undefined) {
+                            realLatestStock = productStock[foundKey];
+                        } else if (productStock[p.id] !== undefined) {
+                            realLatestStock = productStock[p.id];
+                        }
+
+                        if (quantities[k] > realLatestStock) {
+                            outOfStockItems.push(`【${v.sheetName}】(僅剩 ${realLatestStock} 件，您填寫了 ${quantities[k]} 件)`);
+                        }
+                        let finalPrice = getCalculatedPrice(p);
+                        details += `[${p.id}]${v.sheetName} ($${finalPrice}) x ${quantities[k]} \n`;
+                        finalCheckAmount += finalPrice * quantities[k];
+                    }
+                });
+            } else {
+                if(quantities[p.id] > 0) {
+                    let realLatestStock = productStock[p.id] !== undefined ? productStock[p.id] : 999;
+                    if (quantities[p.id] > realLatestStock) {
+                        outOfStockItems.push(`【${p.name}】(僅剩 ${realLatestStock} 件，您填寫了 ${quantities[p.id]} 件)`);
+                    }
+                    let finalPrice = getCalculatedPrice(p);
+                    details += `[${p.id}]${p.name} ($${finalPrice}) x ${quantities[p.id]} \n`;
+                    finalCheckAmount += finalPrice * quantities[p.id];
+                }
+            }
+        });
+        if (outOfStockItems.length > 0) {
+            alert(`⚠️ 庫存衝突！以下商品的現貨已被其他客人搶先買走囉：\n\n${outOfStockItems.join('\n')}\n\n系統已自動為您下修為當前最大現貨量，請確認後再按一次送出！`);
+            productData.forEach(p => {
+                if (p.isEyelash) {
+                    renderEyelashTable(p.id);
+                    return;
+                }
+                let currentSelectedSheetName = p.name;
+                if (p.variants) currentSelectedSheetName = selectedVariantsTemp[p.id] || p.variants[0].sheetName;
+
+                let maxStock = 999;
+                let cleanKey = currentSelectedSheetName.trim().replace(/\s+/g, "");
+                let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
+
+                if (foundKey && productStock[foundKey] !== undefined) {
+                    maxStock = productStock[foundKey];
+                } else if (p.variants) {
+                    let currentVariantObj = p.variants.find(v => v.sheetName === currentSelectedSheetName);
+                    let colorText = currentVariantObj ? currentVariantObj.color : "";
+                    let fuzzyKey = Object.keys(productStock).find(k => k.includes(p.id) && k.includes(colorText));
+                    if (fuzzyKey && productStock[fuzzyKey] !== undefined) maxStock = productStock[fuzzyKey];
+                    else if (productStock[p.id] !== undefined) maxStock = productStock[p.id];
+                } else if (productStock[p.id] !== undefined) {
+                    maxStock = productStock[p.id];
+                }
+
+                let qtyKey = p.variants ? (p.id + "_" + currentSelectedSheetName) : p.id;
+                const inputField = document.getElementById(`input-${p.id}`);
+                if (inputField) {
+                    if (maxStock === 0) {
+                        quantities[qtyKey] = 0;
+                        inputField.value = 0; inputField.disabled = true;
+                    } else {
+                        inputField.disabled = false;
+                        if (quantities[qtyKey] > maxStock) {
+                            quantities[qtyKey] = maxStock;
+                            inputField.value = maxStock;
+                        }
+                    }
+                }
+                const plusBtn = document.getElementById(`plus-${p.id}`);
+                if (plusBtn) plusBtn.disabled = maxStock === 0 || (quantities[qtyKey] >= maxStock);
+            });
+
+            saveQuantitiesToStorage();
+            updateTotal();
+            submitBtn.style.background = "#27ae60"; submitBtn.innerText = "確認送出訂單";
+            submitBtn.disabled = false; 
+            return;
+        }
+
+        let shippingVal = 0;
+        let isLowTemp = (shippingMethod === "黑貓低溫");
+        if (shippingMethod !== "門市自取" && finalCheckAmount < 3000) {
+            if (shippingMethod === "常溫宅配" || shippingMethod === "7-11 店到店") {
+                shippingVal = (shippingMethod === "7-11 店到店" && payment === "貨到付款") ? 38 : 60;
+                if (shippingMethod === "常溫宅配") shippingVal = 100;
+            } else if (shippingMethod === "指定黑貓") shippingVal = 160;
+        } else if (shippingMethod === "指定黑貓" && finalCheckAmount >= 3000) { shippingVal = 60; }
+        
+        let totalBillAmount = finalCheckAmount + (isLowTemp ? 0 : shippingVal);
+        const orderNo = generateOrderNo();
+
+        let qtyText = document.getElementById('txt-total-qty').innerText; 
+        let subtotalText = document.getElementById('txt-subtotal').innerText;
+        let shippingText = document.getElementById('txt-shipping').innerText;
+        let totalText = document.getElementById('txt-total').innerText;
+        let confirmMsg = `📋 【請再次確認您的訂購項目】\n\n`;
+        confirmMsg += `${details}`;
+        confirmMsg += `-----------------------\n`;
+        confirmMsg += `商品總數：${qtyText}\n`; 
+        confirmMsg += `商品小計：${subtotalText}\n`;
+        confirmMsg += `運費金額：${shippingText}\n`;
+        confirmMsg += `最終總金額：${totalText}\n`;
+        confirmMsg += `-----------------------\n`;
+        confirmMsg += `配送方式：${shippingMethod}\n`;
+        confirmMsg += `付款方式：${payment}\n\n`;
+        confirmMsg += `確認以上資料無誤並送出訂單嗎？`;
+        if (!confirm(confirmMsg)) {
+            submitBtn.style.background = "#27ae60";
+            submitBtn.innerText = "確認送出訂單";
+            submitBtn.disabled = false;
+            return;
+        }
+
+        if (payment === "儲值金扣款") {
+            if (userWalletBalance === -1) { 
+                alert("❌ 請務必先登入會員！");
+                submitBtn.style.background = "#27ae60"; submitBtn.innerText = "確認送出訂單"; submitBtn.disabled = false; return;
+            }
+            if (userWalletBalance < totalBillAmount) { 
+                alert(`❌ 儲值金餘額不足！`);
+                submitBtn.style.background = "#27ae60"; submitBtn.innerText = "確認送出訂單"; submitBtn.disabled = false; return;
+            }
+            
+            submitBtn.innerText = "💳 儲值金扣款與下單中...";
+            const deductUrl = `${gasLoginUrl}?action=deduct&phone=${encodeURIComponent(userLoggedInPhone)}&amount=${totalBillAmount}&orderno=${encodeURIComponent(orderNo)}&details=${encodeURIComponent(details)}&_t=${new Date().getTime()}`;
+            
+            fetch(deductUrl)
+                .then(res => res.json())
+                .then(resObj => {
+                    if (resObj.success) { 
+                        let remainingBalance = userWalletBalance - totalBillAmount;
+                        localStorage.setItem('member_balance', remainingBalance.toString());
+                        clearQuantitiesStorage();
+                        executeFinalFormAndLineSubmit(name, phone, lineid, shippingMethod, address, payment, companyTitle, companyVat, details, orderNo); 
+                    } else { 
+                        alert("❌ 扣款失敗：" + resObj.msg); 
+                        submitBtn.style.background = "#27ae60"; submitBtn.innerText = "確認送出訂單"; submitBtn.disabled = false; 
+                    }
+                }).catch(err => { 
+                    alert("網路連線逾時，請重新送出"); 
+                    submitBtn.style.background = "#27ae60"; submitBtn.innerText = "確認送出訂單"; submitBtn.disabled = false; 
+                });
+        } else {
+            submitBtn.innerText = "🚀 訂單傳送中...";
+            const reduceUrl = `${gasLoginUrl}?action=reduceStockOnly&details=${encodeURIComponent(details)}&_t=${new Date().getTime()}`;
+            
+            fetch(reduceUrl)
+                .then(res => res.json())
+                .then(resObj => {
+                    clearQuantitiesStorage();
+                    executeFinalFormAndLineSubmit(name, phone, lineid, shippingMethod, address, payment, companyTitle, companyVat, details, orderNo);
+                }).catch(err => {
+                    clearQuantitiesStorage();
+                    executeFinalFormAndLineSubmit(name, phone, lineid, shippingMethod, address, payment, companyTitle, companyVat, details, orderNo);
+                });
+        }
+    }
+
+    function executeFinalFormAndLineSubmit(name, phone, lineid, shippingMethod, address, payment, companyTitle, companyVat, details, orderNo) {
+        const submitBtn = document.getElementById('btn-submit');
+        submitBtn.innerText = "🚀 訂單傳送中...";
+
+        // 🌟【特權過期修正】
+        const levelNames = { 'default': '過路客 (原價)', 'normal': '一般會員(特權過期) (9折)', 'kylie': '凱莉VIP+ (8折)', 'platinum': '柏金VIP+ (7.2折)', 'top': '頂級VIP+ (6.8折)' };
+        let levelText = levelNames[currentLevel] || '一般會員';
+        let subtotalText = document.getElementById('txt-subtotal').innerText;
+        let shippingText = document.getElementById('txt-shipping').innerText;
+        let totalText = document.getElementById('txt-total').innerText;
+        document.getElementById('g-name').value = name; 
+        document.getElementById('g-phone').value = phone; 
+        document.getElementById('g-level').value = levelText; 
+        document.getElementById('g-details').value = details; 
+        document.getElementById('g-subtotal').value = subtotalText; 
+        document.getElementById('g-shipping').value = shippingText;
+        document.getElementById('g-total').value = totalText; 
+        document.getElementById('g-lineid').value = lineid; 
+        document.getElementById('g-address').value = `【${shippingMethod}】${address}`;
+        document.getElementById('g-payment').value = payment; 
+        document.getElementById('g-company-title').value = companyTitle; 
+        document.getElementById('g-company-vat').value = companyVat;
+        document.getElementById('g-orderno').value = orderNo;
+
+        document.getElementById('hiddenGoogleForm').submit();
+        
+        let invoiceText = (companyTitle || companyVat) ? `-----------------------\n🏢 發票抬頭：${companyTitle || '無'}\n🔢 統一編號：${companyVat || '無'}\n` : "";
+        let msg = `🛒【新訂單成立】\n訂單單號：${orderNo}\n客群級別：${levelText}\n-----------------------\n訂購品項明細：\n${details}-----------------------\n商品小計：${subtotalText}\n運費判定：${shippingText}\n應付總金額：${totalText}\n-----------------------\n👤 收件姓名：${name}\n📞 聯絡電話：${phone}\n🆔 LINE ID：${lineid}\n${invoiceText}🚚 配送方式：${shippingMethod}\n📍 配送資訊：${address}\n💳 付款方式：${payment}`;
+        setTimeout(function() {
+            alert(`🎉 訂單已成功成立！\n您的專屬訂單編號為：${orderNo}\n按下確認後將自動開啟 LINE 傳送明細給客服。`);
+            
+            let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                window.location.href = `line://msg/text/?${encodeURIComponent(msg)}`;
+            } else {
+                window.open(`https://line.me/R/msg/text/?${encodeURIComponent(msg)}`, '_blank');
+            }
+
+            setTimeout(function() {
+                submitBtn.style.background = "#27ae60";
+                submitBtn.innerText = "確認送出訂單";
+                submitBtn.disabled = false;
+                updateTotal(); 
+            }, 3000);
+
+        }, 100);
+    }
+
+    window.onload = function() {
+        initQuantities();
+
+        const savedPhone = localStorage.getItem('member_phone');
+        const savedLevel = localStorage.getItem('member_level');
+        const savedBalance = localStorage.getItem('member_balance');
+        const savedName = localStorage.getItem('member_name');
+        if (savedPhone && savedLevel && savedName) {
+            currentLevel = savedLevel;
+            userWalletBalance = parseInt(savedBalance || "0", 10);
+            userLoggedInPhone = savedPhone;
+            updateAuthUI(savedName, currentLevel, userWalletBalance, savedPhone);
+        } else {
+            if (localStorage.getItem('saved_customer_name')) document.getElementById('name').value = localStorage.getItem('saved_customer_name');
+            if (localStorage.getItem('saved_customer_phone')) document.getElementById('phone').value = localStorage.getItem('saved_customer_phone');
+            if (localStorage.getItem('saved_customer_lineid')) document.getElementById('lineid').value = localStorage.getItem('saved_customer_lineid');
+            if (localStorage.getItem('saved_customer_address')) document.getElementById('address').value = localStorage.getItem('saved_customer_address');
+            if (localStorage.getItem('saved_customer_title')) document.getElementById('company_title').value = localStorage.getItem('saved_customer_title');
+            if (localStorage.getItem('saved_customer_vat')) document.getElementById('company_vat').value = localStorage.getItem('saved_customer_vat');
+        }
+
+        if (localStorage.getItem('saved_customer_shipping')) {
+            document.getElementById('shipping_method').value = localStorage.getItem('saved_customer_shipping');
+            onShippingOrPaymentChange();
+        }
+        if (localStorage.getItem('saved_customer_payment')) document.getElementById('payment').value = localStorage.getItem('saved_customer_payment');
+
+        const lastCategory = localStorage.getItem('last_active_category') || '00';
+        selectCategory(lastCategory);
+
+        updateTotal();
+        
+        setTimeout(function() {
+            loadInventory();
+        }, 50);
+    };
+</script>
+</body>
+</html>
