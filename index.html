@@ -624,6 +624,11 @@
             </select>
         </div>
 
+        <div class="form-group">
+            <label>訂單備註 (選填)</label>
+            <textarea id="order_notes" placeholder="例如：若無人接聽請放管理室，謝謝！" style="width: 100%; padding: 12px 16px; border: 1px solid #E6DDD3; border-radius: 10px; box-sizing: border-box; font-size: 14px; color: var(--text-color); background: #FFF; transition: border-color 0.2s; resize: vertical; min-height: 80px;"></textarea>
+        </div>
+
         <div class="summary-box">
             <div class="summary-line" style="font-weight: bold;
             color: #1F4E79;"><span>商品總數：</span><span id="txt-total-qty">共 0 樣商品</span></div>
@@ -649,6 +654,8 @@
     <input type="hidden" 
     name="entry.1159160303" id="g-total"><input type="hidden" name="entry.411814122" id="g-lineid"><input type="hidden" name="entry.933239600" id="g-address"><input type="hidden" name="entry.58806919" id="g-payment">
     <input type="hidden" name="entry.1837831989" id="g-company-title"><input type="hidden" name="entry.1837831989" id="g-company-vat"><input type="hidden" name="entry.405723101" id="g-orderno">
+    <!-- 💡 這是您剛剛新貼進來的隱藏備註欄位 -->
+    <input type="hidden" name="entry.1889238607" id="g-notes" value="">
 </form>
 <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 
@@ -2139,7 +2146,7 @@ const specialRates = {
     }
 
     function updateAuthUI(name, level, balance, phone) {
-        const levelNames = { 'normal': '一般會員', 'kylie': '凱莉VIP+', 'platinum': '柏金VIP+', 'top': '頂級VIP+', 'depA': '儲值商A', 'depB': '儲值商B', 'depC': '儲值商C', 'depc': '儲商C' };
+        const levelNames = { 'normal': '一般會員', 'kylie': '凱莉VIP+', 'platinum': '柏金VIP+', 'top': '頂級VIP+', 'depA': '儲值/業務 68批發', 'depB': '加盟 58批發', 'depC': '加盟 63批發', 'depc': '加盟 63批發' };
         let levelText = levelNames[level] || '認證會員';
         document.getElementById('userAuthArea').innerHTML = `
             <button class="btn-trigger btn-login-trigger" style="background:#475569;" onclick="toggleQueryModal(true)">📦 查詢訂單</button>
@@ -2874,6 +2881,7 @@ function getCalculatedPrice(product, basePrice) {
         const payment = document.getElementById('payment').value;
         const companyTitle = document.getElementById('company_title').value; 
         const companyVat = document.getElementById('company_vat').value;
+        const orderNotes = document.getElementById('order_notes').value.trim();
 
         if (!name || !phone || !lineid || !address) { alert("請務必填寫收件人資訊欄位！"); return; }
         
@@ -2956,7 +2964,7 @@ function getCalculatedPrice(product, basePrice) {
             }
         });
         if (outOfStockItems.length > 0) {
-            alert(`⚠️ 庫存衝突！以下商品的現貨已被其他客人搶先買走囉：\n\n${outOfStockItems.join('\n')}\n\n系統已自動為您下修為當前最大現貨量，請確認後再按一次送出！`);
+            alert(`⚠️ 庫庫存衝突！以下商品的現貨已被其他客人搶先買走囉：\n\n${outOfStockItems.join('\n')}\n\n系統已自動為您下修為當前最大現貨量，請確認後再按一次送出！`);
             productData.forEach(p => {
                 if (p.isEyelash) {
                     renderEyelashTable(p.id);
@@ -3060,7 +3068,8 @@ function getCalculatedPrice(product, basePrice) {
                         let remainingBalance = userWalletBalance - totalBillAmount;
                         localStorage.setItem('member_balance', remainingBalance.toString());
                         clearQuantitiesStorage();
-                        executeFinalFormAndLineSubmit(name, phone, lineid, shippingMethod, address, payment, companyTitle, companyVat, details, orderNo); 
+                        // 💡 修正：補上缺失的 orderNotes 參數
+                        executeFinalFormAndLineSubmit(name, phone, lineid, shippingMethod, address, payment, companyTitle, companyVat, details, orderNo, orderNotes); 
                     } else { 
                         alert("❌ 扣款失敗：" + resObj.msg); 
                         submitBtn.style.background = "#27ae60"; submitBtn.innerText = "確認送出訂單"; submitBtn.disabled = false; 
@@ -3077,61 +3086,68 @@ function getCalculatedPrice(product, basePrice) {
                 .then(res => res.json())
                 .then(resObj => {
                     clearQuantitiesStorage();
-                    executeFinalFormAndLineSubmit(name, phone, lineid, shippingMethod, address, payment, companyTitle, companyVat, details, orderNo);
+                    // 💡 修正：補上缺失的 orderNotes 參數
+                    executeFinalFormAndLineSubmit(name, phone, lineid, shippingMethod, address, payment, companyTitle, companyVat, details, orderNo, orderNotes);
                 }).catch(err => {
                     clearQuantitiesStorage();
-                    executeFinalFormAndLineSubmit(name, phone, lineid, shippingMethod, address, payment, companyTitle, companyVat, details, orderNo);
+                    // 💡 修正：補上缺失的 orderNotes 參數
+                    executeFinalFormAndLineSubmit(name, phone, lineid, shippingMethod, address, payment, companyTitle, companyVat, details, orderNo, orderNotes);
                 });
         }
     }
 
-    function executeFinalFormAndLineSubmit(name, phone, lineid, shippingMethod, address, payment, companyTitle, companyVat, details, orderNo) {
-        const submitBtn = document.getElementById('btn-submit');
-        submitBtn.innerText = "🚀 訂單傳送中...";
+function executeFinalFormAndLineSubmit(name, phone, lineid, shippingMethod, address, payment, companyTitle, companyVat, details, orderNo, orderNotes) {
+    const submitBtn = document.getElementById('btn-submit');
+    submitBtn.innerText = "🚀 訂單傳送中...";
 
-        const levelNames = { 'default': '過路客 (原價)', 'normal': '一般會員(特權過期) (9折)', 'kylie': '凱莉VIP+ (8折)', 'platinum': '柏金VIP+ (7.2折)', 'top': '頂級VIP+ (6.8折)' };
-        let levelText = levelNames[currentLevel] || '一般會員';
-        let subtotalText = document.getElementById('txt-subtotal').innerText;
-        let shippingText = document.getElementById('txt-shipping').innerText;
-        let totalText = document.getElementById('txt-total').innerText;
-        document.getElementById('g-name').value = name; 
-        document.getElementById('g-phone').value = phone; 
-        document.getElementById('g-level').value = levelText; 
-        document.getElementById('g-details').value = details; 
-        document.getElementById('g-subtotal').value = subtotalText; 
-        document.getElementById('g-shipping').value = shippingText;
-        document.getElementById('g-total').value = totalText; 
-        document.getElementById('g-lineid').value = lineid; 
-        document.getElementById('g-address').value = `【${shippingMethod}】${address}`;
-        document.getElementById('g-payment').value = payment; 
-        document.getElementById('g-company-title').value = companyTitle; 
-        document.getElementById('g-company-vat').value = companyVat;
-        document.getElementById('g-orderno').value = orderNo;
+    const levelNames = { 'default': '過路客 (原價)', 'normal': '一般會員(特權過期) (9折)', 'kylie': '凱莉VIP+ (8折)', 'platinum': '柏金VIP+ (7.2折)', 'top': '頂級VIP+ (6.8折)', 'depA': '儲值/業務 68批發', 'depB': '加盟 58批發', 'depC': '加盟 63批發' };
+    let levelText = document.getElementById('txt-level') ? document.getElementById('txt-level').innerText.trim() : (levelNames[currentLevel] || '一般會員');
+    let subtotalText = document.getElementById('txt-subtotal').innerText;
+    let shippingText = document.getElementById('txt-shipping').innerText;
+    let totalText = document.getElementById('txt-total').innerText;
+    document.getElementById('g-name').value = name; 
+    document.getElementById('g-phone').value = phone; 
+    document.getElementById('g-level').value = levelText; 
+    document.getElementById('g-details').value = details; 
+    document.getElementById('g-subtotal').value = subtotalText; 
+    document.getElementById('g-shipping').value = shippingText;
+    document.getElementById('g-total').value = totalText; 
+    document.getElementById('g-lineid').value = lineid; 
+    document.getElementById('g-address').value = `【${shippingMethod}】${address}`;
+    document.getElementById('g-payment').value = payment; 
+    document.getElementById('g-company-title').value = companyTitle; 
+    document.getElementById('g-company-vat').value = companyVat;
+    document.getElementById('g-orderno').value = orderNo;
+    
+    document.getElementById('g-notes').value = orderNotes || "無";
 
-        document.getElementById('hiddenGoogleForm').submit();
+    document.getElementById('hiddenGoogleForm').submit();
+    
+    let invoiceText = (companyTitle || companyVat) ? `-----------------------\n🏢 發票抬頭：${companyTitle || '無'}\n🔢 統一編號：${companyVat || '無'}\n` : "";
+    
+    let notesText = `📝 訂單備註：${orderNotes || '無'}\n`;
+    let msg = `🛒【新訂單成立】\n訂單單號：${orderNo}\n客群級別：${levelText}\n-----------------------\n訂購品項明細：\n${details}-----------------------\n商品小計：${subtotalText}\n運費判定：${shippingText}\n應付總金額：${totalText}\n-----------------------\n👤 收件姓名：${name}\n📞 聯絡電話：${phone}\n🆔 LINE ID：${lineid}\n${invoiceText}${notesText}🚚 配送方式：${shippingMethod}\n📍 配送資訊：${address}\n💳 付款方式：${payment}`;
+    
+    setTimeout(function() {
+        alert(`🎉 訂單已成功成立！\n您的專屬訂單編號為：${orderNo}\n按下確認後將自動開啟 LINE 傳送明細給客服。`);
         
-        let invoiceText = (companyTitle || companyVat) ? `-----------------------\n🏢 發票抬頭：${companyTitle || '無'}\n🔢 統一編號：${companyVat || '無'}\n` : "";
-        let msg = `🛒【新訂單成立】\n訂單單號：${orderNo}\n客群級別：${levelText}\n-----------------------\n訂購品項明細：\n${details}-----------------------\n商品小計：${subtotalText}\n運費判定：${shippingText}\n應付總金額：${totalText}\n-----------------------\n👤 收件姓名：${name}\n📞 聯絡電話：${phone}\n🆔 LINE ID：${lineid}\n${invoiceText}🚚 配送方式：${shippingMethod}\n📍 配送資訊：${address}\n💳 付款方式：${payment}`;
+        let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            window.location.href = `line://msg/text/?${encodeURIComponent(msg)}`;
+        } else {
+            window.open(`https://line.me/R/msg/text/?${encodeURIComponent(msg)}`, '_blank');
+        }
+
         setTimeout(function() {
-            alert(`🎉 訂單已成功成立！\n您的專屬訂單編號為：${orderNo}\n按下確認後將自動開啟 LINE 傳送明細給客服。`);
-            
-            let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            if (isMobile) {
-                window.location.href = `line://msg/text/?${encodeURIComponent(msg)}`;
-            } else {
-                window.open(`https://line.me/R/msg/text/?${encodeURIComponent(msg)}`, '_blank');
-            }
+            submitBtn.style.background = "#27ae60";
+            submitBtn.innerText = "確認送出訂單";
+            submitBtn.disabled = false;
+            updateTotal(); 
+        }, 3000);
 
-            setTimeout(function() {
-                submitBtn.style.background = "#27ae60";
-                submitBtn.innerText = "確認送出訂單";
-                submitBtn.disabled = false;
-                updateTotal(); 
-            }, 3000);
-
-        }, 100);
-    }
+    }, 100);
+} // 💡 修正：在此處切斷函式，並徹底清除下方所有多複製出的重複程式碼
 
     window.onload = function() {
         initQuantities();
