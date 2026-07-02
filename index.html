@@ -687,7 +687,7 @@
             thicknesses: ["0.07", "0.10", "0.15"], 
             lengths: [
                 { val: "MIX 8-14mm", p100: 290 },
-                { val: "MIX 9-12mm", p100: 290, excludeCurl: ["J", "C"] },
+                { val: "MIX 9-12mm", p100: 290, excludeCurl: ["J"] },
                 { val: "8mm", p100: 290, excludeCurl: ["J"] },
                 { val: "9mm", p100: 290, excludeCurl: ["J"] },
                 { val: "10mm", p100: 290, excludeCurl: ["J"] },
@@ -722,7 +722,7 @@
             thicknesses: ["0.07", "0.10", "0.15"], 
             lengths: [
                 { val: "MIX 8-14mm", p100: 290 },
-                { val: "MIX 9-12mm", p100: 290, excludeCurl: ["J", "C"] },
+                { val: "MIX 9-12mm", p100: 290, excludeCurl: ["J"] },
                 { val: "8mm", p100: 290, excludeCurl: ["J"] },
                 { val: "9mm", p100: 290, excludeCurl: ["J"] },
                 { val: "10mm", p100: 290, excludeCurl: ["J"] },
@@ -2425,11 +2425,17 @@ function getCalculatedPrice(product, basePrice) {
             return;
         }
 
-        // 🌟 新增：針對 E1_UP 的 D 捲進行粗細控制
-        // 當選到 D 捲且長度為 MIX 9-12mm 時，只有粗細不是 "0.10" 的規格會被隱藏（return）
-        if ((id === "E1_UP" || id === "E5_UP") && c === "D" && l.val === "MIX 9-12mm" && t !== "0.10") {
-            return;
-        }
+        // 🌟 終極修正：針對 E1_UP 與 E5_UP 的 MIX 9-12mm 進行精細粗細控制
+if ((id === "E1_UP" || id === "E5_UP") && l.val === "MIX 9-12mm") {
+    // 1. 如果是 C 捲，只有當粗細是 0.07 時要隱藏 (留下 0.10 和 0.15)
+    if (c === "C" && t === "0.07") {
+        return;
+    }
+    // 2. 如果是 D 捲，只要粗細不是 0.15 統統隱藏 (只留下 0.15)
+    if (c === "D" && t !== "0.15") {
+        return;
+    }
+}
 
         let sheetName = `${p.name}(${c}-${t}-${l.val})`;
         let qtyKey = id + "_" + sheetName;
