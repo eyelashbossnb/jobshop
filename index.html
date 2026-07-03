@@ -653,7 +653,7 @@
 <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 
 <script>
-    const gasLoginUrl = "https://script.google.com/macros/s/AKfycbwlqybI45ExaqAHLkyI1g8mZrZxZn25nfvtkM2mTb_QohrGxJm0KixUp4sfuprPlxN8/exec";
+    const gasLoginUrl = "https://script.google.com/macros/s/AKfycbwGK6LPsXr_S-yZ9sKT9HsFrG84_-aZJirJFcLVY0E7XLA5mGipdX2ZgH6uOi-CxyxmFA/exec";
     const productData = [
         // ======= 🌟 美睫款式系列矩陣 (分類代碼 '00') =======
         { 
@@ -2254,47 +2254,66 @@ const specialRates = {
             window.location.reload();
         }
     }
-
+// 🌟 全新修正：前台強效標準連通版（解決撈不到參數與帳密死結問題）
     function verifyMember() {
         const phone = document.getElementById('loginPhone').value.trim();
         const password = document.getElementById('loginPassword').value.trim();
         const btn = document.getElementById('loginBtn');
         if (!phone || !password) { alert("請輸入完整的帳號密碼！"); return; }
+        
         btn.innerText = "驗證中..."; btn.disabled = true;
-        fetch(`${gasLoginUrl}?action=login&phone=${encodeURIComponent(phone)}&password=${encodeURIComponent(password)}&_cb=${new Date().getTime()}`)
-            .then(res => res.json())
-            .then(response => {
-                if (response.success) {
-                    currentLevel = response.level; userWalletBalance = parseInt(response.balance || "0", 10); userLoggedInPhone = phone;
-                    
-                    localStorage.setItem('member_phone', phone);
-                    localStorage.setItem('member_level', response.level);
-                    localStorage.setItem('member_balance', response.balance || "0");
-                    localStorage.setItem('member_name', response.name);
+        
+        // 🌟 核心關鍵：將參數黏在標準 URL 後方，強制以明文參數傳遞，確保後台 handleAllActions 必定能精準接收！
+        const finalLoginUrl = gasLoginUrl + "?action=login&phone=" + encodeURIComponent(phone) + "&password=" + encodeURIComponent(password) + "&_cb=" + new Date().getTime();
+        
+        fetch(finalLoginUrl, {
+            method: 'GET',
+            mode: 'cors'
+        })
+        .then(res => res.json())
+        .then(response => {
+            if (response.success) {
+                currentLevel = response.level; 
+                userWalletBalance = parseInt(response.balance || "0", 10); 
+                userLoggedInPhone = phone;
+                
+                // 鎖入本地暫存
+                localStorage.setItem('member_phone', phone);
+                localStorage.setItem('member_level', response.level);
+                localStorage.setItem('member_balance', response.balance || "0");
+                localStorage.setItem('member_name', response.name);
 
-                    toggleLoginModal(false);
-                    updateAuthUI(response.name, currentLevel, userWalletBalance, phone);
-                    
-                    if (localStorage.getItem('saved_customer_lineid')) document.getElementById('lineid').value = localStorage.getItem('saved_customer_lineid');
-                    if (localStorage.getItem('saved_customer_address')) document.getElementById('address').value = localStorage.getItem('saved_customer_address');
-                    if (localStorage.getItem('saved_customer_title')) document.getElementById('company_title').value = localStorage.getItem('saved_customer_title');
-                    if (localStorage.getItem('saved_customer_vat')) document.getElementById('company_vat').value = localStorage.getItem('saved_customer_vat');
-                    if (localStorage.getItem('saved_customer_shipping')) document.getElementById('shipping_method').value = localStorage.getItem('saved_customer_shipping');
-                    if (localStorage.getItem('saved_customer_payment')) document.getElementById('payment').value = localStorage.getItem('saved_customer_payment');
-                    onShippingOrPaymentChange();
+                toggleLoginModal(false);
+                updateAuthUI(response.name, currentLevel, userWalletBalance, phone);
+                
+                if (localStorage.getItem('saved_customer_lineid')) document.getElementById('lineid').value = localStorage.getItem('saved_customer_lineid');
+                if (localStorage.getItem('saved_customer_address')) document.getElementById('address').value = localStorage.getItem('saved_customer_address');
+                if (localStorage.getItem('saved_customer_title')) document.getElementById('company_title').value = localStorage.getItem('saved_customer_title');
+                if (localStorage.getItem('saved_customer_vat')) document.getElementById('company_vat').value = localStorage.getItem('saved_customer_vat');
+                if (localStorage.getItem('saved_customer_shipping')) document.getElementById('shipping_method').value = localStorage.getItem('saved_customer_shipping');
+                if (localStorage.getItem('saved_customer_payment')) document.getElementById('payment').value = localStorage.getItem('saved_customer_payment');
+                onShippingOrPaymentChange();
 
-                    render(); updateTotal();
-                    
-                    if (response.msg && (response.msg.includes("過期") || response.msg.includes("逾期"))) {
-                        alert(`⚠️ 提示：\n${response.msg}`);
-                    } else {
-                        alert(`🎉 歡迎您，${response.name}！\n已成功變更專屬折扣價格。`);
-                    }
-                } else {
-                    alert("❌ " + response.msg);
-                    btn.innerText = "驗證登入"; btn.disabled = false;
-                }
-            }).catch(err => { alert("連線失敗"); btn.innerText = "驗證登入"; btn.disabled = false; });
+                // 登入成功，刷新購物車與 VIP 專屬折扣價格
+                initQuantities();
+                render(); 
+                updateTotal();
+                
+                alert(`🎉 歡迎您，${response.name}！\n已成功變更為您的專屬折扣價格。`);
+                
+                setTimeout(function() {
+                    loadInventory();
+                }, 100);
+            } else {
+                alert("❌ 登入失敗原因：" + response.msg);
+                btn.innerText = "驗證登入"; btn.disabled = false;
+            }
+        })
+        .catch(err => { 
+            console.error("連線失敗原因:", err);
+            alert("連線失敗！請確保您「即時庫存表」後台的 GAS 已經部署為『新版本』且權限設為『任何人』。"); 
+            btn.innerText = "驗證登入"; btn.disabled = false; 
+        });
     }
 
     function fetchOrders() {
