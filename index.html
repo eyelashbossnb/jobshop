@@ -2096,61 +2096,70 @@ const specialRates = {
                         }
 
                         let currentSelectedSheetName = p.name;
-let variantColorText = "";
-if (p.variants) {
-    let savedValue = selectedVariantsTemp[p.id] || p.variants[0].sheetName;
-    currentSelectedSheetName = savedValue;
-    let currentVariantObj = p.variants.find(v => v.sheetName === savedValue);
-    if (currentVariantObj) variantColorText = currentVariantObj.color;
-}
+                        let variantColorText = "";
+                        if (p.variants) {
+                            let savedValue = selectedVariantsTemp[p.id] || p.variants[0].sheetName;
+                            currentSelectedSheetName = savedValue;
+                            let currentVariantObj = p.variants.find(v => v.sheetName === savedValue);
+                            if (currentVariantObj) variantColorText = currentVariantObj.color;
+                        }
 
-let maxStock = 999; // 預設保底數值
-let cleanKey = currentSelectedSheetName.trim().replace(/\s+/g, "").toUpperCase();
-let pIdClean = p.id.trim().toUpperCase();
-let pNameClean = p.name.trim().replace(/\s+/g, "").toUpperCase();
+                        let maxStock = 999;
+                        let pIdClean = p.id.trim().toUpperCase();
 
-// 💡 終極容錯機制：全方位搜尋後台庫存表的所有 Key
-let foundKey = Object.keys(productStock).find(k => {
-    let kClean = k.trim().replace(/\s+/g, "").toUpperCase();
-    
-    // 1. 完全對上規格全名 (例如 "A70超薄U型切口眼膜(對稱)-50對")
-    if (kClean === cleanKey) return true;
-    
-    // 2. 移除商品ID後比對 (例如 "超薄U型切口眼膜(對稱)-50對")
-    let keyWithoutId = cleanKey.replace(pIdClean, "");
-    if (kClean === keyWithoutId) return true;
-    
-    // 3. 單一規格商品：品名完全一致 (例如 "韓國IU黑膠/5G")
-    if (!p.variants && kClean === pNameClean) return true;
-    
-    // 4. 代碼完全一致：如果後台 A 欄直接偷懶只寫商品編號 (例如 "A6"、"A10")
-    if (kClean === pIdClean) return true;
-    
-    // 5. 變體商品模糊包含：後台名稱同時包含商品代號與規格文字
-    if (variantColorText && kClean.indexOf(pIdClean) !== -1 && kClean.indexOf(variantColorText.toUpperCase()) !== -1) return true;
-    
-    // 6. 🌟 單一商品模糊包含：後台 A 欄寫的名稱包含前台的品名，或者被前台品名包含
-    if (!p.variants) {
-        if (kClean.indexOf(pNameClean) !== -1 || pNameClean.indexOf(kClean) !== -1) return true;
-        // 如果後台寫的是包含 ID 的品名 (例如 "A6韓國IU黑膠/5G" 或 "A6 韓國IU黑膠/5G")
-        if (kClean.indexOf(pIdClean) !== -1 && (kClean.indexOf("黑膠") !== -1 || kClean.indexOf(pNameClean.substring(0,4)) !== -1)) return true;
-    }
-    
-    return false;
-});
+                        // 🌟核心眼膜庫存連動機制
+                        if (['A70', 'A74', 'A76'].includes(p.id)) {
+                            let found50Key = Object.keys(productStock).find(k => {
+                                let kClean = k.trim().replace(/\s+/g, "").toUpperCase();
+                                return kClean.indexOf(pIdClean) !== -1 && kClean.indexOf("50對") !== -1;
+                            });
 
-if (foundKey && productStock[foundKey] !== undefined) {
-    maxStock = productStock[foundKey];
-} else {
-    // 最終防線：如果完全撈不到任何 Key，檢查後台有沒有直接用商品 ID 當作 Key 存入
-    if (productStock[p.id] !== undefined) {
-        maxStock = productStock[p.id];
-    } else if (productStock[pIdClean] !== undefined) {
-        maxStock = productStock[pIdClean];
-    } else {
-        maxStock = 999; // 🛠️ 找不到對照時，暫時恢復顯示 999，確保系統不會誤導客人無法下單
-    }
-}
+                            if (found50Key && productStock[found50Key] !== undefined) {
+                                let baseStock50 = productStock[found50Key];
+                                // 如果前台切換選到 100對，可用庫存顯示為 50對現貨量 / 2 (無條件捨去)
+                                if (variantColorText === "100對") {
+                                    maxStock = Math.floor(baseStock50 / 2);
+                                } else {
+                                    maxStock = baseStock50;
+                                }
+                            } else {
+                                maxStock = 0;
+                            }
+                        } else {
+                            // 判斷是否為常規商品（無規格 variants）
+                            if (!p.variants) {
+                                let idClean = p.id.trim().toUpperCase();
+                                let nameClean = p.name.trim().replace(/\s+/g, "").toUpperCase();
+                                
+                                // 1. 先用商品 ID (如 A2, A3) 去後台精準對應庫存
+                                let foundKeyById = Object.keys(productStock).find(k => k.trim().toUpperCase() === idClean);
+                                
+                                // 2. 如果 ID 找不到，再用「去掉空白與特殊符號的品名」去後台模糊搜尋
+                                let foundKeyByName = Object.keys(productStock).find(k => {
+                                    let kClean = k.trim().replace(/\s+/g, "").toUpperCase();
+                                    return kClean === nameClean || kClean.indexOf(idClean) !== -1;
+                                });
+
+                                if (foundKeyById && productStock[foundKeyById] !== undefined) {
+                                    maxStock = productStock[foundKeyById];
+                                } else if (foundKeyByName && productStock[foundKeyByName] !== undefined) {
+                                    maxStock = productStock[foundKeyByName];
+                                } else if (productStock[p.id] !== undefined) {
+                                    maxStock = productStock[p.id];
+                                } else {
+                                    maxStock = 999; // 如果後台完全沒定義這項商品，給予預設大值防鎖死
+                                }
+                            } else {
+                                // 有規格商品（下拉選單）的容錯校正匹配
+                                let cleanKey = currentSelectedSheetName.trim().replace(/\s+/g, "").toUpperCase();
+                                let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "").toUpperCase() === cleanKey);
+                                if (foundKey && productStock[foundKey] !== undefined) {
+                                    maxStock = productStock[foundKey];
+                                } else if (productStock[p.id] !== undefined) {
+                                    maxStock = productStock[p.id];
+                                }
+                            }
+                        }
 
                         const stockContainer = document.getElementById(`stock-container-${p.id}`);
                         if (stockContainer) {
@@ -2161,24 +2170,26 @@ if (foundKey && productStock[foundKey] !== undefined) {
                             }
                         }
 
+                        // 確保常規商品與多規格商品的購物車暫存 Key 一致
                         let qtyKey = p.variants ? (p.id + "_" + currentSelectedSheetName) : p.id;
                         const inputField = document.getElementById(`input-${p.id}`);
                         if (inputField) {
                             if (maxStock === 0) {
                                 inputField.value = 0;
                                 inputField.disabled = true;
+                                quantities[qtyKey] = 0; // 庫存為 0 時重設購物車暫存
                             } else {
                                 inputField.disabled = false;
-                                if (quantities[qtyKey] > maxStock) {
+                                if ((quantities[qtyKey] || 0) > maxStock) {
                                     quantities[qtyKey] = maxStock;
                                     saveQuantitiesToStorage();
                                 }
-                                inputField.value = quantities[qtyKey];
+                                inputField.value = quantities[qtyKey] || 0;
                             }
                         }
                         const plusBtn = document.getElementById(`plus-${p.id}`);
                         if (plusBtn) {
-                            plusBtn.disabled = maxStock === 0 || (quantities[qtyKey] >= maxStock);
+                            plusBtn.disabled = maxStock === 0 || ((quantities[qtyKey] || 0) >= maxStock);
                         }
                     });
                     restoreAccordionState();
@@ -2243,7 +2254,8 @@ if (foundKey && productStock[foundKey] !== undefined) {
             window.location.reload();
         }
     }
-function verifyMember() {
+
+    function verifyMember() {
         const phone = document.getElementById('loginPhone').value.trim();
         const password = document.getElementById('loginPassword').value.trim();
         const btn = document.getElementById('loginBtn');
@@ -2329,10 +2341,9 @@ function verifyMember() {
         render();
     }
 
-function getCalculatedPrice(product, basePrice) {
+    function getCalculatedPrice(product, basePrice) {
         let price = (basePrice !== undefined) ? basePrice : product.p100;
 
-        // 💡 新增：如果是眼膜這三款具有不同價格規格的商品，重新指定 price 來源
         if (['A70', 'A74', 'A76'].includes(product.id) && product.variants) {
             let savedValue = selectedVariantsTemp[product.id] || product.variants[0].sheetName;
             let currentV = product.variants.find(v => v.sheetName === savedValue);
@@ -2343,16 +2354,14 @@ function getCalculatedPrice(product, basePrice) {
 
         if (product.category === "08") return price;
 
-        // 🌟 1. 精準比對：只有完全符合這批清單或名稱包含德國極靜機的特定紋繡品，才套用新折數[cite: 1]
         if (isTargetSpecial紋繡商品(product.id) || (product.name && product.name.includes("德國極靜多功能紋繡機"))) {
             if (currentLevel === 'default' || currentLevel === 'kylie') {
-                return Math.round(price * 0.50); // 過路客5折、凱莉5折[cite: 1]
+                return Math.round(price * 0.50); 
             } else {
-                return Math.round(price * 0.30); // 其他會員3折[cite: 1]
+                return Math.round(price * 0.30); 
             }
         }
 
-        // 2. 採耳、出清、美甲等原有特惠專區[cite: 1]
         if (product.category === "07" || product.category === "09" || product.category === "02") {
             if (currentLevel === 'default' || currentLevel === 'normal' || currentLevel === 'kylie') {
                 return Math.round(price * 0.50); 
@@ -2389,7 +2398,6 @@ function getCalculatedPrice(product, basePrice) {
             return Math.round(price * specRate);
         }
 
-        // 🌟 3. 其餘沒在名單內的所有紋繡商品（如 TA、EC系列等色乳），恢復原本的常態會員折扣計算[cite: 1]
         const rate = discountRates[currentLevel] || 1.0;
         return Math.round(price * rate);
     }
@@ -2479,22 +2487,20 @@ function getCalculatedPrice(product, basePrice) {
         let t = currentSel.thickness;
 
         let listHtml = "";
-    p.lengths.forEach(l => {
-        if (l.excludeCurl && l.excludeCurl.includes(c)) return;
+        p.lengths.forEach(l => {
+            if (l.excludeCurl && l.excludeCurl.includes(c)) return;
 
-        if (id === "E6_UP" && (t === "0.10" || t === "0.15") && l.val === "MIX 9-12mm") {
-            return;
-        }
+            if (id === "E6_UP" && (t === "0.10" || t === "0.15") && l.val === "MIX 9-12mm") {
+                return;
+            }
 
-        // 🌟 新增：針對 E1_UP 的 D 捲進行粗細控制
-        // 當選到 D 捲且長度為 MIX 9-12mm 時，只有粗細不是 "0.10" 的規格會被隱藏（return）
-        if ((id === "E1_UP" || id === "E5_UP") && c === "D" && l.val === "MIX 9-12mm" && t !== "0.10") {
-            return;
-        }
+            if ((id === "E1_UP" || id === "E5_UP") && c === "D" && l.val === "MIX 9-12mm" && t !== "0.10") {
+                return;
+            }
 
-        let sheetName = `${p.name}(${c}-${t}-${l.val})`;
-        let qtyKey = id + "_" + sheetName;
-            
+            let sheetName = `${p.name}(${c}-${t}-${l.val})`;
+            let qtyKey = id + "_" + sheetName;
+                
             let finalPrice = getCalculatedPrice(p, l.p100);
             let maxStock = 999;
             let cleanKey = sheetName.trim().replace(/\s+/g, "");
@@ -2519,7 +2525,6 @@ function getCalculatedPrice(product, basePrice) {
 
             let priceDisplayHtml = `NT ${finalPrice} / 盒`;
 
-            // 🌟 只有在特定的特惠名單內或 09、02 專區，才在前台跑出原價劃線與折後價對照[cite: 1]
             if (isTargetSpecial紋繡商品(p.id) || p.category === "09" || p.category === "02") {
                 if (p.isBundle) {
                     priceDisplayHtml = `<span style="color: #ef4444; font-size:12px; font-weight:bold;">[活動品] NT ${finalPrice} / 盒 (任選滿3盒自動享特惠價)</span>`;
@@ -2710,33 +2715,36 @@ function getCalculatedPrice(product, basePrice) {
 
             let finalPrice = getCalculatedPrice(p);
             let maxStock = 999; 
-            let cleanKey = currentSelectedSheetName.trim().replace(/\s+/g, "").toUpperCase();
             let pIdClean = p.id.trim().toUpperCase();
-            let pNameClean = p.name.trim().replace(/\s+/g, "").toUpperCase();
 
-            let foundKey = Object.keys(productStock).find(k => {
-                let kClean = k.trim().replace(/\s+/g, "").toUpperCase();
-                if (kClean === cleanKey) return true;
-                let keyWithoutId = cleanKey.replace(pIdClean, "");
-                if (kClean === keyWithoutId) return true;
-                if (!p.variants && kClean === pNameClean) return true;
-                if (kClean === pIdClean) return true;
-                if (variantColorText && kClean.indexOf(pIdClean) !== -1 && kClean.indexOf(variantColorText.toUpperCase()) !== -1) return true;
-                if (!p.variants) {
-                    if (kClean.indexOf(pNameClean) !== -1 || pNameClean.indexOf(kClean) !== -1) return true;
-                }
-                return false;
-            });
+            // 🌟 2. 渲染介面時的眼膜防超賣分流與減半顯示
+            if (['A70', 'A74', 'A76'].includes(p.id)) {
+                let found50Key = Object.keys(productStock).find(k => {
+                    let kClean = k.trim().replace(/\s+/g, "").toUpperCase();
+                    return kClean.indexOf(pIdClean) !== -1 && kClean.indexOf("50對") !== -1;
+                });
 
-            if (foundKey && productStock[foundKey] !== undefined) {
-                maxStock = productStock[foundKey];
-            } else {
-                if (productStock[p.id] !== undefined) {
-                    maxStock = productStock[p.id];
-                } else if (productStock[pIdClean] !== undefined) {
-                    maxStock = productStock[pIdClean];
+                if (found50Key && productStock[found50Key] !== undefined) {
+                    let baseStock50 = productStock[found50Key];
+                    if (variantColorText === "100對") {
+                        maxStock = Math.floor(baseStock50 / 2);
+                    } else {
+                        maxStock = baseStock50;
+                    }
                 } else {
-                    maxStock = 999; 
+                    maxStock = 0;
+                }
+            } else {
+                let cleanKey = currentSelectedSheetName.trim().replace(/\s+/g, "").toUpperCase();
+                let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "").toUpperCase() === cleanKey);
+                if (foundKey && productStock[foundKey] !== undefined) {
+                    maxStock = productStock[foundKey];
+                } else {
+                    if (productStock[p.id] !== undefined) {
+                        maxStock = productStock[p.id];
+                    } else if (productStock[pIdClean] !== undefined) {
+                        maxStock = productStock[pIdClean];
+                    }
                 }
             }
 
@@ -2757,7 +2765,6 @@ function getCalculatedPrice(product, basePrice) {
 
             let priceDisplayHtml = `NT ${finalPrice} / 單位`;
             
-            // 🌟 核心控制：只有名單內的特定特惠紋繡品、或指定特惠專區，才在前台呈現原價與折後價劃線！其餘色乳系列直接乾淨呈現折後價[cite: 1]
             if (isTargetSpecial紋繡商品(p.id) || (p.name && p.name.includes("德國極靜多功能紋繡機")) || p.category === "07" || p.category === "09" || p.category === "02" || specialDiscountIds.includes(p.id)) {
                 priceDisplayHtml = `<span style="text-decoration: line-through; color: #94a3b8; font-size: 12px; margin-right: 5px;">原價: NT ${p.p100}</span> <span style="color: #e74c3c; font-weight: bold;">折後價: NT ${finalPrice}</span>`;
             }
@@ -2790,26 +2797,45 @@ function getCalculatedPrice(product, basePrice) {
         loadInventory();
     }
 
+    // 🌟 3. 點擊「+」與「-」按鈕時的眼膜極值限鎖
     function modifyQty(id, change) {
         const p = productData.find(prod => prod.id === id);
         let qtyKey = id;
         let targetSheetName = p.name;
+        let variantColorText = "";
         if(p.variants) {
             targetSheetName = selectedVariantsTemp[id] || p.variants[0].sheetName;
             qtyKey = id + "_" + targetSheetName;
+            let currentVariantObj = p.variants.find(v => v.sheetName === targetSheetName);
+            if (currentVariantObj) variantColorText = currentVariantObj.color;
         }
         
         let maxStock = 999;
-        let cleanKey = targetSheetName.trim().replace(/\s+/g, "");
-        let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
-        if (foundKey && productStock[foundKey] !== undefined) {
-            maxStock = productStock[foundKey];
-        } else if (productStock[id] !== undefined) {
-            maxStock = productStock[id];
+        let pIdClean = id.trim().toUpperCase();
+
+        if (['A70', 'A74', 'A76'].includes(id)) {
+            let found50Key = Object.keys(productStock).find(k => {
+                let kClean = k.trim().replace(/\s+/g, "").toUpperCase();
+                return kClean.indexOf(pIdClean) !== -1 && kClean.indexOf("50對") !== -1;
+            });
+            if (found50Key && productStock[found50Key] !== undefined) {
+                let baseStock50 = productStock[found50Key];
+                maxStock = (variantColorText === "100對") ? Math.floor(baseStock50 / 2) : baseStock50;
+            } else {
+                maxStock = 0;
+            }
+        } else {
+            let cleanKey = targetSheetName.trim().replace(/\s+/g, "");
+            let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
+            if (foundKey && productStock[foundKey] !== undefined) {
+                maxStock = productStock[foundKey];
+            } else if (productStock[id] !== undefined) {
+                maxStock = productStock[id];
+            }
         }
 
         if (change > 0 && quantities[qtyKey] >= maxStock) {
-            alert("抱歉，該規格已達目前的現場最大庫存量囉！");
+            alert(`抱歉，該規格現貨分配量已達上限上限囉！(目前最大可用上限為: ${maxStock} 件)`);
             return;
         }
         quantities[qtyKey] = Math.max(0, quantities[qtyKey] + change);
@@ -2823,24 +2849,43 @@ function getCalculatedPrice(product, basePrice) {
         updateTotal();
     }
 
+    // 🌟 4. 手動敲入鍵盤數值時的眼膜限界鎖
     function handleManualInput(id) {
         const inputField = document.getElementById(`input-${id}`);
         if (!inputField) return;
         const p = productData.find(prod => prod.id === id);
         let qtyKey = id;
         let targetSheetName = p.name;
+        let variantColorText = "";
         if(p.variants) {
             targetSheetName = selectedVariantsTemp[id] || p.variants[0].sheetName;
             qtyKey = id + "_" + targetSheetName;
+            let currentVariantObj = p.variants.find(v => v.sheetName === targetSheetName);
+            if (currentVariantObj) variantColorText = currentVariantObj.color;
         }
         
         let maxStock = 999;
-        let cleanKey = targetSheetName.trim().replace(/\s+/g, "");
-        let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
-        if (foundKey && productStock[foundKey] !== undefined) {
-            maxStock = productStock[foundKey];
-        } else if (productStock[id] !== undefined) {
-            maxStock = productStock[id];
+        let pIdClean = id.trim().toUpperCase();
+
+        if (['A70', 'A74', 'A76'].includes(id)) {
+            let found50Key = Object.keys(productStock).find(k => {
+                let kClean = k.trim().replace(/\s+/g, "").toUpperCase();
+                return kClean.indexOf(pIdClean) !== -1 && kClean.indexOf("50對") !== -1;
+            });
+            if (found50Key && productStock[found50Key] !== undefined) {
+                let baseStock50 = productStock[found50Key];
+                maxStock = (variantColorText === "100對") ? Math.floor(baseStock50 / 2) : baseStock50;
+            } else {
+                maxStock = 0;
+            }
+        } else {
+            let cleanKey = targetSheetName.trim().replace(/\s+/g, "");
+            let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
+            if (foundKey && productStock[foundKey] !== undefined) {
+                maxStock = productStock[foundKey];
+            } else if (productStock[id] !== undefined) {
+                maxStock = productStock[id];
+            }
         }
 
         let inputValue = parseInt(inputField.value.trim(), 10);
@@ -2848,7 +2893,7 @@ function getCalculatedPrice(product, basePrice) {
             alert("請輸入正確的購買數量唷！");
             quantities[qtyKey] = 0; inputField.value = 0;
         } else if (inputValue > maxStock) {
-            alert(`⚠️ 庫存不足！該規格的現場最大剩餘庫存為 ${maxStock} 件，已自動幫您調整為最大值！`);
+            alert(`⚠️ 庫存不足！該規格當前最大可配額現貨為 ${maxStock} 件，已自動幫您調整為最大值！`);
             quantities[qtyKey] = maxStock; inputField.value = maxStock;
         } else {
             quantities[qtyKey] = inputValue;
@@ -2870,7 +2915,6 @@ function getCalculatedPrice(product, basePrice) {
                     p.thicknesses.forEach(t => {
                         p.lengths.forEach(l => {
                             if (l.excludeCurl && l.excludeCurl.includes(c)) return;
-
                             let sheetName = `${p.name}(${c}-${t}-${l.val})`;
                             let k = p.id + "_" + sheetName;
                             if (quantities[k] > 0) {
@@ -2949,6 +2993,7 @@ function getCalculatedPrice(product, basePrice) {
         return `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${Math.floor(1000 + Math.random() * 9000)}`;
     }
 
+    // 🌟 修正後的完整 sendOrder 函數（確保 50對與100對共用後台50對總庫存，且前端不重複翻倍傳遞）
     function sendOrder() {
         const name = document.getElementById('name').value;
         const phone = document.getElementById('phone').value; 
@@ -2981,6 +3026,7 @@ function getCalculatedPrice(product, basePrice) {
         submitBtn.innerText = "⏳ 正在處理訂單..."; 
         submitBtn.disabled = true;
         let outOfStockItems = []; let details = ""; let finalCheckAmount = 0;
+        
         productData.forEach(p => {
             if (p.isEyelash) {
                 p.curls.forEach(c => {
@@ -2990,9 +3036,12 @@ function getCalculatedPrice(product, basePrice) {
 
                             let sheetName = `${p.name}(${c}-${t}-${l.val})`;
                             let k = p.id + "_" + sheetName;
-                            if (quantities[k] > 0) { let realLatestStock = 999;
+                    
+                            if (quantities[k] > 0) { 
+                                let realLatestStock = 999;
                                 let cleanKey = sheetName.trim().replace(/\s+/g, "");
                                 let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
+        
                                 if (foundKey && productStock[foundKey] !== undefined) realLatestStock = productStock[foundKey];
 
                                 if (quantities[k] > realLatestStock) {
@@ -3010,21 +3059,60 @@ function getCalculatedPrice(product, basePrice) {
                     let k = p.id + "_" + v.sheetName;
                     if(quantities[k] > 0) {
                         let realLatestStock = 999;
-                        let cleanKey = v.sheetName.trim().replace(/\s+/g, "");
-                        let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
+                        let pIdClean = p.id.trim().toUpperCase();
 
-                        if (foundKey && productStock[foundKey] !== undefined) {
-                            realLatestStock = productStock[foundKey];
-                        } else if (productStock[p.id] !== undefined) {
-                            realLatestStock = productStock[p.id];
+                        // 眼膜核心共用庫存換算
+                        if (['A70', 'A74', 'A76'].includes(p.id)) {
+                            let found50Key = Object.keys(productStock).find(ks => {
+                                let kClean = ks.trim().replace(/\s+/g, "").toUpperCase();
+                                return kClean.indexOf(pIdClean) !== -1 && kClean.indexOf("50對") !== -1;
+                            });
+                            
+                            if (found50Key && productStock[found50Key] !== undefined) {
+                                realLatestStock = productStock[found50Key];
+                            } else {
+                                realLatestStock = 0;
+                            }
+
+                            // 前端超賣卡關判定：100對要消耗 2 倍的 50對現貨基準
+                            let consumedStock = (v.color === "100對") ? (quantities[k] * 2) : quantities[k];
+                            if (consumedStock > realLatestStock) {
+                                let displayMaxLimit = (v.color === "100對") ? Math.floor(realLatestStock / 2) : realLatestStock;
+                                outOfStockItems.push(`【${v.sheetName}】(後台總庫存剩餘折合 ${realLatestStock} 對現貨，該規格最大僅能再容納下單 ${displayMaxLimit} 件)`);
+                            }
+                        } else {
+                            let cleanKey = v.sheetName.trim().replace(/\s+/g, "");
+                            let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
+                            if (foundKey && productStock[foundKey] !== undefined) {
+                                realLatestStock = productStock[foundKey];
+                            } else if (productStock[p.id] !== undefined) {
+                                realLatestStock = productStock[p.id];
+                            }
+                            if (quantities[k] > realLatestStock) {
+                                outOfStockItems.push(`【${v.sheetName}】(僅剩 ${realLatestStock} 件，您填寫了 ${quantities[k]} 件)`);
+                            }
                         }
 
-                        if (quantities[k] > realLatestStock) {
-                            outOfStockItems.push(`【${v.sheetName}】(僅剩 ${realLatestStock} 件，您填寫了 ${quantities[k]} 件)`);
-                        }
                         let finalPrice = getCalculatedPrice(p);
-                        details += `[${p.id}]${v.sheetName} ($${finalPrice}) x ${quantities[k]} \n`;
-                        finalCheckAmount += finalPrice * quantities[k];
+                        
+                        // 🌟【品名轉換魔術】直接改變傳給後台的字串，繞過後台的自動加倍邏輯
+                        let transmitSheetName = v.sheetName;
+                        let transmitQty = quantities[k];
+
+                        if (['A70', 'A74', 'A76'].includes(p.id)) {
+                            if (v.color === "100對") {
+                                // 💡 如果選 100對，我們把品名改成「50對」，但數量乘以 2 送過去！
+                                // 這樣後台看到「50對」不會啟動雙倍懲罰，但因為數量帶 2，後台就會精準扣 2！
+                                transmitSheetName = v.sheetName.replace("100對", "50對");
+                                transmitQty = quantities[k] * 2;
+                            } else {
+                                // 💡 如果選 50對，數量維持原樣 1，後台精準扣 1
+                                transmitQty = quantities[k];
+                            }
+                        }
+
+                        details += `[${p.id}]${transmitSheetName} ($${finalPrice}) x ${transmitQty} \n`;
+                        finalCheckAmount += finalPrice * quantities[k]; // 總金額計算維持原樣，不影響客人結帳金額
                     }
                 });
             } else {
@@ -3040,53 +3128,10 @@ function getCalculatedPrice(product, basePrice) {
             }
         });
         if (outOfStockItems.length > 0) {
-            alert(`⚠️ 庫存衝突！以下商品的現貨已被其他客人搶先買走囉：\n\n${outOfStockItems.join('\n')}\n\n系統已自動為您下修為當前最大現貨量，請確認後再按一次送出！`);
-            productData.forEach(p => {
-                if (p.isEyelash) {
-                    renderEyelashTable(p.id);
-                    return;
-                }
-                let currentSelectedSheetName = p.name;
-                if (p.variants) currentSelectedSheetName = selectedVariantsTemp[p.id] || p.variants[0].sheetName;
-
-                let maxStock = 999;
-                let cleanKey = currentSelectedSheetName.trim().replace(/\s+/g, "");
-                let foundKey = Object.keys(productStock).find(k => k.trim().replace(/\s+/g, "") === cleanKey);
-
-                if (foundKey && productStock[foundKey] !== undefined) {
-                    maxStock = productStock[foundKey];
-                } else if (p.variants) {
-                    let currentVariantObj = p.variants.find(v => v.sheetName === currentSelectedSheetName);
-                    let colorText = currentVariantObj ? currentVariantObj.color : "";
-                    let fuzzyKey = Object.keys(productStock).find(k => k.includes(p.id) && k.includes(colorText));
-                    if (fuzzyKey && productStock[fuzzyKey] !== undefined) maxStock = productStock[fuzzyKey];
-                    else if (productStock[p.id] !== undefined) maxStock = productStock[p.id];
-                } else if (productStock[p.id] !== undefined) {
-                    maxStock = productStock[p.id];
-                }
-
-                let qtyKey = p.variants ? (p.id + "_" + currentSelectedSheetName) : p.id;
-                const inputField = document.getElementById(`input-${p.id}`);
-                if (inputField) {
-                    if (maxStock === 0) {
-                        quantities[qtyKey] = 0;
-                        inputField.value = 0; inputField.disabled = true;
-                    } else {
-                        inputField.disabled = false;
-                        if (quantities[qtyKey] > maxStock) {
-                            quantities[qtyKey] = maxStock;
-                            inputField.value = maxStock;
-                        }
-                    }
-                }
-                const plusBtn = document.getElementById(`plus-${p.id}`);
-                if (plusBtn) plusBtn.disabled = maxStock === 0 || (quantities[qtyKey] >= maxStock);
+            alert(`⚠️ 庫存衝突！以下商品的現貨已被其他客人搶先買走或超過合併分配上限囉：\n\n${outOfStockItems.join('\n')}\n\n系統已自動為您下修為當前最大現貨量，請確認後再按一次送出！`);
+            loadInventory(() => {
+                submitBtn.style.background = "#27ae60"; submitBtn.innerText = "確認送出訂單"; submitBtn.disabled = false;
             });
-
-            saveQuantitiesToStorage();
-            updateTotal();
-            submitBtn.style.background = "#27ae60"; submitBtn.innerText = "確認送出訂單";
-            submitBtn.disabled = false; 
             return;
         }
 
@@ -3097,7 +3142,8 @@ function getCalculatedPrice(product, basePrice) {
                 shippingVal = (shippingMethod === "7-11 店到店" && payment === "貨到付款") ? 38 : 60;
                 if (shippingMethod === "常溫宅配") shippingVal = 100;
             } else if (shippingMethod === "指定黑貓") shippingVal = 160;
-        } else if (shippingMethod === "指定黑貓" && finalCheckAmount >= 3000) { shippingVal = 60; }
+        } else if (shippingMethod === "指定黑貓" && finalCheckAmount >= 3000) { shippingVal = 60;
+        }
         
         let totalBillAmount = finalCheckAmount + (isLowTemp ? 0 : shippingVal);
         const orderNo = generateOrderNo();
