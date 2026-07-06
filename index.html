@@ -680,7 +680,7 @@
             thicknesses: ["0.07", "0.10", "0.15"], 
             lengths: [
                 { val: "MIX 8-14mm", p100: 290 },
-                { val: "MIX 9-12mm", p100: 290, excludeCurl: ["J", "C"] },
+                { val: "MIX 9-12mm", p100: 290, excludeCurl: ["J"] },
                 { val: "8mm", p100: 290, excludeCurl: ["J"] },
                 { val: "9mm", p100: 290, excludeCurl: ["J"] },
                 { val: "10mm", p100: 290, excludeCurl: ["J"] },
@@ -715,7 +715,7 @@
             thicknesses: ["0.07", "0.10", "0.15"], 
             lengths: [
                 { val: "MIX 8-14mm", p100: 290 },
-                { val: "MIX 9-12mm", p100: 290, excludeCurl: ["J", "C"] },
+                { val: "MIX 9-12mm", p100: 290, excludeCurl: ["J"] },
                 { val: "8mm", p100: 290, excludeCurl: ["J"] },
                 { val: "9mm", p100: 290, excludeCurl: ["J"] },
                 { val: "10mm", p100: 290, excludeCurl: ["J"] },
@@ -2513,9 +2513,9 @@ const specialRates = {
                 return;
             }
 
-            if ((id === "E1_UP" || id === "E5_UP") && c === "D" && l.val === "MIX 9-12mm" && t !== "0.10") {
-                return;
-            }
+            if ((id === "E1_UP" || id === "E5_UP") && l.val === "MIX 9-12mm" && (c === "C" || c === "D") && t === "0.07") {
+    return;
+}
 
             let sheetName = `${p.name}(${c}-${t}-${l.val})`;
             let qtyKey = id + "_" + sheetName;
