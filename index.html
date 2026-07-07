@@ -680,7 +680,7 @@
             thicknesses: ["0.07", "0.10", "0.15"], 
             lengths: [
                 { val: "MIX 8-14mm", p100: 290 },
-                { val: "MIX 9-12mm", p100: 290, excludeCurl: ["J"] },
+                { val: "MIX 9-12mm", p100: 290, excludeCurl: ["J", "C"] },
                 { val: "8mm", p100: 290, excludeCurl: ["J"] },
                 { val: "9mm", p100: 290, excludeCurl: ["J"] },
                 { val: "10mm", p100: 290, excludeCurl: ["J"] },
@@ -715,7 +715,7 @@
             thicknesses: ["0.07", "0.10", "0.15"], 
             lengths: [
                 { val: "MIX 8-14mm", p100: 290 },
-                { val: "MIX 9-12mm", p100: 290, excludeCurl: ["J"] },
+                { val: "MIX 9-12mm", p100: 290, excludeCurl: ["J", "C"] },
                 { val: "8mm", p100: 290, excludeCurl: ["J"] },
                 { val: "9mm", p100: 290, excludeCurl: ["J"] },
                 { val: "10mm", p100: 290, excludeCurl: ["J"] },
@@ -1076,7 +1076,7 @@
         { color: "100對", sheetName: "A76超薄卸睫專用眼膜(左右眼)-100對", p100: 650 }
     ] 
 },
-        { id: "A78", category: "01", section: "✨ 清潔/保養", name: "美睫專用迷你型眼膜(對稱)/100對", p100: 150 },
+        { id: "A78", category: "01", section: "✨ 清潔/保養", name: "美睫專用迷你型眼膜(對稱)/100對", p100: 300 },
         { id: "A79", category: "01", section: "🛠️ 夾子系列", name: "朵朵花開大七神夾", p100: 350 },
         { id: "A80", category: "01", section: "🛠️ 夾子系列", name: "6D．9DQ將神夾", p100: 300 },
         { id: "A81", category: "01", section: "🛠️ 夾子系列", name: "6D．9D開花神夾", p100: 300 },
@@ -2513,9 +2513,9 @@ const specialRates = {
                 return;
             }
 
-            if ((id === "E1_UP" || id === "E5_UP") && l.val === "MIX 9-12mm" && (c === "C" || c === "D") && t === "0.07") {
-    return;
-}
+            if ((id === "E1_UP" || id === "E5_UP") && c === "D" && l.val === "MIX 9-12mm" && t !== "0.10") {
+                return;
+            }
 
             let sheetName = `${p.name}(${c}-${t}-${l.val})`;
             let qtyKey = id + "_" + sheetName;
