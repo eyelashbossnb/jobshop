@@ -6673,7 +6673,7 @@
         "A31": { name: "A31 眉睫再生養護液/6ml", price: 330, max: 20 },
         "A32": { name: "A32 睫毛記憶定型雨衣/6ml", price: 330, max: 20 },
         "A61": { name: "A61 69D開花睫毛防護雨衣/6ml", price: 330, max: 20 },
-        "F53": { name: "A53 法國玫瑰植萃潔顏慕斯/150ml", price: 330, max: 20 },
+        "A53": { name: "A53 法國玫瑰植萃潔顏慕斯/150ml", price: 330, max: 20 },
         "A59": { name: "A59 美睫專用卸妝清潔QQ棉片/10包", price: 160, max: 20 },
         "A60": { name: "A60 美睫專用卸妝清潔QQ棉片/22包", price: 330, max: 20 },
         "A64": { name: "A64 一擦即淨保濕卸妝棉片/25片(罐)", price: 200, max: 20 },
@@ -8942,6 +8942,9 @@ function updateHomepageProductPrices() {
 
     const absoluteOriginalPriceIds = ['V1', 'V2', 'V3'];
 
+    // 固定原價 5 折商品清單
+    const fixedHalfDiscountIds = ['A116', 'A129', 'A275'];
+
     const customDiscountIds = [
         'TC1', 'TC2', 'TC9', 'TC12', 'TC13', 'TF35', 'TF36', 'TF38', 'TF48', 'TF49', 'TF50', 'TF40', 'TF41',
         'TF42', 'TF43', 'TF44', 'TF45', 'TF46', 'TF47', 'TD4', 'TD7', 'TD8', 'TD10', 'TD11', 'TD12', 'TD13',
@@ -8995,11 +8998,23 @@ function updateHomepageProductPrices() {
         if (!basePrice) return;
         item.setAttribute('data-origin-price', basePrice); 
 
+        // 1. 不可打折商品（顯示原價）
         if (absoluteOriginalPriceIds.includes(productId)) {
             priceDisplay.innerHTML = `<span style="color: var(--text-main); font-weight: bold;">$${basePrice.toLocaleString()}</span>`;
             return; 
         }
 
+        // 2. A116, A129, A275：不論會員等級，統一計算 5 折並依照一般樣式呈現
+        if (fixedHalfDiscountIds.includes(productId)) {
+            const finalDiscountedPrice = Math.round(basePrice * 0.5);
+            priceDisplay.innerHTML = `
+                <span style="text-decoration: line-through; color: var(--text-muted); font-size: 13px; margin-right: 6px;">$${basePrice.toLocaleString()}</span>
+                <span style="color: var(--accent-color); font-weight: bold;">$${finalDiscountedPrice.toLocaleString()}</span>
+            `;
+            return;
+        }
+
+        // 3. 自訂卡別折扣商品 (TC/TE/TF等)
         if (customDiscountIds.includes(productId)) {
             const forcedRate = customLevelRates[currentLevel];
             if (forcedRate !== undefined) {
@@ -9013,6 +9028,7 @@ function updateHomepageProductPrices() {
             }
         }
 
+        // 4. 一般商品與特定等級折扣計算
         let finalRate = globalDiscountRate;
         if (isLoggedIn && specialDiscountIds.includes(productId) && specialRates[currentLevel] !== undefined) {
             finalRate = specialRates[currentLevel];
@@ -9041,6 +9057,9 @@ updateCartSummary = function() {
     let subtotal = 0;
 
     const absoluteOriginalPriceIds = ['V1', 'V2', 'V3'];
+
+    // 新增：固定原價 5 折商品清單
+    const fixedHalfDiscountIds = ['A116', 'A129', 'A275'];
 
     const customDiscountIds = [
         'TC1', 'TC2', 'TC9', 'TC12', 'TC13', 'TF35', 'TF36', 'TF38', 'TF48', 'TF49', 'TF50', 'TF40', 'TF41',
@@ -9102,15 +9121,26 @@ updateCartSummary = function() {
             if (!itemOriginPrice && pureId === 'A110') itemOriginPrice = 15;
             if (!itemOriginPrice) itemOriginPrice = 290; 
 
+            // 1. 不可打折商品（維持原價）
             if (absoluteOriginalPriceIds.includes(pureId)) {
                 itemRealPrice = itemOriginPrice; 
-            } else if (customDiscountIds.includes(pureId)) {
+            } 
+            // 2. 新增：A116, A129, A275 不論會員身份一律 5 折計算
+            else if (fixedHalfDiscountIds.includes(pureId)) {
+                itemRealPrice = Math.round(itemOriginPrice * 0.5);
+            } 
+            // 3. 自訂卡別折扣商品
+            else if (customDiscountIds.includes(pureId)) {
                 const forcedRate = customLevelRates[activeLevel] || 1.0;
                 itemRealPrice = Math.round(itemOriginPrice * forcedRate);
-            } else if (specialDiscountIds.includes(pureId)) {
+            } 
+            // 4. 特殊商品折扣
+            else if (specialDiscountIds.includes(pureId)) {
                 const specialRate = specialRates[activeLevel] || 1.0;
                 itemRealPrice = Math.round(itemOriginPrice * specialRate);
-            } else {
+            } 
+            // 5. 一般會員等級折扣
+            else {
                 let normRate = 1.0;
                 if (isLoggedIn && typeof DEPT_MEMBER_LEVEL_SETTINGS !== 'undefined' && DEPT_MEMBER_LEVEL_SETTINGS[activeLevel]) {
                     normRate = DEPT_MEMBER_LEVEL_SETTINGS[activeLevel].discountRate;
