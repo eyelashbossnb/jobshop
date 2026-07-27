@@ -9103,7 +9103,52 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 // =============================================================
-// 3a. 會員專屬：動態更新首頁精選商品架的標價顯示
+// 0. 全域狀態與多盒優惠設定 (不限會員與過路客)
+// =============================================================
+if (typeof window.cart === 'undefined') window.cart = {};
+if (typeof window.productConfig === 'undefined') window.productConfig = {};
+let globalInventoryData = {};
+
+const BUNDLE_PROMO_CONFIG = {
+    'E14_UP': { qty: 3, bundlePrice: 750, label: '滿3盒$750', defaultUnitPrice: 390 },
+    'E21_UP': { qty: 3, bundlePrice: 499, label: '滿3盒$499', defaultUnitPrice: 226 },
+    'E22_UP': { qty: 3, bundlePrice: 399, label: '滿3盒$399', defaultUnitPrice: 115 }
+};
+
+// 🔍 提取基礎商品編號 (例如：將 E14_UP_C_0.07_10mm 轉為 E14_UP)
+function getBaseProductId(productId) {
+    if (!productId) return '';
+    if (productId.startsWith('E14_UP')) return 'E14_UP';
+    if (productId.startsWith('E21_UP')) return 'E21_UP';
+    if (productId.startsWith('E22_UP')) return 'E22_UP';
+    return productId;
+}
+
+// 🔍 安全取得單盒價格 (多重備援防 0 與 NaN)
+function getItemUnitPrice(sku, itemObj) {
+    const baseId = getBaseProductId(sku);
+
+    if (itemObj && typeof itemObj === 'object') {
+        let p = itemObj.price || itemObj.unitPrice || itemObj.basePrice;
+        if (p && !isNaN(parseInt(p)) && parseInt(p) > 0) return parseInt(p);
+    }
+    if (typeof productConfig !== 'undefined') {
+        if (productConfig[sku] && productConfig[sku].price) return parseInt(productConfig[sku].price);
+        if (productConfig[baseId] && productConfig[baseId].price) return parseInt(productConfig[baseId].price);
+    }
+    const domElem = document.querySelector(`.product-item[data-id="${sku}"]`) || document.querySelector(`.product-item[data-id="${baseId}"]`);
+    if (domElem) {
+        let p = domElem.getAttribute('data-origin-price') || domElem.getAttribute('data-base-price') || domElem.getAttribute('data-price');
+        if (p && !isNaN(parseInt(p))) return parseInt(p);
+    }
+    if (BUNDLE_PROMO_CONFIG[baseId]) {
+        return BUNDLE_PROMO_CONFIG[baseId].defaultUnitPrice;
+    }
+    return 0;
+}
+
+// =============================================================
+// 🏷️ 1. 補回：首頁精選商品架標價與 3 盒優惠標籤更新 (updateHomepageProductPrices)
 // =============================================================
 function updateHomepageProductPrices() {
     const items = document.querySelectorAll('.product-item');
@@ -9161,6 +9206,7 @@ function updateHomepageProductPrices() {
 
     items.forEach(item => {
         const productId = item.getAttribute('data-id');
+        const baseId = getBaseProductId(productId);
         const priceDisplay = item.querySelector('.product-price') || document.getElementById(`price-display-${productId}`);
         if (!priceDisplay) return;
 
@@ -9175,8 +9221,12 @@ function updateHomepageProductPrices() {
         if (!basePrice) return;
         item.setAttribute('data-origin-price', basePrice); 
 
+        // 🌟 核心：多盒特價標籤 (如：滿3盒$750)
+        const bundleInfo = BUNDLE_PROMO_CONFIG[baseId];
+        const bundleTagHtml = bundleInfo ? `<span style="background: #e8a598; color: #fff; font-size: 11px; padding: 1px 5px; border-radius: 4px; margin-left: 4px; font-weight: bold;">${bundleInfo.label}</span>` : '';
+
         if (absoluteOriginalPriceIds.includes(productId)) {
-            priceDisplay.innerHTML = `<span style="color: var(--text-main); font-weight: bold;">$${basePrice.toLocaleString()}</span>`;
+            priceDisplay.innerHTML = `<span style="color: var(--text-main); font-weight: bold;">$${basePrice.toLocaleString()}</span>${bundleTagHtml}`;
             return; 
         }
 
@@ -9185,6 +9235,7 @@ function updateHomepageProductPrices() {
             priceDisplay.innerHTML = `
                 <span style="text-decoration: line-through; color: var(--text-muted); font-size: 13px; margin-right: 6px;">$${basePrice.toLocaleString()}</span>
                 <span style="color: var(--accent-color); font-weight: bold;">$${finalDiscountedPrice.toLocaleString()}</span>
+                ${bundleTagHtml}
             `;
             return;
         }
@@ -9197,6 +9248,7 @@ function updateHomepageProductPrices() {
                     <span style="text-decoration: line-through; color: var(--text-muted); font-size: 13px; margin-right: 6px;">$${basePrice.toLocaleString()}</span>
                     <span style="color: var(--accent-color); font-weight: bold;">$${finalDiscountedPrice.toLocaleString()}</span>
                     <span style="background: #fff5f0; color: #d4a373; font-size: 11px; padding: 1px 4px; border-radius: 4px; margin-left: 4px; font-weight: bold;">特惠${currentLevel}價</span>
+                    ${bundleTagHtml}
                 `;
                 return;
             }
@@ -9213,9 +9265,10 @@ function updateHomepageProductPrices() {
                 <span style="text-decoration: line-through; color: var(--text-muted); font-size: 13px; margin-right: 6px;">$${basePrice.toLocaleString()}</span>
                 <span style="color: var(--accent-color); font-weight: bold;">$${discountedPrice.toLocaleString()}</span>
                 <span style="background: #fff0f0; color: #c97a7a; font-size: 11px; padding: 1px 4px; border-radius: 4px; margin-left: 4px; font-weight: 500;">${currentLevel}價</span>
+                ${bundleTagHtml}
             `;
         } else {
-            priceDisplay.innerHTML = `<span style="color: var(--text-main); font-weight: bold;">$${basePrice.toLocaleString()}</span>`;
+            priceDisplay.innerHTML = `<span style="color: var(--text-main); font-weight: bold;">$${basePrice.toLocaleString()}</span>${bundleTagHtml}`;
         }
         item.setAttribute('data-base-price', basePrice); 
         item.setAttribute('data-price', basePrice);
@@ -9223,25 +9276,275 @@ function updateHomepageProductPrices() {
 }
 
 // =============================================================
-// 🚀 函式劫持攔截功能
+// 🎨 2. 購物車商品清單繪製 (renderCart)
 // =============================================================
-const oldAddToCartWithVariant = addToCartWithVariant;
-addToCartWithVariant = function(productId) {
-    oldAddToCartWithVariant(productId); 
-    setTimeout(function() {
-        if (typeof updateCartSummary === 'function') updateCartSummary();
-        if (typeof renderCart === 'function') renderCart(); 
-    }, 10);
-};
+function renderCart() {
+    const container = document.getElementById('cart-items-container') || 
+                      document.querySelector('.cart-items-list') || 
+                      document.getElementById('cart-list');
+    if (!container) return;
 
-const oldAddToCart = addToCart;
-addToCart = function(productId) {
-    oldAddToCart(productId); 
-    setTimeout(function() {
-        if (typeof updateCartSummary === 'function') updateCartSummary();
-        if (typeof renderCart === 'function') renderCart(); 
-    }, 10);
-};
+    const productIds = Object.keys(cart);
+    let hasItems = false;
+
+    // 統計各系列總數量 (支援跨長度/捲度混搭滿 3 盒)
+    const baseQtyMap = {};
+    productIds.forEach(id => {
+        const item = cart[id];
+        const qty = typeof item === 'object' ? parseInt(item.quantity || item.qty || 0) : parseInt(item || 0);
+        if (qty > 0) {
+            const baseId = getBaseProductId(id);
+            baseQtyMap[baseId] = (baseQtyMap[baseId] || 0) + qty;
+            hasItems = true;
+        }
+    });
+
+    if (!hasItems) {
+        container.innerHTML = '<div class="empty-cart-text">購物車目前是空的</div>';
+        updateCartSummary();
+        return;
+    }
+
+    let html = '';
+    productIds.forEach(id => {
+        const item = cart[id];
+        const qty = typeof item === 'object' ? parseInt(item.quantity || item.qty || 0) : parseInt(item || 0);
+        if (qty <= 0) return;
+
+        const baseId = getBaseProductId(id);
+        const pInfo = productConfig[id] || {};
+        const name = (typeof item === 'object' && item.name) ? item.name : (pInfo.name || id);
+        const unitPrice = getItemUnitPrice(id, item);
+
+        // 計算此品項小計 (判斷是否享滿 3 盒特價)
+        let itemSubtotal = qty * unitPrice;
+        const promo = BUNDLE_PROMO_CONFIG[baseId];
+        
+        if (promo && baseQtyMap[baseId] >= promo.qty) {
+            const seriesTotalQty = baseQtyMap[baseId];
+            const bundleCount = Math.floor(seriesTotalQty / promo.qty);
+            const remainderQty = seriesTotalQty % promo.qty;
+            const totalSeriesAmount = (bundleCount * promo.bundlePrice) + (remainderQty * unitPrice);
+            itemSubtotal = Math.round((qty / seriesTotalQty) * totalSeriesAmount);
+        }
+
+        const safeId = id.replace(/'/g, "\\'");
+
+        html += `
+            <div class="cart-item" data-sku="${safeId}">
+                <div class="cart-item-info">
+                    <span class="cart-item-name">${name}</span>
+                    <span style="font-size: 11px; color: var(--text-muted);">$${unitPrice.toLocaleString()} / 盒</span>
+                </div>
+                <div class="cart-item-actions">
+                    <div class="quantity-selector">
+                        <button type="button" class="quantity-btn" onclick="changeCartItemQty('${safeId}', -1)">-</button>
+                        <input type="number" class="quantity-input" value="${qty}" readonly>
+                        <button type="button" class="quantity-btn" onclick="changeCartItemQty('${safeId}', 1)">+</button>
+                    </div>
+                    <span class="cart-item-price" style="font-weight:600; color:var(--accent-color);">$${itemSubtotal.toLocaleString()}</span>
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+    updateCartSummary();
+}
+
+// =============================================================
+// 🧮 3. 金額與數量統計 (updateCartSummary) - 雙向 DOM 相容版
+// =============================================================
+function updateCartSummary() {
+    try {
+        let totalQty = 0;
+        let finalSubtotal = 0;
+
+        // 3-1. 先統計各系列商品總數量
+        const baseQtyMap = {};
+        for (let sku in cart) {
+            const item = cart[sku];
+            const qty = typeof item === 'object' ? parseInt(item.quantity || item.qty || 0) : parseInt(item || 0);
+            if (qty > 0) {
+                const baseId = getBaseProductId(sku);
+                baseQtyMap[baseId] = (baseQtyMap[baseId] || 0) + qty;
+                totalQty += qty;
+            }
+        }
+
+        // 3-2. 計算折抵後總金額
+        for (let sku in cart) {
+            const item = cart[sku];
+            const qty = typeof item === 'object' ? parseInt(item.quantity || item.qty || 0) : parseInt(item || 0);
+            if (qty <= 0) continue;
+
+            const baseId = getBaseProductId(sku);
+            const unitPrice = getItemUnitPrice(sku, item);
+            const promo = BUNDLE_PROMO_CONFIG[baseId];
+
+            if (promo && baseQtyMap[baseId] >= promo.qty) {
+                const seriesTotalQty = baseQtyMap[baseId];
+                const bundleCount = Math.floor(seriesTotalQty / promo.qty);
+                const remainderQty = seriesTotalQty % promo.qty;
+                const totalSeriesAmount = (bundleCount * promo.bundlePrice) + (remainderQty * unitPrice);
+                finalSubtotal += Math.round((qty / seriesTotalQty) * totalSeriesAmount);
+            } else {
+                finalSubtotal += qty * unitPrice;
+            }
+        }
+
+        // 3-3. 運費計算
+        const shippingSelect = document.getElementById('shipping');
+        const shippingMethod = shippingSelect ? shippingSelect.value : "normal";
+        let shippingFee = 0; 
+        let shippingText = "$0";
+
+        if (finalSubtotal > 0) {
+            if (finalSubtotal >= 3000) {
+                if (shippingMethod === 'blackcat') { shippingFee = 60; shippingText = "$60 (滿額優惠)"; }
+                else if (shippingMethod === 'blackcat-cold') { shippingFee = 200; shippingText = "$200"; }
+                else { shippingFee = 0; shippingText = "免運 (滿額)"; }
+            } else {
+                switch (shippingMethod) {
+                    case 'normal': shippingFee = 100; break;
+                    case 'cvs': shippingFee = 60; break;
+                    case 'blackcat': shippingFee = 160; break;
+                    case 'blackcat-cold': shippingFee = 200; break;
+                    case 'store-pickup': shippingFee = 0; break;
+                    default: shippingFee = 60; break;
+                }
+                shippingText = shippingFee === 0 ? "$0" : `$${shippingFee}`;
+            }
+        }
+
+        let grandTotal = finalSubtotal + shippingFee;
+
+        // 3-4. 精準寫回 UI (同時支援 total-qty 與 cart-total-count 兩套格式)
+        const qtyTargets = [document.getElementById('total-qty'), document.getElementById('cart-total-count'), document.querySelector('.cart-count')];
+        const subtotalTargets = [document.getElementById('subtotal-price'), document.getElementById('cart-subtotal'), document.querySelector('.summary-subtotal')];
+        const shippingTargets = [document.getElementById('shipping-fee'), document.getElementById('cart-shipping-fee'), document.querySelector('.summary-shipping')];
+        const grandTotalTargets = [document.getElementById('grand-total'), document.getElementById('cart-total-price'), document.querySelector('.summary-line.total span:last-child')];
+
+        qtyTargets.forEach(el => { if (el) el.innerText = `${totalQty} 件`; });
+        subtotalTargets.forEach(el => { if (el) el.innerText = `$${finalSubtotal.toLocaleString()}`; });
+        shippingTargets.forEach(el => { 
+            if (el) {
+                el.innerText = shippingText;
+                el.style.color = shippingText.includes("免運") ? "var(--accent-color)" : "var(--text-main)";
+            }
+        });
+        grandTotalTargets.forEach(el => { if (el) el.innerText = `$${grandTotal.toLocaleString()}`; });
+
+    } catch (err) {
+        console.error("updateCartSummary 計算時發生錯誤:", err);
+    }
+}
+
+// 🛒 購物車加減按鈕連動
+function changeCartItemQty(cartKey, change) {
+    if (cart[cartKey] === undefined) return;
+
+    let currentQty = (typeof cart[cartKey] === 'object') ? parseInt(cart[cartKey].quantity || cart[cartKey].qty || 0) : parseInt(cart[cartKey] || 0);
+    currentQty += change;
+
+    if (currentQty <= 0) {
+        delete cart[cartKey];
+    } else {
+        const maxStock = productConfig[cartKey]?.max || 999;
+        if (currentQty > maxStock) {
+            alert(`抱歉，該商品此規格現貨庫存上限為 ${maxStock} 件唷！`);
+            currentQty = maxStock;
+        }
+        if (typeof cart[cartKey] === 'object') {
+            cart[cartKey].quantity = currentQty;
+            cart[cartKey].qty = currentQty;
+        } else {
+            cart[cartKey] = currentQty;
+        }
+    }
+    if (typeof saveCartToStorage === 'function') saveCartToStorage();
+    renderCart();
+}
+
+function changeCartQty(sku, delta) {
+    changeCartItemQty(sku, delta);
+}
+
+// =============================================================
+// 💾 4. 購物車資料持久化與頁面初始化
+// =============================================================
+function saveCartToStorage() {
+    try {
+        localStorage.setItem('shopping_cart_data', JSON.stringify(cart));
+        const specialConfigs = {};
+        for (let key in productConfig) {
+            if (productConfig[key] && productConfig[key]._isSpecialSku) {
+                specialConfigs[key] = productConfig[key];
+            }
+        }
+        localStorage.setItem('shopping_cart_config', JSON.stringify(specialConfigs));
+    } catch (e) {
+        console.error("無法儲存購物車資料至 localStorage:", e);
+    }
+}
+
+function loadCartFromStorage() {
+    try {
+        const savedCart = localStorage.getItem('shopping_cart_data');
+        const savedConfig = localStorage.getItem('shopping_cart_config');
+
+        if (savedConfig) {
+            const parsedConfig = JSON.parse(savedConfig);
+            Object.assign(productConfig, parsedConfig);
+        }
+        if (savedCart) {
+            cart = JSON.parse(savedCart);
+        }
+    } catch (e) {
+        console.error("從 localStorage 還原購物車失敗:", e);
+        cart = {};
+    }
+}
+
+function refreshStockDisplay() {
+    if (typeof checkAndRestoreMemberLogin === "function") checkAndRestoreMemberLogin();
+    loadCartFromStorage();
+
+    // 🌟 初始化動態標籤與購物車
+    updateHomepageProductPrices();
+    if (typeof renderMemberHeader === "function") renderMemberHeader();
+    
+    renderCart();
+
+    if (typeof filterProducts === "function") filterProducts();
+    if (typeof fetchInventoryFromSheet === "function") fetchInventoryFromSheet();
+}
+
+// 監聽 DOM 載入
+document.addEventListener('DOMContentLoaded', function() {
+    refreshStockDisplay();
+
+    const shippingSelect = document.getElementById("shipping");
+    if (shippingSelect) {
+        shippingSelect.addEventListener("change", function() {
+            setTimeout(updateCartSummary, 50); 
+        });
+    }
+});
+
+// AOP 攔截按鈕加入購物車動作，自動觸發持久化與重新計算
+['addToCart', 'addLashToCart', 'addToCartWithVariant'].forEach(fnName => {
+    if (typeof window[fnName] === 'function') {
+        const oldFn = window[fnName];
+        window[fnName] = function(...args) {
+            oldFn.apply(this, args);
+            setTimeout(() => {
+                saveCartToStorage();
+                renderCart();
+            }, 50);
+        };
+    }
+});
 </script>
 </body>
 </html>
