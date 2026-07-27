@@ -546,160 +546,177 @@
 
 <main class="main-container">
     <div>
+        <!-- 🆕 尊榮美業電子型錄點擊橫幅 (已移除內嵌視窗與 QR Code) -->
+        <a href="https://heyzine.com/flip-book/a792795585.html" target="_BLANK" style="text-decoration: none; display: block; margin-bottom: 30px;">
+            <div class="card" style="padding: 22px 30px; margin-bottom: 0; background: linear-gradient(135deg, #ffffff 0%, #faf7f5 100%); border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer;">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <span style="font-size: 28px;">📖</span>
+                    <div>
+                        <div style="font-size: 16px; font-weight: 600; color: var(--text-main); margin-bottom: 4px; letter-spacing: 0.08em;">線上品牌型錄與新品圖鑑</div>
+                        <div style="font-size: 13px; color: var(--text-muted);">點擊即可開啟全螢幕線上翻頁電子型錄</div>
+                    </div>
+                </div>
+                <div style="background-color: var(--accent-color); color: #ffffff; padding: 8px 20px; border-radius: 20px; font-size: 13px; font-weight: 500; letter-spacing: 0.05em; white-space: nowrap;">
+                    點擊翻閱 ↗
+                </div>
+            </div>
+        </a>
+
+        <!-- 原本的精選商品卡片區塊 -->
         <div class="card">
             <div class="card-title">精選商品</div>
             
             <div class="category-container">
-    <button class="category-tab active" onclick="selectCategory('all', this); toggleSaleMenu(false);">全部商品</button>
-    <button class="category-tab" onclick="selectCategory('event', this); toggleSaleMenu(false);">活動專區</button>
-    <button class="category-tab" onclick="selectCategory('eyelash', this); toggleSaleMenu(false);">睫毛款式專區</button>
-    <button class="category-tab" onclick="selectCategory('perimeter', this); toggleSaleMenu(false);">美睫周邊</button>
-    <button class="category-tab" onclick="selectCategory('wax', this); toggleSaleMenu(false);">頂級熱蠟</button>
-    <button class="category-tab" onclick="selectCategory('brows', this); toggleSaleMenu(false);">紋綉商品</button>
-    <button class="category-tab" onclick="selectCategory('skincare', this); toggleSaleMenu(false);">臉部保養</button>
-    <button class="category-tab" onclick="selectCategory('makeup', this); toggleSaleMenu(false);">美妝商品</button>
-    <button class="category-tab" onclick="selectCategory('ear', this); toggleSaleMenu(false);">採耳商品</button>
-    <button class="category-tab" onclick="selectCategory('nail', this); toggleSaleMenu(false);">美甲商品</button>
-    <button class="category-tab" onclick="selectCategory('sale', this); toggleSaleMenu(true);">出清五折</button>
-    <button class="category-tab" onclick="selectCategory('membership', this); toggleSaleMenu(false);">購買會籍</button>
-</div>
+                <button class="category-tab active" onclick="selectCategory('all', this); toggleSaleMenu(false);">全部商品</button>
+                <button class="category-tab" onclick="selectCategory('event', this); toggleSaleMenu(false);">活動專區</button>
+                <button class="category-tab" onclick="selectCategory('eyelash', this); toggleSaleMenu(false);">睫毛款式專區</button>
+                <button class="category-tab" onclick="selectCategory('perimeter', this); toggleSaleMenu(false);">美睫周邊</button>
+                <button class="category-tab" onclick="selectCategory('wax', this); toggleSaleMenu(false);">頂級熱蠟</button>
+                <button class="category-tab" onclick="selectCategory('brows', this); toggleSaleMenu(false);">紋綉商品</button>
+                <button class="category-tab" onclick="selectCategory('skincare', this); toggleSaleMenu(false);">臉部保養</button>
+                <button class="category-tab" onclick="selectCategory('makeup', this); toggleSaleMenu(false);">美妝商品</button>
+                <button class="category-tab" onclick="selectCategory('ear', this); toggleSaleMenu(false);">採耳商品</button>
+                <button class="category-tab" onclick="selectCategory('nail', this); toggleSaleMenu(false);">美甲商品</button>
+                <button class="category-tab" onclick="selectCategory('sale', this); toggleSaleMenu(true);">出清五折</button>
+                <button class="category-tab" onclick="selectCategory('membership', this); toggleSaleMenu(false);">購買會籍</button>
+            </div>
 
-<div id="sub-category-eyelash" class="sub-category-menu" style="display: none; flex-wrap: wrap;">
-    <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
-    <button class="sub-tab active" onclick="filterSubCategory('all', this); toggleEyelashMenu('', false);">顯示全部</button>
-    <button class="sub-tab" onclick="filterSubCategory('lash-fan', this); toggleEyelashMenu('', false);">黑耀魔幻羽扇</button>
-    <button class="sub-tab" onclick="filterSubCategory('lash-mink', this); toggleEyelashMenu('', false);">頂級人造水貂絲</button>
-    <button class="sub-tab" onclick="filterSubCategory('lash-layered', this); toggleEyelashMenu('layered', true);">輕盈層次毛</button>
-    <button class="sub-tab" onclick="filterSubCategory('lash-bloom', this); toggleEyelashMenu('bloom', true);">朵朵開花</button>
-    <button class="sub-tab" onclick="filterSubCategory('lash-Silky', this); toggleEyelashMenu('', false);"> 0.03 絲柔</button>
-    <button class="sub-tab" onclick="filterSubCategory('lash-Cashmere', this); toggleEyelashMenu('', false);">美瞳線扁毛</button>
-    <button class="sub-tab" onclick="filterSubCategory('lash-velvet', this); toggleEyelashMenu('', false);">眸若星晨羽絲絨</button>
-    <button class="sub-tab" onclick="filterSubCategory('lash-butterfly', this); toggleEyelashMenu('', false);">黑瞳4D羽蝶系列</button>
-    <button class="sub-tab" onclick="filterSubCategory('lash-color', this); toggleEyelashMenu('', false);">彩毛</button>
+            <div id="sub-category-eyelash" class="sub-category-menu" style="display: none; flex-wrap: wrap;">
+                <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
+                <button class="sub-tab active" onclick="filterSubCategory('all', this); toggleEyelashMenu('', false);">顯示全部</button>
+                <button class="sub-tab" onclick="filterSubCategory('lash-fan', this); toggleEyelashMenu('', false);">黑耀魔幻羽扇</button>
+                <button class="sub-tab" onclick="filterSubCategory('lash-mink', this); toggleEyelashMenu('', false);">頂級人造水貂絲</button>
+                <button class="sub-tab" onclick="filterSubCategory('lash-layered', this); toggleEyelashMenu('layered', true);">輕盈層次毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('lash-bloom', this); toggleEyelashMenu('bloom', true);">朵朵開花</button>
+                <button class="sub-tab" onclick="filterSubCategory('lash-Silky', this); toggleEyelashMenu('', false);"> 0.03 絲柔</button>
+                <button class="sub-tab" onclick="filterSubCategory('lash-Cashmere', this); toggleEyelashMenu('', false);">美瞳線扁毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('lash-velvet', this); toggleEyelashMenu('', false);">眸若星晨羽絲絨</button>
+                <button class="sub-tab" onclick="filterSubCategory('lash-butterfly', this); toggleEyelashMenu('', false);">黑瞳4D羽蝶系列</button>
+                <button class="sub-tab" onclick="filterSubCategory('lash-color', this); toggleEyelashMenu('', false);">彩毛</button>
 
-    <div id="eyelash-layered-menu" style="display: none; width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); gap: 6px; flex-wrap: wrap;">
-        <span style="font-size: 12px; color: var(--text-muted); align-self: center; margin-right: 5px;">層次毛系列 ｜</span>
-        <button class="sub-tab" onclick="filterSubCategory('lash-kellis', this)">凱莉絲花園</button>
-        <button class="sub-tab" onclick="filterSubCategory('lash-camellia', this)">完美茶花</button>
-    </div>
+                <div id="eyelash-layered-menu" style="display: none; width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); gap: 6px; flex-wrap: wrap;">
+                    <span style="font-size: 12px; color: var(--text-muted); align-self: center; margin-right: 5px;">層次毛系列 ｜</span>
+                    <button class="sub-tab" onclick="filterSubCategory('lash-kellis', this)">凱莉絲花園</button>
+                    <button class="sub-tab" onclick="filterSubCategory('lash-camellia', this)">完美茶花</button>
+                </div>
 
-    <div id="eyelash-bloom-menu" style="display: none; width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); gap: 6px; flex-wrap: wrap;">
-        <span style="font-size: 12px; color: var(--text-muted); align-self: center; margin-right: 5px;">開花系列 ｜</span>
-        <button class="sub-tab" onclick="filterSubCategory('lash-yy', this)">PLAY YY毛</button>
-        <button class="sub-tab" onclick="filterSubCategory('lash-clover3', this)">完美豐盈三葉草</button>
-        <button class="sub-tab" onclick="filterSubCategory('lash-clover5', this)">完美豐盈五葉草</button>
-        <button class="sub-tab" onclick="filterSubCategory('lash-w', this)">完美豐盈雙層W毛</button>
-    </div>
-</div>
+                <div id="eyelash-bloom-menu" style="display: none; width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); gap: 6px; flex-wrap: wrap;">
+                    <span style="font-size: 12px; color: var(--text-muted); align-self: center; margin-right: 5px;">開花系列 ｜</span>
+                    <button class="sub-tab" onclick="filterSubCategory('lash-yy', this)">PLAY YY毛</button>
+                    <button class="sub-tab" onclick="filterSubCategory('lash-clover3', this)">完美豐盈三葉草</button>
+                    <button class="sub-tab" onclick="filterSubCategory('lash-clover5', this)">完美豐盈五葉草</button>
+                    <button class="sub-tab" onclick="filterSubCategory('lash-w', this)">完美豐盈雙層W毛</button>
+                </div>
+            </div>
 
-<div id="sub-category-perimeter" class="sub-category-menu" style="display: none;">
-    <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
-    <button class="sub-tab active" onclick="filterSubCategory('all', this)">顯示全部</button>
-    <button class="sub-tab" onclick="filterSubCategory('glue', this)">美睫黑膠/卸除</button>
-    <button class="sub-tab" onclick="filterSubCategory('cleaning', this)">清潔/保養</button>
-    <button class="sub-tab" onclick="filterSubCategory('tweezers', this)">夾子系列</button>
-    <button class="sub-tab" onclick="filterSubCategory('p-others', this)">周邊商品</button>
-</div>
+            <div id="sub-category-perimeter" class="sub-category-menu" style="display: none;">
+                <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
+                <button class="sub-tab active" onclick="filterSubCategory('all', this)">顯示全部</button>
+                <button class="sub-tab" onclick="filterSubCategory('glue', this)">美睫黑膠/卸除</button>
+                <button class="sub-tab" onclick="filterSubCategory('cleaning', this)">清潔/保養</button>
+                <button class="sub-tab" onclick="filterSubCategory('tweezers', this)">夾子系列</button>
+                <button class="sub-tab" onclick="filterSubCategory('p-others', this)">周邊商品</button>
+            </div>
 
-<div id="sub-category-wax" class="sub-category-menu" style="display: none;">
-    <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
-    <button class="sub-tab active" onclick="filterSubCategory('all', this)">顯示全部</button>
-    <button class="sub-tab" onclick="filterSubCategory('wax-beans', this)">蠟豆/軟蠟</button>
-    <button class="sub-tab" onclick="filterSubCategory('skin-care', this)">裸肌保養</button>
-    <button class="sub-tab" onclick="filterSubCategory('wax-machine', this)">熱蠟機/鍋爐</button>
-    <button class="sub-tab" onclick="filterSubCategory('paraffin', this)">巴拿芬保養蠟</button>
-    <button class="sub-tab" onclick="filterSubCategory('seaweed', this)">海藻矽晶保養</button>
-    <button class="sub-tab" onclick="filterSubCategory('towel', this)">毛巾/浴巾</button>
-    <button class="sub-tab" onclick="filterSubCategory('disposable', this)">拋棄式床單/鋪巾</button>
-    <button class="sub-tab" onclick="filterSubCategory('wax-others', this)">周邊商品</button>
-    <button class="sub-tab" onclick="filterSubCategory('beauty-others', this)">美容周邊商品</button>
-</div>
+            <div id="sub-category-wax" class="sub-category-menu" style="display: none;">
+                <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
+                <button class="sub-tab active" onclick="filterSubCategory('all', this)">顯示全部</button>
+                <button class="sub-tab" onclick="filterSubCategory('wax-beans', this)">蠟豆/軟蠟</button>
+                <button class="sub-tab" onclick="filterSubCategory('skin-care', this)">裸肌保養</button>
+                <button class="sub-tab" onclick="filterSubCategory('wax-machine', this)">熱蠟機/鍋爐</button>
+                <button class="sub-tab" onclick="filterSubCategory('paraffin', this)">巴拿芬保養蠟</button>
+                <button class="sub-tab" onclick="filterSubCategory('seaweed', this)">海藻矽晶保養</button>
+                <button class="sub-tab" onclick="filterSubCategory('towel', this)">毛巾/浴巾</button>
+                <button class="sub-tab" onclick="filterSubCategory('disposable', this)">拋棄式床單/鋪巾</button>
+                <button class="sub-tab" onclick="filterSubCategory('wax-others', this)">周邊商品</button>
+                <button class="sub-tab" onclick="filterSubCategory('beauty-others', this)">美容周邊商品</button>
+            </div>
 
-<div id="sub-category-brows" class="sub-category-menu" style="display: none;">
-    <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
-    <button class="sub-tab active" onclick="filterSubCategory('all', this)">顯示全部</button>
-    <button class="sub-tab" onclick="filterSubCategory('color-10ml', this)">德國頂級植萃美顏色乳 10ML</button>
-    <button class="sub-tab" onclick="filterSubCategory('color-3ml', this)">德國頂級植萃美顏色乳 3ML</button>
-    <button class="sub-tab" onclick="filterSubCategory('oriental', this)">東方之繡</button>
-    <button class="sub-tab" onclick="filterSubCategory('machine', this)">專業核心儀器機器</button>
-    <button class="sub-tab" onclick="filterSubCategory('needle-all', this)">免麻儀與腕表專用全拋針</button>
-    <button class="sub-tab" onclick="filterSubCategory('manual-pen', this)">專業手工紋繡操作筆</button>
-    <button class="sub-tab" onclick="filterSubCategory('manual-needle', this)">一般手工常備針片</button>
-    <button class="sub-tab" onclick="filterSubCategory('combo-needle', this)">通用/卡扣一體式機器針片</button>
-    <button class="sub-tab" onclick="filterSubCategory('needle-cap', this)">精準機器配備針帽</button>
-    <button class="sub-tab" onclick="filterSubCategory('bionic-tools', this)">仿生練習專用系列工具</button>
-    <button class="sub-tab" onclick="filterSubCategory('palette', this)">專業色料架與工作托盤</button>
-    <button class="sub-tab" onclick="filterSubCategory('cup', this)">戒指色料杯與吸色海綿</button>
-    <button class="sub-tab" onclick="filterSubCategory('repair', this)">專用修護鎖色與去角質精華</button>
-    <button class="sub-tab" onclick="filterSubCategory('location', this)">必備精準定位周邊耗材</button>
-</div>
+            <div id="sub-category-brows" class="sub-category-menu" style="display: none;">
+                <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
+                <button class="sub-tab active" onclick="filterSubCategory('all', this)">顯示全部</button>
+                <button class="sub-tab" onclick="filterSubCategory('color-10ml', this)">德國頂級植萃美顏色乳 10ML</button>
+                <button class="sub-tab" onclick="filterSubCategory('color-3ml', this)">德國頂級植萃美顏色乳 3ML</button>
+                <button class="sub-tab" onclick="filterSubCategory('oriental', this)">東方之繡</button>
+                <button class="sub-tab" onclick="filterSubCategory('machine', this)">專業核心儀器機器</button>
+                <button class="sub-tab" onclick="filterSubCategory('needle-all', this)">免麻儀與腕表專用全拋針</button>
+                <button class="sub-tab" onclick="filterSubCategory('manual-pen', this)">專業手工紋繡操作筆</button>
+                <button class="sub-tab" onclick="filterSubCategory('manual-needle', this)">一般手工常備針片</button>
+                <button class="sub-tab" onclick="filterSubCategory('combo-needle', this)">通用/卡扣一體式機器針片</button>
+                <button class="sub-tab" onclick="filterSubCategory('needle-cap', this)">精準機器配備針帽</button>
+                <button class="sub-tab" onclick="filterSubCategory('bionic-tools', this)">仿生練習專用系列工具</button>
+                <button class="sub-tab" onclick="filterSubCategory('palette', this)">專業色料架與工作托盤</button>
+                <button class="sub-tab" onclick="filterSubCategory('cup', this)">戒指色料杯與吸色海綿</button>
+                <button class="sub-tab" onclick="filterSubCategory('repair', this)">專用修護鎖色與去角質精華</button>
+                <button class="sub-tab" onclick="filterSubCategory('location', this)">必備精準定位周邊耗材</button>
+            </div>
 
-<div id="sub-category-makeup" class="sub-category-menu" style="display: none; flex-wrap: wrap;">
-    <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
-    <button class="sub-tab active" onclick="filterSubCategory('all', this); toggleLashesMenu(false);">顯示全部</button>
-    <button class="sub-tab" onclick="filterSubCategory('pens', this); toggleLashesMenu(false);">美妝筆類</button>
-    <button class="sub-tab" onclick="filterSubCategory('makeup-consumables', this); toggleLashesMenu(false);">周邊耗材</button>
-    <button class="sub-tab" onclick="filterSubCategory('eyelid', this); toggleLashesMenu(false);">雙眼皮貼</button>
-    <button class="sub-tab" onclick="filterSubCategory('lashes', this); toggleLashesMenu(true);">假睫毛</button>
-    <button class="sub-tab" onclick="filterSubCategory('brushes', this); toggleLashesMenu(false);">高級手工刷具</button>
+            <div id="sub-category-makeup" class="sub-category-menu" style="display: none; flex-wrap: wrap;">
+                <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
+                <button class="sub-tab active" onclick="filterSubCategory('all', this); toggleLashesMenu(false);">顯示全部</button>
+                <button class="sub-tab" onclick="filterSubCategory('pens', this); toggleLashesMenu(false);">美妝筆類</button>
+                <button class="sub-tab" onclick="filterSubCategory('makeup-consumables', this); toggleLashesMenu(false);">周邊耗材</button>
+                <button class="sub-tab" onclick="filterSubCategory('eyelid', this); toggleLashesMenu(false);">雙眼皮貼</button>
+                <button class="sub-tab" onclick="filterSubCategory('lashes', this); toggleLashesMenu(true);">假睫毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('brushes', this); toggleLashesMenu(false);">高級手工刷具</button>
 
-    <div id="lashes-series-menu" style="display: none; width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); gap: 6px; flex-wrap: wrap;">
-        <span style="font-size: 12px; color: var(--text-muted); align-self: center; margin-right: 5px;">假睫毛系列 ｜</span>
-        <button class="sub-tab" onclick="filterSubCategory('lashes-jw', this)">尖尾系列</button>
-        <button class="sub-tab" onclick="filterSubCategory('lashes-gz', this)">公主系列</button>
-        <button class="sub-tab" onclick="filterSubCategory('lashes-zr', this)">自然系列</button>
-        <button class="sub-tab" onclick="filterSubCategory('lashes-wt', this)">舞台系列</button>
-        <button class="sub-tab" onclick="filterSubCategory('lashes-tm', this)">透明梗系列</button>
-    </div>
-</div>
+                <div id="lashes-series-menu" style="display: none; width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); gap: 6px; flex-wrap: wrap;">
+                    <span style="font-size: 12px; color: var(--text-muted); align-self: center; margin-right: 5px;">假睫毛系列 ｜</span>
+                    <button class="sub-tab" onclick="filterSubCategory('lashes-jw', this)">尖尾系列</button>
+                    <button class="sub-tab" onclick="filterSubCategory('lashes-gz', this)">公主系列</button>
+                    <button class="sub-tab" onclick="filterSubCategory('lashes-zr', this)">自然系列</button>
+                    <button class="sub-tab" onclick="filterSubCategory('lashes-wt', this)">舞台系列</button>
+                    <button class="sub-tab" onclick="filterSubCategory('lashes-tm', this)">透明梗系列</button>
+                </div>
+            </div>
 
-<div id="sub-category-ear" class="sub-category-menu" style="display: none;">
-    <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
-    <button class="sub-tab active" onclick="filterSubCategory('all', this)">顯示全部</button>
-    <button class="sub-tab" onclick="filterSubCategory('bamboo', this)">竹柄系列</button>
-    <button class="sub-tab" onclick="filterSubCategory('silver', this)">銀針系列</button>
-    <button class="sub-tab" onclick="filterSubCategory('disposable-silver', this)">拋棄式銀針系列</button>
-    <button class="sub-tab" onclick="filterSubCategory('stainless', this)">不鏽鋼系列</button>
-    <button class="sub-tab" onclick="filterSubCategory('ear-light', this)">手持充電式採耳燈系列</button>
-    <button class="sub-tab" onclick="filterSubCategory('ear-bulb', this)">耳道吹球系列</button>
-</div>
+            <div id="sub-category-ear" class="sub-category-menu" style="display: none;">
+                <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
+                <button class="sub-tab active" onclick="filterSubCategory('all', this)">顯示全部</button>
+                <button class="sub-tab" onclick="filterSubCategory('bamboo', this)">竹柄系列</button>
+                <button class="sub-tab" onclick="filterSubCategory('silver', this)">銀針系列</button>
+                <button class="sub-tab" onclick="filterSubCategory('disposable-silver', this)">拋棄式銀針系列</button>
+                <button class="sub-tab" onclick="filterSubCategory('stainless', this)">不鏽鋼系列</button>
+                <button class="sub-tab" onclick="filterSubCategory('ear-light', this)">手持充電式採耳燈系列</button>
+                <button class="sub-tab" onclick="filterSubCategory('ear-bulb', this)">耳道吹球系列</button>
+            </div>
 
-<div id="sub-category-nail" class="sub-category-menu" style="display: none; flex-wrap: wrap;">
-    <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
-    <button class="sub-tab active" onclick="filterSubCategory('all', this); toggleNailBrushMenu(false);">顯示全部</button>
-    <button class="sub-tab" onclick="filterSubCategory('nail-brush', this); toggleNailBrushMenu(true);">美甲筆刷區</button>
-    <button class="sub-tab" onclick="filterSubCategory('nail-others', this); toggleNailBrushMenu(false);">美甲保養</button>
-    <button class="sub-tab" onclick="filterSubCategory('nail-lamps', this); toggleNailBrushMenu(false);">美甲燈具</button>
-    <button class="sub-tab" onclick="filterSubCategory('nail-grinding', this); toggleNailBrushMenu(false);">磨棒耗材</button>
-    
-    <div id="nail-brush-series-menu" style="display: none; width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); gap: 6px; flex-wrap: wrap;">
-        <span style="font-size: 12px; color: var(--text-muted); align-self: center; margin-right: 5px;">筆刷系列 ｜</span>
-        <button class="sub-tab" onclick="filterSubCategory('nail-round', this)">圓筆系列</button>
-        <button class="sub-tab" onclick="filterSubCategory('nail-angle', this)">斜口筆系列</button>
-        <button class="sub-tab" onclick="filterSubCategory('nail-flat', this)">平筆系列</button>
-        <button class="sub-tab" onclick="filterSubCategory('nail-liner', this)">線筆系列</button>
-        <button class="sub-tab" onclick="filterSubCategory('nail-art', this)">專業彩繪筆</button>
-    </div>
-</div>
+            <div id="sub-category-nail" class="sub-category-menu" style="display: none; flex-wrap: wrap;">
+                <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
+                <button class="sub-tab active" onclick="filterSubCategory('all', this); toggleNailBrushMenu(false);">顯示全部</button>
+                <button class="sub-tab" onclick="filterSubCategory('nail-brush', this); toggleNailBrushMenu(true);">美甲筆刷區</button>
+                <button class="sub-tab" onclick="filterSubCategory('nail-others', this); toggleNailBrushMenu(false);">美甲保養</button>
+                <button class="sub-tab" onclick="filterSubCategory('nail-lamps', this); toggleNailBrushMenu(false);">美甲燈具</button>
+                <button class="sub-tab" onclick="filterSubCategory('nail-grinding', this); toggleNailBrushMenu(false);">磨棒耗材</button>
+                
+                <div id="nail-brush-series-menu" style="display: none; width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); gap: 6px; flex-wrap: wrap;">
+                    <span style="font-size: 12px; color: var(--text-muted); align-self: center; margin-right: 5px;">筆刷系列 ｜</span>
+                    <button class="sub-tab" onclick="filterSubCategory('nail-round', this)">圓筆系列</button>
+                    <button class="sub-tab" onclick="filterSubCategory('nail-angle', this)">斜口筆系列</button>
+                    <button class="sub-tab" onclick="filterSubCategory('nail-flat', this)">平筆系列</button>
+                    <button class="sub-tab" onclick="filterSubCategory('nail-liner', this)">線筆系列</button>
+                    <button class="sub-tab" onclick="filterSubCategory('nail-art', this)">專業彩繪筆</button>
+                </div>
+            </div>
 
-<div id="sub-category-sale" class="sub-category-menu" style="display: none; flex-wrap: wrap;">
-    <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
-    <button class="sub-tab active" onclick="filterSubCategory('all', this)">顯示全部</button>
-    <button class="sub-tab" onclick="filterSubCategory('sale-fan', this)">黑耀魔幻羽扇</button>
-    <button class="sub-tab" onclick="filterSubCategory('sale-mink', this)">頂級人造水貂絲</button>
-    <button class="sub-tab" onclick="filterSubCategory('sale-real-mink', this)">奢華手工真貂毛</button>
-    <button class="sub-tab" onclick="filterSubCategory('sale-pillow-swallow', this)">獨創枕型輕量燕尾睫</button>
-    <button class="sub-tab" onclick="filterSubCategory('sale-5th-ave', this)">睛艷第五大道</button>
-    <button class="sub-tab" onclick="filterSubCategory('sale-gradient', this)">魔法渲染漸層睫毛</button>
-    <button class="sub-tab" onclick="filterSubCategory('sale-peacock', this)">法式輕柔孔雀羽</button>
-    <button class="sub-tab" onclick="filterSubCategory('sale-easy-bloom', this)">Easy花</button>
-    <button class="sub-tab" onclick="filterSubCategory('sale-maxia', this)">麥斯雅花園</button>
-    <button class="sub-tab" onclick="filterSubCategory('sale-camellia', this)">完美茶花</button>
-    <button class="sub-tab" onclick="filterSubCategory('sale-kellis', this)">凱莉絲花園</button>
-    <button class="sub-tab" onclick="filterSubCategory('sale-l-plus', this)">L+絕翹天后</button>
-</div>
+            <div id="sub-category-sale" class="sub-category-menu" style="display: none; flex-wrap: wrap;">
+                <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
+                <button class="sub-tab active" onclick="filterSubCategory('all', this)">顯示全部</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-fan', this)">黑耀魔幻羽扇</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-mink', this)">頂級人造水貂絲</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-real-mink', this)">奢華手工真貂毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-pillow-swallow', this)">獨創枕型輕量燕尾睫</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-5th-ave', this)">睛艷第五大道</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-gradient', this)">魔法渲染漸層睫毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-peacock', this)">法式輕柔孔雀羽</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-easy-bloom', this)">Easy花</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-maxia', this)">麥斯雅花園</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-camellia', this)">完美茶花</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-kellis', this)">凱莉絲花園</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-l-plus', this)">L+絕翹天后</button>
+            </div>
 
-<div class="product-grid" id="main-product-grid">
+            <div class="product-grid" id="main-product-grid">
                 
                 <div class="product-item" data-id="E1_UNDER" data-name="黑耀魔幻羽扇 下睫毛" data-category="eyelash" data-sub="lash-fan" data-lash="true" data-base-price="150" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
