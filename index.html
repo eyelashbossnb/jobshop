@@ -8902,6 +8902,7 @@ function submitOrder(evt) {
     }
 }
 
+// 🌟【修復與融合核心】：強制防護無庫存商品寫入後台
 function executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState) {
     console.log("=== 正在生成訂單明細與序號 ===");
 
@@ -8924,6 +8925,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
     let itemsSummary = []; 
     let cartBackup = {};
     const eyeMaskSharedKey = "A70 超薄U型切口眼膜(對稱)";
+    let validItemIndex = 1;
 
     try {
         let cartArray = [];
@@ -8943,10 +8945,12 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             });
         }
 
-        cartArray.forEach((item, index) => {
+        cartArray.forEach((item) => {
             const itemId = item.id || "N/A";
-            const itemQty = item.qty || 1;
-            const specText = item.spec ? ` (${item.spec})` : '';
+            const itemQty = parseInt(item.qty, 10) || 0;
+
+            // 1. 數量 <= 0 直接跳過
+            if (itemQty <= 0) return;
 
             let itemName = item.name;
             let itemPrice = item.price;
@@ -8959,8 +8963,26 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             itemName = itemName || "商品 " + itemId;
             itemPrice = itemPrice || 0;
 
-            orderDetails += `${index + 1}. [${itemId}] ${itemName}${specText} ($${itemPrice}) x ${itemQty}\n`;
+            // 🛡️ 2.【庫存二次確認防護】：即時向雲端資料庫比對庫存數量
+            let currentStock = null;
+            if (typeof getStockFromDatabase === 'function') {
+                currentStock = getStockFromDatabase(itemName);
+                if (currentStock === null && typeof productConfig !== 'undefined' && productConfig[itemId]) {
+                    currentStock = productConfig[itemId].max;
+                }
+            }
+
+            // ❌ 如果該商品在資料庫庫存為 0，直接自動刪除剔除！不打包進訂單
+            if (currentStock !== null && currentStock <= 0) {
+                console.warn(`⚠️ 商品「${itemName}」已被標記無庫存，自動從訂單中刪除！`);
+                return; 
+            }
+
+            // 3. 只有「確定有庫存」的商品才會組裝寫入明細
+            const specText = item.spec ? ` (${item.spec})` : '';
+            orderDetails += `${validItemIndex}. [${itemId}] ${itemName}${specText} ($${itemPrice}) x ${itemQty}\n`;
             itemsSummary.push(`${itemName} x${itemQty}`);
+            validItemIndex++;
 
             if (typeof productConfig !== 'undefined' && productConfig[itemId]) {
                 if (productConfig[itemId].isSharedStock) {
@@ -9001,7 +9023,13 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             }
         });
 
-        if (!orderDetails) orderDetails = "購物車內無有效商品。";
+        // 🛡️ 4. 最終防護：如果購物車內所有商品被剔除後變空了，中斷送出！
+        if (itemsSummary.length === 0) {
+            alert("❌ 送出失敗：您購物車內的商品目前皆無庫存，無法成立訂單！");
+            if (typeof setSubmittingState === 'function') setSubmittingState(false);
+            return;
+        }
+
     } catch (e) {
         console.error(e);
         orderDetails = "前台商品明細解析異常：" + e.message;
