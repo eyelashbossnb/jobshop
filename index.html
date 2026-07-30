@@ -8902,7 +8902,7 @@ function submitOrder(evt) {
     }
 }
 
-// 🌟【修復與融合核心】：強制防護無庫存商品寫入後台
+// 🌟【完美修復版本】：保護毛款正常寫入，同時剔除真正無庫存的常規商品
 function executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState) {
     console.log("=== 正在生成訂單明細與序號 ===");
 
@@ -8963,22 +8963,28 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             itemName = itemName || "商品 " + itemId;
             itemPrice = itemPrice || 0;
 
-            // 🛡️ 2.【庫存二次確認防護】：即時向雲端資料庫比對庫存數量
-            let currentStock = null;
-            if (typeof getStockFromDatabase === 'function') {
-                currentStock = getStockFromDatabase(itemName);
-                if (currentStock === null && typeof productConfig !== 'undefined' && productConfig[itemId]) {
-                    currentStock = productConfig[itemId].max;
+            // 💡 判斷是否為毛款或多規格商品 (帶有下劃線、特殊SKU、或產品名包含睫毛)
+            const isLashOrVariant = itemId.includes('_') || (typeof productConfig !== 'undefined' && productConfig[itemId] && productConfig[itemId]._isSpecialSku) || itemName.includes("睫毛");
+
+            // 🛡️ 2.【庫存二次確認防護】：
+            if (!isLashOrVariant) {
+                // 一般單一商品才進行模糊名稱二次比對
+                let currentStock = null;
+                if (typeof getStockFromDatabase === 'function') {
+                    currentStock = getStockFromDatabase(itemName);
+                    if (currentStock === null && typeof productConfig !== 'undefined' && productConfig[itemId]) {
+                        currentStock = productConfig[itemId].max;
+                    }
+                }
+
+                // ❌ 僅針對「確定庫存為 0 的一般商品」進行剔除
+                if (currentStock !== null && currentStock <= 0) {
+                    console.warn(`⚠️ 商品「${itemName}」已被標記無庫存，自動從訂單中刪除！`);
+                    return; 
                 }
             }
 
-            // ❌ 如果該商品在資料庫庫存為 0，直接自動刪除剔除！不打包進訂單
-            if (currentStock !== null && currentStock <= 0) {
-                console.warn(`⚠️ 商品「${itemName}」已被標記無庫存，自動從訂單中刪除！`);
-                return; 
-            }
-
-            // 3. 只有「確定有庫存」的商品才會組裝寫入明細
+            // 3. 毛款與正常有庫存的商品，一律正常打包寫入明細！
             const specText = item.spec ? ` (${item.spec})` : '';
             orderDetails += `${validItemIndex}. [${itemId}] ${itemName}${specText} ($${itemPrice}) x ${itemQty}\n`;
             itemsSummary.push(`${itemName} x${itemQty}`);
@@ -8996,6 +9002,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
                 }
             }
 
+            // 打包傳給後台扣庫存的資料包
             if (typeof cart !== 'undefined' && cart[itemId] !== undefined) {
                 const qty = cart[itemId];
                 if (typeof productConfig !== 'undefined' && productConfig[itemId]) {
@@ -9011,19 +9018,19 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
                             const finalDeductQty = is100Pairs ? (qty * 2) : qty;
                             cartBackup[backendEyeMaskName] = (cartBackup[backendEyeMaskName] || 0) + finalDeductQty;
                         } else {
-                            cartBackup[pInfo.name] = qty;
+                            cartBackup[pInfo.name || itemName] = qty;
                         }
                     } else {
                         let backendKey = pInfo.name.toUpperCase().includes(itemId.toUpperCase()) ? pInfo.name : itemId + pInfo.name;
                         cartBackup[backendKey] = qty;
                     }
                 } else {
-                    cartBackup[itemId] = qty;
+                    cartBackup[itemName || itemId] = qty;
                 }
             }
         });
 
-        // 🛡️ 4. 最終防護：如果購物車內所有商品被剔除後變空了，中斷送出！
+        // 🛡️ 4. 防呆攔截：如果購物車內完全沒有有效商品，中斷送出！
         if (itemsSummary.length === 0) {
             alert("❌ 送出失敗：您購物車內的商品目前皆無庫存，無法成立訂單！");
             if (typeof setSubmittingState === 'function') setSubmittingState(false);
