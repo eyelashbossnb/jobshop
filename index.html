@@ -579,7 +579,7 @@
                         <img src="https://i.ibb.co/rRWmDjvH/catalog-png.png" alt="睫老闆商品型錄" style="width: 75px; height: 100px; object-fit: cover; border-radius: 8px; box-shadow: 0 6px 14px rgba(0,0,0,0.12); flex-shrink: 0;">
                         <div>
                             <div style="font-size: 18px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; letter-spacing: 0.05em;">睫老闆商品型錄</div>
-                            <div style="font-size: 13px; color: var(--text-muted);">全螢幕線上翻頁型錄</div>
+                            <div style="font-size: 13px; color: var(--text-muted);">點擊開啟電子型錄</div>
                         </div>
                     </div>
                     <div style="background-color: var(--accent-color); color: #ffffff; padding: 9px 20px; border-radius: 22px; font-size: 13px; font-weight: 500; letter-spacing: 0.05em; white-space: nowrap; margin-left: 12px;">
@@ -594,8 +594,8 @@
                     <div style="display: flex; align-items: center; gap: 20px;">
                         <img src="https://i.ibb.co/KpY4YFWC/0.png" alt="VIP會員｜訂購指南" style="width: 75px; height: 100px; object-fit: cover; border-radius: 8px; box-shadow: 0 6px 14px rgba(0,0,0,0.12); flex-shrink: 0;">
                         <div>
-                            <div style="font-size: 18px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; letter-spacing: 0.05em;">尊榮美業精選電子型錄</div>
-                            <div style="font-size: 13px; color: var(--text-muted);">點擊開啟線上電子型錄</div>
+                            <div style="font-size: 18px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; letter-spacing: 0.05em;">VIP會員｜訂購指南</div>
+                            <div style="font-size: 13px; color: var(--text-muted);">點擊開啟電子型錄</div>
                         </div>
                     </div>
                     <div style="background-color: var(--accent-color); color: #ffffff; padding: 9px 20px; border-radius: 22px; font-size: 13px; font-weight: 500; letter-spacing: 0.05em; white-space: nowrap; margin-left: 12px;">
@@ -608,7 +608,7 @@
 <!-- 👇 置中的中間活動圖片區塊 👇 -->
 <div id="banner-image-block" style="margin: 0 auto 30px auto; text-align: center; width: 100%; display: block;">
     <a href="https://ibb.co/hRFcdRnX" target="_blank" style="display: block; text-decoration: none;">
-        <img src="https://i.ibb.co/3ymvFy8f/1.png" alt="活動橫幅" style="width: 100%; max-width: 100%; height: auto; border-radius: 12px; display: block; border: 0; margin: 0 auto;">
+        <img src="https://i.ibb.co/BHxyz87R/1.png" alt="活動橫幅" style="width: 100%; max-width: 100%; height: auto; border-radius: 12px; display: block; border: 0; margin: 0 auto;">
     </a>
 </div>
 <!-- 👆 置中的中間活動圖片區塊 👆 -->
@@ -6656,7 +6656,7 @@
                 <div><span class="policy-tag">滿額免運</span>單筆滿 NT 3,000 元(含)以上享本島/外島常溫與 7-11 免運。</div>
                 <div style="margin-top: 8px; border-top: 1px dashed #eedcd9; padding-top: 8px;"><strong>⚠️ 未滿 NT 3,000 元運費計算：</strong></div>
                 <div>• 常溫宅配：NT 100</div>
-                <div>• 7-11 店到店：NT 60</div>
+                <div>• 7-11 店到店：NT 38</div>
                 <div>• 指定黑貓：NT 160</div>
                 <div>• 黑貓低溫：依包裹大小計算</div>
                 <div>• 門市自取：免運費</div>
@@ -8565,7 +8565,7 @@ function updateCartSummary() {
         } else {
             switch (shippingMethod) {
                 case 'normal': shippingFee = 100; break;
-                case 'cvs': shippingFee = 60; break;
+                case 'cvs': shippingFee = 38; break; // 👈 已將 7-11 超商取貨運費改為 38 元
                 case 'blackcat': shippingFee = 160; break;
                 case 'blackcat-cold': shippingFee = 200; break;
                 case 'store-pickup': shippingFee = 0; break;
