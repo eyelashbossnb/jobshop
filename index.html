@@ -37,16 +37,17 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 20px;
+            padding: 10px 20px; /* 稍微縮減上下外距，留空間給超大 Logo */
         }
 
+        /* 🆕 超大版 Logo 圖片樣式設定 */
         .logo {
             display: flex;
             align-items: center;
             text-decoration: none;
         }
         .logo-img {
-            height: 85px;
+            height: 85px; /* 👈 超大版高度設定 (若要再更大可自行調整為 100px 或 120px) */
             width: auto;
             object-fit: contain;
             display: block;
@@ -75,6 +76,7 @@
             width: 160px;
         }
         
+        /* 導覽列按鈕與會員狀態區 */
         .nav-btn {
             background-color: transparent;
             border: 1px solid var(--text-main);
@@ -137,7 +139,7 @@
                 gap: 15px;
             }
             .logo-img {
-                height: 65px;
+                height: 65px; /* 手機上維持適中超大比例，防止被遮擋 */
             }
             .main-container { 
                 grid-template-columns: 1fr; 
@@ -171,6 +173,7 @@
             background-color: var(--accent-color);
         }
 
+        /* 商品分類標籤樣式 */
         .category-container {
             display: flex;
             gap: 12px;
@@ -198,6 +201,7 @@
             box-shadow: 0 4px 12px rgba(232, 165, 152, 0.2);
         }
 
+        /* 子分類功能選單外框樣式 */
         .sub-category-menu {
             gap: 10px;
             margin-bottom: 25px;
@@ -231,6 +235,7 @@
             box-shadow: 0 2px 8px rgba(212, 163, 115, 0.15) !important;
         }
         
+        /* 商品區塊排版 */
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -256,6 +261,7 @@
         .product-price { color: var(--accent-color); font-weight: 600; margin-bottom: 6px; font-size: 16px; }
         .product-stock { font-size: 12px; color: var(--text-muted); margin-bottom: 15px; }
         
+        /* 睫毛按鈕專用規格外框 */
         .lash-variant-container {
             text-align: left;
             margin: 10px 0;
@@ -275,6 +281,7 @@
         .spec-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
         .spec-btn.active { background-color: var(--primary-color); border-color: var(--primary-color); color: #fff; font-weight: bold; }
 
+        /* 數量選取計數器 */
         .quantity-selector {
             display: inline-flex;
             align-items: center;
@@ -313,6 +320,7 @@
             outline: none;
         }
 
+        /* 表單欄位排版 */
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -352,6 +360,7 @@
             min-height: 80px;
         }
         
+        /* 右側明細排版 */
         .cart-item {
             display: flex;
             justify-content: space-between;
@@ -413,6 +422,7 @@
             margin-top: 12px;
         }
         
+        /* 運費規範說明區塊 */
         .shipping-policy-box {
             background-color: var(--warning-bg);
             border: 1px solid #f5e6e3;
@@ -436,6 +446,7 @@
             font-size: 11px;
         }
 
+        /* 彈出視窗共同遮罩與主體 */
         .modal-overlay {
             position: fixed;
             top:0; left:0; width:100%; height:100%;
@@ -469,6 +480,7 @@
             line-height: 1;
         }
 
+        /* 訂單查詢結果面板 */
         .search-result-box {
             margin-top: 20px;
             padding: 16px;
@@ -494,6 +506,7 @@
             color: var(--text-muted);
         }
 
+        /* 按鈕樣式 */
         .btn {
             background-color: var(--text-main);
             color: #fff;
@@ -519,12 +532,14 @@
             font-size: 14px;
         }
 
+        /* 針對 Chrome, Safari, Edge, Opera 瀏覽器隱藏上下箭頭 */
         .quantity-input::-webkit-outer-spin-button,
         .quantity-input::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
 
+        /* 針對 Firefox 瀏覽器隱藏上下箭頭 */
         .quantity-input[type=number] {
             -moz-appearance: textfield;
         }
@@ -538,6 +553,7 @@
 
 <header>
     <div class="header-container">
+        <!-- 🆕 超大版圖片 Logo -->
         <a href="#" class="logo">
             <img src="https://i.ibb.co/BH9z3D5D/image.png" alt="睫老闆美妝百貨" class="logo-img">
         </a>
@@ -554,8 +570,8 @@
 
 <main class="main-container">
     <div>
-        <!-- 特大尊榮美業雙電子型錄區塊 -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 25px;">
+        <!-- 🆕 特大尊榮美業雙電子型錄區塊 -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 35px;">
             <!-- 左側型錄 -->
             <a href="https://heyzine.com/flip-book/a792795585.html" target="_BLANK" style="text-decoration: none; display: block;">
                 <div class="card" style="padding: 24px 26px; margin-bottom: 0; background: linear-gradient(135deg, #ffffff 0%, #faf7f5 100%); border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; height: 100%; box-sizing: border-box;">
@@ -589,13 +605,13 @@
             </a>
         </div>
 
-        <!-- 👇 置中的中間活動圖片區塊（已加入 id） 👇 -->
-        <div id="banner-image-block" style="margin: 0 auto 30px auto; text-align: center; width: 100%;">
-            <a href="https://i.ibb.co/sdJsBM7D/20260301.png" target="_blank" style="display: block; text-decoration: none;">
-                <img src="https://i.ibb.co/sdJsBM7D/20260301.png" alt="20260301" style="width: 100%; max-width: 100%; height: auto; border-radius: 12px; display: block; border: 0; margin: 0 auto;">
-            </a>
-        </div>
-        <!-- 👆 置中的中間活動圖片區塊 👆 -->
+<!-- 👇 置中的中間活動圖片區塊 👇 -->
+<div id="banner-image-block" style="margin: 0 auto 30px auto; text-align: center; width: 100%; display: block;">
+    <a href="https://ibb.co/hRFcdRnX" target="_blank" style="display: block; text-decoration: none;">
+        <img src="https://i.ibb.co/3ymvFy8f/1.png" alt="活動橫幅" style="width: 100%; max-width: 100%; height: auto; border-radius: 12px; display: block; border: 0; margin: 0 auto;">
+    </a>
+</div>
+<!-- 👆 置中的中間活動圖片區塊 👆 -->
 
         <!-- 原本的精選商品卡片區塊 -->
         <div class="card">
@@ -7903,7 +7919,7 @@ function saveMemberContact() {
 }
 
 // =============================================================
-// 7. 其他前端互動輔助函式與完美融合過濾邏輯
+// 7. 其他前端互動輔助函式
 // =============================================================
 function selectCategory(category, btnElement) {
     currentCategory = category;
@@ -7946,20 +7962,18 @@ function resetSubTabs(activeBtn) {
     activeBtn.classList.add('active');
 }
 
-// 🌟【核心修復與融入】：過濾商品 + 動態隱藏/顯示活動橫幅圖片
+// 🌟【融入修改版本】：商品篩選 + 輸入關鍵字時動態隱藏/顯示橫幅廣告圖片
 function filterProducts() {
     const searchInput = document.getElementById('product-search-input');
-    if (!searchInput) return;
+    const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
 
-    const query = searchInput.value.trim().toLowerCase();
-    
-    // 🖼️ 控制中間活動橫幅圖片隱藏/顯示
+    // 🖼️【新增功能】：搜尋框有字時自動隱藏活動圖片，清空時恢復顯示
     const bannerBlock = document.getElementById('banner-image-block');
     if (bannerBlock) {
         if (query.length > 0) {
             bannerBlock.style.display = 'none';  // 搜尋有字時隱藏
         } else {
-            bannerBlock.style.display = 'block'; // 清空搜尋時恢復顯示
+            bannerBlock.style.display = 'block'; // 搜尋清空時恢復顯示
         }
     }
 
