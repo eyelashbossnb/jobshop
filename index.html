@@ -7436,7 +7436,7 @@
 // =============================================================
 // 🛒 購物車持久化與頁面初始化整合 (完整修正版)
 // =============================================================
-// 💾 [新增] 將購物車與動態規格資料同步寫入 localStorage
+// 💾 將購物車與動態規格資料同步寫入 localStorage
 function saveCartToStorage() {
     try {
         localStorage.setItem('shopping_cart_data', JSON.stringify(cart));
@@ -7454,7 +7454,7 @@ function saveCartToStorage() {
     }
 }
 
-// 📂 [新增] 從 localStorage 自動載入並還原購物車資料
+// 📂 從 localStorage 自動載入並還原購物車資料
 function loadCartFromStorage() {
     try {
         const savedCart = localStorage.getItem('shopping_cart_data');
@@ -7480,31 +7480,31 @@ function loadCartFromStorage() {
 window.addEventListener('DOMContentLoaded', refreshStockDisplay);
 
 function refreshStockDisplay() {
-    // 0. 🌟 自動恢復會員登入狀態與購物車資料
+    // 0. 自動恢復會員登入狀態與購物車資料
     checkAndRestoreMemberLogin();
-    loadCartFromStorage(); // 👈 載入 localStorage 購物車快存
+    loadCartFromStorage(); // 載入 localStorage 購物車快存
 
-    // 1. 🌟 【核心修復】：依據會員身份即時動態計算並渲染商品折扣價格
+    // 1. 依據會員身份即時動態計算並渲染商品折扣價格
     if (typeof updateHomepageProductPrices === "function") {
         updateHomepageProductPrices();
     }
 
     // 2. 刷新常規面板數據與渲染購物車畫面
     renderMemberHeader();
-    renderCart(); // 👈 繪製購物車品項
+    renderCart(); // 繪製購物車品項
     updateCartSummary();
     if (typeof filterProducts === "function") {
         filterProducts();
     }
     
-    // 3. 【核心整合連動】：面板加載完畢後，安全觸發遠端撈取 10 個分頁庫存
+    // 3. 面板加載完畢後，安全觸發遠端撈取 10 個分頁庫存
     if (typeof fetchInventoryFromSheet === "function") {
         fetchInventoryFromSheet();
     }
 }
 
 // ==========================================
-// 2. 訂單查詢功能 (融合線上與本地保底) - 完美修正版
+// 2. 訂單查詢功能 (融合線上與本地保底)
 // ==========================================
 function queryOrderFromServer() {
     const rawInput = document.getElementById('search-input').value;
@@ -7601,7 +7601,7 @@ function queryOrderFromServer() {
 }
 
 // =============================================================
-// 1. 百貨會員中心：獨立配置與全域狀態（全面隔離防衝突）
+// 1. 百貨會員中心：獨立配置與全域狀態
 // =============================================================
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwK6VVHAtXUZkIfje392ZgkQzbUTSVKAeUgIENCK7h10x2VQnstCOM34Jolb7CUAnCuOg/exec";
 let deptIsLoggedIn = false;
@@ -7625,7 +7625,7 @@ const DEPT_MEMBER_LEVEL_SETTINGS = {
     "連鎖店B":  { discountRate: 0.58, note: "5.8折" }
 };
 
-// 🌟 自動檢查與還原會員登入狀態
+// 自動檢查與還原會員登入狀態
 function checkAndRestoreMemberLogin() {
     const savedMemberData = localStorage.getItem("deptMemberData");
     if (savedMemberData) {
@@ -7971,18 +7971,16 @@ function resetSubTabs(activeBtn) {
     activeBtn.classList.add('active');
 }
 
-// 🌟【融入修改版本】：商品篩選 + 輸入關鍵字時動態隱藏/顯示橫幅廣告圖片
 function filterProducts() {
     const searchInput = document.getElementById('product-search-input');
     const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
 
-    // 🖼️【新增功能】：搜尋框有字時自動隱藏活動圖片，清空時恢復顯示
     const bannerBlock = document.getElementById('banner-image-block');
     if (bannerBlock) {
         if (query.length > 0) {
-            bannerBlock.style.display = 'none';  // 搜尋有字時隱藏
+            bannerBlock.style.display = 'none';
         } else {
-            bannerBlock.style.display = 'block'; // 搜尋清空時恢復顯示
+            bannerBlock.style.display = 'block';
         }
     }
 
@@ -8270,7 +8268,7 @@ function executeLashSpecSelect(btn, productId) {
 }
 
 // =============================================================
-// 8. 加入購物車功能 (已同步持久化機制)
+// 8. 加入購物車功能
 // =============================================================
 function addLashToCart(productId) {
     const card = document.querySelector(`.product-item[data-id="${productId}"]`);
@@ -8342,7 +8340,7 @@ function addLashToCart(productId) {
 
     cart[cartItemSku] = currentInCart + qtySelected;
     leftInput.value = 0;
-    saveCartToStorage(); // 💾 [儲存至 localStorage]
+    saveCartToStorage();
     renderCart();
 }
 
@@ -8372,7 +8370,7 @@ function addToCartWithVariant(productId) {
 
     cart[cartKey] = newQty;
     leftInput.value = 0;
-    saveCartToStorage(); // 💾 [儲存至 localStorage]
+    saveCartToStorage();
     renderCart();
 }
 
@@ -8404,7 +8402,7 @@ function addToCart(productId) {
     
     cart[productId] = newQty;
     leftInput.value = 0;
-    saveCartToStorage(); // 💾 [儲存至 localStorage]
+    saveCartToStorage();
     renderCart();
 }
 
@@ -8424,12 +8422,12 @@ function changeCartItemQty(cartKey, change) {
         }
         cart[cartKey] = currentQty;
     }
-    saveCartToStorage(); // 💾 [儲存至 localStorage]
+    saveCartToStorage();
     renderCart();
 }
 
 // =============================================================
-// 9. 購物車渲染與小計更新
+// 9. 購物車渲染與小計更新 (7-11 店到店: 貨到付款 38 元，其餘 60 元)
 // =============================================================
 function renderCart() {
     const container = document.getElementById('cart-items-container');
@@ -8563,21 +8561,45 @@ function updateCartSummary() {
         subtotal += itemRealPrice * qty;
     });
 
+    // 🌟 讀取付款方式與物流選項 (實現 7-11 貨到付款 38 元 / 其餘 60 元)
+    const paymentSelect = document.getElementById('payment');
+    const paymentText = paymentSelect && paymentSelect.selectedIndex >= 0 ? paymentSelect.options[paymentSelect.selectedIndex].text : "";
+    const paymentVal = paymentSelect ? paymentSelect.value : "";
+
     const shippingSelect = document.getElementById('shipping');
     const shippingMethod = shippingSelect ? shippingSelect.value : "normal";
-    let shippingFee = 0; let shippingText = "$0";
+    let shippingFee = 0; 
+    let shippingText = "$0";
+
     if (subtotal > 0) {
         if (subtotal >= 3000) {
             if (shippingMethod === 'blackcat') { shippingFee = 60; shippingText = "$60 (滿額優惠)"; }
             else if (shippingMethod === 'blackcat-cold') { shippingFee = 200; shippingText = "$200"; }
             else { shippingFee = 0; shippingText = "免運 (滿額)"; }
         } else {
+            // 判斷是否為「貨到付款」
+            const isCOD = paymentText.includes('貨到付款') || paymentVal === 'cod';
+
             switch (shippingMethod) {
-                case 'normal': shippingFee = 100; break;
-                case 'cvs': shippingFee = 38; break; // 👈 已將 7-11 超商取貨運費改為 38 元
-                case 'blackcat': shippingFee = 160; break;
-                case 'blackcat-cold': shippingFee = 200; break;
-                case 'store-pickup': shippingFee = 0; break;
+                case 'normal': 
+                    shippingFee = 100; 
+                    break;
+                case 'cvs': // 7-11 店到店
+                    if (isCOD) {
+                        shippingFee = 38; // 🌟 貨到付款：38 元
+                    } else {
+                        shippingFee = 60; // 🌟 其餘結帳方式（轉帳/扣儲值金/信用卡等）：60 元
+                    }
+                    break;
+                case 'blackcat': 
+                    shippingFee = 160; 
+                    break;
+                case 'blackcat-cold': 
+                    shippingFee = 200; 
+                    break;
+                case 'store-pickup': 
+                    shippingFee = 0; 
+                    break;
             }
             shippingText = shippingFee === 0 ? "$0" : `$${shippingFee}`;
         }
@@ -8594,7 +8616,7 @@ function updateCartSummary() {
     const discountRow = document.getElementById("discount-row");
     if (discountRow) discountRow.style.display = "none";
     if(document.getElementById('grand-total')) document.getElementById('grand-total').innerText = `$${grandTotal.toLocaleString()}`;
-};
+}
 
 function toggleLashesMenu(show) {
     const lashesMenu = document.getElementById('lashes-series-menu');
@@ -8609,7 +8631,7 @@ function toggleNailBrushMenu(show) {
 // =============================================================
 // 10. 遠端 Google Sheets 即時庫存同步與模糊比對機制
 // =============================================================
-const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwJRMDaMtosNGswL7Pn5mAaAW49-uiuNK4Yw-XoVXrokGI1_CIA6ydcqhLLDwVgG-D02w/exec"; 
+const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbJRMDaMtosNGswL7Pn5mAaAW49-uiuNK4Yw-XoVXrokGI1_CIA6ydcqhLLDwVgG-D02w/exec"; 
 
 function sendDeductStockRequestToBackend(cartData) {
     if (!cartData || Object.keys(cartData).length === 0) return;
@@ -8776,7 +8798,7 @@ function updateLashVariantStockDisplay(productId) {
     }
 }
 
-// 🎯 會員全站常規折數運算核心
+// 會員全站常規折數運算核心
 function getDeptDiscountedPrice(basePrice) {
     if (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn && deptMemberData) {
         let currentLevel = deptMemberData.member_level || "一般會員";
@@ -8928,7 +8950,6 @@ function submitOrder(evt) {
     }
 }
 
-// 🌟【完美修復版本】：保護毛款正常寫入，同時剔除真正無庫存的常規商品
 function executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState) {
     console.log("=== 正在生成訂單明細與序號 ===");
 
@@ -9189,9 +9210,18 @@ document.addEventListener("DOMContentLoaded", function() {
     renderMemberHeader();
     updateHomepageProductPrices(); 
     
+    // 物流選單切換監聽
     const shippingSelect = document.getElementById("shipping");
     if (shippingSelect) {
         shippingSelect.addEventListener("change", function() {
+            setTimeout(updateCartSummary, 50); 
+        });
+    }
+
+    // 付款選單切換監聽 (切換貨到付款或其餘結帳方式時即時連動)
+    const paymentSelect = document.getElementById("payment");
+    if (paymentSelect) {
+        paymentSelect.addEventListener("change", function() {
             setTimeout(updateCartSummary, 50); 
         });
     }
