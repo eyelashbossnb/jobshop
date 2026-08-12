@@ -3046,20 +3046,30 @@
                 </div>
 
 		<div class="product-item" data-id="TA1" data-name="色乳-01 魅力黑灰" data-category="brows" data-sub="color-10ml">
-                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：TA1</div>
-                    <div class="product-name">色乳-01 魅力黑灰</div><div class="product-price">$450</div>
-                    <div class="product-stock" id="stock-text-TA1">載入中...</div>
-                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('TA1', -1)">-</button><input type="number" class="quantity-input" id="left-input-TA2" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('TA1', 1)">+</button></div>
-                    <button class="btn" onclick="addToCart('TA1')">加入購物車</button>
-                </div>
+    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：TA1</div>
+    <div class="product-name">色乳-01 魅力黑灰</div><div class="product-price">$450</div>
+    <div class="product-stock" id="stock-text-TA1">載入中...</div>
+    <div class="quantity-selector">
+        <button class="quantity-btn" onclick="changeLeftQty('TA1', -1)">-</button>
+        
+        <input type="number" class="quantity-input" id="left-input-TA1" value="0" min="0" >
+        <button class="quantity-btn" onclick="changeLeftQty('TA1', 1)">+</button>
+    </div>
+    <button class="btn" onclick="addToCart('TA1')">加入購物車</button>
+</div>
 
-                <div class="product-item" data-id="TA2" data-name="色乳-02 焦糖深棕" data-category="brows" data-sub="color-10ml">
-                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：TA2</div>
-                    <div class="product-name">色乳-02 焦糖深棕</div><div class="product-price">$450</div>
-                    <div class="product-stock" id="stock-text-TA2">載入中...</div>
-                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('TA2', -1)">-</button><input type="number" class="quantity-input" id="left-input-TA2" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('TA2', 1)">+</button></div>
-                    <button class="btn" onclick="addToCart('TA2')">加入購物車</button>
-                </div>
+<!-- TA2 商品區塊 (保持原本正確的 id="left-input-TA2") -->
+<div class="product-item" data-id="TA2" data-name="色乳-02 焦糖深棕" data-category="brows" data-sub="color-10ml">
+    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：TA2</div>
+    <div class="product-name">色乳-02 焦糖深棕</div><div class="product-price">$450</div>
+    <div class="product-stock" id="stock-text-TA2">載入中...</div>
+    <div class="quantity-selector">
+        <button class="quantity-btn" onclick="changeLeftQty('TA2', -1)">-</button>
+        <input type="number" class="quantity-input" id="left-input-TA2" value="0" min="0" >
+        <button class="quantity-btn" onclick="changeLeftQty('TA2', 1)">+</button>
+    </div>
+    <button class="btn" onclick="addToCart('TA2')">加入購物車</button>
+</div>
 
                 <div class="product-item" data-id="TA3" data-name="色乳-03 深邃灰棕" data-category="brows" data-sub="color-10ml">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：TA3</div>
@@ -8868,6 +8878,9 @@ function submitOrder(evt) {
 
     setSubmittingState(true);
 
+    // 送出前更新並確認最新金額
+    if (typeof updateCartSummary === 'function') updateCartSummary();
+
     const grandTotalText = document.getElementById("grand-total") ? document.getElementById("grand-total").textContent : "0";
     const finalTotalAmount = parseInt(grandTotalText.replace(/[^0-9]/g, ""), 10) || 0;
 
@@ -9174,18 +9187,121 @@ function scrollToOrderForm() {
 }
 
 // =============================================================
+// 🌟 完整運費計算邏輯（涵蓋所有配送方式）
+// =============================================================
+function calculateShippingFee() {
+    const shippingEl = document.getElementById("shipping");
+    const paymentEl = document.getElementById("payment");
+
+    const shippingText = shippingEl ? (shippingEl.options[shippingEl.selectedIndex]?.text || shippingEl.value || "") : "";
+    const paymentText = paymentEl ? (paymentEl.options[paymentEl.selectedIndex]?.text || paymentEl.value || "") : "";
+
+    // 1. 7-11 店到店：區分付款方式（貨到付款 38 / 轉帳及儲值金 60）
+    if (shippingText.includes("7-11")) {
+        if (paymentText.includes("轉帳") || paymentText.includes("儲值金")) {
+            return 60;
+        } else if (paymentText.includes("貨到付款")) {
+            return 38;
+        }
+        return 38; // 預設 38
+    }
+
+    // 2. 門市自取：免運費
+    if (shippingText.includes("自取")) {
+        return 0;
+    }
+
+    // 3. 常溫宅配：NT 100
+    if (shippingText.includes("常溫宅配")) {
+        return 100;
+    }
+
+    // 4. 指定黑貓：NT 160
+    if (shippingText.includes("指定黑貓")) {
+        return 160;
+    }
+
+    // 5. 黑貓低溫：依包裹大小計算（若 select value 有填數字讀 value，無則回傳 0 供人工核算）
+    if (shippingText.includes("黑貓低溫")) {
+        const parsedVal = parseInt(shippingEl?.value, 10);
+        return !isNaN(parsedVal) ? parsedVal : 0;
+    }
+
+    // 6. 其他未明列配送方式：嘗試讀取 option 的 value 數字或文字中的金額
+    const rawVal = parseInt(shippingEl?.value, 10);
+    if (!isNaN(rawVal)) return rawVal;
+
+    const match = shippingText.match(/\$(\d+)/);
+    if (match) return parseInt(match[1], 10);
+
+    return 60; // 預設底線運費
+}
+
+function updateCartSummary() {
+    const subtotalEl = document.getElementById('subtotal-price');
+    const shippingFeeEl = document.getElementById('shipping-fee');
+    const grandTotalEl = document.getElementById('grand-total');
+
+    let subtotal = 0;
+    let currentCart = [];
+    if (typeof cart !== 'undefined') currentCart = cart;
+    else if (typeof shoppingCart !== 'undefined') currentCart = shoppingCart;
+
+    if (Array.isArray(currentCart)) {
+        subtotal = currentCart.reduce((sum, item) => sum + ((item.price || 0) * (item.qty || 1)), 0);
+    } else if (typeof currentCart === 'object' && currentCart !== null) {
+        Object.keys(currentCart).forEach(key => {
+            const item = currentCart[key];
+            if (typeof item === 'number') {
+                const price = (typeof productConfig !== 'undefined' && productConfig[key]) ? productConfig[key].price : 0;
+                subtotal += price * item;
+            } else if (item && typeof item === 'object') {
+                subtotal += (item.price || 0) * (item.qty || 1);
+            }
+        });
+    }
+
+    const shippingFee = calculateShippingFee();
+    const grandTotal = subtotal + shippingFee;
+
+    if (subtotalEl) subtotalEl.innerText = `$${subtotal.toLocaleString()}`;
+    if (shippingFeeEl) {
+        const shippingEl = document.getElementById("shipping");
+        const shippingText = shippingEl ? (shippingEl.options[shippingEl.selectedIndex]?.text || "") : "";
+        if (shippingText.includes("黑貓低溫") && shippingFee === 0) {
+            shippingFeeEl.innerText = "依大小另計";
+        } else {
+            shippingFeeEl.innerText = `$${shippingFee.toLocaleString()}`;
+        }
+    }
+    if (grandTotalEl) grandTotalEl.innerText = `$${grandTotal.toLocaleString()}`;
+}
+
+// =============================================================
 // 13. 初始化動態監聽器
 // =============================================================
 document.addEventListener("DOMContentLoaded", function() {
     renderMemberHeader();
     updateHomepageProductPrices(); 
     
+    // 監聽配送方式變更
     const shippingSelect = document.getElementById("shipping");
     if (shippingSelect) {
         shippingSelect.addEventListener("change", function() {
             setTimeout(updateCartSummary, 50); 
         });
     }
+
+    // 監聽付款方式變更
+    const paymentSelect = document.getElementById("payment");
+    if (paymentSelect) {
+        paymentSelect.addEventListener("change", function() {
+            setTimeout(updateCartSummary, 50);
+        });
+    }
+
+    // 頁面載入時執行一次金額計算
+    updateCartSummary();
 });
 
 // =============================================================
