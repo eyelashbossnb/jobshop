@@ -6621,62 +6621,11 @@
                         <option value="store-pickup">門市自取</option>
                     </select>
                 </div>
-
-           <div class="form-group">
+<div class="form-group">
     <label for="address">配送地址 / 自取門市</label>
-
-    <!-- 平常輸入用 -->
-    <input type="text"
-           id="address"
-           class="form-control"
+    <input type="text" id="address" class="form-control"
            placeholder="請輸入完整外送收件地址（若選店到店請填店號/門市名稱）">
-
-    <!-- 列印用 -->
-    <div id="printAddress" class="print-address"></div>
 </div>
-
-<style>
-    /* 平常畫面隱藏列印用地址 */
-    .print-address {
-        display: none;
-    }
-
-    /* 列印時 */
-    @media print {
-
-        /* 隱藏原本的 input */
-        #address {
-            display: none !important;
-        }
-
-        /* 顯示列印用地址 */
-        .print-address {
-            display: block !important;
-
-            width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
-
-            /* 自動換行 */
-            white-space: normal;
-            overflow-wrap: anywhere;
-            word-break: break-word;
-
-            /* 讓多行地址比較好閱讀 */
-            line-height: 1.5;
-        }
-    }
-</style>
-
-<script>
-    // 列印前，把輸入框的地址放到列印用區塊
-    window.addEventListener('beforeprint', function () {
-        const address = document.getElementById('address').value;
-        document.getElementById('printAddress').textContent = address;
-    });
-</script>
-
-
 
                 <div class="form-group">
                     <label for="notes">訂單備註</label>
