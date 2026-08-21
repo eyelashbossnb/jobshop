@@ -4809,6 +4809,20 @@
                     <button class="btn" onclick="addToCart('G37')">加入購物車</button>
                 </div>
 		<!-- 🆕 臉部保養（超涵水角鯊烯保濕系列）上架開始 -->
+				<div class="product-item" data-id="DA1" data-category="skincare" data-name="淨妍雙效保濕卸妝水230ML" data-price="790">
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DA1</div>
+                    <div class="product-name">淨妍雙效保濕卸妝水230ML</div><div class="product-price">$790</div>
+                    <div class="product-stock" id="stock-text-DA1">載入中...</div>
+                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DA1', -1)">-</button><input type="number" class="quantity-input" id="left-input-DC2" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DC2', 1)">+</button></div>
+                    <button class="btn" onclick="addToCart('DA1')">加入購物車</button>
+                </div>
+				<div class="product-item" data-id="DA3" data-category="skincare" data-name="極淨精萃雙效卸妝液230ML" data-price="790">
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DA3</div>
+                    <div class="product-name">極淨精萃雙效卸妝液230ML</div><div class="product-price">$790</div>
+                    <div class="product-stock" id="stock-text-DA3">載入中...</div>
+                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DA3', -1)">-</button><input type="number" class="quantity-input" id="left-input-DC2" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DC2', 1)">+</button></div>
+                    <button class="btn" onclick="addToCart('DA3')">加入購物車</button>
+                </div>
                 <div class="product-item" data-id="DC2" data-category="skincare" data-name="超涵水角鯊烯保濕美肌露" data-price="650">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DC2</div>
                     <div class="product-name">超涵水角鯊烯保濕美肌露</div><div class="product-price">$650</div>
@@ -7193,7 +7207,9 @@
         "TM4": { name: "TM4 棉片收納盒-透明", price: 100, max: 50 },
         "G36": { name: "G36 鑽石攪拌棒-透明", price: 60, max: 50 },
         "G37": { name: "G37 鑽石攪拌棒-粉色", price: 60, max: 50 },
-        "DC2": { name: "DC2超涵水角鯊烯保濕美肌露", price: 650, max: 50 },
+		"DA1": { name: "DA1 淨妍雙效保濕卸妝水230ML", price: 790, max: 50 },
+		"DA3": { name: "DA3 極淨精萃雙效卸妝液230ML", price: 790, max: 50 },
+        "DC2": { name: "DC2 超涵水角鯊烯保濕美肌露", price: 650, max: 50 },
         "DD2": { name: "DD2 超涵水角鯊烯保濕雙效精粹", price: 1680, max: 50 },
         "DG2": { name: "DG2 超涵水角鯊烯保濕面膜(五入裝)", price: 399, max: 50 },
         "D19": { name: "D19 奢華優雅抗暈眼影筆-古銅金", price: 74, max: 50 },
@@ -8521,7 +8537,7 @@ function updateCartSummary() {
         'P37', 'P38', 'P41', 'R17', 'B10', 'B22', 'B23', 'S1', 'S3', 'S4', 'S5', 'S7', 'S8', 'S9', 'S10', 'S11', 'S12',
         'DE1', 'DE2', 'DE3', 'DE4', 'DE5', 'DE6', 'DE7', 'DE8', 'DE9', 'DE13', 'DE20', 'DE21', 'DE22', 'DE25', 'DE26', 'DE40',
         'DE10', 'DE11', 'DE12', 'DE30', 'DE31', 'DE32', 'DE33', 'DE34', 'DE35', 'DE36', 'DE37', 'DE38', 'DE39', 'DE41', 'DG1', 'DG2', 'DG3',
-        'F62'
+        'F62', 'DA1',, 'DA3',
     ];
     const customLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5, 
