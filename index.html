@@ -737,7 +737,7 @@
                 <button class="sub-tab active" onclick="filterSubCategory('all', this); toggleNailBrushMenu(false);">顯示全部</button>
                 <button class="sub-tab" onclick="filterSubCategory('nail-brush', this); toggleNailBrushMenu(true);">美甲筆刷區</button>
                 <button class="sub-tab" onclick="filterSubCategory('nail-others', this); toggleNailBrushMenu(false);">美甲保養</button>
-                <button class="sub-tab" onclick="filterSubCategory('nail-lamps', this); toggleNailBrushMenu(false);">美甲燈具</button>
+                <button class="sub-tab" onclick="filterSubCategory('nail-lamps', this); toggleNailBrushMenu(false);">五金儀器</button>
                 <button class="sub-tab" onclick="filterSubCategory('nail-grinding', this); toggleNailBrushMenu(false);">磨棒耗材</button>
 				<button class="sub-tab" onclick="filterSubCategory('nail-peripheral', this); toggleNailBrushMenu(false);">周邊商品</button>
                 
@@ -6641,7 +6641,21 @@
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('B22', -1)">-</button><input type="number" class="quantity-input" id="left-input-B22" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('B22', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('B22')">加入購物車</button>
                 </div>
-                <div class="product-item" data-id="B23" data-category="nail" data-sub="nail-lamps" data-name="36W天使燈UV+LED" data-price="4800">
+                <div class="product-item" data-id="B36" data-category="nail" data-sub="nail-lamps" data-name="甘皮剪-7.0mm" data-price="175">
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：B36</div>
+                    <div class="product-name">甘皮剪-7.0mm</div><div class="product-price">$175</div>
+                    <div class="product-stock" id="stock-text-B36">載入中...</div>
+                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('B36', -1)">-</button><input type="number" class="quantity-input" id="left-input-B36" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('B36', 1)">+</button></div>
+                    <button class="btn" onclick="addToCart('B36')">加入購物車</button>
+                </div>
+				<div class="product-item" data-id="B42" data-category="nail" data-sub="nail-lamps" data-name="進口鋼推(死皮推+劍型)" data-price="165">
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：B42</div>
+                    <div class="product-name">進口鋼推(死皮推+劍型)</div><div class="product-price">$165</div>
+                    <div class="product-stock" id="stock-text-B42">載入中...</div>
+                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('B42', -1)">-</button><input type="number" class="quantity-input" id="left-input-B42" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('B42', 1)">+</button></div>
+                    <button class="btn" onclick="addToCart('B42')">加入購物車</button>
+                </div>
+				<div class="product-item" data-id="B23" data-category="nail" data-sub="nail-lamps" data-name="36W天使燈UV+LED" data-price="4800">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：B23</div>
                     <div class="product-name">36W天使燈UV+LED</div><div class="product-price">$4800</div>
                     <div class="product-stock" id="stock-text-B23">載入中...</div>
@@ -7622,6 +7636,8 @@
         "B10": { name: "B10 6W 迷你LED燈 (白)", price: 416, max: 50 },
         "B22": { name: "B22 6W LED貝殼美甲燈", price: 1050, max: 50 },
         "B23": { name: "B23 36W天使燈UV+LED", price: 4800, max: 50 },
+		"B36": { name: "B36 甘皮剪-7.0mm", price: 175, max: 50 },
+		"B42": { name: "B42 進口鋼推(死皮推+劍型)", price: 165, max: 50 },
         "S1": { name: "S1海綿磨砂棒 (規格:100/180綠)", price: 85, max: 50 },
         "S3": { name: "S3超彈力磨棒 (規格:100/100藍)", price: 55, max: 50 },
         "S4": { name: "S4超彈力磨棒 (規格:150/150紫)", price: 55, max: 50 },
@@ -8716,7 +8732,7 @@ function updateCartSummary() {
         'TJ1', 'TJ2', 'TJ4', 'TJ5', 'TJ7', 'TJ8', 'TJ9', 'TJ12', 'TJ14', 'TJ15', 'TK9', 'TK10', 'TB1', 'TB3', 'TB4', 'TL6', 'TL7', 'TL8',
         'TL9', 'TL17', 'TL18', 'TL19', 'TL20', 'G36', 'G37',
         'P21', 'P22', 'P23', 'P24', 'P25', 'P26', 'P27', 'P28', 'P29', 'P30', 'P31', 'P32', 'P33', 'P34', 'P35', 'P36', 'P39', 'P40',
-        'P37', 'P38', 'P41', 'R17', 'B10', 'B22', 'B23', 'S1', 'S3', 'S4', 'S5', 'S7', 'S8', 'S9', 'S10', 'S11', 'S12','S13',
+        'P37', 'P38', 'P41', 'R17', 'B10', 'B22', 'B23','B36','B42', 'S1', 'S3', 'S4', 'S5', 'S7', 'S8', 'S9', 'S10', 'S11', 'S12','S13',
         'DDE1', 'DE2', 'DE3', 'DE4', 'DE5', 'DE6', 'DE7', 'DE8', 'DE9', 'DE13', 'DE20', 'DE21', 'DE22', 'DE25', 'DE26', 'DE40',
         'DE10', 'DE11', 'DE12', 'DE30', 'DE31', 'DE32', 'DE33', 'DE34', 'DE35', 'DE36', 'DE37', 'DE38', 'DE39', 'DE41', 'DG1', 'DG2', 'DG3',
         'F62', 'DC2', 'DD2', 'DA1', 'DA3', 'DB2', 'DC1', 'DC3', 'DC5', 'DD1', 'DD3', 'DD4', 'DD5', 'DD7', 'DE1', 'DF1','DF2','DF3','DF4','DF5','DF6','DF7','DF8','DF9','DF10',
@@ -9476,7 +9492,7 @@ function updateHomepageProductPrices() {
         'TJ1', 'TJ2', 'TJ4', 'TJ5', 'TJ7', 'TJ8', 'TJ9', 'TJ12', 'TJ14', 'TJ15', 'TK9', 'TK10', 'TB1', 'TB3', 'TB4', 'TL6', 'TL7', 'TL8',
         'TL9', 'TL17', 'TL18', 'TL19', 'TL20', 'G36', 'G37',
         'P21', 'P22', 'P23', 'P24', 'P25', 'P26', 'P27', 'P28', 'P29', 'P30', 'P31', 'P32', 'P33', 'P34', 'P35', 'P36', 'P39', 'P40',
-        'P37', 'P38', 'P41', 'R17', 'B10', 'B22', 'B23', 'S1', 'S3', 'S4', 'S5', 'S7', 'S8', 'S9', 'S10', 'S11', 'S12','S13',
+        'P37', 'P38', 'P41', 'R17', 'B10', 'B22', 'B23','B36','B42', 'S1', 'S3', 'S4', 'S5', 'S7', 'S8', 'S9', 'S10', 'S11', 'S12','S13',
         'DDE1', 'DE2', 'DE3', 'DE4', 'DE5', 'DE6', 'DE7', 'DE8', 'DE9', 'DE13', 'DE20', 'DE21', 'DE22', 'DE25', 'DE26', 'DE40',
         'DE10', 'DE11', 'DE12', 'DE30', 'DE31', 'DE32', 'DE33', 'DE34', 'DE35', 'DE36', 'DE37', 'DE38', 'DE39', 'DE41', 'DG1', 'DG2', 'DG3',
         'F62', 'DC2', 'DD2', 'DA1', 'DA3', 'DB2', 'DC1', 'DC3', 'DC5', 'DD1', 'DD3', 'DD4', 'DD5', 'DD7', 'DE1', 'DF1','DF2','DF3','DF4','DF5','DF6','DF7','DF8','DF9','DF10',
