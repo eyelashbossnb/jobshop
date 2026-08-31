@@ -2784,9 +2784,17 @@
                     <button class="btn" onclick="addToCart('F116')">加入購物車</button>
                 </div>
 
-                <div class="product-item" data-id="F101" data-name="典雅紫櫻花巴拿芬護膚蠟" data-category="wax" data-sub="paraffin">
+                <div class="product-item" data-id="F100" data-name="巴拿芬護膚蠟450g-粉紅玫瑰" data-category="wax" data-sub="paraffin">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：F101</div>
-                    <div class="product-name">典雅紫櫻花巴拿芬護膚蠟</div><div class="product-price">$250</div>
+                    <div class="product-name">巴拿芬護膚蠟450g-粉紅玫瑰</div><div class="product-price">$250</div>
+                    <div class="product-stock" id="stock-text-F100">載入中...</div>
+                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('F100', -1)">-</button><input type="number" class="quantity-input" id="left-input-F100" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('F100', 1)">+</button></div>
+                    <button class="btn" onclick="addToCart('F100')">加入購物車</button>
+                </div>
+				
+				<div class="product-item" data-id="F101" data-name="巴拿芬護膚蠟450g-典雅紫櫻花" data-category="wax" data-sub="paraffin">
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：F101</div>
+                    <div class="product-name">巴拿芬護膚蠟450g-典雅紫櫻花</div><div class="product-price">$250</div>
                     <div class="product-stock" id="stock-text-F101">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('F101', -1)">-</button><input type="number" class="quantity-input" id="left-input-F101" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('F101', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('F101')">加入購物車</button>
@@ -8017,7 +8025,8 @@
         "F116": { name: "F116 超級不沾黏熱蠟內鍋-黑", price: 175, max: 50 },
 
         // 頂級熱蠟：巴拿芬保養蠟系列（庫存 50 盒）
-        "F101": { name: "F101 典雅紫櫻花巴拿芬護膚蠟", price: 250, max: 50 },
+        "F100": { name: "F100 巴拿芬護膚蠟450g-粉紅玫瑰", price: 250, max: 50 },
+		"F101": { name: "F101 巴拿芬護膚蠟450g-典雅紫櫻花", price: 250, max: 50 },
         "F102": { name: "F102 巴拿芬蠟恆溫熔蠟機", price: 1200, max: 50 },
         "F103": { name: "F103 巴拿芬棉質保溫手套", price: 130, max: 50 },
         "F104": { name: "F104 巴拿芬棉質保溫腳套", price: 130, max: 50 },
@@ -9791,7 +9800,8 @@ function updateCartSummary() {
 		'Q11', 'Q12', 'Q31', 'Q34', 'Q37','Q38','Q39','Q41','Q44','Q50','Q47','Q51','Q53','Q61','Q62',
         'DDE1', 'DE2', 'DE3', 'DE4', 'DE5', 'DE6', 'DE7', 'DE8', 'DE9', 'DE13', 'DE20', 'DE21', 'DE22', 'DE25', 'DE26', 'DE40',
         'DE10', 'DE11', 'DE12', 'DE30', 'DE31', 'DE32', 'DE33', 'DE34', 'DE35', 'DE36', 'DE37', 'DE38', 'DE39', 'DE41', 'DG1', 'DG2', 'DG3',
-        'F62', 'DC2', 'DD2', 'DA1', 'DA3', 'DB2', 'DC1', 'DC3', 'DC5', 'DD1', 'DD3', 'DD4', 'DD5', 'DD7', 'DE1', 'DF1','DF2','DF3','DF4','DF5','DF6','DF7','DF8','DF9','DF10',
+        'F62', 'F100', 'F101',
+		'DC2', 'DD2', 'DA1', 'DA3', 'DB2', 'DC1', 'DC3', 'DC5', 'DD1', 'DD3', 'DD4', 'DD5', 'DD7', 'DE1', 'DF1','DF2','DF3','DF4','DF5','DF6','DF7','DF8','DF9','DF10',
     ]; 
     const customLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5, 
@@ -10559,7 +10569,8 @@ function updateHomepageProductPrices() {
 		'Q11', 'Q12', 'Q31', 'Q34', 'Q37','Q38','Q39','Q41','Q44','Q50','Q47','Q51','Q53','Q61','Q62',
         'DDE1', 'DE2', 'DE3', 'DE4', 'DE5', 'DE6', 'DE7', 'DE8', 'DE9', 'DE13', 'DE20', 'DE21', 'DE22', 'DE25', 'DE26', 'DE40',
         'DE10', 'DE11', 'DE12', 'DE30', 'DE31', 'DE32', 'DE33', 'DE34', 'DE35', 'DE36', 'DE37', 'DE38', 'DE39', 'DE41', 'DG1', 'DG2', 'DG3',
-        'F62', 'DC2', 'DD2', 'DA1', 'DA3', 'DB2', 'DC1', 'DC3', 'DC5', 'DD1', 'DD3', 'DD4', 'DD5', 'DD7', 'DE1', 'DF1','DF2','DF3','DF4','DF5','DF6','DF7','DF8','DF9','DF10',
+        'F62','F100', 'F101',
+		'DC2', 'DD2', 'DA1', 'DA3', 'DB2', 'DC1', 'DC3', 'DC5', 'DD1', 'DD3', 'DD4', 'DD5', 'DD7', 'DE1', 'DF1','DF2','DF3','DF4','DF5','DF6','DF7','DF8','DF9','DF10',
     ];
 
     const customLevelRates = {
