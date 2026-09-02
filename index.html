@@ -1834,8 +1834,16 @@
                     <button class="btn" onclick="addToCart('A61')">加入購物車</button>
                 </div>
 
-                <div class="product-item" data-id="A53" data-name="法國玫瑰植萃潔顏慕斯/150ml" data-category="perimeter" data-sub="cleaning">
-                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：A53</div>
+                <div class="product-item" data-id="A54" data-name="Oil Free純淨玫瑰保濕卸妝水/120ml" data-category="perimeter" data-sub="cleaning">
+    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：A54</div>
+    <div class="product-name">Oil Free純淨玫瑰保濕卸妝水/120ml</div><div class="product-price">$330</div>
+    <div class="product-stock" id="stock-text-A54">載入中...</div>
+    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('A54', -1)">-</button><input type="number" class="quantity-input" id="left-input-A54" value="0" min="0"><button class="quantity-btn" onclick="changeLeftQty('A54', 1)">+</button></div>
+    <button class="btn" onclick="addToCart('A54')">加入購物車</button>
+</div>
+
+				<div class="product-item" data-id="A54" data-name="法國玫瑰植萃潔顏慕斯/150ml" data-category="perimeter" data-sub="cleaning">
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：A54</div>
                     <div class="product-name">法國玫瑰植萃潔顏慕斯/150ml</div><div class="product-price">$330</div>
                     <div class="product-stock" id="stock-text-A53">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('A53', -1)">-</button><input type="number" class="quantity-input" id="left-input-A53" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('A53', 1)">+</button></div>
@@ -7914,6 +7922,7 @@
         "A32": { name: "A32 睫毛記憶定型雨衣/6ml", price: 330, max: 20 },
         "A61": { name: "A61 69D開花睫毛防護雨衣/6ml", price: 330, max: 20 },
         "A53": { name: "A53 法國玫瑰植萃潔顏慕斯/150ml", price: 330, max: 20 },
+		"A54": { name: "A54 Oil Free純淨玫瑰保濕卸妝水 120ml", price: 330, max: 20 },
         "A59": { name: "A59 美睫專用卸妝清潔QQ棉片/10包", price: 160, max: 20 },
         "A60": { name: "A60 美睫專用卸妝清潔QQ棉片/22包", price: 330, max: 20 },
         "A64": { name: "A64 一擦即淨保濕卸妝棉片/25片(罐)", price: 200, max: 20 },
@@ -9811,7 +9820,7 @@ function updateCartSummary() {
     };
 
     const specialDiscountIds = [
-        'A31', 'A32', 'A61', 'A53', 'A59', 'A60', 'A64', 'A65',
+        'A31', 'A32', 'A61', 'A53','A54', 'A59', 'A60', 'A64', 'A65',
         'F50', 'F60', 'F63', 'F64', 'F65', 'F66', 'F67', 'FA1', 'FA3',
         'D10', 'D60'
     ];
@@ -10533,7 +10542,7 @@ function updateHomepageProductPrices() {
     if (items.length === 0) return;
 
     const specialDiscountIds = [
-        'A31', 'A32', 'A61', 'A53', 'A59', 'A60', 'A64', 'A65',
+        'A31', 'A32', 'A61', 'A53','A54',  'A59', 'A60', 'A64', 'A65',
         'F50', 'F60', 'F63', 'F64', 'F65', 'F66', 'F67', 'FA1', 'FA3',
         'D10', 'D60', 
     ];
