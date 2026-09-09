@@ -9888,7 +9888,7 @@ function updateCartSummary() {
     if (subtotal > 0) {
         if (subtotal >= 3000) {
             if (shippingMethod === 'blackcat') { shippingFee = 60; shippingText = "$60 (滿額優惠)"; }
-            else if (shippingMethod === 'blackcat-cold') { shippingFee = 200; shippingText = "$200"; }
+            else if (shippingMethod === 'blackcat-cold') { shippingFee = 160; shippingText = "$160"; }
             else { shippingFee = 0; shippingText = "免運 (滿額)"; }
         } else {
             switch (shippingMethod) {
@@ -9904,7 +9904,7 @@ function updateCartSummary() {
                     }
                     break;
                 case 'blackcat': shippingFee = 160; break;
-                case 'blackcat-cold': shippingFee = 200; break;
+                case 'blackcat-cold': shippingFee = 160; break;
                 case 'store-pickup': shippingFee = 0; break;
             }
             shippingText = shippingFee === 0 ? "$0" : `$${shippingFee}`;
