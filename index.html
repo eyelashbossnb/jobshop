@@ -7959,7 +7959,7 @@
         "A153": { name: "A153 專業接睫卸除棉籤(小)/100支", price: 75, max: 20 },
         "A154": { name: "A154 專業接睫卸除棉籤(長)/100支", price: 105, max: 20 },
 	"A165": { name: "A165 卸除棉棒100支/黑", price: 200, max: 20 },
-	"A166": { name: "A167 洗臉海綿12條/黃", price: 50, max: 20 },
+	"A166": { name: "A166 洗臉海綿12條/黃", price: 50, max: 20 },
         "A167": { name: "A167 洗臉海綿12條/粉", price: 50, max: 20 },
         "A171": { name: "A171 美睫專用紙膠帶/2捲", price: 32, max: 20 },
         "A172": { name: "A172 美睫專用紙膠帶/24捲", price: 350, max: 20 },
@@ -9629,13 +9629,17 @@ function addLashToCart(productId) {
         productConfig[cartItemSku] = {
             name: cartDisplayName,
             price: basePrice,
-            max: currentStock, 
+            max: currentStock,
             isSharedStock: isEyeMask,
-            _isSpecialSku: true 
+            _isSpecialSku: true,
+            // ✅ 保存實際在 Google Sheets 匹配成功的庫存鍵，結帳時用它精準扣庫存
+            backendStockKey: skuKey
         };
     } else {
-        productConfig[cartItemSku].price = basePrice; 
+        productConfig[cartItemSku].price = basePrice;
         productConfig[cartItemSku].max = currentStock;
+        // ✅ 每次加入購物車都重新保存最新匹配到的實際後台 SKU
+        productConfig[cartItemSku].backendStockKey = skuKey;
     }
 
     let currentInCart = cart[cartItemSku] || 0;
@@ -10256,6 +10260,44 @@ function submitOrder(evt) {
     }
 }
 
+// ✅【扣庫存修正】取得規格商品真正對應到 Google Sheets 的庫存鍵
+// 新加入購物車的商品會直接使用 backendStockKey；舊購物車資料則自動嘗試還原，避免重新整理後漏扣。
+function resolveBackendStockKeyForSpecialItem(itemId, pInfo) {
+    if (pInfo && pInfo.backendStockKey) return pInfo.backendStockKey;
+
+    try {
+        const cards = Array.from(document.querySelectorAll('.product-item[data-id]'));
+        // 商品本身的 ID 可能就含底線（例如 E5_UP），因此找「最長且符合前綴」的原始商品 ID
+        const matchedCard = cards
+            .filter(card => {
+                const baseId = card.getAttribute('data-id') || '';
+                return baseId && itemId.startsWith(baseId + '_');
+            })
+            .sort((a, b) => (b.getAttribute('data-id') || '').length - (a.getAttribute('data-id') || '').length)[0];
+
+        if (matchedCard) {
+            const baseId = matchedCard.getAttribute('data-id') || '';
+            const baseName = matchedCard.getAttribute('data-name') || '';
+            const suffix = itemId.substring(baseId.length + 1);
+            const candidates = [baseId + baseName + suffix, baseName + suffix];
+
+            if (typeof globalInventoryData !== 'undefined' && globalInventoryData) {
+                for (const candidate of candidates) {
+                    const cleanedCandidate = cleanString(candidate);
+                    for (const realKey in globalInventoryData) {
+                        if (cleanString(realKey) === cleanedCandidate) return realKey;
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        console.warn('還原規格商品後台庫存鍵失敗：', itemId, e);
+    }
+
+    // 最後保底，舊資料至少維持原本行為
+    return (pInfo && pInfo.name) ? pInfo.name : itemId;
+}
+
 // 🌟【完美修復版本】：保護毛款正常寫入，同時剔除真正無庫存的常規商品
 function executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState) {
     console.log("=== 正在生成訂單明細與序號 ===");
@@ -10365,7 +10407,10 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
                             const finalDeductQty = is100Pairs ? (qty * 2) : qty;
                             cartBackup[backendEyeMaskName] = (cartBackup[backendEyeMaskName] || 0) + finalDeductQty;
                         } else {
-                            cartBackup[pInfo.name || itemName] = qty;
+                            // ✅ 規格／睫毛商品必須使用「實際匹配到的後台 SKU」扣庫存，
+                            // 不能只用畫面顯示名稱，否則不同翹度／粗度／長度會扣不到。
+                            const backendStockKey = resolveBackendStockKeyForSpecialItem(itemId, pInfo);
+                            cartBackup[backendStockKey] = (cartBackup[backendStockKey] || 0) + qty;
                         }
                     } else {
                         let backendKey = pInfo.name.toUpperCase().includes(itemId.toUpperCase()) ? pInfo.name : itemId + pInfo.name;
