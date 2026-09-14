@@ -9947,11 +9947,13 @@ function sendDeductStockRequestToBackend(cartData) {
     if (!cartData || Object.keys(cartData).length === 0) return;
 
     console.log("=====開始送出扣庫存=====");
+    const stockRequestBody = new URLSearchParams();
+    stockRequestBody.set("payload", JSON.stringify({ cart: cartData }));
     fetch(GOOGLE_SHEET_API_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cart: cartData })
+        headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+        body: stockRequestBody.toString()
     })
     .then(() => {
         console.log("✅ 已送出扣庫存請求");
@@ -10004,18 +10006,6 @@ function getStockFromDatabase(targetName) {
         }
     }
     return null;
-}
-
-// ✅ 回傳庫存資料中真正存在的原始鍵值，不能回傳前台自己拼出的名稱。
-// 水貂絲名稱含有「上睫毛／下睫毛、括號與底線」，拼出的鍵即使能查到庫存，
-// 結帳時送回後台仍可能不是工作表中的原字串，因而無法扣除。
-function getExactBackendStockKey(targetName) {
-    if (!targetName || typeof globalInventoryData === 'undefined' || !globalInventoryData) return "";
-    const cleanedTarget = cleanString(targetName);
-    for (const realKey in globalInventoryData) {
-        if (cleanString(realKey) === cleanedTarget) return realKey;
-    }
-    return "";
 }
 
 function updateAllLoadedStocks() {
@@ -10094,9 +10084,15 @@ function updateLashVariantStockDisplay(productId) {
         combinedName = baseName + colorStr + curl + "_" + thickness + "_" + length;
     }
 
-    let matchedKey = getExactBackendStockKey(productId + combinedName);
-    if (!matchedKey) matchedKey = getExactBackendStockKey(combinedName);
-    let currentStock = matchedKey ? globalInventoryData[matchedKey] : null;
+    let matchedKey = "";
+    let currentStock = getStockFromDatabase(productId + combinedName);
+    
+    if (currentStock !== null) {
+        matchedKey = productId + combinedName;
+    } else {
+        currentStock = getStockFromDatabase(combinedName);
+        if (currentStock !== null) matchedKey = combinedName;
+    }
 
     if (currentStock !== null) {
         if (isEyeMask100) currentStock = Math.floor(currentStock / 2);
@@ -10448,11 +10444,15 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
     console.log("🚀 [第一階段] 正在向 Apps Script 送出即時扣除總庫存請求...");
     
     if (Object.keys(cartBackup).length > 0) {
+        // 使用「簡單請求」格式送 Apps Script，避免 no-cors 搭配 application/json
+        // 時瀏覽器略過／阻擋 Content-Type，造成部分訂單根本沒有進入 doPost。
+        const stockRequestBody = new URLSearchParams();
+        stockRequestBody.set("payload", JSON.stringify({ cart: cartBackup }));
         fetch(GOOGLE_SHEET_API_URL, {
             method: "POST",
             mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ cart: cartBackup })
+            headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+            body: stockRequestBody.toString()
         })
         .then(() => {
             console.log("✅ [第一階段完成] 庫存扣除訊號已發送，準備進入第二階段表單寫入...");
