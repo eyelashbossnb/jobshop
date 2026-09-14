@@ -9947,13 +9947,11 @@ function sendDeductStockRequestToBackend(cartData) {
     if (!cartData || Object.keys(cartData).length === 0) return;
 
     console.log("=====開始送出扣庫存=====");
-    const stockRequestBody = new URLSearchParams();
-    stockRequestBody.set("payload", JSON.stringify({ cart: cartData }));
     fetch(GOOGLE_SHEET_API_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-        body: stockRequestBody.toString()
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cart: cartData })
     })
     .then(() => {
         console.log("✅ 已送出扣庫存請求");
@@ -10444,15 +10442,11 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
     console.log("🚀 [第一階段] 正在向 Apps Script 送出即時扣除總庫存請求...");
     
     if (Object.keys(cartBackup).length > 0) {
-        // 使用「簡單請求」格式送 Apps Script，避免 no-cors 搭配 application/json
-        // 時瀏覽器略過／阻擋 Content-Type，造成部分訂單根本沒有進入 doPost。
-        const stockRequestBody = new URLSearchParams();
-        stockRequestBody.set("payload", JSON.stringify({ cart: cartBackup }));
         fetch(GOOGLE_SHEET_API_URL, {
             method: "POST",
             mode: "no-cors",
-            headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-            body: stockRequestBody.toString()
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ cart: cartBackup })
         })
         .then(() => {
             console.log("✅ [第一階段完成] 庫存扣除訊號已發送，準備進入第二階段表單寫入...");
