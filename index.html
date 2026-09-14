@@ -9942,12 +9942,14 @@ function toggleNailBrushMenu(show) {
 // 10. 遠端 Google Sheets 即時庫存同步與模糊比對機制
 // =============================================================
 const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwJRMDaMtosNGswL7Pn5mAaAW49-uiuNK4Yw-XoVXrokGI1_CIA6ydcqhLLDwVgG-D02w/exec"; 
+// ✅ 訂單後臺網址：所有實際扣庫存請求統一送到已支援 params.cart 的後臺
+const ORDER_STOCK_DEDUCT_API_URL = "https://script.google.com/macros/s/AKfycbxkqDfGCbiDWyoZdHYRrOqBQuYdxnwR7Wthsn_vpNzCjGetaWvAiDqPqHzsjUVCixVt/exec";
 
 function sendDeductStockRequestToBackend(cartData) {
     if (!cartData || Object.keys(cartData).length === 0) return;
 
     console.log("=====開始送出扣庫存=====");
-    fetch(GOOGLE_SHEET_API_URL, {
+    fetch(ORDER_STOCK_DEDUCT_API_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
@@ -9983,23 +9985,6 @@ function cleanString(str) {
         return String.fromCharCode(ch.charCodeAt(0) - 0xFEE0);
     });
     return clean.replace(/\s+/g, '').toUpperCase();
-}
-
-// 回傳 Google Sheets 中「真正存在的庫存鍵」與數量。
-// 顯示庫存與結帳扣庫存必須共用同一個真實鍵，避免空格、全形字或底線差異造成漏扣。
-function findExactStockEntry(targetName) {
-    if (!targetName || !globalInventoryData) return null;
-    const cleanedTarget = cleanString(targetName);
-
-    for (let realKey in globalInventoryData) {
-        if (cleanString(realKey) === cleanedTarget) {
-            return {
-                key: realKey,
-                qty: parseInt(globalInventoryData[realKey], 10) || 0
-            };
-        }
-    }
-    return null;
 }
 
 function getStockFromDatabase(targetName) {
@@ -10099,12 +10084,15 @@ function updateLashVariantStockDisplay(productId) {
         combinedName = baseName + colorStr + curl + "_" + thickness + "_" + length;
     }
 
-    // 必須保存試算表原始鍵值，不能保存前台自行拼出的候選名稱。
-    let stockEntry = findExactStockEntry(productId + combinedName);
-    if (!stockEntry) stockEntry = findExactStockEntry(combinedName);
-
-    let matchedKey = stockEntry ? stockEntry.key : "";
-    let currentStock = stockEntry ? stockEntry.qty : null;
+    let matchedKey = "";
+    let currentStock = getStockFromDatabase(productId + combinedName);
+    
+    if (currentStock !== null) {
+        matchedKey = productId + combinedName;
+    } else {
+        currentStock = getStockFromDatabase(combinedName);
+        if (currentStock !== null) matchedKey = combinedName;
+    }
 
     if (currentStock !== null) {
         if (isEyeMask100) currentStock = Math.floor(currentStock / 2);
@@ -10456,7 +10444,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
     console.log("🚀 [第一階段] 正在向 Apps Script 送出即時扣除總庫存請求...");
     
     if (Object.keys(cartBackup).length > 0) {
-        fetch(GOOGLE_SHEET_API_URL, {
+        fetch(ORDER_STOCK_DEDUCT_API_URL, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "application/json" },
