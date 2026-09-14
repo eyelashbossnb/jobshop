@@ -9942,14 +9942,12 @@ function toggleNailBrushMenu(show) {
 // 10. 遠端 Google Sheets 即時庫存同步與模糊比對機制
 // =============================================================
 const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwJRMDaMtosNGswL7Pn5mAaAW49-uiuNK4Yw-XoVXrokGI1_CIA6ydcqhLLDwVgG-D02w/exec"; 
-// ✅ 訂單後臺網址：所有實際扣庫存請求統一送到已支援 params.cart 的後臺
-const ORDER_STOCK_DEDUCT_API_URL = "https://script.google.com/macros/s/AKfycbxkqDfGCbiDWyoZdHYRrOqBQuYdxnwR7Wthsn_vpNzCjGetaWvAiDqPqHzsjUVCixVt/exec";
 
 function sendDeductStockRequestToBackend(cartData) {
     if (!cartData || Object.keys(cartData).length === 0) return;
 
     console.log("=====開始送出扣庫存=====");
-    fetch(ORDER_STOCK_DEDUCT_API_URL, {
+    fetch(GOOGLE_SHEET_API_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
@@ -10006,6 +10004,18 @@ function getStockFromDatabase(targetName) {
         }
     }
     return null;
+}
+
+// ✅ 回傳庫存資料中真正存在的原始鍵值，不能回傳前台自己拼出的名稱。
+// 水貂絲名稱含有「上睫毛／下睫毛、括號與底線」，拼出的鍵即使能查到庫存，
+// 結帳時送回後台仍可能不是工作表中的原字串，因而無法扣除。
+function getExactBackendStockKey(targetName) {
+    if (!targetName || typeof globalInventoryData === 'undefined' || !globalInventoryData) return "";
+    const cleanedTarget = cleanString(targetName);
+    for (const realKey in globalInventoryData) {
+        if (cleanString(realKey) === cleanedTarget) return realKey;
+    }
+    return "";
 }
 
 function updateAllLoadedStocks() {
@@ -10084,15 +10094,9 @@ function updateLashVariantStockDisplay(productId) {
         combinedName = baseName + colorStr + curl + "_" + thickness + "_" + length;
     }
 
-    let matchedKey = "";
-    let currentStock = getStockFromDatabase(productId + combinedName);
-    
-    if (currentStock !== null) {
-        matchedKey = productId + combinedName;
-    } else {
-        currentStock = getStockFromDatabase(combinedName);
-        if (currentStock !== null) matchedKey = combinedName;
-    }
+    let matchedKey = getExactBackendStockKey(productId + combinedName);
+    if (!matchedKey) matchedKey = getExactBackendStockKey(combinedName);
+    let currentStock = matchedKey ? globalInventoryData[matchedKey] : null;
 
     if (currentStock !== null) {
         if (isEyeMask100) currentStock = Math.floor(currentStock / 2);
@@ -10444,7 +10448,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
     console.log("🚀 [第一階段] 正在向 Apps Script 送出即時扣除總庫存請求...");
     
     if (Object.keys(cartBackup).length > 0) {
-        fetch(ORDER_STOCK_DEDUCT_API_URL, {
+        fetch(GOOGLE_SHEET_API_URL, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "application/json" },
