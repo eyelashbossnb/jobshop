@@ -9947,11 +9947,15 @@ function sendDeductStockRequestToBackend(cartData) {
     if (!cartData || Object.keys(cartData).length === 0) return;
 
     console.log("=====開始送出扣庫存=====");
+    const requestId = `STOCK-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const requestBody = new URLSearchParams();
+    requestBody.set('payload', JSON.stringify({ cart: cartData, requestId: requestId }));
+
     fetch(GOOGLE_SHEET_API_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cart: cartData })
+        body: requestBody,
+        keepalive: true
     })
     .then(() => {
         console.log("✅ 已送出扣庫存請求");
@@ -10460,13 +10464,18 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
     console.log("🚀 [第一階段] 正在向 Apps Script 送出即時扣除總庫存請求...");
     
     if (Object.keys(cartBackup).length > 0) {
+        const stockRequestId = `STOCK-${orderSerialNumber}`;
+        const stockRequestBody = new URLSearchParams();
+        stockRequestBody.set('payload', JSON.stringify({
+            cart: cartBackup,
+            requestId: stockRequestId
+        }));
+
         fetch(GOOGLE_SHEET_API_URL, {
             method: "POST",
             mode: "no-cors",
-            // no-cors 下 application/json 可能觸發瀏覽器預檢而使 Apps Script 收不到內容；
-            // text/plain 仍可由 e.postData.contents 正常 JSON.parse。
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ cart: cartBackup }),
+            // 使用瀏覽器允許的表單格式，Apps Script 從 e.parameter.payload 取得 JSON。
+            body: stockRequestBody,
             keepalive: true
         })
         .then(() => {
