@@ -10006,16 +10006,6 @@ function getStockFromDatabase(targetName) {
     return null;
 }
 
-// 回傳庫存後臺 A欄真正的原始品名，避免只拿到數量卻送出推測名稱。
-function findActualInventoryKey(targetName) {
-    if (!targetName || !globalInventoryData) return "";
-    const cleanedTarget = cleanString(targetName);
-    for (const key in globalInventoryData) {
-        if (cleanString(key) === cleanedTarget) return key;
-    }
-    return "";
-}
-
 function updateAllLoadedStocks() {
     const items = document.querySelectorAll('.product-item');
     items.forEach(item => {
@@ -10092,9 +10082,15 @@ function updateLashVariantStockDisplay(productId) {
         combinedName = baseName + colorStr + curl + "_" + thickness + "_" + length;
     }
 
-    let matchedKey = findActualInventoryKey(productId + combinedName);
-    if (!matchedKey) matchedKey = findActualInventoryKey(combinedName);
-    let currentStock = matchedKey ? Number(globalInventoryData[matchedKey]) : null;
+    let matchedKey = "";
+    let currentStock = getStockFromDatabase(productId + combinedName);
+    
+    if (currentStock !== null) {
+        matchedKey = productId + combinedName;
+    } else {
+        currentStock = getStockFromDatabase(combinedName);
+        if (currentStock !== null) matchedKey = combinedName;
+    }
 
     if (currentStock !== null) {
         if (isEyeMask100) currentStock = Math.floor(currentStock / 2);
@@ -10125,32 +10121,11 @@ function getDeptDiscountedPrice(basePrice) {
 // =============================================================
 // 11. 核心結帳中心：結帳成功後自動清空快存
 // =============================================================
-let orderSubmissionInProgress = false;
-
-function createOrderSerialNumber() {
-    const now = new Date();
-    const timestamp = now.getFullYear() +
-        String(now.getMonth() + 1).padStart(2, '0') +
-        String(now.getDate()).padStart(2, '0') +
-        String(now.getHours()).padStart(2, '0') +
-        String(now.getMinutes()).padStart(2, '0') +
-        String(now.getSeconds()).padStart(2, '0') +
-        String(now.getMilliseconds()).padStart(3, '0');
-    const randomNum = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
-    return `ORD${timestamp}${randomNum}`;
-}
-
 function submitOrder(evt) {
+    saveMemberContact();
+
     const e = evt || window.event;
     if (e && e.preventDefault) e.preventDefault();
-
-    // 即使按鈕狀態尚未更新，連點或重複觸發事件也只執行一次。
-    if (orderSubmissionInProgress) {
-        console.warn("訂單正在處理中，已攔截重複送出。");
-        return false;
-    }
-
-    saveMemberContact();
 
     let submitBtn = null;
     if (e && e.target) {
@@ -10172,7 +10147,6 @@ function submitOrder(evt) {
     }
 
     const setSubmittingState = (isSubmitting) => {
-        if (!isSubmitting) orderSubmissionInProgress = false;
         if (!submitBtn) return;
         if (isSubmitting) {
             if (!submitBtn.dataset.originalText) {
@@ -10233,15 +10207,10 @@ function submitOrder(evt) {
         return;
     }
 
-    orderSubmissionInProgress = true;
     setSubmittingState(true);
 
     const grandTotalText = document.getElementById("grand-total") ? document.getElementById("grand-total").textContent : "0";
     const finalTotalAmount = parseInt(grandTotalText.replace(/[^0-9]/g, ""), 10) || 0;
-
-    // 儲值金訂單若因網路中斷重試，沿用同一訂單編號，後台才不會重複扣款。
-    const pendingOrderStorageKey = "pending_stored_value_order_id";
-    let orderSerialNumber = "";
 
     if (paymentMethod.includes("儲值金")) {
         if (typeof deptIsLoggedIn === 'undefined' || !deptIsLoggedIn || !deptMemberData) {
@@ -10256,9 +10225,6 @@ function submitOrder(evt) {
             return;
         }
 
-        orderSerialNumber = sessionStorage.getItem(pendingOrderStorageKey) || createOrderSerialNumber();
-        sessionStorage.setItem(pendingOrderStorageKey, orderSerialNumber);
-
         console.log("正在向後台發送儲值金扣款請求...");
         fetch(GAS_API_URL, {
             method: "POST",
@@ -10266,9 +10232,7 @@ function submitOrder(evt) {
             body: JSON.stringify({ 
                 action: "deduct_balance", 
                 phone: deptMemberData.phone, 
-                amount: finalTotalAmount,
-                orderId: orderSerialNumber,
-                customerName: deptMemberData.name || customerName
+                amount: finalTotalAmount 
             })
         })
         .then(res => res.json())
@@ -10279,7 +10243,7 @@ function submitOrder(evt) {
 
                 if (typeof renderMemberHeader === 'function') renderMemberHeader(); 
                 console.log("💰 後台儲值金已成功扣除！最新餘額: $" + data.newBalance);
-                executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState, orderSerialNumber);
+                executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState);
             } else {
                 alert("🚨 儲值金扣款失敗，後台回應：" + data.message);
                 setSubmittingState(false);
@@ -10291,19 +10255,15 @@ function submitOrder(evt) {
             setSubmittingState(false);
         });
     } else {
-        orderSerialNumber = createOrderSerialNumber();
         console.log(`選擇非儲值金付款（${paymentMethod}），直接送入訂單總表...`);
-        executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState, orderSerialNumber);
+        executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState);
     }
 }
 
 // ✅【扣庫存修正】取得規格商品真正對應到 Google Sheets 的庫存鍵
 // 新加入購物車的商品會直接使用 backendStockKey；舊購物車資料則自動嘗試還原，避免重新整理後漏扣。
 function resolveBackendStockKeyForSpecialItem(itemId, pInfo) {
-    if (pInfo && pInfo.backendStockKey) {
-        const verifiedStoredKey = findActualInventoryKey(pInfo.backendStockKey);
-        if (verifiedStoredKey) return verifiedStoredKey;
-    }
+    if (pInfo && pInfo.backendStockKey) return pInfo.backendStockKey;
 
     try {
         const cards = Array.from(document.querySelectorAll('.product-item[data-id]'));
@@ -10339,8 +10299,18 @@ function resolveBackendStockKeyForSpecialItem(itemId, pInfo) {
 }
 
 // 🌟【完美修復版本】：保護毛款正常寫入，同時剔除真正無庫存的常規商品
-function executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState, orderSerialNumber) {
+function executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState) {
     console.log("=== 正在生成訂單明細與序號 ===");
+
+    const now = new Date();
+    const timestamp = now.getFullYear() +
+        String(now.getMonth() + 1).padStart(2, '0') +
+        String(now.getDate()).padStart(2, '0') +
+        String(now.getHours()).padStart(2, '0') +
+        String(now.getMinutes()).padStart(2, '0') +
+        String(now.getSeconds()).padStart(2, '0');
+    const randomNum = String(Math.floor(Math.random() * 1000)).padStart(3, '0');
+    const orderSerialNumber = `ORD${timestamp}${randomNum}`;
 
     let memberLevel = "一般會員";
     if (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn && deptMemberData) {
@@ -10481,22 +10451,17 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
     if (Object.keys(cartBackup).length > 0) {
         fetch(GOOGLE_SHEET_API_URL, {
             method: "POST",
-            mode: "cors",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ cart: cartBackup, orderId: orderSerialNumber })
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ cart: cartBackup })
         })
-        .then(response => response.json())
-        .then(stockResult => {
-            if (!stockResult || !stockResult.success) {
-                throw new Error(stockResult && stockResult.message ? stockResult.message : "庫存後臺沒有回傳成功結果");
-            }
-            console.log("✅ [第一階段完成] 庫存已確認扣除：", stockResult);
+        .then(() => {
+            console.log("✅ [第一階段完成] 庫存扣除訊號已發送，準備進入第二階段表單寫入...");
             sendDataToGoogleForm();
         })
         .catch(err => {
-            console.error("❌ 庫存扣除失敗，已停止建立訂單:", err);
-            alert("❌ 訂單未送出：" + err.message);
-            if (typeof setSubmittingState === 'function') setSubmittingState(false);
+            console.error("❌ 庫存扣除通訊失敗，但仍嘗試寫入表單:", err);
+            sendDataToGoogleForm();
         });
     } else {
         sendDataToGoogleForm();
@@ -10555,7 +10520,6 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             }
             localStorage.removeItem('shopping_cart_data');
             localStorage.removeItem('shopping_cart_config');
-            sessionStorage.removeItem('pending_stored_value_order_id');
 
             const orderForm = document.getElementById('order-form');
             if (orderForm) orderForm.reset();
