@@ -10006,6 +10006,16 @@ function getStockFromDatabase(targetName) {
     return null;
 }
 
+// 回傳庫存後臺 A欄真正的原始品名，避免只拿到數量卻送出推測名稱。
+function findActualInventoryKey(targetName) {
+    if (!targetName || !globalInventoryData) return "";
+    const cleanedTarget = cleanString(targetName);
+    for (const key in globalInventoryData) {
+        if (cleanString(key) === cleanedTarget) return key;
+    }
+    return "";
+}
+
 function updateAllLoadedStocks() {
     const items = document.querySelectorAll('.product-item');
     items.forEach(item => {
@@ -10082,15 +10092,9 @@ function updateLashVariantStockDisplay(productId) {
         combinedName = baseName + colorStr + curl + "_" + thickness + "_" + length;
     }
 
-    let matchedKey = "";
-    let currentStock = getStockFromDatabase(productId + combinedName);
-    
-    if (currentStock !== null) {
-        matchedKey = productId + combinedName;
-    } else {
-        currentStock = getStockFromDatabase(combinedName);
-        if (currentStock !== null) matchedKey = combinedName;
-    }
+    let matchedKey = findActualInventoryKey(productId + combinedName);
+    if (!matchedKey) matchedKey = findActualInventoryKey(combinedName);
+    let currentStock = matchedKey ? Number(globalInventoryData[matchedKey]) : null;
 
     if (currentStock !== null) {
         if (isEyeMask100) currentStock = Math.floor(currentStock / 2);
@@ -10296,7 +10300,10 @@ function submitOrder(evt) {
 // ✅【扣庫存修正】取得規格商品真正對應到 Google Sheets 的庫存鍵
 // 新加入購物車的商品會直接使用 backendStockKey；舊購物車資料則自動嘗試還原，避免重新整理後漏扣。
 function resolveBackendStockKeyForSpecialItem(itemId, pInfo) {
-    if (pInfo && pInfo.backendStockKey) return pInfo.backendStockKey;
+    if (pInfo && pInfo.backendStockKey) {
+        const verifiedStoredKey = findActualInventoryKey(pInfo.backendStockKey);
+        if (verifiedStoredKey) return verifiedStoredKey;
+    }
 
     try {
         const cards = Array.from(document.querySelectorAll('.product-item[data-id]'));
@@ -10474,17 +10481,22 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
     if (Object.keys(cartBackup).length > 0) {
         fetch(GOOGLE_SHEET_API_URL, {
             method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ cart: cartBackup })
+            mode: "cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ cart: cartBackup, orderId: orderSerialNumber })
         })
-        .then(() => {
-            console.log("✅ [第一階段完成] 庫存扣除訊號已發送，準備進入第二階段表單寫入...");
+        .then(response => response.json())
+        .then(stockResult => {
+            if (!stockResult || !stockResult.success) {
+                throw new Error(stockResult && stockResult.message ? stockResult.message : "庫存後臺沒有回傳成功結果");
+            }
+            console.log("✅ [第一階段完成] 庫存已確認扣除：", stockResult);
             sendDataToGoogleForm();
         })
         .catch(err => {
-            console.error("❌ 庫存扣除通訊失敗，但仍嘗試寫入表單:", err);
-            sendDataToGoogleForm();
+            console.error("❌ 庫存扣除失敗，已停止建立訂單:", err);
+            alert("❌ 訂單未送出：" + err.message);
+            if (typeof setSubmittingState === 'function') setSubmittingState(false);
         });
     } else {
         sendDataToGoogleForm();
