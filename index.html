@@ -10234,8 +10234,9 @@ function submitOrder(evt) {
             method: "POST",
             mode: "cors",
             body: JSON.stringify({ 
-                action: "deduct_balance", 
-                phone: deptMemberData.phone, 
+                action: "deduct_balance",
+                phone: String(deptMemberData.phone || customerPhone || "").trim(),
+                name: String(deptMemberData.name || customerName || "").trim(),
                 amount: finalTotalAmount 
             })
         })
