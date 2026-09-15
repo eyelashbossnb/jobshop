@@ -10263,7 +10263,19 @@ function submitOrder(evt) {
 // ✅【扣庫存修正】取得規格商品真正對應到 Google Sheets 的庫存鍵
 // 新加入購物車的商品會直接使用 backendStockKey；舊購物車資料則自動嘗試還原，避免重新整理後漏扣。
 function resolveBackendStockKeyForSpecialItem(itemId, pInfo) {
-    if (pInfo && pInfo.backendStockKey) return pInfo.backendStockKey;
+    // 一律換回 doGet 傳來的「A 欄原始字串」，避免看似相同但空白或符號不同。
+    function findRealInventoryKey(candidate) {
+        if (!candidate || typeof globalInventoryData === 'undefined' || !globalInventoryData) return "";
+        const wanted = cleanString(candidate);
+        for (const realKey in globalInventoryData) {
+            if (cleanString(realKey) === wanted) return realKey;
+        }
+        return "";
+    }
+
+    if (pInfo && pInfo.backendStockKey) {
+        return findRealInventoryKey(pInfo.backendStockKey) || pInfo.backendStockKey;
+    }
 
     try {
         const cards = Array.from(document.querySelectorAll('.product-item[data-id]'));
@@ -10284,9 +10296,8 @@ function resolveBackendStockKeyForSpecialItem(itemId, pInfo) {
             if (typeof globalInventoryData !== 'undefined' && globalInventoryData) {
                 for (const candidate of candidates) {
                     const cleanedCandidate = cleanString(candidate);
-                    for (const realKey in globalInventoryData) {
-                        if (cleanString(realKey) === cleanedCandidate) return realKey;
-                    }
+                    const realKey = findRealInventoryKey(candidate);
+                    if (realKey) return realKey;
                 }
             }
         }
@@ -10452,8 +10463,11 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
         fetch(GOOGLE_SHEET_API_URL, {
             method: "POST",
             mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ cart: cartBackup })
+            // no-cors 下 application/json 可能觸發瀏覽器預檢而使 Apps Script 收不到內容；
+            // text/plain 仍可由 e.postData.contents 正常 JSON.parse。
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ cart: cartBackup }),
+            keepalive: true
         })
         .then(() => {
             console.log("✅ [第一階段完成] 庫存扣除訊號已發送，準備進入第二階段表單寫入...");
