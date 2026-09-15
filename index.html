@@ -9941,7 +9941,7 @@ function toggleNailBrushMenu(show) {
 // =============================================================
 // 10. 遠端 Google Sheets 即時庫存同步與模糊比對機制
 // =============================================================
-const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbzc8Nes_RGBgRgCGF3MuX3LPNWYsmT0QBdQ_KVn0vsZqaBDnjlw2wnFemx1lH5bMPR-jA/exec"; 
+const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwJRMDaMtosNGswL7Pn5mAaAW49-uiuNK4Yw-XoVXrokGI1_CIA6ydcqhLLDwVgG-D02w/exec"; 
 
 function sendDeductStockRequestToBackend(cartData) {
     if (!cartData || Object.keys(cartData).length === 0) return;
@@ -10392,33 +10392,40 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
                 }
             }
 
-            if (typeof cart !== 'undefined' && cart[itemId] !== undefined) {
-                const qty = cart[itemId];
-                if (typeof productConfig !== 'undefined' && productConfig[itemId]) {
-                    const pInfo = productConfig[itemId];
-                    if (itemId.includes('_')) {
-                        const isEyeMask = itemId.startsWith('A70_') || itemId.startsWith('A74_') || itemId.startsWith('A76_');
-                        if (isEyeMask) {
-                            let backendEyeMaskName = "";
-                            if (itemId.startsWith('A70_')) backendEyeMaskName = "A70超薄U型切口眼膜(對稱)";
-                            if (itemId.startsWith('A74_')) backendEyeMaskName = "A74超薄型眼膜(對稱)";
-                            if (itemId.startsWith('A76_')) backendEyeMaskName = "A76超薄卸睫專用眼膜(左右眼)";
-                            const is100Pairs = itemId.endsWith('100對');
-                            const finalDeductQty = is100Pairs ? (qty * 2) : qty;
-                            cartBackup[backendEyeMaskName] = (cartBackup[backendEyeMaskName] || 0) + finalDeductQty;
-                        } else {
-                            // ✅ 規格／睫毛商品必須使用「實際匹配到的後台 SKU」扣庫存，
-                            // 不能只用畫面顯示名稱，否則不同翹度／粗度／長度會扣不到。
-                            const backendStockKey = resolveBackendStockKeyForSpecialItem(itemId, pInfo);
-                            cartBackup[backendStockKey] = (cartBackup[backendStockKey] || 0) + qty;
-                        }
+            // ✅ 直接使用本次結帳已解析完成的數量。
+            // 不再回頭檢查全域 cart[itemId]，避免水貂絲等動態規格 SKU 被排除，
+            // 導致 cartBackup 為空而完全沒有送出 doPost 扣庫存請求。
+            const qty = itemQty;
+
+            if (typeof productConfig !== 'undefined' && productConfig[itemId]) {
+                const pInfo = productConfig[itemId];
+
+                if (itemId.includes('_')) {
+                    const isEyeMask = itemId.startsWith('A70_') || itemId.startsWith('A74_') || itemId.startsWith('A76_');
+
+                    if (isEyeMask) {
+                        let backendEyeMaskName = "";
+                        if (itemId.startsWith('A70_')) backendEyeMaskName = "A70超薄U型切口眼膜(對稱)";
+                        if (itemId.startsWith('A74_')) backendEyeMaskName = "A74超薄型眼膜(對稱)";
+                        if (itemId.startsWith('A76_')) backendEyeMaskName = "A76超薄卸睫專用眼膜(左右眼)";
+
+                        const is100Pairs = itemId.endsWith('100對');
+                        const finalDeductQty = is100Pairs ? (qty * 2) : qty;
+                        cartBackup[backendEyeMaskName] = (cartBackup[backendEyeMaskName] || 0) + finalDeductQty;
                     } else {
-                        let backendKey = pInfo.name.toUpperCase().includes(itemId.toUpperCase()) ? pInfo.name : itemId + pInfo.name;
-                        cartBackup[backendKey] = qty;
+                        // 規格／睫毛商品使用實際匹配到的後台 SKU，
+                        // 精準對應水貂絲的捲度、粗度及長度。
+                        const backendStockKey = resolveBackendStockKeyForSpecialItem(itemId, pInfo);
+                        cartBackup[backendStockKey] = (cartBackup[backendStockKey] || 0) + qty;
                     }
                 } else {
-                    cartBackup[itemName || itemId] = qty;
+                    const backendKey = pInfo.name.toUpperCase().includes(itemId.toUpperCase())
+                        ? pInfo.name
+                        : itemId + pInfo.name;
+                    cartBackup[backendKey] = (cartBackup[backendKey] || 0) + qty;
                 }
+            } else {
+                cartBackup[itemName || itemId] = (cartBackup[itemName || itemId] || 0) + qty;
             }
         });
 
