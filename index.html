@@ -10133,7 +10133,14 @@ function getStoredValueDeductionTransactionId(phone, amount) {
     try {
         const saved = JSON.parse(sessionStorage.getItem(storageKey) || "null");
         if (saved && saved.checkoutKey === checkoutKey && saved.transactionId) {
-            return saved.transactionId;
+            // 只沿用新版 ORD 編號。舊版曾暫存 PAY- 編號，若繼續沿用就會
+            // 造成會員扣款紀錄是 PAY-、訂單總表卻是 ORD 的不同步問題。
+            if (/^ORD\d{17}$/.test(String(saved.transactionId))) {
+                return saved.transactionId;
+            }
+
+            console.warn("偵測到舊版扣款交易編號，已自動清除並改用統一 ORD 訂單編號：", saved.transactionId);
+            sessionStorage.removeItem(storageKey);
         }
     } catch (e) {
         console.warn("讀取待確認扣款交易編號失敗：", e);
