@@ -10125,6 +10125,58 @@ function getDeptDiscountedPrice(basePrice) {
 // =============================================================
 // 11. 核心結帳中心：結帳成功後自動清空快存
 // =============================================================
+function getStoredValueDeductionTransactionId(phone, amount) {
+    const normalizedPhone = String(phone || "").replace(/\D/g, "");
+    const checkoutKey = `${normalizedPhone}|${Number(amount) || 0}`;
+    const storageKey = "pendingStoredValueDeduction";
+
+    try {
+        const saved = JSON.parse(sessionStorage.getItem(storageKey) || "null");
+        if (saved && saved.checkoutKey === checkoutKey && saved.transactionId) {
+            return saved.transactionId;
+        }
+    } catch (e) {
+        console.warn("讀取待確認扣款交易編號失敗：", e);
+    }
+
+    const transactionId = `PAY-${Date.now()}-${Math.random().toString(36).slice(2, 10).toUpperCase()}`;
+    sessionStorage.setItem(storageKey, JSON.stringify({ checkoutKey, transactionId }));
+    return transactionId;
+}
+
+function clearStoredValueDeductionTransactionId(transactionId) {
+    try {
+        const storageKey = "pendingStoredValueDeduction";
+        const saved = JSON.parse(sessionStorage.getItem(storageKey) || "null");
+        if (!saved || saved.transactionId === transactionId) sessionStorage.removeItem(storageKey);
+    } catch (e) {
+        sessionStorage.removeItem("pendingStoredValueDeduction");
+    }
+}
+
+async function requestStoredValueDeduction(payload) {
+    // 若第一次回應在途中遺失，以完全相同的交易編號安全重試一次。
+    // 後台會辨識相同交易編號並回傳原結果，不會再次扣款。
+    let lastError = null;
+    for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+            const response = await fetch(GAS_API_URL, {
+                method: "POST",
+                mode: "cors",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            lastError = error;
+            console.warn(`儲值金扣款第 ${attempt} 次連線未取得結果：`, error);
+            if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 1200));
+        }
+    }
+    throw lastError || new Error("無法確認扣款結果");
+}
+
 function submitOrder(evt) {
     saveMemberContact();
 
@@ -10229,26 +10281,28 @@ function submitOrder(evt) {
             return;
         }
 
-        console.log("正在向後台發送儲值金扣款請求...");
-        fetch(GAS_API_URL, {
-            method: "POST",
-            mode: "cors",
-            body: JSON.stringify({ 
-                action: "deduct_balance",
-                phone: String(deptMemberData.phone || customerPhone || "").trim(),
-                name: String(deptMemberData.name || customerName || "").trim(),
-                amount: finalTotalAmount 
-            })
+        const deductionPhone = String(deptMemberData.phone || customerPhone || "").trim();
+        const transactionId = getStoredValueDeductionTransactionId(deductionPhone, finalTotalAmount);
+
+        console.log("正在向後台發送儲值金扣款請求，交易編號：" + transactionId);
+        requestStoredValueDeduction({
+            action: "deduct_balance",
+            phone: deductionPhone,
+            name: String(deptMemberData.name || customerName || "").trim(),
+            amount: finalTotalAmount,
+            transactionId: transactionId,
+            orderId: transactionId
         })
-        .then(res => res.json())
         .then(data => {
             if (data.success) {
                 deptMemberData.balance = data.newBalance;
                 localStorage.setItem("deptMemberData", JSON.stringify(deptMemberData));
 
                 if (typeof renderMemberHeader === 'function') renderMemberHeader(); 
-                console.log("💰 後台儲值金已成功扣除！最新餘額: $" + data.newBalance);
-                executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState);
+                console.log(data.alreadyProcessed
+                    ? "✅ 此交易先前已扣款，本次沒有重複扣款。"
+                    : "💰 後台儲值金已成功扣除！最新餘額: $" + data.newBalance);
+                executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState, transactionId);
             } else {
                 alert("🚨 儲值金扣款失敗，後台回應：" + data.message);
                 setSubmittingState(false);
@@ -10256,7 +10310,11 @@ function submitOrder(evt) {
         })
         .catch(err => {
             console.error(err);
-            alert("❌ 連線失敗：無法從雲端扣除儲值金，訂單未送出。請檢查網路狀態！");
+            alert(
+                "⚠️ 目前無法確認扣款結果。\n\n" +
+                "請勿重複建立新交易；系統已保留本次交易編號：\n" + transactionId +
+                "\n\n請保持購物車內容與金額不變後再次按下送出，後台會用相同交易編號查詢，不會重複扣款。"
+            );
             setSubmittingState(false);
         });
     } else {
@@ -10315,7 +10373,7 @@ function resolveBackendStockKeyForSpecialItem(itemId, pInfo) {
 }
 
 // 🌟【完美修復版本】：保護毛款正常寫入，同時剔除真正無庫存的常規商品
-function executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState) {
+function executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState, deductionTransactionId) {
     console.log("=== 正在生成訂單明細與序號 ===");
 
     const now = new Date();
@@ -10519,6 +10577,12 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
         })
         .then(() => {
             console.log("=== 數據成功發送至 Google 表單 ===");
+
+            // 必須等訂單也成功送出後才清除扣款交易編號。
+            // 若訂單傳送失敗，下一次仍會沿用同一編號，避免再次扣款。
+            if (deductionTransactionId) {
+                clearStoredValueDeductionTransactionId(deductionTransactionId);
+            }
 
             if (typeof mockOrderDatabase !== 'undefined') {
                 mockOrderDatabase.push({
