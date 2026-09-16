@@ -10139,7 +10139,16 @@ function getStoredValueDeductionTransactionId(phone, amount) {
         console.warn("讀取待確認扣款交易編號失敗：", e);
     }
 
-    const transactionId = `PAY-${Date.now()}-${Math.random().toString(36).slice(2, 10).toUpperCase()}`;
+    // 這個編號同時作為會員扣款交易編號與訂單編號，兩個後台可直接核對。
+    const now = new Date();
+    const timestamp = now.getFullYear() +
+        String(now.getMonth() + 1).padStart(2, '0') +
+        String(now.getDate()).padStart(2, '0') +
+        String(now.getHours()).padStart(2, '0') +
+        String(now.getMinutes()).padStart(2, '0') +
+        String(now.getSeconds()).padStart(2, '0');
+    const randomNum = String(Math.floor(Math.random() * 1000)).padStart(3, '0');
+    const transactionId = `ORD${timestamp}${randomNum}`;
     sessionStorage.setItem(storageKey, JSON.stringify({ checkoutKey, transactionId }));
     return transactionId;
 }
@@ -10384,7 +10393,8 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
         String(now.getMinutes()).padStart(2, '0') +
         String(now.getSeconds()).padStart(2, '0');
     const randomNum = String(Math.floor(Math.random() * 1000)).padStart(3, '0');
-    const orderSerialNumber = `ORD${timestamp}${randomNum}`;
+    // 儲值金付款直接沿用扣款交易編號；其他付款方式才在此建立新訂單編號。
+    const orderSerialNumber = deductionTransactionId || `ORD${timestamp}${randomNum}`;
 
     let memberLevel = "一般會員";
     if (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn && deptMemberData) {
