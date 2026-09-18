@@ -738,18 +738,11 @@
             <div id="sub-category-sale" class="sub-category-menu" style="display: none; flex-wrap: wrap;">
                 <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
                 <button class="sub-tab active" onclick="filterSubCategory('all', this)">顯示全部</button>
-                <button class="sub-tab" onclick="filterSubCategory('sale-fan', this)">黑耀魔幻羽扇</button>
-                <button class="sub-tab" onclick="filterSubCategory('sale-mink', this)">頂級人造水貂絲</button>
-                <button class="sub-tab" onclick="filterSubCategory('sale-real-mink', this)">奢華手工真貂毛</button>
-                <button class="sub-tab" onclick="filterSubCategory('sale-pillow-swallow', this)">獨創枕型輕量燕尾睫</button>
-                <button class="sub-tab" onclick="filterSubCategory('sale-5th-ave', this)">睛艷第五大道</button>
-                <button class="sub-tab" onclick="filterSubCategory('sale-gradient', this)">魔法渲染漸層睫毛</button>
-                <button class="sub-tab" onclick="filterSubCategory('sale-peacock', this)">法式輕柔孔雀羽</button>
-                <button class="sub-tab" onclick="filterSubCategory('sale-easy-bloom', this)">Easy花</button>
-                <button class="sub-tab" onclick="filterSubCategory('sale-maxia', this)">麥斯雅花園</button>
-                <button class="sub-tab" onclick="filterSubCategory('sale-camellia', this)">完美茶花</button>
-                <button class="sub-tab" onclick="filterSubCategory('sale-kellis', this)">凱莉絲花園</button>
-                <button class="sub-tab" onclick="filterSubCategory('sale-l-plus', this)">L+絕翹天后</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-straight', this)">排毛/齊長毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-layered-bloom', this)">層次/開花毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-color-group', this)">彩毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-flat', this)">扁毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-tech', this)">科技毛</button>
             </div>
 
             <div class="product-grid" id="main-product-grid">
@@ -9301,6 +9294,18 @@ function filterProducts() {
             } else if (currentSubCategory === 'dash-bloom') {
                 matchesSubCategory = (productSub === 'lash-bloom' ||
                     productSub === 'lash-yy' || productSub === 'lash-clover3' || productSub === 'lash-clover5' || productSub === 'lash-w');
+            } else if (currentSubCategory === 'sale-straight') {
+                matchesSubCategory = (productSub === 'sale-fan' || productSub === 'sale-mink' ||
+                    productSub === 'sale-real-mink' || productSub === 'sale-l-plus');
+            } else if (currentSubCategory === 'sale-layered-bloom') {
+                matchesSubCategory = (productSub === 'sale-kellis' || productSub === 'sale-camellia' ||
+                    productSub === 'sale-maxia' || productSub === 'sale-easy-bloom');
+            } else if (currentSubCategory === 'sale-color-group') {
+                matchesSubCategory = (productSub === 'sale-5th-ave' || productSub === 'sale-gradient');
+            } else if (currentSubCategory === 'sale-flat') {
+                matchesSubCategory = (productSub === 'sale-pillow-swallow');
+            } else if (currentSubCategory === 'sale-tech') {
+                matchesSubCategory = (productSub === 'sale-peacock');
             } else {
                 matchesSubCategory = (productSub === currentSubCategory);
             }
