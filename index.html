@@ -10890,6 +10890,55 @@ function getStockFromDatabase(targetName) {
     return null;
 }
 
+// ✅【五折區庫存連動】
+// 五折商品在官網使用 W1_UP～W19_UP，但試算表 A 欄使用中文品名，
+// 而且括號、連字號及「捲翹／翹度」的寫法可能不同。
+// 這裡用「商品系列＋顏色＋翹度＋粗度＋長度」尋找真正的試算表列名，
+// 找到後會把 A 欄原始文字保存為 backendStockKey，結帳時精準扣同一列。
+function findClearanceLashInventoryMatch(productId, baseName, color, curl, thickness, length) {
+    if (!/^W(?:[1-9]|1[0-9])_UP$/.test(productId || '')) return null;
+    if (typeof globalInventoryData === 'undefined' || !globalInventoryData) return null;
+
+    function compact(value) {
+        return cleanString(value)
+            .replace(/咖啡色/g, '咖')
+            .replace(/[^0-9A-Z\u3400-\u9FFF]/g, '');
+    }
+
+    // W1～W5 的官網名稱多帶有「J翹度單尺寸」，試算表則可能寫成
+    // 「捲翹J單尺寸」；比對時只取前面的商品系列名稱。
+    let productToken = compact(baseName || '')
+        .replace(/J翹度單尺寸$/g, '')
+        .replace(/捲翹J單尺寸$/g, '')
+        .replace(/J捲度單尺寸$/g, '');
+
+    const requiredTokens = [color, curl, thickness, length]
+        .filter(Boolean)
+        .map(compact)
+        .filter(Boolean);
+
+    let bestMatch = null;
+    for (const realKey in globalInventoryData) {
+        const keyToken = compact(realKey);
+        if (!productToken || !keyToken.includes(productToken)) continue;
+
+        // 規格必須全部存在，避免同系列不同粗度或長度抓到錯誤庫存。
+        if (!requiredTokens.every(token => keyToken.includes(token))) continue;
+
+        // 名稱越接近且多餘字越少者優先。
+        const score = keyToken.length - productToken.length;
+        if (!bestMatch || score < bestMatch.score) {
+            bestMatch = {
+                key: realKey,
+                stock: globalInventoryData[realKey],
+                score: score
+            };
+        }
+    }
+
+    return bestMatch;
+}
+
 function updateAllLoadedStocks() {
     const items = document.querySelectorAll('.product-item');
     items.forEach(item => {
@@ -10974,6 +11023,17 @@ function updateLashVariantStockDisplay(productId) {
     } else {
         currentStock = getStockFromDatabase(combinedName);
         if (currentStock !== null) matchedKey = combinedName;
+    }
+
+    // 一般精準比對找不到時，改用五折商品專用的規格比對。
+    if (currentStock === null) {
+        const clearanceMatch = findClearanceLashInventoryMatch(
+            productId, baseName, colorStr, curl, thickness, length
+        );
+        if (clearanceMatch) {
+            currentStock = clearanceMatch.stock;
+            matchedKey = clearanceMatch.key;
+        }
     }
 
     if (currentStock !== null) {
@@ -11257,6 +11317,22 @@ function resolveBackendStockKeyForSpecialItem(itemId, pInfo) {
                     const cleanedCandidate = cleanString(candidate);
                     const realKey = findRealInventoryKey(candidate);
                     if (realKey) return realKey;
+                }
+            }
+
+            // 舊購物車或重新整理後，五折商品也能由購物車 SKU 還原到
+            // 試算表真正的 A 欄品名，避免畫面有庫存但結帳沒有扣除。
+            if (/^W(?:[1-9]|1[0-9])_UP$/.test(baseId)) {
+                const parts = suffix.split('_');
+                if (parts.length >= 3) {
+                    const oldLength = parts.pop() || '';
+                    const oldThickness = parts.pop() || '';
+                    const oldCurl = parts.pop() || '';
+                    const oldColor = parts.join('_');
+                    const clearanceMatch = findClearanceLashInventoryMatch(
+                        baseId, baseName, oldColor, oldCurl, oldThickness, oldLength
+                    );
+                    if (clearanceMatch) return clearanceMatch.key;
                 }
             }
         }
