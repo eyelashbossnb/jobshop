@@ -10480,7 +10480,16 @@ function addLashToCart(productId) {
     const finalDisplayName = chosenColor ? `${productName}-${chosenColor}` : productName;
     const originalPrice = parseInt(card.getAttribute('data-base-price')) || 290;
     const isClearanceLash = /^W(?:[1-9]|1[0-9])_UP$/.test(productId);
-    const basePrice = isClearanceLash ? Math.round(originalPrice * 0.5) : getDeptDiscountedPrice(originalPrice);
+    const clearanceLevelRates = {
+        '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5,
+        '柏金VIP': 0.3, '頂極VIP': 0.3,
+        '業務A': 0.3, '加盟A': 0.3, '儲值商A': 0.3,
+        '加盟B': 0.3, '儲值商B': 0.3, '業務B': 0.3, '連鎖店B': 0.3
+    };
+    const clearanceLevel = (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn && deptMemberData)
+        ? (deptMemberData.member_level || '一般會員') : '未登入';
+    const clearanceRate = clearanceLevelRates[clearanceLevel] || 0.5;
+    const basePrice = isClearanceLash ? Math.round(originalPrice * clearanceRate) : getDeptDiscountedPrice(originalPrice);
 
     let cartItemSku = "";
     let cartDisplayName = "";
@@ -10655,11 +10664,11 @@ function updateCartSummary() {
     let subtotal = 0;
 
     const absoluteOriginalPriceIds = ['V1', 'V2', 'V3'];
-    const fixedHalfDiscountIds = ['A116', 'A129', 'A275',
-        'W1_UP', 'W2_UP', 'W3_UP', 'W4_UP', 'W5_UP', 'W6_UP', 'W7_UP', 'W8_UP', 'W9_UP',
-        'W10_UP', 'W11_UP', 'W12_UP', 'W13_UP', 'W14_UP', 'W15_UP', 'W16_UP', 'W17_UP', 'W18_UP', 'W19_UP'];
+    const fixedHalfDiscountIds = ['A116', 'A129', 'A275'];
 
     const customDiscountIds = [
+        'W1_UP', 'W2_UP', 'W3_UP', 'W4_UP', 'W5_UP', 'W6_UP', 'W7_UP', 'W8_UP', 'W9_UP',
+        'W10_UP', 'W11_UP', 'W12_UP', 'W13_UP', 'W14_UP', 'W15_UP', 'W16_UP', 'W17_UP', 'W18_UP', 'W19_UP',
         'TC1', 'TC2', 'TC9', 'TC12', 'TC13', 'TF35', 'TF36', 'TF38', 'TF48', 'TF49', 'TF50', 'TF40', 'TF41',
         'TF42', 'TF43', 'TF44', 'TF45', 'TF46', 'TF47', 'TD4', 'TD7', 'TD8', 'TD10', 'TD11', 'TD12', 'TD13',
         'TD14', 'TD15', 'TD16', 'TD17', 'TD23', 'TD24',
@@ -10685,8 +10694,7 @@ function updateCartSummary() {
         'DE10', 'DE11', 'DE12', 'DE30', 'DE31', 'DE32', 'DE33', 'DE34', 'DE35', 'DE36', 'DE37', 'DE38', 'DE39', 'DE41', 'DG1', 'DG2', 'DG3',
         'F62', 'F100', 'F101',
 		'DC2', 'DD2', 'DA1', 'DA3', 'DB2', 'DC1', 'DC3', 'DC5', 'DD1', 'DD3', 'DD4', 'DD5', 'DD7', 'DE1', 'DF1','DF2','DF3','DF4','DF5','DF6','DF7','DF8','DF9','DF10',
-        'W1_UP', 'W2_UP', 'W3_UP', 'W4_UP',
-	]; 
+    ]; 
     const customLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5, 
         '柏金VIP': 0.3,  '頂極VIP': 0.3,
@@ -11580,11 +11588,11 @@ function updateHomepageProductPrices() {
     };
 
     const absoluteOriginalPriceIds = ['V1', 'V2', 'V3'];
-    const fixedHalfDiscountIds = ['A116', 'A129', 'A275',
-        'W1_UP', 'W2_UP', 'W3_UP', 'W4_UP', 'W5_UP', 'W6_UP', 'W7_UP', 'W8_UP', 'W9_UP',
-        'W10_UP', 'W11_UP', 'W12_UP', 'W13_UP', 'W14_UP', 'W15_UP', 'W16_UP', 'W17_UP', 'W18_UP', 'W19_UP'];
+    const fixedHalfDiscountIds = ['A116', 'A129', 'A275'];
 
     const customDiscountIds = [
+        'W1_UP', 'W2_UP', 'W3_UP', 'W4_UP', 'W5_UP', 'W6_UP', 'W7_UP', 'W8_UP', 'W9_UP',
+        'W10_UP', 'W11_UP', 'W12_UP', 'W13_UP', 'W14_UP', 'W15_UP', 'W16_UP', 'W17_UP', 'W18_UP', 'W19_UP',
         'TC1', 'TC2', 'TC9', 'TC12', 'TC13', 'TF35', 'TF36', 'TF38', 'TF48', 'TF49', 'TF50', 'TF40', 'TF41',
         'TF42', 'TF43', 'TF44', 'TF45', 'TF46', 'TF47', 'TD4', 'TD7', 'TD8', 'TD10', 'TD11', 'TD12', 'TD13',
         'TD14', 'TD15', 'TD16', 'TD17', 'TD23', 'TD24',
@@ -11610,8 +11618,7 @@ function updateHomepageProductPrices() {
         'DE10', 'DE11', 'DE12', 'DE30', 'DE31', 'DE32', 'DE33', 'DE34', 'DE35', 'DE36', 'DE37', 'DE38', 'DE39', 'DE41', 'DG1', 'DG2', 'DG3',
         'F62', 'F100', 'F101',
 		'DC2', 'DD2', 'DA1', 'DA3', 'DB2', 'DC1', 'DC3', 'DC5', 'DD1', 'DD3', 'DD4', 'DD5', 'DD7', 'DE1', 'DF1','DF2','DF3','DF4','DF5','DF6','DF7','DF8','DF9','DF10',
-        'W1_UP', 'W2_UP', 'W3_UP', 'W4_UP',
-	];
+    ];
 
     const customLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5, 
