@@ -10810,7 +10810,10 @@ function toggleNailBrushMenu(show) {
 // =============================================================
 // 10. 遠端 Google Sheets 即時庫存同步與模糊比對機制
 // =============================================================
-const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyA4w1YKCpbs-9AxDsXFLKJL3sBRNhHitE4vntHuQPvQI5mAxSgPLJit0pk7mOh-zbcJw/exec"; 
+// ✅ 庫存後臺目前使用的正式 Web App 部署網址。
+// 顯示庫存（GET）與結帳扣庫存（POST）必須共用同一個部署，
+// 否則會出現部分商品讀到舊資料、下單卻扣到另一份試算表的情況。
+const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxu5dvVe6xgkBf9CUDHqayV_s4Y7cZYT06ziwx9PaiXJCoJsp0y60reIcFlODp0K43UiA/exec"; 
 
 function sendDeductStockRequestToBackend(cartData) {
     if (!cartData || Object.keys(cartData).length === 0) return;
