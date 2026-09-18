@@ -1826,8 +1826,6 @@
                                 <div class="variant-title">粗度：</div>
                                 <div class="btn-tabs-container">
                                     <button class="spec-btn" data-type="thickness" data-value="0.07" onclick="executeLashSpecSelect(this, 'W4_UP')">0.07</button>
-                                    <button class="spec-btn" data-type="thickness" data-value="0.10" onclick="executeLashSpecSelect(this, 'W4_UP')">0.10</button>
-                                    <button class="spec-btn" data-type="thickness" data-value="0.15" onclick="executeLashSpecSelect(this, 'W4_UP')">0.15</button>
                                 </div>
                             </div>
                             <div class="variant-group">
@@ -1871,8 +1869,6 @@
                                 <div class="variant-title">粗度：</div>
                                 <div class="btn-tabs-container">
                                     <button class="spec-btn" data-type="thickness" data-value="0.07" onclick="executeLashSpecSelect(this, 'W5_UP')">0.07</button>
-                                    <button class="spec-btn" data-type="thickness" data-value="0.10" onclick="executeLashSpecSelect(this, 'W5_UP')">0.10</button>
-                                    <button class="spec-btn" data-type="thickness" data-value="0.15" onclick="executeLashSpecSelect(this, 'W5_UP')">0.15</button>
                                 </div>
                             </div>
                             <div class="variant-group">
@@ -1978,7 +1974,7 @@
                                     <button class="spec-btn" data-type="length" data-value="12mm" onclick="executeLashSpecSelect(this, 'W7_UP')">12mm</button>
                                     <button class="spec-btn" data-type="length" data-value="13mm" onclick="executeLashSpecSelect(this, 'W7_UP')">13mm</button>
                                     <button class="spec-btn" data-type="length" data-value="14mm" onclick="executeLashSpecSelect(this, 'W7_UP')">14mm</button>
-                                    <button class="spec-btn" data-type="length" data-value="MIX8-14" onclick="executeLashSpecSelect(this, 'W7_UP')">MIX 8-14</button>
+                                    <button class="spec-btn" data-type="length" data-value="MIX8-13" onclick="executeLashSpecSelect(this, 'W7_UP')">MIX 8-13</button>
                                 </div>
                             </div>
                         </div>
@@ -2026,7 +2022,7 @@
                             <div class="variant-group">
                                 <div class="variant-title">尺寸／長度：</div>
                                 <div class="btn-tabs-container">
-                                    <button class="spec-btn" data-type="length" data-value="MIX9-14" onclick="executeLashSpecSelect(this, 'W8_UP')">MIX 9-14</button>
+                                    <button class="spec-btn" data-type="length" data-value="MIX8-14" onclick="executeLashSpecSelect(this, 'W8_UP')">MIX 8-14</button>
                                 </div>
                             </div>
                         </div>
@@ -2344,11 +2340,10 @@
                             <div class="variant-group">
                                 <div class="variant-title">尺寸／長度：</div>
                                 <div class="btn-tabs-container">
-                                    <button class="spec-btn" data-type="length" data-value="7-8mm" onclick="executeLashSpecSelect(this, 'W15_UP')">7-8mm</button>
-                                    <button class="spec-btn" data-type="length" data-value="9-10mm" onclick="executeLashSpecSelect(this, 'W15_UP')">9-10mm</button>
-                                    <button class="spec-btn" data-type="length" data-value="11-12mm" onclick="executeLashSpecSelect(this, 'W15_UP')">11-12mm</button>
-                                    <button class="spec-btn" data-type="length" data-value="13-14mm" onclick="executeLashSpecSelect(this, 'W15_UP')">13-14mm</button>
-                                    <button class="spec-btn" data-type="length" data-value="MIX8-14" onclick="executeLashSpecSelect(this, 'W15_UP')">MIX 8-14</button>
+                                    <button class="spec-btn" data-type="length" data-value="7-9mm" onclick="executeLashSpecSelect(this, 'W15_UP')">7-9mm</button>
+                                    <button class="spec-btn" data-type="length" data-value="9-11mm" onclick="executeLashSpecSelect(this, 'W15_UP')">9-11mm</button>
+                                    <button class="spec-btn" data-type="length" data-value="11-13mm" onclick="executeLashSpecSelect(this, 'W15_UP')">11-13mm</button>
+                                    <button class="spec-btn" data-type="length" data-value="MIX" onclick="executeLashSpecSelect(this, 'W15_UP')">MIX 綜合</button>
                                 </div>
                             </div>
                         </div>
@@ -2419,7 +2414,6 @@
                                     <button class="spec-btn" data-type="curl" data-value="B" onclick="executeLashSpecSelect(this, 'W17_UP')">B45˚</button>
                                     <button class="spec-btn" data-type="curl" data-value="C" onclick="executeLashSpecSelect(this, 'W17_UP')">C65˚</button>
                                     <button class="spec-btn" data-type="curl" data-value="D" onclick="executeLashSpecSelect(this, 'W17_UP')">D75˚</button>
-                                    <button class="spec-btn" data-type="curl" data-value="U" onclick="executeLashSpecSelect(this, 'W17_UP')">U95˚</button>
                                 </div>
                             </div>
                             <div class="variant-group">
@@ -10900,32 +10894,69 @@ function findClearanceLashInventoryMatch(productId, baseName, color, curl, thick
             .replace(/[^0-9A-Z\u3400-\u9FFF]/g, '');
     }
 
-    // W1～W5 的官網名稱多帶有「J翹度單尺寸」，試算表則可能寫成
-    // 「捲翹J單尺寸」；比對時只取前面的商品系列名稱。
-    let productToken = compact(baseName || '')
-        .replace(/J翹度單尺寸$/g, '')
-        .replace(/捲翹J單尺寸$/g, '')
-        .replace(/J捲度單尺寸$/g, '');
+    // 依「商品庫存.xlsx／出清五折」A 欄建立固定別名。
+    // 使用完整別名可避免抓到「睫毛款式專區」裡名稱相似的一般商品。
+    const clearanceInventoryAliases = {
+        'W1_UP':  ['黑耀魔幻羽扇捲翹J單尺寸'],
+        'W2_UP':  ['頂級人造水貂絲捲翹J單尺寸黑'],
+        'W3_UP':  ['頂級人造水貂絲單尺寸咖'],
+        'W4_UP':  ['凱莉絲花園層次黑J翹度單尺寸'],
+        'W5_UP':  ['凱莉絲花園層次咖J翹度單尺寸'],
+        'W6_UP':  ['奢華手工真貂毛單尺寸'],
+        'W7_UP':  ['獨創枕型輕量燕尾睫'],
+        'W8_UP':  ['睛艷第五大道藍色紫色限時任選3盒'],
+        'W9_UP':  ['魔法渲染漸層睫毛限時任選3盒'],
+        'W10_UP': ['法式輕柔孔雀羽朵毛黑3根'],
+        'W11_UP': ['法式輕柔孔雀羽朵毛5根黑'],
+        'W12_UP': ['法式輕柔孔雀羽朵毛黑7根'],
+        'W13_UP': ['法式輕柔孔雀羽朵毛5根咖'],
+        'W14_UP': ['EASY花黑兩層'],
+        'W15_UP': ['EASY花黑005三層'],
+        'W16_UP': ['麥斯雅花園'],
+        'W17_UP': ['完美茶花黑粗細005'],
+        'W18_UP': ['完美茶花咖'],
+        'W19_UP': ['L絕翹天后粗細010']
+    };
 
-    const requiredTokens = [color, curl, thickness, length]
-        .filter(Boolean)
+    const productTokens = (clearanceInventoryAliases[productId] || [baseName || ''])
         .map(compact)
         .filter(Boolean);
+
+    // 「無」是官網用來表示固定粗度／固定翹度的介面值，並不是庫存表文字。
+    const specValues = [color, curl, thickness].filter(value => value && value !== '無');
+    const requiredTokenGroups = specValues.map(value => [compact(value)]);
+
+    // 部分商品的 MIX 在庫存表寫成「MIX綜合」；五折燕尾睫及第五大道
+    // 原官網範圍也與庫存表不同，這裡按實際 A 欄規格轉換。
+    let lengthAlternatives = [length];
+    if (productId === 'W7_UP' && length === 'MIX8-14') lengthAlternatives = ['MIX8-13'];
+    if (productId === 'W8_UP' && length === 'MIX9-14') lengthAlternatives = ['MIX8-14'];
+    if (['W14_UP', 'W15_UP', 'W17_UP', 'W19_UP'].includes(productId) && /^MIX/i.test(length || '')) {
+        lengthAlternatives = ['MIX綜合'];
+    }
+    if (productId === 'W18_UP' && /^MIX/i.test(length || '')) {
+        lengthAlternatives = String(length).includes('奇數') ? ['MIX綜合奇數'] : ['MIX綜合'];
+    }
+    requiredTokenGroups.push(lengthAlternatives.map(compact).filter(Boolean));
 
     let bestMatch = null;
     for (const realKey in globalInventoryData) {
         const keyToken = compact(realKey);
-        if (!productToken || !keyToken.includes(productToken)) continue;
+        const matchedProductToken = productTokens.find(token => keyToken.includes(token));
+        if (!matchedProductToken) continue;
 
         // 規格必須全部存在，避免同系列不同粗度或長度抓到錯誤庫存。
-        if (!requiredTokens.every(token => keyToken.includes(token))) continue;
+        if (!requiredTokenGroups.every(group => group.some(token => keyToken.includes(token)))) continue;
 
         // 名稱越接近且多餘字越少者優先。
-        const score = keyToken.length - productToken.length;
+        const score = keyToken.length - matchedProductToken.length;
         if (!bestMatch || score < bestMatch.score) {
+            const rawStock = globalInventoryData[realKey];
+            const parsedStock = Number(rawStock);
             bestMatch = {
                 key: realKey,
-                stock: globalInventoryData[realKey],
+                // 空白、叉號或非數字代表目前無可售庫存，但仍視為已成功連到該列。
+                stock: Number.isFinite(parsedStock) ? parsedStock : 0,
                 score: score
             };
         }
