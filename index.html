@@ -635,29 +635,11 @@
             <div id="sub-category-eyelash" class="sub-category-menu" style="display: none; flex-wrap: wrap;">
                 <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
                 <button class="sub-tab active" onclick="filterSubCategory('all', this); toggleEyelashMenu('', false);">顯示全部</button>
-                <button class="sub-tab" onclick="filterSubCategory('lash-fan', this); toggleEyelashMenu('', false);">黑耀魔幻羽扇</button>
-                <button class="sub-tab" onclick="filterSubCategory('lash-mink', this); toggleEyelashMenu('', false);">頂級人造水貂絲</button>
-                <button class="sub-tab" onclick="filterSubCategory('lash-layered', this); toggleEyelashMenu('layered', true);">層次開花毛</button>
-                <button class="sub-tab" onclick="filterSubCategory('lash-bloom', this); toggleEyelashMenu('bloom', true);">朵朵開花</button>
-                <button class="sub-tab" onclick="filterSubCategory('lash-Silky', this); toggleEyelashMenu('', false);"> 0.03 絲柔</button>
-                <button class="sub-tab" onclick="filterSubCategory('lash-Cashmere', this); toggleEyelashMenu('', false);">美瞳線扁毛</button>
-                <button class="sub-tab" onclick="filterSubCategory('lash-velvet', this); toggleEyelashMenu('', false);">眸若星晨羽絲絨</button>
-                <button class="sub-tab" onclick="filterSubCategory('lash-butterfly', this); toggleEyelashMenu('', false);">黑瞳4D羽蝶系列</button>
-                <button class="sub-tab" onclick="filterSubCategory('lash-color', this); toggleEyelashMenu('', false);">繽紛彩毛</button>
-
-                <div id="eyelash-layered-menu" style="display: none; width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); gap: 6px; flex-wrap: wrap;">
-                    <span style="font-size: 12px; color: var(--text-muted); align-self: center; margin-right: 5px;">層次毛系列 ｜</span>
-                    <button class="sub-tab" onclick="filterSubCategory('lash-kellis', this)">凱莉絲花園</button>
-                    <button class="sub-tab" onclick="filterSubCategory('lash-camellia', this)">完美茶花</button>
-                </div>
-
-                <div id="eyelash-bloom-menu" style="display: none; width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); gap: 6px; flex-wrap: wrap;">
-                    <span style="font-size: 12px; color: var(--text-muted); align-self: center; margin-right: 5px;">開花系列 ｜</span>
-                    <button class="sub-tab" onclick="filterSubCategory('lash-yy', this)">PLAY YY毛</button>
-                    <button class="sub-tab" onclick="filterSubCategory('lash-clover3', this)">完美豐盈三葉草</button>
-                    <button class="sub-tab" onclick="filterSubCategory('lash-clover5', this)">完美豐盈五葉草</button>
-                    <button class="sub-tab" onclick="filterSubCategory('lash-w', this)">完美豐盈雙層W毛</button>
-                </div>
+                <button class="sub-tab" onclick="filterSubCategory('lash-straight', this); toggleEyelashMenu('', false);">排毛/齊長毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('lash-layered-bloom', this); toggleEyelashMenu('', false);">層次/開花毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('lash-color', this); toggleEyelashMenu('', false);">彩毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('lash-flat', this); toggleEyelashMenu('', false);">扁毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('lash-tech', this); toggleEyelashMenu('', false);">科技毛</button>
             </div>
 
             <div id="sub-category-perimeter" class="sub-category-menu" style="display: none;">
@@ -772,7 +754,7 @@
 
             <div class="product-grid" id="main-product-grid">
                 
-                <div class="product-item" data-id="E1_UNDER" data-name="黑耀魔幻羽扇 下睫毛" data-category="eyelash" data-sub="lash-fan" data-lash="true" data-base-price="150" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E1_UNDER" data-name="黑耀魔幻羽扇 下睫毛" data-category="eyelash" data-sub="lash-straight" data-lash="true" data-base-price="150" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E1_UNDER</div>
                         <div class="product-name">黑耀魔幻羽扇 下睫毛</div>
@@ -810,7 +792,7 @@
                     </div>
                 </div>
 
-                <div class="product-item" data-id="E1_UP" data-name="黑耀魔幻羽扇 上睫毛" data-category="eyelash" data-sub="lash-fan" data-lash="true" data-base-price="290" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E1_UP" data-name="黑耀魔幻羽扇 上睫毛" data-category="eyelash" data-sub="lash-straight" data-lash="true" data-base-price="290" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E1_UP</div>
                         <div class="product-name">黑耀魔幻羽扇 上睫毛</div>
@@ -861,7 +843,7 @@
                     </div>
                 </div>
 
-                <div class="product-item" data-id="E5_UNDER" data-name="頂級人造水貂絲 下睫毛" data-category="eyelash" data-sub="lash-mink" data-lash="true" data-base-price="150" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E5_UNDER" data-name="頂級人造水貂絲 下睫毛" data-category="eyelash" data-sub="lash-straight" data-lash="true" data-base-price="150" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E5_UNDER</div>
                         <div class="product-name">頂級人造水貂絲 下睫毛</div>
@@ -899,7 +881,7 @@
                     </div>
                 </div>
 
-                <div class="product-item" data-id="E5_UP" data-name="頂級人造水貂絲 上睫毛" data-category="eyelash" data-sub="lash-mink" data-lash="true" data-base-price="290" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E5_UP" data-name="頂級人造水貂絲 上睫毛" data-category="eyelash" data-sub="lash-straight" data-lash="true" data-base-price="290" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E5_UP</div>
                         <div class="product-name">頂級人造水貂絲 上睫毛</div>
@@ -950,7 +932,7 @@
                     </div>
                 </div>
 
-                <div class="product-item" data-id="E6_UP" data-name="頂級人造水貂絲(咖啡色)" data-category="eyelash" data-sub="lash-mink" data-lash="true" data-base-price="290" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E6_UP" data-name="頂級人造水貂絲(咖啡色)" data-category="eyelash" data-sub="lash-straight" data-lash="true" data-base-price="290" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E6_UP</div>
                         <div class="product-name">頂級人造水貂絲(咖啡色)</div>
@@ -992,7 +974,7 @@
                     </div>
                 </div>
 
-                <div class="product-item" data-id="E7_UP" data-name="凱莉絲花園" data-category="eyelash" data-sub="lash-kellis" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E7_UP" data-name="凱莉絲花園" data-category="eyelash" data-sub="lash-layered-bloom" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E7_UP</div>
                         <div class="product-name">凱莉絲花園</div>
@@ -1040,7 +1022,7 @@
                     </div>
                 </div>
 
-                <div class="product-item" data-id="E8_UP" data-name="凱莉絲花園(咖啡)" data-category="eyelash" data-sub="lash-kellis" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E8_UP" data-name="凱莉絲花園(咖啡)" data-category="eyelash" data-sub="lash-layered-bloom" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E8_UP</div>
                         <div class="product-name">凱莉絲花園(咖啡)</div>
@@ -1087,7 +1069,7 @@
                 </div>
 
                 <!-- 🆕 睫毛款式：完美茶花(黑) (E15_UP) -->
-<div class="product-item" data-id="E15_UP" data-name="完美茶花(黑)" data-category="eyelash" data-sub="lash-camellia" data-lash="true" data-base-price="490" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+<div class="product-item" data-id="E15_UP" data-name="完美茶花(黑)" data-category="eyelash" data-sub="lash-layered-bloom" data-lash="true" data-base-price="490" data-selected-curl="" data-selected-thickness="" data-selected-length="">
     <div>
         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E15_UP</div>
         <div class="product-name">完美茶花(黑)</div>
@@ -1135,7 +1117,7 @@
     </div>
 </div>
 
-		<div class="product-item" data-id="E14_UP" data-name="PLAY YY毛" data-category="eyelash" data-sub="lash-yy" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+		<div class="product-item" data-id="E14_UP" data-name="PLAY YY毛" data-category="eyelash" data-sub="lash-tech" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E14_UP</div>
                         <div class="product-name">PLAY YY毛</div>
@@ -1182,7 +1164,7 @@
                 </div>
 
                 <!-- 🆕 睫毛款式：完美豐盈三葉草 (E10_UP) -->
-                <div class="product-item" data-id="E10_UP" data-name="完美豐盈三葉草" data-category="eyelash" data-sub="lash-clover3" data-lash="true" data-base-price="390" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E10_UP" data-name="完美豐盈三葉草" data-category="eyelash" data-sub="lash-tech" data-lash="true" data-base-price="390" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E10_UP</div>
                         <div class="product-name">完美豐盈三葉草</div>
@@ -1221,7 +1203,7 @@
                 </div>
 
                 <!-- 🆕 睫毛款式：完美豐盈四葉草 (E11_UP) -->
-                <div class="product-item" data-id="E11_UP" data-name="完美豐盈四葉草" data-category="eyelash" data-sub="lash-clover5" data-lash="true" data-base-price="390" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E11_UP" data-name="完美豐盈四葉草" data-category="eyelash" data-sub="lash-tech" data-lash="true" data-base-price="390" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E11_UP</div>
                         <div class="product-name">完美豐盈四葉草</div>
@@ -1260,7 +1242,7 @@
                 </div>
 
                 <!-- 🆕 睫毛款式：完美豐盈五葉草 (E12_UP) -->
-                <div class="product-item" data-id="E12_UP" data-name="完美豐盈五葉草" data-category="eyelash" data-sub="lash-clover5" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E12_UP" data-name="完美豐盈五葉草" data-category="eyelash" data-sub="lash-tech" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E12_UP</div>
                         <div class="product-name">完美豐盈五葉草</div>
@@ -1299,7 +1281,7 @@
                 </div>
 
                 <!-- 🆕 睫毛款式：完美豐盈雙層W毛 (E13_UP) -->
-                <div class="product-item" data-id="E13_UP" data-name="完美豐盈雙層W毛" data-category="eyelash" data-sub="lash-w" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E13_UP" data-name="完美豐盈雙層W毛" data-category="eyelash" data-sub="lash-tech" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E13_UP</div>
                         <div class="product-name">完美豐盈雙層W毛</div>
@@ -1338,7 +1320,7 @@
                 </div>
 
 		<!-- 🆕 睫毛款式：0.03輕盈無感絲柔毛 (E9_UP) -->
-                <div class="product-item" data-id="E9_UP" data-name="0.03輕盈無感絲柔毛" data-category="eyelash" data-sub="lash-Silky" data-lash="true" data-base-price="295" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E9_UP" data-name="0.03輕盈無感絲柔毛" data-category="eyelash" data-sub="lash-straight" data-lash="true" data-base-price="295" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E9_UP</div>
                         <div class="product-name">0.03輕盈無感絲柔毛</div>
@@ -1386,7 +1368,7 @@
                 </div>
 
                 <!-- 🆕 睫毛款式：2代美瞳線超輕量扁毛 (E20_UP) -->
-                <div class="product-item" data-id="E20_UP" data-name="2代美瞳線超輕量扁毛" data-category="eyelash" data-sub="lash-Cashmere" data-lash="true" data-base-price="390" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E20_UP" data-name="2代美瞳線超輕量扁毛" data-category="eyelash" data-sub="lash-flat" data-lash="true" data-base-price="390" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E20_UP</div>
                         <div class="product-name">2代美瞳線超輕量扁毛</div>
@@ -1432,7 +1414,7 @@
                     </div>
                 </div>
 
-                <div class="product-item" data-id="E16_UP" data-name="眸若星晨羽絲絨(0.07)" data-category="eyelash" data-sub="lash-velvet" data-lash="true" data-base-price="295" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E16_UP" data-name="眸若星晨羽絲絨(0.07)" data-category="eyelash" data-sub="lash-straight" data-lash="true" data-base-price="295" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E16_UP</div>
                         <div class="product-name">眸若星晨羽絲絨(0.07)</div>
@@ -1476,7 +1458,7 @@
                     </div>
                 </div>
 
-                <div class="product-item" data-id="E17_UP" data-name="眸若星晨羽絲絨(0.07) 翹度 : U" data-category="eyelash" data-sub="lash-velvet" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E17_UP" data-name="眸若星晨羽絲絨(0.07) 翹度 : U" data-category="eyelash" data-sub="lash-straight" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E17_UP</div>
                         <div class="product-name">眸若星晨羽絲絨(0.07) 翹度 : U</div>
@@ -1519,7 +1501,7 @@
                     </div>
                 </div>
 
-                <div class="product-item" data-id="E18_UP" data-name="黑瞳4D羽蝶(0.07)" data-category="eyelash" data-sub="lash-butterfly" data-lash="true" data-base-price="295" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E18_UP" data-name="黑瞳4D羽蝶(0.07)" data-category="eyelash" data-sub="lash-straight" data-lash="true" data-base-price="295" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E18_UP</div>
                         <div class="product-name">黑瞳4D羽蝶(0.07)</div>
@@ -1564,7 +1546,7 @@
                 </div>
 
                 <!-- 🆕 睫毛款式：黑瞳4D羽蝶(0.07) U捲 (E19_UP) -->
-                <div class="product-item" data-id="E19_UP" data-name="黑瞳4D羽蝶(0.07) 翹度:U" data-category="eyelash" data-sub="lash-butterfly" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="E19_UP" data-name="黑瞳4D羽蝶(0.07) 翹度:U" data-category="eyelash" data-sub="lash-straight" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E19_UP</div>
                         <div class="product-name">黑瞳4D羽蝶(0.07) 翹度:U</div>
