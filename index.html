@@ -2616,15 +2616,6 @@
                     <button class="btn" onclick="addToCart('A13')">加入購物車</button>
                 </div>
 
-                <!-- 🆕 新增：瞬效無毒溫和卸除凝膠/10G -->
-                <div class="product-item" data-id="A16" data-name="瞬效無毒溫和卸除凝膠/10G" data-category="perimeter" data-sub="glue">
-                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：A16</div>
-                    <div class="product-name">瞬效無毒溫和卸除凝膠/10G</div><div class="product-price">$350</div>
-                    <div class="product-stock" id="stock-text-A16">載入中...</div>
-                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('A16', -1)">-</button><input type="number" class="quantity-input" id="left-input-A16" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('A16', 1)">+</button></div>
-                    <button class="btn" onclick="addToCart('A16')">加入購物車</button>
-                </div>
-
                 <!-- 🆕 新增：瞬效溫和質萃卸除凝膠/15G -->
                 <div class="product-item" data-id="A17" data-name="瞬效溫和質萃卸除凝膠/15G" data-category="perimeter" data-sub="glue">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：A17</div>
@@ -8756,7 +8747,6 @@
         "A11": { name: "A11 嫁接睫毛專用黑膠-武士黑膠/5G", price: 590, max: 20 },
         "A12": { name: "A12 嫁接睫毛專用黑膠-藝妓黑膠/5G", price: 590, max: 20 },
         "A13": { name: "A13 嫁接睫毛專用黑膠-雷神黑膠/5G", price: 550, max: 20 },
-        "A16": { name: "A16 瞬效無毒溫和卸除凝膠/10G", price: 350, max: 20 },
         "A17": { name: "A17 瞬效溫和質萃卸除凝膠/15G", price: 410, max: 20 },
         "A21": { name: "A21 瞬效溫和質萃卸膠膏/15G", price: 290, max: 20 },
         "A30": { name: "A30 韓國雙效強化持久劑/15G", price: 390, max: 20 },
@@ -10810,10 +10800,7 @@ function toggleNailBrushMenu(show) {
 // =============================================================
 // 10. 遠端 Google Sheets 即時庫存同步與模糊比對機制
 // =============================================================
-// ✅ 庫存後臺目前使用的正式 Web App 部署網址。
-// 顯示庫存（GET）與結帳扣庫存（POST）必須共用同一個部署，
-// 否則會出現部分商品讀到舊資料、下單卻扣到另一份試算表的情況。
-const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxu5dvVe6xgkBf9CUDHqayV_s4Y7cZYT06ziwx9PaiXJCoJsp0y60reIcFlODp0K43UiA/exec"; 
+const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyA4w1YKCpbs-9AxDsXFLKJL3sBRNhHitE4vntHuQPvQI5mAxSgPLJit0pk7mOh-zbcJw/exec"; 
 
 function sendDeductStockRequestToBackend(cartData) {
     if (!cartData || Object.keys(cartData).length === 0) return;
@@ -10895,53 +10882,6 @@ function findClearanceLashInventoryMatch(productId, baseName, color, curl, thick
         return cleanString(value)
             .replace(/咖啡色/g, '咖')
             .replace(/[^0-9A-Z\u3400-\u9FFF]/g, '');
-    }
-
-    // 優先直接組出「出清五折」工作表 A 欄的完整名稱。
-    // 這些系列在一般睫毛工作表也有相似名稱，使用完整名稱才能避免讀錯工作表。
-    function buildExactClearanceKey() {
-        const spec = `${curl}-${thickness}-${length}`;
-        switch (productId) {
-            case 'W1_UP': return `黑耀魔幻羽扇 (捲翹J單尺寸)(${spec})`;
-            case 'W2_UP': return `頂級人造水貂絲 (捲翹J單尺寸-黑)(${spec})`;
-            case 'W3_UP': return `頂級人造水貂絲 (單尺寸-咖)(${spec})`;
-            case 'W4_UP': return `凱莉絲花園-層次(黑) J翹度單尺寸(${spec})`;
-            case 'W5_UP': return `凱莉絲花園-層次(咖) J翹度單尺寸(${spec})`;
-            case 'W6_UP': return `奢華手工真貂毛 (單尺寸)(${curl}-單一粗度-${length})`;
-            case 'W7_UP': return `獨創枕型輕量燕尾睫(${curl}-${thickness}-${/^MIX/i.test(length) ? 'MIX 8-13mm' : length})`;
-            case 'W8_UP': return `睛艷第五大道-藍色/紫色(限時任選3盒)(${curl}-${thickness}-MIX 8-14mm(${color}))`;
-            case 'W9_UP': return `魔法渲染漸層睫毛(限時任選3盒)(${curl}-${thickness}-MIX 8-14mm(${color}))`;
-            case 'W10_UP': return `法式輕柔孔雀羽-朵毛(黑/3根)(${curl}-3根朵毛-${length})`;
-            case 'W11_UP': return `法式輕柔孔雀羽-朵毛(5根-黑)(${curl}-5根朵毛-${length})`;
-            case 'W12_UP': return `法式輕柔孔雀羽-朵毛(黑/7根)(${curl}-7根朵毛-${length})`;
-            case 'W13_UP': return `法式輕柔孔雀羽-朵毛(5根-咖)(${curl}-5根朵毛-${length})`;
-            case 'W14_UP': return `Easy花(黑)-兩層(${curl}-${thickness}-${/^MIX/i.test(length) ? 'MIX綜合' : length})`;
-            case 'W15_UP': return `Easy花(黑)-0.05三層(${curl}-${thickness}-${/^MIX/i.test(length) ? 'MIX綜合' : length})`;
-            case 'W16_UP': return `麥斯雅花園 粗細0.07(${curl}-0.07-${length})`;
-            case 'W17_UP': return `完美茶花(黑) 粗細0.05(${curl}-0.05-${/^MIX/i.test(length) ? 'MIX綜合' : length})`;
-            case 'W18_UP': {
-                const teaLength = /^MIX/i.test(length)
-                    ? (String(length).includes('奇數') ? 'MIX綜合(奇數)' : 'MIX綜合')
-                    : length;
-                return `完美茶花(咖)(${curl}-${thickness}-${teaLength})`;
-            }
-            case 'W19_UP': return `L+絕翹天后 (粗細0.10)(L+-0.10-MIX綜合)`;
-            default: return '';
-        }
-    }
-
-    const exactClearanceKey = buildExactClearanceKey();
-    if (exactClearanceKey) {
-        const wantedExactKey = cleanString(exactClearanceKey);
-        for (const realKey in globalInventoryData) {
-            if (cleanString(realKey) !== wantedExactKey) continue;
-            const parsedStock = Number(globalInventoryData[realKey]);
-            return {
-                key: realKey,
-                stock: Number.isFinite(parsedStock) ? parsedStock : 0,
-                score: -1
-            };
-        }
     }
 
     // 依「商品庫存.xlsx／出清五折」A 欄建立固定別名。
@@ -11092,23 +11032,30 @@ function updateLashVariantStockDisplay(productId) {
     }
 
     let matchedKey = "";
-    let currentStock = getStockFromDatabase(productId + combinedName);
-    
-    if (currentStock !== null) {
-        matchedKey = productId + combinedName;
-    } else {
-        currentStock = getStockFromDatabase(combinedName);
-        if (currentStock !== null) matchedKey = combinedName;
-    }
+    let currentStock = null;
 
-    // 一般精準比對找不到時，改用五折商品專用的規格比對。
-    if (currentStock === null) {
+    // ✅ 五折商品必須優先使用「出清五折」完整品名＋規格比對。
+    // 舊寫法先呼叫 getStockFromDatabase()；該函式含模糊比對，會先抓到
+    // 「頂級人造水貂絲／凱莉絲花園／完美茶花」等無數量的分類標題列，
+    // 並把標題列當成 0 庫存，導致真正的規格列永遠沒有機會被搜尋。
+    // 這也是水貂絲、凱莉絲、真貂毛、第五大道、麥斯雅及茶花不同步的主因。
+    const isClearanceLash = /^W(?:[1-9]|1[0-9])_UP$/.test(productId || '');
+    if (isClearanceLash) {
         const clearanceMatch = findClearanceLashInventoryMatch(
             productId, baseName, colorStr, curl, thickness, length
         );
         if (clearanceMatch) {
             currentStock = clearanceMatch.stock;
             matchedKey = clearanceMatch.key;
+        }
+    } else {
+        currentStock = getStockFromDatabase(productId + combinedName);
+
+        if (currentStock !== null) {
+            matchedKey = productId + combinedName;
+        } else {
+            currentStock = getStockFromDatabase(combinedName);
+            if (currentStock !== null) matchedKey = combinedName;
         }
     }
 
