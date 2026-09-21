@@ -543,6 +543,23 @@
         .quantity-input[type=number] {
             -moz-appearance: textfield;
         }
+
+        /* ==================================================
+           專業套組商品專用版型
+           ================================================== */
+        .product-item[data-sub="professional-kit"] {
+            grid-column: 1 / -1;
+            text-align: left;
+            padding: 28px 32px;
+        }
+        .product-item[data-sub="professional-kit"] .product-name { font-size: 20px; font-weight: 600; margin-bottom: 12px; }
+        .professional-kit-content { background: #faf7f5; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px 24px; margin: 12px 0 20px; font-size: 14px; line-height: 1.9; color: var(--text-main); }
+        .professional-kit-list { display: grid; grid-template-columns: 1fr 1fr; column-gap: 35px; row-gap: 7px; margin-top: 12px; }
+        .professional-kit-list div { padding-bottom: 5px; border-bottom: 1px dashed var(--border-color); }
+        @media (max-width: 768px) {
+            .product-item[data-sub="professional-kit"] { grid-column: 1; padding: 20px; }
+            .professional-kit-list { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -3392,6 +3409,56 @@
                     <div class="product-stock" id="stock-text-A310">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('A310', -1)">-</button><input type="number" class="quantity-input" id="left-input-A310" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('A310', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('A310')">加入購物車</button>
+                </div>
+
+
+
+                <!-- 專業套組：A311 基礎入門套組 -->
+                <div class="product-item" data-id="A311" data-name="基礎入門套組" data-category="perimeter" data-sub="professional-kit">
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px;">商品編號：A311</div>
+                    <div class="product-name">基礎入門套組</div>
+                    <div class="professional-kit-content">
+                        <strong>套組內容｜共 33 項</strong>
+                        <div class="professional-kit-list">
+            <div>01. 嫁接睫毛專用黑膠-Mild初學黑膠－1瓶</div>
+            <div>02. 瞬效溫和質萃卸膠膏－1罐</div>
+            <div>03. 睫毛記憶定型雨衣－1瓶</div>
+            <div>04. 眉睫再胜養護液－1瓶</div>
+            <div>05. 美睫卸妝清潔QQ棉片－2入10包</div>
+            <div>06. 高效去蛋白清潔液－1瓶</div>
+            <div>07. 超薄型眼膜(左右眼)－50對</div>
+            <div>08. 專業美睫V型細夾－1支</div>
+            <div>09. 專業美睫J型彎夾－1支</div>
+            <div>10. 專利磁片頭巾－1個</div>
+            <div>11. 睫毛量尺磁片(長型)－1包</div>
+            <div>12. 磁片收納盒(長型)－2個</div>
+            <div>13. 拋棄式專業睫毛刷(黑)－100支</div>
+            <div>14. 專業接睫卸除棉籤(小)－100支</div>
+            <div>15. 洗臉海棉－12條</div>
+            <div>16. 美睫專用紙膠帶－2捲</div>
+            <div>17. 美睫專用膠水(淺杯)－100入</div>
+            <div>18. 嫁接練習本3D－100張</div>
+            <div>19. 美睫專用練習假睫毛－10副</div>
+            <div>20. 美容假人頭－1個</div>
+            <div>21. 卸膏專用刷－1支</div>
+            <div>22. AD1工具專用卸除膠－1瓶</div>
+            <div>23. 睫毛生長週期海報－A4／1張</div>
+            <div>24. 美睫款式介紹海報－A4／1張</div>
+            <div>25. 美睫卸妝QQ棉片海報－A4／1張</div>
+            <div>26. 黑耀羽扇／頂級水貂絲海報－A4／1張</div>
+            <div>27. 養護液X定型雨衣海報－A3／1張</div>
+            <div>28. 呵護美睫清潔／保養－A3／1張</div>
+            <div>29. 美瞳線超輕量扁毛海報－A4／1張</div>
+            <div>30. 頂級人造水貂絲(0.15MIX C75)－1盒</div>
+            <div>31. 黑耀魔幻羽扇(0.10MIX C75)－1盒</div>
+            <div>32. 美瞳線超輕量扁毛(0.15MIX C75)－1盒</div>
+            <div>33. 膠囊式風扇－1個</div>
+                        </div>
+                    </div>
+                    <div class="product-price">$4500</div>
+                    <div class="product-stock" id="stock-text-A311">載入中...</div>
+                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('A311', -1)">-</button><input type="number" class="quantity-input" id="left-input-A311" value="0" min="0"><button class="quantity-btn" onclick="changeLeftQty('A311', 1)">+</button></div>
+                    <button class="btn" onclick="addToCart('A311')">加入購物車</button>
                 </div>
 
                 <div class="product-item" data-id="B56" data-name="36格睫毛盒收納架" data-category="perimeter" data-sub="p-others">
@@ -8830,6 +8897,7 @@
         "A275": { name: "A275 萬用尖夾保護套/20入", price: 60, max: 20 },
         "A308": { name: "A308 美容假人頭", price: 320, max: 20 },
         "A310": { name: "A310 推頭式洗眼瓶", price: 30, max: 20 },
+        "A311": { name: "A311 基礎入門套組", price: 4500, max: 20 },
         "B56": { name: "B56 36格睫毛盒收納架", price: 1500, max: 20 },
         "B71": { name: "B71 包裝OPP袋(2.5*11CM)/100入", price: 25, max: 20 },
         "B72": { name: "B72 包裝OPP袋(10*10CM)/A.粉紅雪花", price: 50, max: 20 },
