@@ -11020,6 +11020,23 @@ function renderA313Choices(type) {
     count.style.color = total === 10 ? 'var(--primary-color)' : 'var(--text-muted)';
 }
 
+function getBaseKitStock(productId) {
+    const baseInfo = productConfig[productId];
+    if (!baseInfo) return 0;
+
+    let stock = getStockFromDatabase(productId + baseInfo.name);
+    if (stock === null) stock = getStockFromDatabase(baseInfo.name);
+
+    if (stock === null) {
+        const nameWithoutId = String(baseInfo.name || '').replace(new RegExp('^' + productId + '\\s*'), '');
+        stock = getStockFromDatabase(productId + nameWithoutId);
+        if (stock === null) stock = getStockFromDatabase(nameWithoutId);
+    }
+
+    const n = Number(stock);
+    return Number.isFinite(n) ? Math.max(0, n) : 0;
+}
+
 function addA313ToCart() {
     const minkTotal = getA313ChoiceTotal('mink');
     const kellyTotal = getA313ChoiceTotal('kelly');
@@ -11030,6 +11047,16 @@ function addA313ToCart() {
     const qtySelected = parseInt(qtyInput.value) || 0;
     if (qtySelected <= 0) { alert('請先選擇套組數量。'); return; }
 
+    const baseKitStock = getBaseKitStock('A313');
+    if (baseKitStock <= 0) {
+        alert('A313 開花高手套組目前無庫存，暫時無法加入購物車。');
+        return;
+    }
+    if (qtySelected > baseKitStock) {
+        alert(`A313 開花高手套組目前庫存 ${baseKitStock} 組，最多只能加入 ${baseKitStock} 組。`);
+        return;
+    }
+
     const minkText = A313_CHOICES.mink.map(x => `${x.curl}捲/0.07/${x.length}×${x.qty}`).join('、');
     const kellyText = A313_CHOICES.kelly.map(x => `${x.curl}捲/0.07/${x.length}×${x.qty}`).join('、');
     const specText = `水貂：${minkText}；凱莉絲：${kellyText}`;
@@ -11039,7 +11066,7 @@ function addA313ToCart() {
         productConfig[cartKey] = {
             name: `A313 開花高手套組【${specText}】`,
             price: 7500,
-            max: productConfig['A313']?.max || 20,
+            max: baseKitStock,
             _isSpecialSku: true,
             _isA313Kit: true,
             displayId: 'A313',
@@ -11116,6 +11143,16 @@ function addWaxKitToCart(productId) {
         return;
     }
 
+    const baseKitStock = getBaseKitStock(productId);
+    if (baseKitStock <= 0) {
+        alert(`${productId} 套組目前無庫存，暫時無法加入購物車。`);
+        return;
+    }
+    if (qtySelected > baseKitStock) {
+        alert(`${productId} 套組目前庫存 ${baseKitStock} 組，最多只能加入 ${baseKitStock} 組。`);
+        return;
+    }
+
     const baseInfo = productConfig[productId];
     if (!baseInfo) {
         alert('找不到套組商品資料。');
@@ -11128,7 +11165,7 @@ function addWaxKitToCart(productId) {
     productConfig[cartKey] = {
         name: `${baseInfo.name}【${specText}】`,
         price: baseInfo.price,
-        max: baseInfo.max || 20,
+        max: baseKitStock,
         _isWaxKitChoice: true,
         _waxKitBaseId: productId,
         displayId: productId,
@@ -11151,6 +11188,27 @@ function addWaxKitToCart(productId) {
 }
 
 function addToCart(productId) {
+    // A311 / A312 專業套組：套組本體無庫存時禁止加入購物車
+    if (productId === 'A311' || productId === 'A312') {
+        const baseKitStock = getBaseKitStock(productId);
+        if (baseKitStock <= 0) {
+            alert(`${productId} 套組目前無庫存，暫時無法加入購物車。`);
+            return;
+        }
+
+        const qtyInput = document.getElementById('left-input-' + productId);
+        const requestedQty = qtyInput ? (parseInt(qtyInput.value, 10) || 0) : 0;
+        const alreadyInCart = Number(cart[productId] || 0);
+
+        if (requestedQty > baseKitStock) {
+            alert(`${productId} 套組目前庫存 ${baseKitStock} 組，最多只能加入 ${baseKitStock} 組。`);
+            return;
+        }
+        if (alreadyInCart + requestedQty > baseKitStock) {
+            alert(`${productId} 套組目前庫存 ${baseKitStock} 組，購物車內數量加上本次加入數量不可超過庫存。`);
+            return;
+        }
+    }
     const leftInput = document.getElementById(`left-input-${productId}`);
     const productItem = document.querySelector(`.product-item[data-id="${productId}"]`);
     const qtySelected = parseInt(leftInput.value) || 0;
