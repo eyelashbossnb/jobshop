@@ -10904,9 +10904,9 @@ const A313_LENGTH_OPTIONS = {
     D: ['MIX8-14','8mm','9mm','10mm','11mm','12mm','13mm','14mm']
   },
   kelly: {
-    B: ['MIX7-14','7-9mm','8-10mm','9-11mm','10-12mm','11-13mm','12-14mm'],
-    C: ['MIX7-14','7-9mm','8-10mm','9-11mm','10-12mm','11-13mm','12-14mm'],
-    D: ['MIX7-14','7-9mm','8-10mm','9-11mm','10-12mm','11-13mm','12-14mm'],
+    B: ['MIX7-14','7-9','8-10','9-11','10-12','11-13','12-14'],
+    C: ['MIX7-14','7-9','8-10','9-11','10-12','11-13','12-14'],
+    D: ['MIX7-14','7-9','8-10','9-11','10-12','11-13','12-14'],
     O: ['MIX7-13']
   }
 };
@@ -10938,7 +10938,8 @@ function refreshA313LengthOptions(type){
   const prev=l.value, arr=A313_LENGTH_OPTIONS[type]?.[c.value]||[];
   l.innerHTML='<option value="">選擇長度</option>'+arr.map(x=>{
     const s=getA313SpecStock(type,c.value,x), no=s===0;
-    return `<option value="${x}" ${no?'disabled':''}>${x}${s===null?'':no?'（無庫存）':`（庫存 ${s}）`}</option>`;
+    const displayX = (type === 'kelly' && /^\d+-\d+$/.test(x)) ? `${x}mm` : x;
+    return `<option value="${x}" ${no?'disabled':''}>${displayX}${s===null?'':no?'（無庫存）':`（庫存 ${s}）`}</option>`;
   }).join('');
   const keep=[...l.options].find(o=>o.value===prev&&!o.disabled); if(keep)l.value=prev;
 }
