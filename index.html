@@ -10917,49 +10917,19 @@ function getA313BackendStockKey(type,curl,length){
 function getA313SpecStock(type,curl,length){
   if(typeof globalInventoryData==='undefined'||!globalInventoryData||!Object.keys(globalInventoryData).length)return null;
 
-  const code = type==='mink' ? 'E5_UP' : 'E7_UP';
-  const lengthToken = cleanString(String(length).replace(/mm$/i,''));
-  const thicknessToken = '0.07';
+  // 直接沿用官網原本 E5_UP / E7_UP 商品規格的庫存查詢方式，
+  // 不另外猜庫存表名稱，確保 A313 顯示結果和一般睫毛商品完全一致。
+  const productId = type === 'mink' ? 'E5_UP' : 'E7_UP';
+  const baseName = type === 'mink' ? '頂級人造水貂絲 上睫毛' : '凱莉絲花園';
+  const combinedName = baseName + curl + "_0.07_" + length;
 
-  // A313 不再自行猜整串品名，而是依「商品編號＋捲度＋0.07＋長度」
-  // 去比對庫存表，避免庫存表品名中多了中文字、度數或 mm 時被誤判成無庫存。
-  let matches = [];
+  let stock = getStockFromDatabase(productId + combinedName);
+  if (stock === null) stock = getStockFromDatabase(combinedName);
 
-  for(const realKey in globalInventoryData){
-    const raw = String(realKey || '');
-    const cleaned = cleanString(raw);
+  if (stock === null || stock === undefined || stock === '') return 0;
 
-    if(!cleaned.includes(code)) continue;
-    if(!cleaned.includes(thicknessToken)) continue;
-
-    // 長度比對：同時相容 MIX7-13 / MIX7-13mm、7-9 / 7-9mm 等寫法
-    const keyNoMM = cleaned.replace(/MM/g,'');
-    if(!keyNoMM.includes(lengthToken)) continue;
-
-    // 捲度比對：相容 B、B65度、C75度、D90度、O105度等庫存表寫法
-    const curlPatterns = {
-      B: [/(?:^|[_\s])B(?:[_\s]|65|捲|翹|度)/i, /B65/i],
-      C: [/(?:^|[_\s])C(?:[_\s]|75|捲|翹|度)/i, /C75/i],
-      D: [/(?:^|[_\s])D(?:[_\s]|90|捲|翹|度)/i, /D90/i],
-      O: [/(?:^|[_\s])O(?:[_\s]|105|捲|翹|度)/i, /O105/i]
-    };
-    const patterns = curlPatterns[curl] || [];
-    if(!patterns.some(p => p.test(raw) || p.test(cleaned))) continue;
-
-    const n=Number(globalInventoryData[realKey]);
-    matches.push({
-      key: realKey,
-      stock: Number.isFinite(n) ? Math.max(0,n) : 0
-    });
-  }
-
-  if(matches.length){
-    // 同一規格若意外有重複列，以有庫存的列優先。
-    matches.sort((a,b)=>b.stock-a.stock);
-    return matches[0].stock;
-  }
-
-  return 0;
+  const n = Number(stock);
+  return Number.isFinite(n) ? Math.max(0, n) : 0;
 }
 function refreshA313LengthOptions(type){
   const c=document.getElementById(`A313-${type}-curl`), l=document.getElementById(`A313-${type}-length`);
