@@ -580,6 +580,22 @@
         .product-item[data-sub="beauty-professional-kit"] { grid-column: 1; padding: 20px; }
             .professional-kit-list { grid-template-columns: 1fr; }
         }
+
+        /* A313 開花高手套組－尺寸任選 */
+        .a313-choice-box { margin-top: 18px; padding: 16px; background: #fff; border: 1px solid var(--border-color); border-radius: 10px; }
+        .a313-choice-title { font-weight: 600; margin-bottom: 5px; }
+        .a313-fixed-spec { font-size: 12px; color: var(--accent-color); margin-bottom: 10px; }
+        .a313-choice-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .a313-select { width: auto; min-width: 125px; padding: 8px 10px; }
+        .a313-qty { width: 72px; padding: 8px 10px; }
+        .a313-add-spec-btn { border: 1px solid var(--primary-color); background: #fff; color: var(--primary-color); border-radius: 8px; padding: 9px 13px; cursor: pointer; }
+        .a313-add-spec-btn:hover { background: var(--primary-color); color: #fff; }
+        .a313-selected-list { margin-top: 10px; font-size: 13px; }
+        .a313-selected-item { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px dashed var(--border-color); }
+        .a313-remove { border: 0; background: transparent; color: #c97a7a; cursor: pointer; }
+        .a313-count { margin-top: 8px; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+        @media (max-width: 768px) { .a313-choice-row { align-items: stretch; } .a313-select, .a313-qty, .a313-add-spec-btn { width: 100%; box-sizing: border-box; } }
+
     </style>
 </head>
 <body>
@@ -3567,6 +3583,7 @@
                 <div class="product-item" data-id="A313" data-name="開花高手套組" data-category="perimeter" data-sub="professional-kit">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px;">商品編號：A313</div>
                     <div class="product-name">開花高手套組</div>
+
                     <details class="professional-kit-details">
                         <summary class="professional-kit-summary">查看套組內容｜共 4 項</summary>
                         <div class="professional-kit-content">
@@ -3576,8 +3593,61 @@
                                 <div>03. 頂級人造水貂絲 0.07－任選10盒</div>
                                 <div>04. 凱莉絲花園 0.07－任選10盒</div>
                             </div>
+
+                            <div class="a313-choice-box">
+                                <div class="a313-choice-title">03｜頂級人造水貂絲 0.07－任選10盒</div>
+                                <div class="a313-fixed-spec">粗度固定：0.07</div>
+                                <div class="a313-choice-row">
+                                    <select id="A313-mink-curl" class="form-control a313-select">
+                                        <option value="">選擇捲度</option>
+                                        <option value="B">B捲</option>
+                                        <option value="C">C捲</option>
+                                        <option value="D">D捲</option>
+                                    </select>
+                                    <select id="A313-mink-length" class="form-control a313-select">
+                                        <option value="">選擇長度</option>
+                                        <option value="MIX8-14">MIX 8-14</option>
+                                        <option value="MIX9-12">MIX 9-12</option>
+                                        <option value="8mm">8mm</option><option value="9mm">9mm</option>
+                                        <option value="10mm">10mm</option><option value="11mm">11mm</option>
+                                        <option value="12mm">12mm</option><option value="13mm">13mm</option>
+                                        <option value="14mm">14mm</option><option value="15mm">15mm</option>
+                                    </select>
+                                    <input id="A313-mink-qty" class="form-control a313-qty" type="number" min="1" max="10" value="1">
+                                    <button type="button" class="a313-add-spec-btn" onclick="addA313Choice('mink')">加入尺寸</button>
+                                </div>
+                                <div id="A313-mink-list" class="a313-selected-list"></div>
+                                <div id="A313-mink-count" class="a313-count">已選 0 / 10 盒</div>
+                            </div>
+
+                            <div class="a313-choice-box">
+                                <div class="a313-choice-title">04｜凱莉絲花園 0.07－任選10盒</div>
+                                <div class="a313-fixed-spec">粗度固定：0.07</div>
+                                <div class="a313-choice-row">
+                                    <select id="A313-kelly-curl" class="form-control a313-select">
+                                        <option value="">選擇捲度</option>
+                                        <option value="B">B捲</option>
+                                        <option value="C">C捲</option>
+                                        <option value="D">D捲</option>
+                                    </select>
+                                    <select id="A313-kelly-length" class="form-control a313-select">
+                                        <option value="">選擇長度</option>
+                                        <option value="MIX8-14">MIX 8-14</option>
+                                        <option value="MIX9-12">MIX 9-12</option>
+                                        <option value="8mm">8mm</option><option value="9mm">9mm</option>
+                                        <option value="10mm">10mm</option><option value="11mm">11mm</option>
+                                        <option value="12mm">12mm</option><option value="13mm">13mm</option>
+                                        <option value="14mm">14mm</option><option value="15mm">15mm</option>
+                                    </select>
+                                    <input id="A313-kelly-qty" class="form-control a313-qty" type="number" min="1" max="10" value="1">
+                                    <button type="button" class="a313-add-spec-btn" onclick="addA313Choice('kelly')">加入尺寸</button>
+                                </div>
+                                <div id="A313-kelly-list" class="a313-selected-list"></div>
+                                <div id="A313-kelly-count" class="a313-count">已選 0 / 10 盒</div>
+                            </div>
                         </div>
                     </details>
+
                     <div class="product-price">$7500</div>
                     <div class="product-stock" id="stock-text-A313">載入中...</div>
                     <div class="quantity-selector">
@@ -3585,7 +3655,7 @@
                         <input type="number" class="quantity-input" id="left-input-A313" value="0" min="0">
                         <button class="quantity-btn" onclick="changeLeftQty('A313', 1)">+</button>
                     </div>
-                    <button class="btn" onclick="addToCart('A313')">加入購物車</button>
+                    <button class="btn" onclick="addA313ToCart()">加入購物車</button>
                 </div>
 
                 <div class="product-item" data-id="B56" data-name="36格睫毛盒收納架" data-category="perimeter" data-sub="p-others">
@@ -10789,6 +10859,98 @@ function addLashToCart(productId) {
     cart[cartItemSku] = currentInCart + qtySelected;
     leftInput.value = 0;
     saveCartToStorage(); // 💾 [儲存至 localStorage]
+    renderCart();
+}
+
+
+// =============================================================
+// A313 開花高手套組－0.07 規格任選，各系列合計 10 盒
+// =============================================================
+const A313_CHOICES = { mink: [], kelly: [] };
+
+function getA313ChoiceTotal(type) {
+    return A313_CHOICES[type].reduce((sum, item) => sum + item.qty, 0);
+}
+
+function addA313Choice(type) {
+    const curl = document.getElementById(`A313-${type}-curl`).value;
+    const length = document.getElementById(`A313-${type}-length`).value;
+    const qtyInput = document.getElementById(`A313-${type}-qty`);
+    const qty = parseInt(qtyInput.value) || 0;
+
+    if (!curl || !length) { alert('請先選擇捲度與長度。'); return; }
+    if (qty <= 0) { alert('盒數至少要 1 盒。'); return; }
+
+    const currentTotal = getA313ChoiceTotal(type);
+    if (currentTotal + qty > 10) {
+        alert(`此系列共需選 10 盒，目前已選 ${currentTotal} 盒，最多還能加入 ${10 - currentTotal} 盒。`);
+        return;
+    }
+
+    const found = A313_CHOICES[type].find(x => x.curl === curl && x.length === length);
+    if (found) found.qty += qty;
+    else A313_CHOICES[type].push({ curl, thickness: '0.07', length, qty });
+
+    qtyInput.value = 1;
+    renderA313Choices(type);
+}
+
+function removeA313Choice(type, index) {
+    A313_CHOICES[type].splice(index, 1);
+    renderA313Choices(type);
+}
+
+function renderA313Choices(type) {
+    const list = document.getElementById(`A313-${type}-list`);
+    const count = document.getElementById(`A313-${type}-count`);
+    if (!list || !count) return;
+
+    list.innerHTML = A313_CHOICES[type].map((item, i) => `
+        <div class="a313-selected-item">
+            <span>${item.curl}捲／0.07／${item.length} × ${item.qty}盒</span>
+            <button type="button" class="a313-remove" onclick="removeA313Choice('${type}', ${i})">移除</button>
+        </div>
+    `).join('');
+
+    const total = getA313ChoiceTotal(type);
+    count.textContent = `已選 ${total} / 10 盒`;
+    count.style.color = total === 10 ? 'var(--primary-color)' : 'var(--text-muted)';
+}
+
+function addA313ToCart() {
+    const minkTotal = getA313ChoiceTotal('mink');
+    const kellyTotal = getA313ChoiceTotal('kelly');
+    if (minkTotal !== 10) { alert(`頂級人造水貂絲 0.07 需選滿 10 盒，目前已選 ${minkTotal} 盒。`); return; }
+    if (kellyTotal !== 10) { alert(`凱莉絲花園 0.07 需選滿 10 盒，目前已選 ${kellyTotal} 盒。`); return; }
+
+    const qtyInput = document.getElementById('left-input-A313');
+    const qtySelected = parseInt(qtyInput.value) || 0;
+    if (qtySelected <= 0) { alert('請先選擇套組數量。'); return; }
+
+    const minkText = A313_CHOICES.mink.map(x => `${x.curl}捲/0.07/${x.length}×${x.qty}`).join('、');
+    const kellyText = A313_CHOICES.kelly.map(x => `${x.curl}捲/0.07/${x.length}×${x.qty}`).join('、');
+    const specText = `水貂：${minkText}；凱莉絲：${kellyText}`;
+    const cartKey = `A313_${encodeURIComponent(specText)}`;
+
+    if (!productConfig[cartKey]) {
+        productConfig[cartKey] = {
+            name: `A313 開花高手套組【${specText}】`,
+            price: 7500,
+            max: productConfig['A313']?.max || 20,
+            _isSpecialSku: true
+        };
+    }
+
+    const current = cart[cartKey] || 0;
+    const max = productConfig[cartKey].max || 20;
+    if (current + qtySelected > max) {
+        alert(`此套組最多可加入 ${max} 組。`);
+        return;
+    }
+
+    cart[cartKey] = current + qtySelected;
+    qtyInput.value = 0;
+    saveCartToStorage();
     renderCart();
 }
 
