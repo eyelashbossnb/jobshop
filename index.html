@@ -596,6 +596,15 @@
         .a313-count { margin-top: 8px; font-size: 12px; font-weight: 600; color: var(--text-muted); }
         @media (max-width: 768px) { .a313-choice-row { align-items: stretch; } .a313-select, .a313-qty, .a313-add-spec-btn { width: 100%; box-sizing: border-box; } }
 
+    
+        /* F247 / F248 熱蠟專業套組－款式任選 */
+        .wax-kit-choice-box { margin: 12px 0 16px; padding: 16px; background: #fff; border: 1px solid var(--border-color); border-radius: 10px; }
+        .wax-kit-choice-title { font-weight: 600; margin-bottom: 10px; font-size: 14px; }
+        .wax-kit-choice-row { display: grid; grid-template-columns: 150px 1fr; gap: 10px; align-items: center; margin: 8px 0; }
+        .wax-kit-choice-label { font-size: 13px; color: var(--text-main); }
+        .wax-kit-select { width: 100%; padding: 9px 10px; border: 1px solid var(--border-color); border-radius: 8px; background: #fff; color: var(--text-main); }
+        @media (max-width: 768px) { .wax-kit-choice-row { grid-template-columns: 1fr; gap: 5px; } }
+
     </style>
 </head>
 <body>
@@ -4133,10 +4142,31 @@
                             </div>
                         </div>
                     </details>
+                    
+                    <div class="wax-kit-choice-box">
+                        <div class="wax-kit-choice-title">請選擇套組款式</div>
+                        <div class="wax-kit-choice-row">
+                            <div class="wax-kit-choice-label">Q彈潤白軟蠟：</div>
+                            <select id="F247-softwax" class="wax-kit-select">
+                                <option value="">請選擇</option>
+                                <option value="純淨蜂蜜">純淨蜂蜜</option>
+                                <option value="美肌蘆薈">美肌蘆薈</option>
+                            </select>
+                        </div>
+                        <div class="wax-kit-choice-row">
+                            <div class="wax-kit-choice-label">全效修護硬蠟：</div>
+                            <select id="F247-hardwax" class="wax-kit-select">
+                                <option value="">請選擇</option>
+                                <option value="巴西香草白">巴西香草白</option>
+                                <option value="巴西藍甘菊">巴西藍甘菊</option>
+                                <option value="超彈力竹炭黑">超彈力竹炭黑</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="product-price">$4500</div>
                     <div class="product-stock" id="stock-text-F247">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('F247', -1)">-</button><input type="number" class="quantity-input" id="left-input-F247" value="0" min="0"><button class="quantity-btn" onclick="changeLeftQty('F247', 1)">+</button></div>
-                    <button class="btn" onclick="addToCart('F247')">加入購物車</button>
+                    <button class="btn" onclick="addWaxKitToCart('F247')">加入購物車</button>
                 </div>
 
 
@@ -4180,10 +4210,31 @@
                         </div>
                         </div>
                     </details>
+                    
+                    <div class="wax-kit-choice-box">
+                        <div class="wax-kit-choice-title">請選擇套組款式</div>
+                        <div class="wax-kit-choice-row">
+                            <div class="wax-kit-choice-label">Q彈潤白軟蠟：</div>
+                            <select id="F248-softwax" class="wax-kit-select">
+                                <option value="">請選擇</option>
+                                <option value="純淨蜂蜜">純淨蜂蜜</option>
+                                <option value="美肌蘆薈">美肌蘆薈</option>
+                            </select>
+                        </div>
+                        <div class="wax-kit-choice-row">
+                            <div class="wax-kit-choice-label">全效修護硬蠟：</div>
+                            <select id="F248-hardwax" class="wax-kit-select">
+                                <option value="">請選擇</option>
+                                <option value="巴西香草白">巴西香草白</option>
+                                <option value="巴西藍甘菊">巴西藍甘菊</option>
+                                <option value="超彈力竹炭黑">超彈力竹炭黑</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="product-price">$7500</div>
                     <div class="product-stock" id="stock-text-F248">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('F248', -1)">-</button><input type="number" class="quantity-input" id="left-input-F248" value="0" min="0"><button class="quantity-btn" onclick="changeLeftQty('F248', 1)">+</button></div>
-                    <button class="btn" onclick="addToCart('F248')">加入購物車</button>
+                    <button class="btn" onclick="addWaxKitToCart('F248')">加入購物車</button>
                 </div>
 
                 <div class="product-item" data-id="FB1" data-name="熱蠟美體紀錄表(雙面款)100/入" data-category="wax" data-sub="wax-others">
@@ -10984,6 +11035,58 @@ function addToCartWithVariant(productId) {
     renderCart();
 }
 
+
+// =============================================================
+// F247 / F248 熱蠟套組－款式任選（僅記錄選項，不扣內容物庫存）
+// =============================================================
+function addWaxKitToCart(productId) {
+    const softWax = document.getElementById(`${productId}-softwax`)?.value || '';
+    const hardWax = document.getElementById(`${productId}-hardwax`)?.value || '';
+    const qtyInput = document.getElementById(`left-input-${productId}`);
+    const qtySelected = parseInt(qtyInput?.value) || 0;
+
+    if (!softWax) {
+        alert('請先選擇 Q彈潤白軟蠟款式。');
+        return;
+    }
+    if (!hardWax) {
+        alert('請先選擇 全效修護硬蠟款式。');
+        return;
+    }
+    if (qtySelected <= 0) {
+        alert('請先選擇要加入的套組數量。');
+        return;
+    }
+
+    const baseInfo = productConfig[productId];
+    if (!baseInfo) {
+        alert('找不到套組商品資料。');
+        return;
+    }
+
+    const specText = `軟蠟：${softWax}；硬蠟：${hardWax}`;
+    const cartKey = `${productId}_KIT_${encodeURIComponent(specText)}`;
+
+    productConfig[cartKey] = {
+        name: `${baseInfo.name}【${specText}】`,
+        price: baseInfo.price,
+        max: baseInfo.max || 20,
+        _isWaxKitChoice: true,
+        _waxKitBaseId: productId
+    };
+
+    const current = cart[cartKey] || 0;
+    if (current + qtySelected > productConfig[cartKey].max) {
+        alert(`此套組最多可加入 ${productConfig[cartKey].max} 組。`);
+        return;
+    }
+
+    cart[cartKey] = current + qtySelected;
+    qtyInput.value = 0;
+    saveCartToStorage();
+    renderCart();
+}
+
 function addToCart(productId) {
     const leftInput = document.getElementById(`left-input-${productId}`);
     const productItem = document.querySelector(`.product-item[data-id="${productId}"]`);
@@ -11912,7 +12015,14 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             if (typeof productConfig !== 'undefined' && productConfig[itemId]) {
                 const pInfo = productConfig[itemId];
 
-                if (itemId.includes('_')) {
+                // 熱蠟套組選項只記錄款式；庫存仍只扣 F247 / F248 套組本身，不扣內容物。
+                if (pInfo._isWaxKitChoice && pInfo._waxKitBaseId) {
+                    const baseKitInfo = productConfig[pInfo._waxKitBaseId];
+                    const backendKey = baseKitInfo && baseKitInfo.name.toUpperCase().includes(pInfo._waxKitBaseId.toUpperCase())
+                        ? baseKitInfo.name
+                        : pInfo._waxKitBaseId + (baseKitInfo ? baseKitInfo.name : '');
+                    cartBackup[backendKey] = (cartBackup[backendKey] || 0) + qty;
+                } else if (itemId.includes('_')) {
                     const isEyeMask = itemId.startsWith('A70_') || itemId.startsWith('A74_') || itemId.startsWith('A76_');
 
                     if (isEyeMask) {
