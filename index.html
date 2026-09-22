@@ -547,12 +547,14 @@
         /* ==================================================
            專業套組商品專用版型
            ================================================== */
-        .product-item[data-sub="professional-kit"] {
+        .product-item[data-sub="professional-kit"],
+        .product-item[data-sub="beauty-professional-kit"] {
             grid-column: 1 / -1;
             text-align: left;
             padding: 28px 32px;
         }
-        .product-item[data-sub="professional-kit"] .product-name { font-size: 20px; font-weight: 600; margin-bottom: 12px; }
+        .product-item[data-sub="professional-kit"] .product-name,
+        .product-item[data-sub="beauty-professional-kit"] .product-name { font-size: 20px; font-weight: 600; margin-bottom: 12px; }
 
         /* 專業套組－預設收合，點擊後查看內容 */
         .professional-kit-details { width: 100%; margin: 12px 0 20px; }
@@ -574,7 +576,8 @@
         .professional-kit-list { display: grid; grid-template-columns: 1fr 1fr; column-gap: 35px; row-gap: 7px; margin-top: 0; }
         .professional-kit-list div { padding-bottom: 5px; border-bottom: 1px dashed var(--border-color); }
         @media (max-width: 768px) {
-            .product-item[data-sub="professional-kit"] { grid-column: 1; padding: 20px; }
+            .product-item[data-sub="professional-kit"],
+        .product-item[data-sub="beauty-professional-kit"] { grid-column: 1; padding: 20px; }
             .professional-kit-list { grid-template-columns: 1fr; }
         }
     </style>
@@ -3624,6 +3627,88 @@
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('B74', -1)">-</button><input type="number" class="quantity-input" id="left-input-B74" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('B74', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('B74')">加入購物車</button>
                 </div>
+
+                <!-- 熱蠟專業套組：A314 新手基礎套組 -->
+                <div class="product-item" data-id="A314" data-name="新手基礎套組" data-category="wax" data-sub="beauty-professional-kit">
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px;">商品編號：A314</div>
+                    <div class="product-name">新手基礎套組</div>
+                    <details class="professional-kit-details">
+                        <summary class="professional-kit-summary">查看套組內容｜共 17 項</summary>
+                        <div class="professional-kit-content">
+                            <div class="professional-kit-list">
+                            <div>01. Q彈潤白軟蠟－1罐</div>
+                            <div>02. 全效修護硬蠟－任選1包<br>（巴西香草白／巴西藍甘菊／超彈力竹炭黑）</div>
+                            <div>03. 單鍋爐熔蠟機－1台</div>
+                            <div>04. 頂級植萃肌膚潔淨噴霧－1瓶</div>
+                            <div>05. 玫瑰美肌精萃滋養油－1瓶</div>
+                            <div>06. 玫瑰精萃鎮定舒緩乳液－1瓶</div>
+                            <div>07. 熱蠟專用木棒（大）－1包</div>
+                            <div>08. 熱蠟專用木棒（中）－1包</div>
+                            <div>09. 熱蠟專用木棒（小）－1包</div>
+                            <div>10. 熱蠟專用木棒（纖細）－1包</div>
+                            <div>11. 金屬刮刀－1支</div>
+                            <div>12. 熔蠟機防汙墊－20入／組</div>
+                            <div>13. 熱蠟黏毛布－100入</div>
+                            <div>14. 熱蠟保養小卡－100張／入</div>
+                            <div>15. 熱蠟顧客同意書－100張／本</div>
+                            <div>16. 不鏽鋼剪刀14公分－1支</div>
+                            <div>17. 扇子－1支</div>
+                            </div>
+                        </div>
+                    </details>
+                    <div class="product-price">$4500</div>
+                    <div class="product-stock" id="stock-text-A314">載入中...</div>
+                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('A314', -1)">-</button><input type="number" class="quantity-input" id="left-input-A314" value="0" min="0"><button class="quantity-btn" onclick="changeLeftQty('A314', 1)">+</button></div>
+                    <button class="btn" onclick="addToCart('A314')">加入購物車</button>
+                </div>
+
+
+                <!-- 熱蠟專業套組：A315 頂級全方位套組 -->
+                <div class="product-item" data-id="A315" data-name="頂級全方位套組" data-category="wax" data-sub="beauty-professional-kit">
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px;">商品編號：A315</div>
+                    <div class="product-name">頂級全方位套組</div>
+                    <details class="professional-kit-details">
+                        <summary class="professional-kit-summary">查看套組內容｜共 22 項</summary>
+                        <div class="professional-kit-content">
+                            <div class="professional-kit-list">
+                            <div>01. Q彈潤白軟蠟－1罐</div>
+                            <div>02. 粉紅玫瑰複合精華硬蠟－1包</div>
+                            <div>03. 全效修護硬蠟－任選1包<br>（巴西香草白／巴西藍甘菊／超彈力竹炭黑）</div>
+                            <div>04. 極效修護複方精油－1瓶</div>
+                            <div>05. 頂級植萃肌膚潔淨噴霧－1瓶</div>
+                            <div>06. 玫瑰美肌精萃滋養油－1瓶</div>
+                            <div>07. 玫瑰精萃鎮定舒緩乳液－1瓶</div>
+                            <div>08. 雙鍋爐熔蠟機－1台</div>
+                            <div>09. 熱蠟專用木棒（大）100支－2包</div>
+                            <div>10. 熱蠟專用木棒（中）100支－2包</div>
+                            <div>11. 熱蠟專用木棒（小）100支－2包</div>
+                            <div>12. 扇子－1支</div>
+                            <div>13. 熱蠟黏毛布100片／入－2包</div>
+                            <div>14. 拋棄式梳子100支／入－1包</div>
+                            <div>15. 金屬刮刀－1支</div>
+                            <div>16. 不鏽鋼剪刀14公分－1支</div>
+                            <div>17. 透明分裝小圓盒5G（10／入）－2包</div>
+                            <div>18. 熱蠟保養小卡100張／入－1包</div>
+                            <div>19. 熱蠟美體紀錄表（雙面款）100／入－1包</div>
+                            <div>20. 熱蠟顧客資料表100／入－1包</div>
+                            <div>21. 方形熔蠟機防汗墊20張／入（大）－1包</div>
+                            <div>22. 平鋪式床單－10張／包－1包</div>
+                            </div>
+                        <div style="margin-top:16px; padding:12px 14px; background:#fff; border:1px dashed var(--primary-color); border-radius:8px;">
+                            <strong>贈品｜熱蠟海報共 4 張</strong><br>
+                            FE10 私密造型款－1張<br>
+                            FE11 金色經典款－1張<br>
+                            FE13 熱蠟價目表－1張<br>
+                            FE14 頂級全效修護硬蠟－1張
+                        </div>
+                        </div>
+                    </details>
+                    <div class="product-price">$7500</div>
+                    <div class="product-stock" id="stock-text-A315">載入中...</div>
+                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('A315', -1)">-</button><input type="number" class="quantity-input" id="left-input-A315" value="0" min="0"><button class="quantity-btn" onclick="changeLeftQty('A315', 1)">+</button></div>
+                    <button class="btn" onclick="addToCart('A315')">加入購物車</button>
+                </div>
+
 
                 <div class="product-item" data-id="F2" data-name="Q彈潤白軟蠟-純淨蜂蜜" data-category="wax" data-sub="wax-beans">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：F2</div>
@@ -9024,6 +9109,8 @@
         "A311": { name: "A311 基礎入門套組", price: 4500, max: 20 },
 		"A312": { name: "A312 6D開花套組", price: 4500, max: 20 },
         "A313": { name: "A313 開花高手套組", price: 7500, max: 20 },
+        "A314": { name: "A314 新手基礎套組", price: 4500, max: 20 },
+        "A315": { name: "A315 頂級全方位套組", price: 7500, max: 20 },
         "B56": { name: "B56 36格睫毛盒收納架", price: 1500, max: 20 },
         "B71": { name: "B71 包裝OPP袋(2.5*11CM)/100入", price: 25, max: 20 },
         "B72": { name: "B72 包裝OPP袋(10*10CM)/A.粉紅雪花", price: 50, max: 20 },
