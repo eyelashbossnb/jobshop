@@ -3600,12 +3600,9 @@
                                 <div class="a313-choice-row">
                                     <select id="A313-mink-curl" class="form-control a313-select">
                                         <option value="">選擇捲度</option>
-                                        <option value="J">J捲</option>
-                                        <option value="J">J捲</option>
                                         <option value="B">B捲</option>
                                         <option value="C">C捲</option>
                                         <option value="D">D捲</option>
-                                        <option value="O">O捲</option>
                                     </select>
                                     <select id="A313-mink-length" class="form-control a313-select">
                                         <option value="">選擇長度</option>
@@ -10867,66 +10864,12 @@ function addLashToCart(productId) {
 
 
 // =============================================================
-// A313 開花高手套組－0.07 規格任選＋雲端庫存連動
+// A313 開花高手套組－0.07 規格任選，各系列合計 10 盒
 // =============================================================
 const A313_CHOICES = { mink: [], kelly: [] };
 
 function getA313ChoiceTotal(type) {
     return A313_CHOICES[type].reduce((sum, item) => sum + item.qty, 0);
-}
-
-function normalizeA313Spec(value) {
-    return cleanString(value || '')
-        .replace(/75°|65°|55°/g, '')
-        .replace(/[^0-9A-Z\u3400-\u9FFF.]/g, '');
-}
-
-// 從 doGet 已下載的 globalInventoryData 中，找出真正的 E5_UP / E7_UP 規格庫存列。
-function findA313LashInventory(type, curl, length) {
-    if (typeof globalInventoryData === 'undefined' || !globalInventoryData) return null;
-
-    const baseId = type === 'mink' ? 'E5_UP' : 'E7_UP';
-    const baseName = type === 'mink' ? '頂級人造水貂絲' : '凱莉絲花園';
-    const wantedCurl = String(curl || '').toUpperCase();
-    const wantedLength = String(length || '').toUpperCase().replace(/\s+/g, '');
-    const wantedThickness = '0.07';
-
-    let best = null;
-
-    for (const realKey in globalInventoryData) {
-        const raw = String(realKey || '');
-        const cleaned = cleanString(raw);
-        const compact = normalizeA313Spec(raw);
-
-        // 優先限定在一般睫毛商品 E5_UP / E7_UP；若後台 A 欄沒有代碼，才以系列中文名保底。
-        const belongsToSeries =
-            cleaned.includes(cleanString(baseId)) ||
-            cleaned.includes(cleanString(baseName));
-        if (!belongsToSeries) continue;
-
-        // 避免誤抓出清 W 區或咖啡色款。
-        if (/W\d+_UP/i.test(raw) || cleaned.includes('出清') || cleaned.includes('咖啡')) continue;
-
-        const hasThickness = cleaned.includes('0.07') || compact.includes('0.07');
-        const hasCurl = cleaned.includes(wantedCurl) || compact.includes(wantedCurl);
-        const hasLength = cleaned.includes(wantedLength) || compact.includes(wantedLength);
-
-        if (hasThickness && hasCurl && hasLength) {
-            best = {
-                key: realKey,
-                stock: Number(globalInventoryData[realKey]) || 0
-            };
-            // 有商品代碼的精準列優先
-            if (cleaned.includes(cleanString(baseId))) break;
-        }
-    }
-    return best;
-}
-
-function getA313AlreadySelected(type, backendKey) {
-    return A313_CHOICES[type]
-        .filter(x => x.backendStockKey === backendKey)
-        .reduce((sum, x) => sum + x.qty, 0);
 }
 
 function addA313Choice(type) {
@@ -10944,28 +10887,9 @@ function addA313Choice(type) {
         return;
     }
 
-    const inventoryMatch = findA313LashInventory(type, curl, length);
-    if (!inventoryMatch) {
-        alert(`找不到此規格的雲端庫存資料：${curl}捲／0.07／${length}。請確認庫存表 A 欄規格名稱。`);
-        return;
-    }
-
-    const alreadySelected = getA313AlreadySelected(type, inventoryMatch.key);
-    if (alreadySelected + qty > inventoryMatch.stock) {
-        alert(`此規格目前庫存 ${inventoryMatch.stock} 盒，您在本套組已選 ${alreadySelected} 盒，最多還可選 ${Math.max(0, inventoryMatch.stock - alreadySelected)} 盒。`);
-        return;
-    }
-
-    const found = A313_CHOICES[type].find(x => x.backendStockKey === inventoryMatch.key);
+    const found = A313_CHOICES[type].find(x => x.curl === curl && x.length === length);
     if (found) found.qty += qty;
-    else A313_CHOICES[type].push({
-        curl,
-        thickness: '0.07',
-        length,
-        qty,
-        backendStockKey: inventoryMatch.key,
-        stock: inventoryMatch.stock
-    });
+    else A313_CHOICES[type].push({ curl, thickness: '0.07', length, qty });
 
     qtyInput.value = 1;
     renderA313Choices(type);
@@ -10983,8 +10907,7 @@ function renderA313Choices(type) {
 
     list.innerHTML = A313_CHOICES[type].map((item, i) => `
         <div class="a313-selected-item">
-            <span>${item.curl}捲／0.07／${item.length} × ${item.qty}盒
-            <small style="color:var(--text-muted);">（庫存 ${item.stock}）</small></span>
+            <span>${item.curl}捲／0.07／${item.length} × ${item.qty}盒</span>
             <button type="button" class="a313-remove" onclick="removeA313Choice('${type}', ${i})">移除</button>
         </div>
     `).join('');
@@ -11004,38 +10927,19 @@ function addA313ToCart() {
     const qtySelected = parseInt(qtyInput.value) || 0;
     if (qtySelected <= 0) { alert('請先選擇套組數量。'); return; }
 
-    // 套組數量 > 1 時，每個規格所需盒數也同步倍增，再檢查一次實際庫存。
-    const allChoices = [...A313_CHOICES.mink, ...A313_CHOICES.kelly];
-    for (const item of allChoices) {
-        const latest = findA313LashInventory(
-            A313_CHOICES.mink.includes(item) ? 'mink' : 'kelly',
-            item.curl,
-            item.length
-        );
-        const stock = latest ? latest.stock : item.stock;
-        const required = item.qty * qtySelected;
-        if (!latest || required > stock) {
-            alert(`${item.curl}捲／0.07／${item.length} 庫存不足，需要 ${required} 盒，目前僅有 ${stock || 0} 盒。`);
-            return;
-        }
-    }
-
     const minkText = A313_CHOICES.mink.map(x => `${x.curl}捲/0.07/${x.length}×${x.qty}`).join('、');
     const kellyText = A313_CHOICES.kelly.map(x => `${x.curl}捲/0.07/${x.length}×${x.qty}`).join('、');
     const specText = `水貂：${minkText}；凱莉絲：${kellyText}`;
     const cartKey = `A313_${encodeURIComponent(specText)}`;
 
-    productConfig[cartKey] = {
-        name: `A313 開花高手套組【${specText}】`,
-        price: 7500,
-        max: productConfig['A313']?.max || 20,
-        _isSpecialSku: true,
-        _isA313Kit: true,
-        a313Components: {
-            mink: A313_CHOICES.mink.map(x => ({...x})),
-            kelly: A313_CHOICES.kelly.map(x => ({...x}))
-        }
-    };
+    if (!productConfig[cartKey]) {
+        productConfig[cartKey] = {
+            name: `A313 開花高手套組【${specText}】`,
+            price: 7500,
+            max: productConfig['A313']?.max || 20,
+            _isSpecialSku: true
+        };
+    }
 
     const current = cart[cartKey] || 0;
     const max = productConfig[cartKey].max || 20;
@@ -12008,23 +11912,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             if (typeof productConfig !== 'undefined' && productConfig[itemId]) {
                 const pInfo = productConfig[itemId];
 
-                // ✅ A313 套組：扣 A313 套組本身 + 套組內實際選取的 E5_UP / E7_UP 規格庫存
-                if (pInfo._isA313Kit && pInfo.a313Components) {
-                    const kitBackendKey = 'A313開花高手套組';
-                    cartBackup[kitBackendKey] = (cartBackup[kitBackendKey] || 0) + qty;
-
-                    const componentGroups = [
-                        ...(pInfo.a313Components.mink || []),
-                        ...(pInfo.a313Components.kelly || [])
-                    ];
-                    componentGroups.forEach(component => {
-                        const backendKey = component.backendStockKey;
-                        const deductBoxes = (Number(component.qty) || 0) * qty;
-                        if (backendKey && deductBoxes > 0) {
-                            cartBackup[backendKey] = (cartBackup[backendKey] || 0) + deductBoxes;
-                        }
-                    });
-                } else if (itemId.includes('_')) {
+                if (itemId.includes('_')) {
                     const isEyeMask = itemId.startsWith('A70_') || itemId.startsWith('A74_') || itemId.startsWith('A76_');
 
                     if (isEyeMask) {
