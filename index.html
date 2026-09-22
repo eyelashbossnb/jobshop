@@ -10984,7 +10984,7 @@ function addA313ToCart() {
     const minkText = A313_CHOICES.mink.map(x => `${x.curl}捲/0.07/${x.length}×${x.qty}`).join('、');
     const kellyText = A313_CHOICES.kelly.map(x => `${x.curl}捲/0.07/${x.length}×${x.qty}`).join('、');
     const specText = `水貂：${minkText}；凱莉絲：${kellyText}`;
-    const cartKey = `A313_${encodeURIComponent(specText)}`;
+    const cartKey = `A313_KIT_${Date.now()}`;
 
     if (!productConfig[cartKey]) {
         productConfig[cartKey] = {
@@ -10993,6 +10993,7 @@ function addA313ToCart() {
             max: productConfig['A313']?.max || 20,
             _isSpecialSku: true,
             _isA313Kit: true,
+            displayId: 'A313',
             a313Components: {
                 mink: A313_CHOICES.mink.map(x => ({...x})),
                 kelly: A313_CHOICES.kelly.map(x => ({...x}))
@@ -11073,7 +11074,7 @@ function addWaxKitToCart(productId) {
     }
 
     const specText = `軟蠟：${softWax}；硬蠟：${hardWax}`;
-    const cartKey = `${productId}_KIT_${encodeURIComponent(specText)}`;
+    const cartKey = `${productId}_KIT_${Date.now()}`;
 
     productConfig[cartKey] = {
         name: `${baseInfo.name}【${specText}】`,
@@ -11081,6 +11082,7 @@ function addWaxKitToCart(productId) {
         max: baseInfo.max || 20,
         _isWaxKitChoice: true,
         _waxKitBaseId: productId,
+        displayId: productId,
         waxKitComponents: [
             { searchName: `Q彈潤白軟蠟${softWax}`, qty: 1 },
             { searchName: `全效修護硬蠟${hardWax}`, qty: 1 }
@@ -11154,6 +11156,12 @@ function changeCartItemQty(cartKey, change) {
 // =============================================================
 // 9. 購物車渲染與小計更新
 // =============================================================
+
+function getOrderDisplayProductId(itemId) {
+    const pInfo = (typeof productConfig !== 'undefined') ? productConfig[itemId] : null;
+    return (pInfo && pInfo.displayId) ? pInfo.displayId : itemId;
+}
+
 function renderCart() {
     const container = document.getElementById('cart-items-container');
     if (!container) return;
@@ -12003,7 +12011,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             }
 
             const specText = item.spec ? ` (${item.spec})` : '';
-            orderDetails += `${validItemIndex}. [${itemId}] ${itemName}${specText} ($${itemPrice}) x ${itemQty}\n`;
+            orderDetails += `${validItemIndex}. [${getOrderDisplayProductId(itemId)}] ${itemName}${specText} ($${itemPrice}) x ${itemQty}\n`;
             itemsSummary.push(`${itemName} x${itemQty}`);
             validItemIndex++;
 
