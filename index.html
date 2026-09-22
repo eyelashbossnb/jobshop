@@ -3609,9 +3609,9 @@
                                 <div class="a313-choice-row">
                                     <select id="A313-mink-curl" class="form-control a313-select">
                                         <option value="">選擇捲度</option>
-                                        <option value="B65°">B65度</option>
-                                        <option value="C75°">C75度</option>
-                                        <option value="D90°">D90度</option>
+                                        <option value="B">B65度</option>
+                                        <option value="C">C75度</option>
+                                        <option value="D">D90度</option>
                                     </select>
                                     <select id="A313-mink-length" class="form-control a313-select">
                                         <option value="">選擇長度</option>
@@ -3634,9 +3634,9 @@
                                 <div class="a313-choice-row">
                                     <select id="A313-kelly-curl" class="form-control a313-select">
                                         <option value="">選擇捲度</option>
-                                        <option value="B65°">B65度</option>
-                                        <option value="C75°">C75度</option>
-                                        <option value="D90°">D90度</option>
+                                        <option value="B">B65度</option>
+                                        <option value="C">C75度</option>
+                                        <option value="D">D90度</option>
                                     </select>
                                     <select id="A313-kelly-length" class="form-control a313-select">
                                         <option value="">選擇長度</option>
@@ -4122,8 +4122,8 @@
                         <summary class="professional-kit-summary">查看套組內容｜共 17 項</summary>
                         <div class="professional-kit-content">
                             <div class="professional-kit-list">
-                            <div>01. Q彈潤白軟蠟－任選1罐</div>
-                            <div>02. 全效修護硬蠟－任選1包</div>
+                            <div>01. Q彈潤白軟蠟－任選1罐<br>（純淨蜂蜜／美肌蘆薈）</div>
+                            <div>02. 全效修護硬蠟－任選1包<br>（巴西香草白／巴西藍甘菊／超彈力竹炭黑）</div>
                             <div>03. 單鍋爐熔蠟機－1台</div>
                             <div>04. 頂級植萃肌膚潔淨噴霧－1瓶</div>
                             <div>05. 玫瑰美肌精萃滋養油－1瓶</div>
@@ -4178,9 +4178,9 @@
                         <summary class="professional-kit-summary">查看套組內容｜共 22 項</summary>
                         <div class="professional-kit-content">
                             <div class="professional-kit-list">
-                            <div>01. Q彈潤白軟蠟－1罐</div>
+                            <div>01. Q彈潤白軟蠟－1罐<br>（純淨蜂蜜／美肌蘆薈）</div>
                             <div>02. 粉紅玫瑰複合精華硬蠟－1包</div>
-                            <div>03. 全效修護硬蠟－任選1包</div>
+                            <div>03. 全效修護硬蠟－任選1包<br>（巴西香草白／巴西藍甘菊／超彈力竹炭黑）</div>
                             <div>04. 極效修護複方精油－1瓶</div>
                             <div>05. 頂級植萃肌膚潔淨噴霧－1瓶</div>
                             <div>06. 玫瑰美肌精萃滋養油－1瓶</div>
@@ -10940,7 +10940,10 @@ function addA313Choice(type) {
 
     const found = A313_CHOICES[type].find(x => x.curl === curl && x.length === length);
     if (found) found.qty += qty;
-    else A313_CHOICES[type].push({ curl, thickness: '0.07', length, qty });
+    else A313_CHOICES[type].push({
+        curl, thickness: '0.07', length, qty,
+        backendStockKey: `${type === 'mink' ? 'E5_UP頂級人造水貂絲上睫毛' : 'E7_UP凱莉絲花園'}${curl}_0.07_${String(length).toUpperCase().replace(/\s+/g,'')}`
+    });
 
     qtyInput.value = 1;
     renderA313Choices(type);
@@ -10988,7 +10991,12 @@ function addA313ToCart() {
             name: `A313 開花高手套組【${specText}】`,
             price: 7500,
             max: productConfig['A313']?.max || 20,
-            _isSpecialSku: true
+            _isSpecialSku: true,
+            _isA313Kit: true,
+            a313Components: {
+                mink: A313_CHOICES.mink.map(x => ({...x})),
+                kelly: A313_CHOICES.kelly.map(x => ({...x}))
+            }
         };
     }
 
@@ -11072,7 +11080,11 @@ function addWaxKitToCart(productId) {
         price: baseInfo.price,
         max: baseInfo.max || 20,
         _isWaxKitChoice: true,
-        _waxKitBaseId: productId
+        _waxKitBaseId: productId,
+        waxKitComponents: [
+            { searchName: `Q彈潤白軟蠟${softWax}`, qty: 1 },
+            { searchName: `全效修護硬蠟${hardWax}`, qty: 1 }
+        ]
     };
 
     const current = cart[cartKey] || 0;
@@ -12015,13 +12027,28 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             if (typeof productConfig !== 'undefined' && productConfig[itemId]) {
                 const pInfo = productConfig[itemId];
 
-                // 熱蠟套組選項只記錄款式；庫存仍只扣 F247 / F248 套組本身，不扣內容物。
-                if (pInfo._isWaxKitChoice && pInfo._waxKitBaseId) {
+                // A313：扣套組本身 + 實際選取的水貂/凱莉絲規格
+                if (pInfo._isA313Kit && pInfo.a313Components) {
+                    const baseInfo = productConfig['A313'];
+                    const baseKey = baseInfo?.name || 'A313 開花高手套組';
+                    cartBackup[baseKey] = (cartBackup[baseKey] || 0) + qty;
+                    [...(pInfo.a313Components.mink || []), ...(pInfo.a313Components.kelly || [])].forEach(c => {
+                        const deductQty = (Number(c.qty) || 0) * qty;
+                        if (c.backendStockKey && deductQty > 0) {
+                            cartBackup[c.backendStockKey] = (cartBackup[c.backendStockKey] || 0) + deductQty;
+                        }
+                    });
+                // F247/F248：扣套組本身 + 所選軟蠟/硬蠟
+                } else if (pInfo._isWaxKitChoice && pInfo._waxKitBaseId) {
                     const baseKitInfo = productConfig[pInfo._waxKitBaseId];
-                    const backendKey = baseKitInfo && baseKitInfo.name.toUpperCase().includes(pInfo._waxKitBaseId.toUpperCase())
-                        ? baseKitInfo.name
-                        : pInfo._waxKitBaseId + (baseKitInfo ? baseKitInfo.name : '');
+                    const backendKey = baseKitInfo?.name || pInfo._waxKitBaseId;
                     cartBackup[backendKey] = (cartBackup[backendKey] || 0) + qty;
+                    (pInfo.waxKitComponents || []).forEach(c => {
+                        const deductQty = (Number(c.qty) || 0) * qty;
+                        if (c.searchName && deductQty > 0) {
+                            cartBackup[c.searchName] = (cartBackup[c.searchName] || 0) + deductQty;
+                        }
+                    });
                 } else if (itemId.includes('_')) {
                     const isEyeMask = itemId.startsWith('A70_') || itemId.startsWith('A74_') || itemId.startsWith('A76_');
 
