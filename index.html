@@ -553,8 +553,25 @@
             padding: 28px 32px;
         }
         .product-item[data-sub="professional-kit"] .product-name { font-size: 20px; font-weight: 600; margin-bottom: 12px; }
-        .professional-kit-content { background: #faf7f5; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px 24px; margin: 12px 0 20px; font-size: 14px; line-height: 1.9; color: var(--text-main); }
-        .professional-kit-list { display: grid; grid-template-columns: 1fr 1fr; column-gap: 35px; row-gap: 7px; margin-top: 12px; }
+
+        /* 專業套組－預設收合，點擊後查看內容 */
+        .professional-kit-details { width: 100%; margin: 12px 0 20px; }
+        .professional-kit-summary {
+            list-style: none; cursor: pointer; background: #faf7f5;
+            border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 15px 20px; font-size: 14px; font-weight: 600;
+            color: var(--text-main); transition: all 0.25s ease; position: relative;
+        }
+        .professional-kit-summary::-webkit-details-marker { display: none; }
+        .professional-kit-summary::after {
+            content: "＋"; position: absolute; right: 20px;
+            font-size: 18px; font-weight: 400; color: var(--primary-color);
+        }
+        .professional-kit-details[open] .professional-kit-summary::after { content: "－"; }
+        .professional-kit-summary:hover { border-color: var(--accent-color); background: #fff; }
+        .professional-kit-details[open] .professional-kit-summary { border-radius: 12px 12px 0 0; border-bottom-color: transparent; }
+        .professional-kit-content { background: #faf7f5; border: 1px solid var(--border-color); border-radius: 0 0 12px 12px; padding: 20px 24px; margin: 0; font-size: 14px; line-height: 1.9; color: var(--text-main); }
+        .professional-kit-list { display: grid; grid-template-columns: 1fr 1fr; column-gap: 35px; row-gap: 7px; margin-top: 0; }
         .professional-kit-list div { padding-bottom: 5px; border-bottom: 1px dashed var(--border-color); }
         @media (max-width: 768px) {
             .product-item[data-sub="professional-kit"] { grid-column: 1; padding: 20px; }
@@ -3419,8 +3436,9 @@
                 <div class="product-item" data-id="A311" data-name="基礎入門套組" data-category="perimeter" data-sub="professional-kit">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px;">商品編號：A311</div>
                     <div class="product-name">基礎入門套組</div>
+                    <details class="professional-kit-details">
+                    <summary class="professional-kit-summary">查看套組內容｜共 33 項</summary>
                     <div class="professional-kit-content">
-                        <strong>套組內容｜共 33 項</strong>
                         <div class="professional-kit-list">
             <div>01. 嫁接睫毛專用黑膠-Mild初學黑膠－1瓶</div>
             <div>02. 瞬效溫和質萃卸膠膏－1罐</div>
@@ -3457,7 +3475,8 @@
             <div>33. 膠囊式風扇－1個</div>
                         </div>
                     </div>
-                    <div class="product-price">$4500</div>
+                </details>
+                <div class="product-price">$4500</div>
                     <div class="product-stock" id="stock-text-A311">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('A311', -1)">-</button><input type="number" class="quantity-input" id="left-input-A311" value="0" min="0"><button class="quantity-btn" onclick="changeLeftQty('A311', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('A311')">加入購物車</button>
@@ -3476,10 +3495,10 @@
 
     <div class="product-name">6D開花套組</div>
 
-    <div class="professional-kit-content">
-        <strong>套組內容｜共 15 項</strong>
-
-        <div class="professional-kit-list">
+    <details class="professional-kit-details">
+        <summary class="professional-kit-summary">查看套組內容｜共 15 項</summary>
+        <div class="professional-kit-content">
+            <div class="professional-kit-list">
             <div>01. 藝妓黑膠－1瓶</div>
             <div>02. 韓國雙效強化持久劑－1瓶</div>
             <div>03. 6D・9D開花神夾－1支</div>
@@ -3522,6 +3541,7 @@
             <div>15. A2海報－EASY花－1張</div>
         </div>
     </div>
+    </details>
 
     <div class="product-price">$4500</div>
 
@@ -3539,6 +3559,31 @@
 
     <button class="btn" onclick="addToCart('A312')">加入購物車</button>
 </div>
+
+                <!-- 專業套組：A313 開花高手套組 -->
+                <div class="product-item" data-id="A313" data-name="開花高手套組" data-category="perimeter" data-sub="professional-kit">
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px;">商品編號：A313</div>
+                    <div class="product-name">開花高手套組</div>
+                    <details class="professional-kit-details">
+                        <summary class="professional-kit-summary">查看套組內容｜共 4 項</summary>
+                        <div class="professional-kit-content">
+                            <div class="professional-kit-list">
+                                <div>01. 韓國IU黑膠（5g）－1瓶</div>
+                                <div>02. 韓國雙效強化持久劑（15g）－1瓶</div>
+                                <div>03. 頂級人造水貂絲 0.07－任選10盒</div>
+                                <div>04. 凱莉絲花園 0.07－任選10盒</div>
+                            </div>
+                        </div>
+                    </details>
+                    <div class="product-price">$7500</div>
+                    <div class="product-stock" id="stock-text-A313">載入中...</div>
+                    <div class="quantity-selector">
+                        <button class="quantity-btn" onclick="changeLeftQty('A313', -1)">-</button>
+                        <input type="number" class="quantity-input" id="left-input-A313" value="0" min="0">
+                        <button class="quantity-btn" onclick="changeLeftQty('A313', 1)">+</button>
+                    </div>
+                    <button class="btn" onclick="addToCart('A313')">加入購物車</button>
+                </div>
 
                 <div class="product-item" data-id="B56" data-name="36格睫毛盒收納架" data-category="perimeter" data-sub="p-others">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：B56</div>
