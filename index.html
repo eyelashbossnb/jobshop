@@ -10775,15 +10775,15 @@ function executeLashSpecSelect(btn, productId) {
             card.removeAttribute('data-matched-sku'); return;
         }
     } else if (productId === 'E20_UP') {
-        if (curl === 'D' && length !== 'MIX8-13') {
+        if (curl === 'D' && length !== 'MIX8-14') {
             stockTxt.innerHTML = `<span style="color:#8a7e72;">⚠️ 沒有這個尺寸</span>`;
             card.removeAttribute('data-matched-sku'); return;
         }
-        if (curl === 'O' && length !== 'MIX8-13') {
+        if (curl === 'O' && length !== 'MIX8-14') {
             stockTxt.innerHTML = `<span style="color:#8a7e72;">⚠️ 沒有這個尺寸</span>`;
             card.removeAttribute('data-matched-sku'); return;
         }
-        if (curl !== 'D' && curl !== 'O' && length === 'MIX8-13') {
+        if (curl !== 'D' && curl !== 'O' && length === 'MIX8-14') {
             stockTxt.innerHTML = `<span style="color:#8a7e72;">⚠️ 沒有這個尺寸</span>`;
             card.removeAttribute('data-matched-sku');
             return;
