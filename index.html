@@ -11119,6 +11119,76 @@ function addToCartWithVariant(productId) {
 
 
 // =============================================================
+// F247 / F248 熱蠟套組－蠟款庫存顯示 / 0庫存禁止選擇
+// =============================================================
+const WAX_KIT_OPTION_STOCK_MAP = {
+    softwax: {
+        '純淨蜂蜜': { id: 'F2', name: 'Q彈潤白軟蠟-純淨蜂蜜' },
+        '美肌蘆薈': { id: 'F3', name: 'Q彈潤白軟蠟-美肌蘆薈' }
+    },
+    hardwax: {
+        '巴西香草白': { id: 'F8', name: '全效修護硬蠟-巴西香草白' },
+        '巴西藍甘菊': { id: 'F9', name: '全效修護硬蠟-巴西藍甘菊' },
+        '超彈力竹炭黑': { id: 'F10', name: '全效修護硬蠟-超彈力竹炭黑' }
+    }
+};
+
+function getWaxKitOptionStock(type, value) {
+    const info = WAX_KIT_OPTION_STOCK_MAP[type]?.[value];
+    if (!info) return null;
+
+    let stock = getStockFromDatabase(info.id + info.name);
+    if (stock === null) stock = getStockFromDatabase(info.name);
+    if (stock === null) stock = getStockFromDatabase(info.id);
+
+    if (stock === null || stock === undefined || stock === '') return null;
+    const n = Number(stock);
+    return Number.isFinite(n) ? Math.max(0, n) : 0;
+}
+
+function refreshWaxKitSelect(productId, type) {
+    const select = document.getElementById(`${productId}-${type}`);
+    if (!select) return;
+
+    const previousValue = select.value;
+
+    [...select.options].forEach(option => {
+        if (!option.value) {
+            option.textContent = '請選擇';
+            option.disabled = false;
+            return;
+        }
+
+        const stock = getWaxKitOptionStock(type, option.value);
+
+        if (stock === null) {
+            option.disabled = false;
+            option.textContent = `${option.value}（庫存讀取中）`;
+        } else if (stock <= 0) {
+            option.disabled = true;
+            option.textContent = `${option.value}（無庫存）`;
+        } else {
+            option.disabled = false;
+            option.textContent = `${option.value}（庫存 ${stock}）`;
+        }
+    });
+
+    const keep = [...select.options].find(o => o.value === previousValue && !o.disabled);
+    if (keep) {
+        select.value = previousValue;
+    } else {
+        select.value = '';
+    }
+}
+
+function refreshAllWaxKitStockOptions() {
+    ['F247', 'F248'].forEach(productId => {
+        refreshWaxKitSelect(productId, 'softwax');
+        refreshWaxKitSelect(productId, 'hardwax');
+    });
+}
+
+// =============================================================
 // F247 / F248 熱蠟套組－款式任選（僅記錄選項，不扣內容物庫存）
 // =============================================================
 function addWaxKitToCart(productId) {
@@ -11137,6 +11207,33 @@ function addWaxKitToCart(productId) {
     }
     if (qtySelected <= 0) {
         alert('請先選擇要加入的套組數量。');
+        return;
+    }
+
+    // 選到的蠟款也必須有足夠庫存；0庫存不能加入。
+    const softWaxStock = getWaxKitOptionStock('softwax', softWax);
+    const hardWaxStock = getWaxKitOptionStock('hardwax', hardWax);
+
+    if (softWaxStock === null || hardWaxStock === null) {
+        alert('蠟款庫存尚未讀取完成，請稍候再試。');
+        return;
+    }
+    if (softWaxStock <= 0) {
+        alert(`Q彈潤白軟蠟【${softWax}】目前無庫存，請選擇其他款式。`);
+        refreshAllWaxKitStockOptions();
+        return;
+    }
+    if (hardWaxStock <= 0) {
+        alert(`全效修護硬蠟【${hardWax}】目前無庫存，請選擇其他款式。`);
+        refreshAllWaxKitStockOptions();
+        return;
+    }
+    if (qtySelected > softWaxStock) {
+        alert(`Q彈潤白軟蠟【${softWax}】目前庫存 ${softWaxStock}，不足 ${qtySelected} 組套組使用。`);
+        return;
+    }
+    if (qtySelected > hardWaxStock) {
+        alert(`全效修護硬蠟【${hardWax}】目前庫存 ${hardWaxStock}，不足 ${qtySelected} 組套組使用。`);
         return;
     }
 
@@ -11504,6 +11601,7 @@ function fetchInventoryFromSheet() {
             console.log("=== 遠端 10 個工作表雲端總庫存同步成功 ===");
             updateAllLoadedStocks();
             refreshAllA313StockOptions();
+            refreshAllWaxKitStockOptions();
         })
         .catch(error => {
             console.error("雲端庫存連接失敗:", error);
