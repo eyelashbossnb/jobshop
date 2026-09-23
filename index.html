@@ -10775,15 +10775,12 @@ function executeLashSpecSelect(btn, productId) {
             card.removeAttribute('data-matched-sku'); return;
         }
     } else if (productId === 'E20_UP') {
-        if (curl === 'D' && length !== 'MIX8-14') {
-            stockTxt.innerHTML = `<span style="color:#8a7e72;">⚠️ 沒有這個尺寸</span>`;
-            card.removeAttribute('data-matched-sku'); return;
-        }
-        if (curl === 'O' && length !== 'MIX8-14') {
-            stockTxt.innerHTML = `<span style="color:#8a7e72;">⚠️ 沒有這個尺寸</span>`;
-            card.removeAttribute('data-matched-sku'); return;
-        }
-        if (curl !== 'D' && curl !== 'O' && length === 'MIX8-14') {
+        // 2代美瞳線超輕量扁毛：B/C 有 MIX8-14 及 8–13mm；D/O 僅 MIX8-14。
+        // 規格值須與按鈕 data-value 及庫存表 A 欄一致。
+        const allowedE20Length = length === 'MIX8-14' ||
+            ((curl === 'B' || curl === 'C') &&
+             ['8mm', '9mm', '10mm', '11mm', '12mm', '13mm'].includes(length));
+        if (!allowedE20Length) {
             stockTxt.innerHTML = `<span style="color:#8a7e72;">⚠️ 沒有這個尺寸</span>`;
             card.removeAttribute('data-matched-sku');
             return;
