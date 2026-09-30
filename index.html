@@ -10023,6 +10023,77 @@ function refreshStockDisplay() {
 // ==========================================
 // 2. 訂單查詢功能 (融合線上與本地保底) - 完美修正版
 // ==========================================
+
+// =============================================================
+// 🚚 配送查詢 / 複製單號
+// =============================================================
+const DELIVERY_TRACKING_URLS = {
+    "便利帶": "https://www.25431010.tw/tracking",
+    "黑貓宅急便": "https://www.t-cat.com.tw/Inquire/Trace.aspx",
+    "黑貓低溫": "https://www.t-cat.com.tw/Inquire/Trace.aspx",
+    "7-ELEVEN店到店": "https://eservice.7-11.com.tw/e-tracking/search.aspx",
+    "7-ELEVEN 店到店": "https://eservice.7-11.com.tw/e-tracking/search.aspx",
+    "順豐速運": "https://htm.sf-express.com/tw/tc/",
+    "國際快捷EMS": "https://postserv.post.gov.tw/pstmail/main_mail.html",
+    "國際快捷 EMS": "https://postserv.post.gov.tw/pstmail/main_mail.html"
+};
+
+function getDeliveryTrackingUrl(method) {
+    return DELIVERY_TRACKING_URLS[String(method || "").trim()] || "";
+}
+
+function copyDeliveryTrackingNo(trackingNo, btn) {
+    const value = String(trackingNo || "").trim();
+    if (!value) return;
+    const done = () => {
+        if (!btn) return;
+        const original = btn.textContent;
+        btn.textContent = "✓ 已複製";
+        setTimeout(() => { btn.textContent = original; }, 1500);
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(value).then(done).catch(() => fallbackCopyDeliveryNo(value, done));
+    } else {
+        fallbackCopyDeliveryNo(value, done);
+    }
+}
+
+function fallbackCopyDeliveryNo(value, done) {
+    const textarea = document.createElement("textarea");
+    textarea.value = value;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    try { document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(textarea);
+    if (done) done();
+}
+
+function buildDeliveryTrackingHtml(order) {
+    const method = String(order.shipping_method || "").trim();
+    const trackingNo = String(order.tracking_no || "").trim();
+    const trackingUrl = getDeliveryTrackingUrl(method);
+    const methodText = method || "尚未指定";
+    const noText = trackingNo || "尚未建立";
+
+    const queryButton = trackingUrl
+        ? `<a href="${trackingUrl}" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-left:8px;padding:3px 9px;border:1px solid var(--primary-color,#b388ff);border-radius:12px;text-decoration:none;font-size:12px;color:var(--primary-color,#b388ff);">查詢配送進度</a>`
+        : "";
+
+    const safeTrackingForJs = trackingNo.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    const copyButton = trackingNo
+        ? `<button type="button" onclick="copyDeliveryTrackingNo('${safeTrackingForJs}', this)" style="margin-left:8px;padding:3px 9px;border:1px solid #bbb;border-radius:12px;background:#fff;cursor:pointer;font-size:12px;">複製單號</button>`
+        : "";
+
+    return `
+        <div class="result-row"><span>配送方式：</span><span>${methodText}${queryButton}</span></div>
+        <div class="result-row"><span>配送單號：</span><span><strong>${noText}</strong>${copyButton}</span></div>
+        <div class="result-row"><span>配送狀態：</span><strong style="color:var(--primary-color,#b388ff);">${order.delivery_status || '待出貨'}</strong></div>
+    `;
+}
+
 function queryOrderFromServer() {
     const rawInput = document.getElementById('search-input').value;
     const keyword = rawInput ? rawInput.trim().replace(/\s+/g, '') : '';
@@ -10069,9 +10140,7 @@ function queryOrderFromServer() {
                         <div class="result-row" style="border-top:1px dashed var(--border-color, #ccc); padding-top:8px; margin-top:8px;">
                             <span>訂單狀態：</span><strong>${matchedOrder.status || '訂單處理中'}</strong>
                         </div>
-                        <div class="result-row"><span>配送方式：</span><span>${matchedOrder.shipping_method || '尚未指定'}</span></div>
-                        <div class="result-row"><span>配送單號：</span><strong>${matchedOrder.tracking_no || '尚未建立'}</strong></div>
-                        <div class="result-row"><span>配送狀態：</span><strong style="color:var(--primary-color, #b388ff);">${matchedOrder.delivery_status || '待出貨'}</strong></div>
+                        ${buildDeliveryTrackingHtml(matchedOrder)}
                     </div>
                 `;
             });
@@ -10110,9 +10179,7 @@ function queryOrderFromServer() {
                         <div class="result-row" style="border-top:1px dashed var(--border-color, #ccc); padding-top:8px; margin-top:8px;">
                             <span>訂單狀態：</span><strong>${matchedOrder.status || '訂單處理中'}</strong>
                         </div>
-                        <div class="result-row"><span>配送方式：</span><span>${matchedOrder.shipping_method || '尚未指定'}</span></div>
-                        <div class="result-row"><span>配送單號：</span><strong>${matchedOrder.tracking_no || '尚未建立'}</strong></div>
-                        <div class="result-row"><span>配送狀態：</span><strong style="color:var(--primary-color, #b388ff);">${matchedOrder.delivery_status || '待出貨'}</strong></div>
+                        ${buildDeliveryTrackingHtml(matchedOrder)}
                     </div>
                 `;
             });
