@@ -10238,7 +10238,7 @@ function queryOrderFromServer() {
         `;
     }
 
-    const gasWebUrl = "https://script.google.com/macros/s/AKfycbzujp7npNzFIQeyvI7aC6xbgwNaoD91VuGZb3XZqQ0-hlOwfLPylbz5AWbFpQmxbbeb/exec";
+    const gasWebUrl = "https://script.google.com/macros/s/AKfycbyq66uUllm-yTTptQxFAHAks89SRT03yNQg1uEiy6AtoJajVqkpjyifd1-aMuonYwtK/exec";
 
     fetch(`${gasWebUrl}?action=query&query=${encodeURIComponent(keyword)}`)
     .then(response => {
@@ -11791,7 +11791,7 @@ function toggleNailBrushMenu(show) {
 // 10. 遠端 Google Sheets 即時庫存同步與模糊比對機制
 // =============================================================
 const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyA4w1YKCpbs-9AxDsXFLKJL3sBRNhHitE4vntHuQPvQI5mAxSgPLJit0pk7mOh-zbcJw/exec";
-const ORDER_QUERY_API_URL = "https://script.google.com/macros/s/AKfycbzujp7npNzFIQeyvI7aC6xbgwNaoD91VuGZb3XZqQ0-hlOwfLPylbz5AWbFpQmxbbeb/exec"; // 訂單查詢／配送／會員訂單關聯專用 
+const ORDER_QUERY_API_URL = "https://script.google.com/macros/s/AKfycbyq66uUllm-yTTptQxFAHAks89SRT03yNQg1uEiy6AtoJajVqkpjyifd1-aMuonYwtK/exec"; // 訂單查詢／配送／會員訂單關聯專用 
 
 function sendDeductStockRequestToBackend(cartData) {
     if (!cartData || Object.keys(cartData).length === 0) return;
@@ -12366,22 +12366,20 @@ function linkMemberOrderWithRetry(orderId, memberPhone) {
     const cleanMemberPhone = String(memberPhone || "").replace(/[^0-9]/g, "");
     if (!cleanOrderId || !cleanMemberPhone) return;
 
-    [0, 5000, 12000, 25000].forEach(function(delay) {
-        setTimeout(function() {
-            fetch(ORDER_QUERY_API_URL, {
-                method: "POST",
-                mode: "no-cors",
-                keepalive: true,
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    action: "link_member_order",
-                    order_id: cleanOrderId,
-                    member_phone: cleanMemberPhone
-                })
-            }).catch(function(err) {
-                console.warn("會員訂單關聯重試失敗：", err);
-            });
-        }, delay);
+    // 只送一次會員綁定請求；後台會等待 Google 表單訂單同步完成，
+    // 避免會員綁定功能誤造成重複訂單或重複請求。
+    fetch(ORDER_QUERY_API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        keepalive: true,
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+            action: "link_member_order",
+            order_id: cleanOrderId,
+            member_phone: cleanMemberPhone
+        })
+    }).catch(function(err) {
+        console.warn("會員訂單關聯失敗：", err);
     });
 }
 
