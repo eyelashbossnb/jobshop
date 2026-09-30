@@ -10341,6 +10341,18 @@ const DEPT_MEMBER_LEVEL_SETTINGS = {
 };
 
 // 🌟 自動檢查與還原會員登入狀態
+function getLoggedInMemberPhone() {
+    if (!deptIsLoggedIn || !deptMemberData) return "";
+    const raw = deptMemberData.__login_phone ||
+                deptMemberData.phone ||
+                deptMemberData.mobile ||
+                deptMemberData.phone_number ||
+                deptMemberData.member_phone ||
+                deptMemberData.account ||
+                deptMemberData.username || "";
+    return String(raw || "").replace(/[^0-9]/g, "");
+}
+
 function checkAndRestoreMemberLogin() {
     const savedMemberData = localStorage.getItem("deptMemberData");
     if (savedMemberData) {
@@ -10475,6 +10487,10 @@ function executeRegister() {
             toggleRegisterModal(false);
             deptIsLoggedIn = true;
             deptMemberData = data.userData;
+            // ★ 登入帳號就是會員手機：登入成功時立即保存，供之後每張訂單綁定。
+            if (deptMemberData) {
+                deptMemberData.__login_phone = String(account || "").replace(/[^0-9]/g, "");
+            }
             
             localStorage.setItem("deptMemberData", JSON.stringify(deptMemberData));
             
@@ -10524,6 +10540,10 @@ function executeLogin() {
             toggleLoginModal(false);
             deptIsLoggedIn = true;
             deptMemberData = data.userData;
+            // ★ 登入帳號就是會員手機：登入成功時立即保存，供之後每張訂單綁定。
+            if (deptMemberData) {
+                deptMemberData.__login_phone = String(account || "").replace(/[^0-9]/g, "");
+            }
             
             localStorage.setItem("deptMemberData", JSON.stringify(deptMemberData));
             
@@ -12574,31 +12594,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             try {
                 // 會員 API 不同版本的電話欄位名稱可能不同。
                 // 優先從已登入會員資料取得；若沒有，再使用登入表單中實際輸入的手機號碼。
-                let memberPhoneRaw = "";
-                if (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn && deptMemberData) {
-                    memberPhoneRaw =
-                        deptMemberData.__login_phone ||
-                        deptMemberData.phone ||
-                        deptMemberData.mobile ||
-                        deptMemberData.phone_number ||
-                        deptMemberData.member_phone ||
-                        deptMemberData.account ||
-                        deptMemberData.username ||
-                        "";
-                }
-
-                if (!memberPhoneRaw) {
-                    const loginPhoneInput =
-                        document.getElementById("dept-login-phone") ||
-                        document.getElementById("login-phone") ||
-                        document.querySelector('#dept-login-modal input[type="tel"]') ||
-                        document.querySelector('#dept-login-modal input[name="phone"]') ||
-                        document.querySelector('input[placeholder*="手機"]');
-
-                    if (loginPhoneInput) memberPhoneRaw = loginPhoneInput.value || "";
-                }
-
-                const memberAccountPhone = String(memberPhoneRaw || "").replace(/[^0-9]/g, "");
+                const memberAccountPhone = getLoggedInMemberPhone();
 
                 if (memberAccountPhone) {
                     fetch(ORDER_QUERY_API_URL, {
