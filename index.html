@@ -10113,7 +10113,7 @@ function queryOrderFromServer() {
         `;
     }
 
-    const gasWebUrl = "https://script.google.com/macros/s/AKfycbxkqDfGCbiDWyoZdHYRrOqBQuYdxnwR7Wthsn_vpNzCjGetaWvAiDqPqHzsjUVCixVt/exec";
+    const gasWebUrl = "https://script.google.com/macros/s/AKfycbzujp7npNzFIQeyvI7aC6xbgwNaoD91VuGZb3XZqQ0-hlOwfLPylbz5AWbFpQmxbbeb/exec";
 
     fetch(`${gasWebUrl}?action=query&query=${encodeURIComponent(keyword)}`)
     .then(response => {
@@ -10193,7 +10193,7 @@ function queryOrderFromServer() {
 // =============================================================
 // 1. 百貨會員中心：獨立配置與全域狀態（全面隔離防衝突）
 // =============================================================
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzgbYJlAgSGARzU5gDNczeaD2iLv1AKQ4L8hn-1OPrYoFqS3OC4M-QsTKNYQnlyZtdkEA/exec";
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzujp7npNzFIQeyvI7aC6xbgwNaoD91VuGZb3XZqQ0-hlOwfLPylbz5AWbFpQmxbbeb/exec";
 let deptIsLoggedIn = false;
 let deptMemberData = null;
 
@@ -11639,7 +11639,7 @@ function toggleNailBrushMenu(show) {
 // =============================================================
 // 10. 遠端 Google Sheets 即時庫存同步與模糊比對機制
 // =============================================================
-const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyA4w1YKCpbs-9AxDsXFLKJL3sBRNhHitE4vntHuQPvQI5mAxSgPLJit0pk7mOh-zbcJw/exec"; 
+const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbzujp7npNzFIQeyvI7aC6xbgwNaoD91VuGZb3XZqQ0-hlOwfLPylbz5AWbFpQmxbbeb/exec"; 
 
 function sendDeductStockRequestToBackend(cartData) {
     if (!cartData || Object.keys(cartData).length === 0) return;
