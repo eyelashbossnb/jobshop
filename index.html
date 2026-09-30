@@ -10164,6 +10164,18 @@ function parseOrderItemsForCustomer(rawItems) {
     return rows;
 }
 
+
+function getCustomerOrderDate(order) {
+    const apiDate = String((order && order.order_date) || "").trim();
+    if (apiDate && apiDate !== "-") return apiDate;
+
+    const orderId = String((order && order.id) || "").trim();
+    const m = orderId.match(/^ORD-?(\d{4})(\d{2})(\d{2})/i);
+    if (m) return `${m[1]}/${m[2]}/${m[3]}`;
+
+    return "-";
+}
+
 function buildCustomerOrderDetailHtml(order) {
     const items = parseOrderItemsForCustomer(order.items);
     const itemRows = items.length ? items.map(item => `
@@ -10183,7 +10195,7 @@ function buildCustomerOrderDetailHtml(order) {
                     <div class="customer-order-slip-title">睫老闆美容集團｜訂單明細</div>
                 </div>
                 <div class="customer-order-meta">
-                    <div>訂單日期：<strong>${escapeOrderHtml(order.order_date || "")}</strong></div>
+                    <div>訂單日期：<strong>${escapeOrderHtml(getCustomerOrderDate(order))}</strong></div>
                     <div>訂單編號：<strong>${escapeOrderHtml(order.id || "")}</strong></div>
                     <div>收件大名：${escapeOrderHtml(order.name || "")}</div>
                     <div>訂單狀態：${escapeOrderHtml(order.status || "訂單處理中")}</div>
