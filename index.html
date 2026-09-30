@@ -10487,6 +10487,9 @@ function executeRegister() {
             toggleRegisterModal(false);
             deptIsLoggedIn = true;
             deptMemberData = data.userData;
+            if (deptMemberData) {
+                deptMemberData.__login_phone = String(account || "").replace(/[^0-9]/g, "");
+            }
             // ★ 登入帳號就是會員手機：登入成功時立即保存，供之後每張訂單綁定。
             if (deptMemberData) {
                 deptMemberData.__login_phone = String(account || "").replace(/[^0-9]/g, "");
@@ -10540,6 +10543,9 @@ function executeLogin() {
             toggleLoginModal(false);
             deptIsLoggedIn = true;
             deptMemberData = data.userData;
+            if (deptMemberData) {
+                deptMemberData.__login_phone = String(account || "").replace(/[^0-9]/g, "");
+            }
             // ★ 登入帳號就是會員手機：登入成功時立即保存，供之後每張訂單綁定。
             if (deptMemberData) {
                 deptMemberData.__login_phone = String(account || "").replace(/[^0-9]/g, "");
@@ -12355,6 +12361,30 @@ function resolveBackendStockKeyForSpecialItem(itemId, pInfo) {
 }
 
 // 🌟【完美修復版本】：保護毛款正常寫入，同時剔除真正無庫存的常規商品
+function linkMemberOrderWithRetry(orderId, memberPhone) {
+    const cleanOrderId = String(orderId || "").trim();
+    const cleanMemberPhone = String(memberPhone || "").replace(/[^0-9]/g, "");
+    if (!cleanOrderId || !cleanMemberPhone) return;
+
+    [0, 5000, 12000, 25000].forEach(function(delay) {
+        setTimeout(function() {
+            fetch(ORDER_QUERY_API_URL, {
+                method: "POST",
+                mode: "no-cors",
+                keepalive: true,
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    action: "link_member_order",
+                    order_id: cleanOrderId,
+                    member_phone: cleanMemberPhone
+                })
+            }).catch(function(err) {
+                console.warn("會員訂單關聯重試失敗：", err);
+            });
+        }, delay);
+    });
+}
+
 function executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState, deductionTransactionId) {
     console.log("=== 正在生成訂單明細與序號 ===");
 
@@ -12589,25 +12619,12 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
                 clearStoredValueDeductionTransactionId(deductionTransactionId);
             }
 
-            // 🆕 若目前為會員登入狀態，將會員帳號電話綁定到這筆訂單。
-            // 收件電話仍保留原值，因此會員電話與收件電話不同也能查到同一會員全部訂單。
+            // 🆕 會員帳號電話與收件電話分開保存。
+            // Google 表單同步可能延遲，因此分段重試綁定。
             try {
-                // 會員 API 不同版本的電話欄位名稱可能不同。
-                // 優先從已登入會員資料取得；若沒有，再使用登入表單中實際輸入的手機號碼。
                 const memberAccountPhone = getLoggedInMemberPhone();
-
                 if (memberAccountPhone) {
-                    fetch(ORDER_QUERY_API_URL, {
-                        method: "POST",
-                        mode: "no-cors",
-                        keepalive: true,
-                        headers: { "Content-Type": "text/plain;charset=utf-8" },
-                        body: JSON.stringify({
-                            action: "link_member_order",
-                            order_id: orderSerialNumber,
-                            member_phone: memberAccountPhone
-                        })
-                    }).catch(err => console.warn("會員訂單關聯送出失敗：", err));
+                    linkMemberOrderWithRetry(orderSerialNumber, memberAccountPhone);
                 }
             } catch (memberLinkErr) {
                 console.warn("會員訂單關聯異常：", memberLinkErr);
