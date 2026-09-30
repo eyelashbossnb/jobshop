@@ -11765,7 +11765,7 @@ function toggleNailBrushMenu(show) {
 // 10. 遠端 Google Sheets 即時庫存同步與模糊比對機制
 // =============================================================
 const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyA4w1YKCpbs-9AxDsXFLKJL3sBRNhHitE4vntHuQPvQI5mAxSgPLJit0pk7mOh-zbcJw/exec";
-const ORDER_QUERY_API_URL = "https://script.google.com/macros/s/AKfycbzujp7npNzFIQeyvI7aC6xbgwNaoD91VuGZb3XZqQ0-hlOwfLPylbz5AWbFpQmxbbeb/exec"; // 訂單查詢／配送／會員訂單關聯專用 
+const ORDER_QUERY_API_URL = "https://script.google.com/macros/s/AKfycbzGS2QhX4G_hVVSWytGN8_46YFoLn_GwwCnrwcS9JdkWcFtQQeSBo-iKGxaGQgAQdPC/exec"; // 訂單查詢／配送／會員訂單關聯專用 
 
 function sendDeductStockRequestToBackend(cartData) {
     if (!cartData || Object.keys(cartData).length === 0) return;
@@ -12569,34 +12569,8 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
                 clearStoredValueDeductionTransactionId(deductionTransactionId);
             }
 
-            // 🆕 若目前為會員登入狀態，將會員帳號電話綁定到這筆訂單。
-            // 收件電話仍保留原值，因此會員電話與收件電話不同也能查到同一會員全部訂單。
-            try {
-                const memberAccountPhone = (typeof deptIsLoggedIn !== 'undefined' &&
-                                            deptIsLoggedIn &&
-                                            deptMemberData &&
-                                            deptMemberData.phone)
-                    ? String(deptMemberData.phone).replace(/[^0-9]/g, "")
-                    : "";
-
-                if (memberAccountPhone) {
-                    fetch(ORDER_QUERY_API_URL, {
-                        method: "POST",
-                        mode: "no-cors",
-                        keepalive: true,
-                        headers: { "Content-Type": "text/plain;charset=utf-8" },
-                        body: JSON.stringify({
-                            action: "link_member_order",
-                            order_id: orderSerialNumber,
-                            member_phone: memberAccountPhone
-                        })
-                    }).catch(err => console.warn("會員訂單關聯送出失敗：", err));
-                }
-            } catch (memberLinkErr) {
-                console.warn("會員訂單關聯異常：", memberLinkErr);
-            }
-
-            if (typeof mockOrderDatabase !== 'undefined') {
+            // 會員電話自動綁定功能目前停用。
+if (typeof mockOrderDatabase !== 'undefined') {
                 mockOrderDatabase.push({
                     id: orderSerialNumber,
                     phone: customerPhone,
