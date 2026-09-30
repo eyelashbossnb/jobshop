@@ -11752,7 +11752,8 @@ function toggleNailBrushMenu(show) {
 // =============================================================
 // 10. 遠端 Google Sheets 即時庫存同步與模糊比對機制
 // =============================================================
-const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbzujp7npNzFIQeyvI7aC6xbgwNaoD91VuGZb3XZqQ0-hlOwfLPylbz5AWbFpQmxbbeb/exec"; 
+const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyA4w1YKCpbs-9AxDsXFLKJL3sBRNhHitE4vntHuQPvQI5mAxSgPLJit0pk7mOh-zbcJw/exec";
+const ORDER_QUERY_API_URL = "https://script.google.com/macros/s/AKfycbzujp7npNzFIQeyvI7aC6xbgwNaoD91VuGZb3XZqQ0-hlOwfLPylbz5AWbFpQmxbbeb/exec"; // 訂單查詢／配送／會員訂單關聯專用 
 
 function sendDeductStockRequestToBackend(cartData) {
     if (!cartData || Object.keys(cartData).length === 0) return;
@@ -12567,7 +12568,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
                     : "";
 
                 if (memberAccountPhone) {
-                    fetch(GOOGLE_SHEET_API_URL, {
+                    fetch(ORDER_QUERY_API_URL, {
                         method: "POST",
                         mode: "no-cors",
                         keepalive: true,
