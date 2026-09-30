@@ -10238,7 +10238,7 @@ function queryOrderFromServer() {
         `;
     }
 
-    const gasWebUrl = "https://script.google.com/macros/s/AKfycbyq66uUllm-yTTptQxFAHAks89SRT03yNQg1uEiy6AtoJajVqkpjyifd1-aMuonYwtK/exec";
+    const gasWebUrl = "https://script.google.com/macros/s/AKfycbzujp7npNzFIQeyvI7aC6xbgwNaoD91VuGZb3XZqQ0-hlOwfLPylbz5AWbFpQmxbbeb/exec";
 
     fetch(`${gasWebUrl}?action=query&query=${encodeURIComponent(keyword)}`)
     .then(response => {
@@ -10341,18 +10341,6 @@ const DEPT_MEMBER_LEVEL_SETTINGS = {
 };
 
 // 🌟 自動檢查與還原會員登入狀態
-function getLoggedInMemberPhone() {
-    if (!deptIsLoggedIn || !deptMemberData) return "";
-    const raw = deptMemberData.__login_phone ||
-                deptMemberData.phone ||
-                deptMemberData.mobile ||
-                deptMemberData.phone_number ||
-                deptMemberData.member_phone ||
-                deptMemberData.account ||
-                deptMemberData.username || "";
-    return String(raw || "").replace(/[^0-9]/g, "");
-}
-
 function checkAndRestoreMemberLogin() {
     const savedMemberData = localStorage.getItem("deptMemberData");
     if (savedMemberData) {
@@ -10487,13 +10475,6 @@ function executeRegister() {
             toggleRegisterModal(false);
             deptIsLoggedIn = true;
             deptMemberData = data.userData;
-            if (deptMemberData) {
-                deptMemberData.__login_phone = String(account || "").replace(/[^0-9]/g, "");
-            }
-            // ★ 登入帳號就是會員手機：登入成功時立即保存，供之後每張訂單綁定。
-            if (deptMemberData) {
-                deptMemberData.__login_phone = String(account || "").replace(/[^0-9]/g, "");
-            }
             
             localStorage.setItem("deptMemberData", JSON.stringify(deptMemberData));
             
@@ -10543,13 +10524,6 @@ function executeLogin() {
             toggleLoginModal(false);
             deptIsLoggedIn = true;
             deptMemberData = data.userData;
-            if (deptMemberData) {
-                deptMemberData.__login_phone = String(account || "").replace(/[^0-9]/g, "");
-            }
-            // ★ 登入帳號就是會員手機：登入成功時立即保存，供之後每張訂單綁定。
-            if (deptMemberData) {
-                deptMemberData.__login_phone = String(account || "").replace(/[^0-9]/g, "");
-            }
             
             localStorage.setItem("deptMemberData", JSON.stringify(deptMemberData));
             
@@ -11791,7 +11765,7 @@ function toggleNailBrushMenu(show) {
 // 10. 遠端 Google Sheets 即時庫存同步與模糊比對機制
 // =============================================================
 const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyA4w1YKCpbs-9AxDsXFLKJL3sBRNhHitE4vntHuQPvQI5mAxSgPLJit0pk7mOh-zbcJw/exec";
-const ORDER_QUERY_API_URL = "https://script.google.com/macros/s/AKfycbyq66uUllm-yTTptQxFAHAks89SRT03yNQg1uEiy6AtoJajVqkpjyifd1-aMuonYwtK/exec"; // 訂單查詢／配送／會員訂單關聯專用 
+const ORDER_QUERY_API_URL = "https://script.google.com/macros/s/AKfycbzujp7npNzFIQeyvI7aC6xbgwNaoD91VuGZb3XZqQ0-hlOwfLPylbz5AWbFpQmxbbeb/exec"; // 訂單查詢／配送／會員訂單關聯專用 
 
 function sendDeductStockRequestToBackend(cartData) {
     if (!cartData || Object.keys(cartData).length === 0) return;
@@ -12361,35 +12335,6 @@ function resolveBackendStockKeyForSpecialItem(itemId, pInfo) {
 }
 
 // 🌟【完美修復版本】：保護毛款正常寫入，同時剔除真正無庫存的常規商品
-function linkMemberOrderWithRetry(orderId, memberPhone) {
-    const cleanOrderId = String(orderId || "").trim();
-    const cleanMemberPhone = String(memberPhone || "").replace(/[^0-9]/g, "");
-    if (!cleanOrderId || !cleanMemberPhone) return;
-
-    // 改用 GET 專用綁定接口。
-    // 這個網址只會「找到既有訂單 → 寫入會員電話」，完全不會建立新訂單。
-    const sendLink = function() {
-        const url = ORDER_QUERY_API_URL
-            + "?action=link_member_order"
-            + "&order_id=" + encodeURIComponent(cleanOrderId)
-            + "&member_phone=" + encodeURIComponent(cleanMemberPhone)
-            + "&_=" + Date.now();
-
-        fetch(url, {
-            method: "GET",
-            mode: "no-cors",
-            cache: "no-store",
-            keepalive: true
-        }).catch(function(err) {
-            console.warn("會員電話綁定 GET 請求失敗：", err);
-        });
-    };
-
-    // 第一次立即送；若 Google Form 同步較慢，40 秒後再補送一次。
-    sendLink();
-    setTimeout(sendLink, 40000);
-}
-
 function executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState, deductionTransactionId) {
     console.log("=== 正在生成訂單明細與序號 ===");
 
@@ -12624,12 +12569,28 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
                 clearStoredValueDeductionTransactionId(deductionTransactionId);
             }
 
-            // 🆕 會員帳號電話與收件電話分開保存。
-            // Google 表單同步可能延遲，因此分段重試綁定。
+            // 🆕 若目前為會員登入狀態，將會員帳號電話綁定到這筆訂單。
+            // 收件電話仍保留原值，因此會員電話與收件電話不同也能查到同一會員全部訂單。
             try {
-                const memberAccountPhone = getLoggedInMemberPhone();
+                const memberAccountPhone = (typeof deptIsLoggedIn !== 'undefined' &&
+                                            deptIsLoggedIn &&
+                                            deptMemberData &&
+                                            deptMemberData.phone)
+                    ? String(deptMemberData.phone).replace(/[^0-9]/g, "")
+                    : "";
+
                 if (memberAccountPhone) {
-                    linkMemberOrderWithRetry(orderSerialNumber, memberAccountPhone);
+                    fetch(ORDER_QUERY_API_URL, {
+                        method: "POST",
+                        mode: "no-cors",
+                        keepalive: true,
+                        headers: { "Content-Type": "text/plain;charset=utf-8" },
+                        body: JSON.stringify({
+                            action: "link_member_order",
+                            order_id: orderSerialNumber,
+                            member_phone: memberAccountPhone
+                        })
+                    }).catch(err => console.warn("會員訂單關聯送出失敗：", err));
                 }
             } catch (memberLinkErr) {
                 console.warn("會員訂單關聯異常：", memberLinkErr);
