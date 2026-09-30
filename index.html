@@ -12572,12 +12572,33 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             // 🆕 若目前為會員登入狀態，將會員帳號電話綁定到這筆訂單。
             // 收件電話仍保留原值，因此會員電話與收件電話不同也能查到同一會員全部訂單。
             try {
-                const memberAccountPhone = (typeof deptIsLoggedIn !== 'undefined' &&
-                                            deptIsLoggedIn &&
-                                            deptMemberData &&
-                                            deptMemberData.phone)
-                    ? String(deptMemberData.phone).replace(/[^0-9]/g, "")
-                    : "";
+                // 會員 API 不同版本的電話欄位名稱可能不同。
+                // 優先從已登入會員資料取得；若沒有，再使用登入表單中實際輸入的手機號碼。
+                let memberPhoneRaw = "";
+                if (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn && deptMemberData) {
+                    memberPhoneRaw =
+                        deptMemberData.__login_phone ||
+                        deptMemberData.phone ||
+                        deptMemberData.mobile ||
+                        deptMemberData.phone_number ||
+                        deptMemberData.member_phone ||
+                        deptMemberData.account ||
+                        deptMemberData.username ||
+                        "";
+                }
+
+                if (!memberPhoneRaw) {
+                    const loginPhoneInput =
+                        document.getElementById("dept-login-phone") ||
+                        document.getElementById("login-phone") ||
+                        document.querySelector('#dept-login-modal input[type="tel"]') ||
+                        document.querySelector('#dept-login-modal input[name="phone"]') ||
+                        document.querySelector('input[placeholder*="手機"]');
+
+                    if (loginPhoneInput) memberPhoneRaw = loginPhoneInput.value || "";
+                }
+
+                const memberAccountPhone = String(memberPhoneRaw || "").replace(/[^0-9]/g, "");
 
                 if (memberAccountPhone) {
                     fetch(ORDER_QUERY_API_URL, {
