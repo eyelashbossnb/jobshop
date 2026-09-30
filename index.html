@@ -10067,8 +10067,11 @@ function queryOrderFromServer() {
                         <div class="result-row"><span>付款狀態：</span><span>${matchedOrder.payment}</span></div>
                         <div class="result-row"><span>訂單總額：</span><span style="color:#d9534f; font-weight:bold;">${matchedOrder.total}</span></div>
                         <div class="result-row" style="border-top:1px dashed var(--border-color, #ccc); padding-top:8px; margin-top:8px;">
-                            <span>物流狀態：</span><strong style="color:var(--primary-color, #b388ff);">${matchedOrder.status || '訂單處理中 📝'}</strong>
+                            <span>訂單狀態：</span><strong>${matchedOrder.status || '訂單處理中'}</strong>
                         </div>
+                        <div class="result-row"><span>配送方式：</span><span>${matchedOrder.shipping_method || '尚未指定'}</span></div>
+                        <div class="result-row"><span>配送單號：</span><strong>${matchedOrder.tracking_no || '尚未建立'}</strong></div>
+                        <div class="result-row"><span>配送狀態：</span><strong style="color:var(--primary-color, #b388ff);">${matchedOrder.delivery_status || '待出貨'}</strong></div>
                     </div>
                 `;
             });
@@ -10105,8 +10108,11 @@ function queryOrderFromServer() {
                         <div class="result-row"><span>付款狀態：</span><span>${matchedOrder.payment}</span></div>
                         <div class="result-row"><span>訂單總額：</span><span style="color:#d9534f; font-weight:bold;">${matchedOrder.total}</span></div>
                         <div class="result-row" style="border-top:1px dashed var(--border-color, #ccc); padding-top:8px; margin-top:8px;">
-                            <span>物流狀態：</span><strong style="color:var(--primary-color, #b388ff);">${matchedOrder.status || '訂單處理中 📝'}</strong>
+                            <span>訂單狀態：</span><strong>${matchedOrder.status || '訂單處理中'}</strong>
                         </div>
+                        <div class="result-row"><span>配送方式：</span><span>${matchedOrder.shipping_method || '尚未指定'}</span></div>
+                        <div class="result-row"><span>配送單號：</span><strong>${matchedOrder.tracking_no || '尚未建立'}</strong></div>
+                        <div class="result-row"><span>配送狀態：</span><strong style="color:var(--primary-color, #b388ff);">${matchedOrder.delivery_status || '待出貨'}</strong></div>
                     </div>
                 `;
             });
