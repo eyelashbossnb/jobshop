@@ -605,6 +605,26 @@
         .wax-kit-select { width: 100%; padding: 9px 10px; border: 1px solid var(--border-color); border-radius: 8px; background: #fff; color: var(--text-main); }
         @media (max-width: 768px) { .wax-kit-choice-row { grid-template-columns: 1fr; gap: 5px; } }
 
+    
+        /* 客戶版訂單明細 */
+        .customer-order-detail { margin-top: 12px; border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; background:#fff; }
+        .customer-order-detail summary { cursor:pointer; padding:11px 14px; font-size:13px; font-weight:600; color:var(--text-main); background:#faf7f5; list-style:none; }
+        .customer-order-detail summary::-webkit-details-marker { display:none; }
+        .customer-order-detail summary::after { content:"＋"; float:right; color:var(--primary-color); font-size:16px; }
+        .customer-order-detail[open] summary::after { content:"－"; }
+        .customer-order-slip { padding:16px 14px; }
+        .customer-order-slip-head { text-align:center; padding-bottom:10px; margin-bottom:12px; border-bottom:2px solid var(--text-main); }
+        .customer-order-slip-title { font-size:17px; font-weight:700; letter-spacing:.08em; }
+        .customer-order-meta { display:grid; grid-template-columns:1fr 1fr; gap:6px 14px; font-size:12px; margin-bottom:14px; }
+        .customer-order-table { width:100%; border-collapse:collapse; font-size:12px; margin:8px 0 12px; }
+        .customer-order-table th, .customer-order-table td { padding:7px 5px; border-bottom:1px solid #eee; vertical-align:top; }
+        .customer-order-table th { background:#faf7f5; text-align:left; }
+        .customer-order-table .num { text-align:right; white-space:nowrap; }
+        .customer-order-totals { margin-left:auto; width:min(250px,100%); font-size:12px; }
+        .customer-order-total-row { display:flex; justify-content:space-between; padding:4px 0; }
+        .customer-order-total-row.grand { border-top:1px solid var(--text-main); margin-top:4px; padding-top:7px; font-size:14px; font-weight:700; }
+        @media (max-width:576px) { .customer-order-meta { grid-template-columns:1fr; } }
+
     </style>
 </head>
 <body>
@@ -10094,13 +10114,106 @@ function buildDeliveryTrackingHtml(order) {
     `;
 }
 
+
+function escapeOrderHtml(value) {
+    return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+function orderMoney(value) {
+    const n = Number(String(value == null ? 0 : value).replace(/[^0-9.-]/g, "")) || 0;
+    return "$" + n.toLocaleString();
+}
+
+function parseOrderItemsForCustomer(rawItems) {
+    const text = String(rawItems || "").trim();
+    if (!text) return [];
+    let rows = [];
+
+    // 支援後台 JSON 明細
+    if (text.startsWith("[") || text.startsWith("{")) {
+        try {
+            let parsed = JSON.parse(text);
+            if (!Array.isArray(parsed)) parsed = [parsed];
+            parsed.forEach(item => {
+                const name = item.name || item.product_name || item.title || "商品";
+                const qty = Number(item.qty || item.quantity || item.count || 1) || 1;
+                const price = Number(item.price || item.product_price || 0) || 0;
+                rows.push({ name: name, qty: qty, price: price, subtotal: price * qty });
+            });
+            if (rows.length) return rows;
+        } catch(e) {}
+    }
+
+    // 支援目前官網文字格式：1. [A11] 商品名稱 ($342) x 2
+    text.split(/\r?\n/).forEach(line => {
+        line = line.trim();
+        if (!line) return;
+        const qtyMatch = line.match(/\bx\s*(\d+(?:\.\d+)?)\s*$/i) || line.match(/\*\s*(\d+(?:\.\d+)?)\s*$/);
+        const priceMatch = line.match(/\(\s*\$\s*([\d,.]+)\s*\)/) || line.match(/NT\$\s*([\d,.]+)/i);
+        const qty = qtyMatch ? Number(qtyMatch[1]) : 1;
+        const price = priceMatch ? Number(priceMatch[1].replace(/,/g, "")) : 0;
+        let name = line
+            .replace(/^\s*\d+\.\s*/, "")
+            .replace(/\(\s*\$\s*[\d,.]+\s*\)/, "")
+            .replace(/\bx\s*\d+(?:\.\d+)?\s*$/i, "")
+            .trim();
+        rows.push({ name: name, qty: qty, price: price, subtotal: price * qty });
+    });
+    return rows;
+}
+
+function buildCustomerOrderDetailHtml(order) {
+    const items = parseOrderItemsForCustomer(order.items);
+    const itemRows = items.length ? items.map(item => `
+        <tr>
+            <td>${escapeOrderHtml(item.name)}</td>
+            <td class="num">${escapeOrderHtml(item.qty)}</td>
+            <td class="num">${orderMoney(item.price)}</td>
+            <td class="num">${orderMoney(item.subtotal)}</td>
+        </tr>`).join("") :
+        `<tr><td colspan="4" style="text-align:center;color:#999;">無商品明細</td></tr>`;
+
+    return `
+        <details class="customer-order-detail">
+            <summary>查看訂單明細</summary>
+            <div class="customer-order-slip">
+                <div class="customer-order-slip-head">
+                    <div class="customer-order-slip-title">睫老闆美容集團｜訂單明細</div>
+                </div>
+                <div class="customer-order-meta">
+                    <div>訂單日期：<strong>${escapeOrderHtml(order.order_date || "")}</strong></div>
+                    <div>訂單編號：<strong>${escapeOrderHtml(order.id || "")}</strong></div>
+                    <div>收件大名：${escapeOrderHtml(order.name || "")}</div>
+                    <div>訂單狀態：${escapeOrderHtml(order.status || "訂單處理中")}</div>
+                </div>
+                <table class="customer-order-table">
+                    <thead><tr><th>商品明細 / 規格</th><th class="num">數量</th><th class="num">單價</th><th class="num">小計</th></tr></thead>
+                    <tbody>${itemRows}</tbody>
+                </table>
+                <div class="customer-order-totals">
+                    <div class="customer-order-total-row"><span>商品小計</span><span>${orderMoney(order.subtotal)}</span></div>
+                    <div class="customer-order-total-row"><span>運費</span><span>${orderMoney(order.shipping_fee)}</span></div>
+                    <div class="customer-order-total-row"><span>優惠折扣</span><span>-${orderMoney(order.discount)}</span></div>
+                    <div class="customer-order-total-row grand"><span>訂單總額</span><span>${orderMoney(order.total)}</span></div>
+                </div>
+                <div style="margin-top:14px;padding-top:10px;border-top:1px dashed #ddd;font-size:12px;line-height:1.8;">
+                    <div>付款方式：${escapeOrderHtml(order.payment || "")}</div>
+                    ${buildDeliveryTrackingHtml(order)}
+                    ${order.notes && order.notes !== "無備註" ? `<div style="margin-top:6px;">訂單備註：${escapeOrderHtml(order.notes)}</div>` : ""}
+                </div>
+            </div>
+        </details>`;
+}
+
 function queryOrderFromServer() {
     const rawInput = document.getElementById('search-input').value;
     const keyword = rawInput ? rawInput.trim().replace(/\s+/g, '') : '';
     const resultBox = document.getElementById('query-result-box');
     
     if(!keyword) {
-        alert('提示：請輸入「手機號碼」或者「訂單編號」再做查詢唷！\n(單號範例: ORD-20260708 或 手機: 0912345678)');
+        alert('提示：請輸入「會員手機／收件手機」或者「訂單編號」再做查詢唷！\n(單號範例: ORD-20260708 或 手機: 0912345678)');
         return;
     }
 
@@ -10134,13 +10247,13 @@ function queryOrderFromServer() {
                     <div class="order-item-block" style="margin-bottom: 20px; border-bottom: 2px solid var(--border-color, #eee); padding-bottom: 15px;">
                         <div class="result-row"><span>訂單編號：</span><strong>${matchedOrder.id}</strong></div>
                         <div class="result-row"><span>收件大名：</span><span>${matchedOrder.name}</span></div>
-                        <div class="result-row"><span>訂購品項：</span><span style="display:block; background:#fdfdfd; padding:5px 8px; border-radius:4px; margin-top:4px; font-size:13px; color:#555; line-height:1.5;">${formattedItems}</span></div>
-                        <div class="result-row"><span>付款狀態：</span><span>${matchedOrder.payment}</span></div>
+                        <div class="result-row"><span>付款方式：</span><span>${escapeOrderHtml(matchedOrder.payment || "")}</span></div>
                         <div class="result-row"><span>訂單總額：</span><span style="color:#d9534f; font-weight:bold;">${matchedOrder.total}</span></div>
                         <div class="result-row" style="border-top:1px dashed var(--border-color, #ccc); padding-top:8px; margin-top:8px;">
                             <span>訂單狀態：</span><strong>${matchedOrder.status || '訂單處理中'}</strong>
                         </div>
                         ${buildDeliveryTrackingHtml(matchedOrder)}
+                        ${buildCustomerOrderDetailHtml(matchedOrder)}
                     </div>
                 `;
             });
@@ -10173,13 +10286,13 @@ function queryOrderFromServer() {
                     <div class="order-item-block" style="margin-bottom: 20px; border-bottom: 2px solid var(--border-color, #eee); padding-bottom: 15px;">
                         <div class="result-row"><span>訂單編號：</span><strong>${matchedOrder.id}</strong></div>
                         <div class="result-row"><span>收件大名：</span><span>${matchedOrder.name}</span></div>
-                        <div class="result-row"><span>訂購品項：</span><span style="display:block; background:#fdfdfd; padding:5px 8px; border-radius:4px; margin-top:4px; font-size:13px; color:#555; line-height:1.5;">${formattedItems}</span></div>
-                        <div class="result-row"><span>付款狀態：</span><span>${matchedOrder.payment}</span></div>
+                        <div class="result-row"><span>付款方式：</span><span>${escapeOrderHtml(matchedOrder.payment || "")}</span></div>
                         <div class="result-row"><span>訂單總額：</span><span style="color:#d9534f; font-weight:bold;">${matchedOrder.total}</span></div>
                         <div class="result-row" style="border-top:1px dashed var(--border-color, #ccc); padding-top:8px; margin-top:8px;">
                             <span>訂單狀態：</span><strong>${matchedOrder.status || '訂單處理中'}</strong>
                         </div>
                         ${buildDeliveryTrackingHtml(matchedOrder)}
+                        ${buildCustomerOrderDetailHtml(matchedOrder)}
                     </div>
                 `;
             });
@@ -12443,6 +12556,33 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
                 clearStoredValueDeductionTransactionId(deductionTransactionId);
             }
 
+            // 🆕 若目前為會員登入狀態，將會員帳號電話綁定到這筆訂單。
+            // 收件電話仍保留原值，因此會員電話與收件電話不同也能查到同一會員全部訂單。
+            try {
+                const memberAccountPhone = (typeof deptIsLoggedIn !== 'undefined' &&
+                                            deptIsLoggedIn &&
+                                            deptMemberData &&
+                                            deptMemberData.phone)
+                    ? String(deptMemberData.phone).replace(/[^0-9]/g, "")
+                    : "";
+
+                if (memberAccountPhone) {
+                    fetch(GOOGLE_SHEET_API_URL, {
+                        method: "POST",
+                        mode: "no-cors",
+                        keepalive: true,
+                        headers: { "Content-Type": "text/plain;charset=utf-8" },
+                        body: JSON.stringify({
+                            action: "link_member_order",
+                            order_id: orderSerialNumber,
+                            member_phone: memberAccountPhone
+                        })
+                    }).catch(err => console.warn("會員訂單關聯送出失敗：", err));
+                }
+            } catch (memberLinkErr) {
+                console.warn("會員訂單關聯異常：", memberLinkErr);
+            }
+
             if (typeof mockOrderDatabase !== 'undefined') {
                 mockOrderDatabase.push({
                     id: orderSerialNumber,
@@ -12489,7 +12629,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
 
             setTimeout(() => {
                 location.reload(); 
-            }, 500);
+            }, 1500);
         })
         .catch(error => {
             console.error("表單發送失敗:", error);
