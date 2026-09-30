@@ -12366,21 +12366,28 @@ function linkMemberOrderWithRetry(orderId, memberPhone) {
     const cleanMemberPhone = String(memberPhone || "").replace(/[^0-9]/g, "");
     if (!cleanOrderId || !cleanMemberPhone) return;
 
-    // 只送一次會員綁定請求；後台會等待 Google 表單訂單同步完成，
-    // 避免會員綁定功能誤造成重複訂單或重複請求。
-    fetch(ORDER_QUERY_API_URL, {
-        method: "POST",
-        mode: "no-cors",
-        keepalive: true,
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-            action: "link_member_order",
-            order_id: cleanOrderId,
-            member_phone: cleanMemberPhone
-        })
-    }).catch(function(err) {
-        console.warn("會員訂單關聯失敗：", err);
-    });
+    // 改用 GET 專用綁定接口。
+    // 這個網址只會「找到既有訂單 → 寫入會員電話」，完全不會建立新訂單。
+    const sendLink = function() {
+        const url = ORDER_QUERY_API_URL
+            + "?action=link_member_order"
+            + "&order_id=" + encodeURIComponent(cleanOrderId)
+            + "&member_phone=" + encodeURIComponent(cleanMemberPhone)
+            + "&_=" + Date.now();
+
+        fetch(url, {
+            method: "GET",
+            mode: "no-cors",
+            cache: "no-store",
+            keepalive: true
+        }).catch(function(err) {
+            console.warn("會員電話綁定 GET 請求失敗：", err);
+        });
+    };
+
+    // 第一次立即送；若 Google Form 同步較慢，40 秒後再補送一次。
+    sendLink();
+    setTimeout(sendLink, 40000);
 }
 
 function executeFinalBackendOrderSubmission(customerName, customerPhone, customerLine, customerAddress, companyTitle, taxId, orderNotes, paymentMethod, shippingMethod, finalTotalAmount, currentCart, setSubmittingState, deductionTransactionId) {
