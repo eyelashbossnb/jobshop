@@ -10501,7 +10501,10 @@ function toggleRenewalReminder(show) {
 function checkMemberRenewalReminder(forceCheck) {
     if (!deptIsLoggedIn || !deptMemberData) return;
 
-    const expiry = parseMemberExpiryDate(getMemberExpiryRaw(deptMemberData));
+    const expiryRaw = getMemberExpiryRaw(deptMemberData);
+    if (String(expiryRaw || "").trim() === "無期限") return;
+
+    const expiry = parseMemberExpiryDate(expiryRaw);
     if (!expiry) return;
 
     const today = new Date();
@@ -10549,8 +10552,11 @@ function renderMemberHeader() {
     if (!area) return;
 
     if (deptIsLoggedIn && deptMemberData) {
-        const expiryDate = parseMemberExpiryDate(getMemberExpiryRaw(deptMemberData));
-        const expiryText = expiryDate ? formatMemberExpiryDate(expiryDate) : "";
+        const expiryRaw = getMemberExpiryRaw(deptMemberData);
+        const expiryDate = parseMemberExpiryDate(expiryRaw);
+        const expiryText = String(expiryRaw || "").trim() === "無期限"
+            ? "無期限"
+            : (expiryDate ? formatMemberExpiryDate(expiryDate) : "");
 
         area.innerHTML = `
             <div class="user-info">
