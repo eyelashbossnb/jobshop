@@ -660,6 +660,21 @@
             .user-info { flex-wrap: wrap; justify-content: center; }
         }
 
+    
+        /* 儲值金使用紀錄 */
+        .balance-clickable { cursor:pointer; text-decoration:underline dotted; text-underline-offset:3px; }
+        .balance-clickable:hover { opacity:.75; }
+        .balance-history-card { max-width:760px; width:calc(100% - 40px); text-align:left; }
+        .balance-history-title { font-size:20px; font-weight:700; margin-bottom:6px; color:var(--text-main); }
+        .balance-history-current { font-size:13px; color:var(--text-muted); margin-bottom:18px; }
+        .balance-history-scroll { max-height:430px; overflow:auto; border:1px solid var(--border-color); border-radius:10px; }
+        .balance-history-table { width:100%; border-collapse:collapse; font-size:12px; min-width:650px; }
+        .balance-history-table th,.balance-history-table td { padding:10px 9px; border-bottom:1px solid var(--border-color); text-align:left; vertical-align:top; }
+        .balance-history-table th { position:sticky; top:0; background:#faf7f5; color:var(--text-main); z-index:1; }
+        .balance-history-table td.num,.balance-history-table th.num { text-align:right; white-space:nowrap; }
+        .balance-history-plus,.balance-history-minus { font-weight:700; }
+        .balance-history-empty { padding:28px 16px; text-align:center; color:var(--text-muted); font-size:13px; }
+
     </style>
 </head>
 <body>
@@ -10562,7 +10577,7 @@ function renderMemberHeader() {
             <div class="user-info">
                 <span>✨ 歡迎，<b>${deptMemberData.name}</b></span>
                 <span class="badge" style="background: var(--primary-color); color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500;">${deptMemberData.member_level}</span>
-                <span class="balance">儲值金: <span style="color: var(--accent-color); font-weight: 600;">$${Number(deptMemberData.balance).toLocaleString()}</span></span>
+                <span class="balance balance-clickable" onclick="openBalanceHistory()" title="點擊查看使用紀錄">儲值金: <span style="color: var(--accent-color); font-weight: 600;">$${Number(deptMemberData.balance).toLocaleString()}</span></span>
                 ${expiryText ? `<span class="member-expiry">到期日：<b>${expiryText}</b></span>` : ""}
                 <a class="logout-link" onclick="executeLogout()">登出</a>
             </div>
@@ -10573,6 +10588,55 @@ function renderMemberHeader() {
             <button class="nav-btn secondary" onclick="toggleRegisterModal(true)" style="margin-left: 6px;">免費註冊</button>
         `;
     }
+}
+
+
+function toggleBalanceHistory(show) {
+    const overlay = document.getElementById("balance-history-overlay");
+    if (!overlay) return;
+    if (show) overlay.classList.add("active"); else overlay.classList.remove("active");
+}
+function escapeBalanceHistoryHtml(value) {
+    return String(value == null ? "" : value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+function formatBalanceHistoryMoney(value) { return "$" + Number(value || 0).toLocaleString(); }
+
+function openBalanceHistory() {
+    if (!deptIsLoggedIn || !deptMemberData || !deptMemberData.phone) {
+        alert("請先登入會員後再查看儲值金紀錄。"); return;
+    }
+    const body=document.getElementById("balance-history-body");
+    const current=document.getElementById("balance-history-current");
+    if(current) current.textContent=`目前儲值金：$${Number(deptMemberData.balance||0).toLocaleString()}`;
+    if(body) body.innerHTML=`<div class="balance-history-empty">紀錄讀取中...</div>`;
+    toggleBalanceHistory(true);
+
+    fetch(GAS_API_URL,{method:"POST",mode:"cors",body:JSON.stringify({action:"balance_history",phone:deptMemberData.phone})})
+    .then(res=>res.json()).then(data=>{
+        if(!body) return;
+        if(!data.success){ body.innerHTML=`<div class="balance-history-empty">⚠️ ${escapeBalanceHistoryHtml(data.message||"紀錄讀取失敗")}</div>`; return; }
+        const records=Array.isArray(data.records)?data.records:[];
+        if(!records.length){ body.innerHTML=`<div class="balance-history-empty">目前沒有儲值金使用紀錄。</div>`; return; }
+
+        const rows=records.map(item=>{
+            const amount=Number(item.amount||0);
+            const amountText=amount>0?`+$${Math.abs(amount).toLocaleString()}`:(amount<0?`-$${Math.abs(amount).toLocaleString()}`:"$0");
+            let note=item.note||"";
+            if(item.transaction_id) note=`${note?note+"｜":""}${item.transaction_id}`;
+            return `<tr>
+                <td>${escapeBalanceHistoryHtml(item.date)}</td>
+                <td>${escapeBalanceHistoryHtml(item.type)}</td>
+                <td class="num">${formatBalanceHistoryMoney(item.old_balance)}</td>
+                <td class="num ${amount>=0?"balance-history-plus":"balance-history-minus"}">${amountText}</td>
+                <td class="num">${formatBalanceHistoryMoney(item.balance)}</td>
+                <td>${escapeBalanceHistoryHtml(note)}</td>
+            </tr>`;
+        }).join("");
+
+        body.innerHTML=`<div class="balance-history-scroll"><table class="balance-history-table">
+            <thead><tr><th>日期</th><th>類型</th><th class="num">原餘額</th><th class="num">使用/增加</th><th class="num">餘額</th><th>備註</th></tr></thead>
+            <tbody>${rows}</tbody></table></div>`;
+    }).catch(()=>{ if(body) body.innerHTML=`<div class="balance-history-empty">連線失敗，請稍後再試。</div>`; });
 }
 
 function executeLogout() {
@@ -12953,6 +13017,17 @@ addToCart = function(productId) {
     }, 10);
 };
 </script>
+
+
+<!-- 儲值金使用紀錄 -->
+<div id="balance-history-overlay" class="modal-overlay">
+    <div class="custom-modal balance-history-card">
+        <button class="modal-close" type="button" onclick="toggleBalanceHistory(false)">×</button>
+        <div class="balance-history-title">儲值金使用紀錄</div>
+        <div id="balance-history-current" class="balance-history-current"></div>
+        <div id="balance-history-body"><div class="balance-history-empty">紀錄讀取中...</div></div>
+    </div>
+</div>
 
 <!-- 會員續約提醒 -->
 <div id="renewal-reminder-overlay" class="modal-overlay">
