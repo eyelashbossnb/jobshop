@@ -10813,7 +10813,10 @@ function executeDeptDiscountCalculate() {
 // 6. 會員專屬：收件人資訊自動記憶與填入功能
 // =============================================================
 function autoFillMemberContact() {
-    if (!deptIsLoggedIn || !deptMemberData || !deptMemberData.phone) return;
+    // 只要已登入且有會員資料就繼續。
+    // 不再要求 phone 必須有值，避免業務會員 E欄電話空白時，
+    // 連 C欄姓名/店名與 F欄地址都一起無法自動帶入。
+    if (!deptIsLoggedIn || !deptMemberData) return;
 
     const nameInput = document.getElementById("name");
     const phoneInput = document.getElementById("phone");
@@ -10825,12 +10828,15 @@ function autoFillMemberContact() {
     // advanced：姓名、電話、地址、公司抬頭、統編
     // business：C姓名/店名、E電話、F地址（由會員 API 統一回傳為 name / phone / address）
     // 客人仍可在訂單畫面自行修改；修改不會回寫會員資料表。
-    if (deptMemberData.profile_source === "advanced" || deptMemberData.profile_source === "business") {
-        if (nameInput) nameInput.value = String(deptMemberData.name || "");
-        if (phoneInput) phoneInput.value = String(deptMemberData.phone || "");
-        if (addressInput) addressInput.value = String(deptMemberData.address || "");
+    const profileSource = String(deptMemberData.profile_source || "").trim().toLowerCase();
 
-        if (deptMemberData.profile_source === "advanced") {
+    if (profileSource === "advanced" || profileSource === "business") {
+        // 三個欄位各自獨立填入，不互相依賴。
+        if (nameInput) nameInput.value = String(deptMemberData.name || "").trim();
+        if (phoneInput) phoneInput.value = String(deptMemberData.phone || "").trim();
+        if (addressInput) addressInput.value = String(deptMemberData.address || "").trim();
+
+        if (profileSource === "advanced") {
             if (companyTitleInput) companyTitleInput.value = String(deptMemberData.company_title || "");
             if (taxIdInput) taxIdInput.value = String(deptMemberData.tax_id || "");
             console.log("✨ 已自動帶入進階會員預設訂購資料");
