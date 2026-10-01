@@ -625,6 +625,41 @@
         .customer-order-total-row.grand { border-top:1px solid var(--text-main); margin-top:4px; padding-top:7px; font-size:14px; font-weight:700; }
         @media (max-width:576px) { .customer-order-meta { grid-template-columns:1fr; } }
 
+    
+        /* 會員到期日 / 續約提醒 */
+        .member-expiry {
+            color: var(--text-muted);
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .renewal-line-link {
+            color: var(--accent-color);
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .renewal-line-link:hover { opacity: .8; }
+        .renewal-modal-card {
+            max-width: 420px;
+            text-align: left;
+        }
+        .renewal-modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 16px;
+        }
+        .renewal-modal-text {
+            font-size: 14px;
+            line-height: 1.9;
+            color: var(--text-muted);
+        }
+        .renewal-modal-text strong { color: var(--text-main); }
+        .renewal-modal-actions { margin-top: 22px; }
+        @media (max-width: 768px) {
+            .user-info { flex-wrap: wrap; justify-content: center; }
+        }
+
     </style>
 </head>
 <body>
@@ -10414,16 +10449,115 @@ function scrollToOrderForm() {
 // =============================================================
 // 3. 頂部導覽列會員狀態渲染
 // =============================================================
+const MEMBER_SERVICE_LINE_URL = "https://line.me/ti/p/4RwpD-atgZ";
+
+function getMemberExpiryRaw(member) {
+    if (!member) return "";
+    return member.expiry_date
+        || member.expiration_date
+        || member.member_expiry
+        || member.member_expiry_date
+        || member.expire_date
+        || member.valid_until
+        || member.end_date
+        || member["會員到期日"]
+        || "";
+}
+
+function parseMemberExpiryDate(raw) {
+    if (!raw) return null;
+    if (raw instanceof Date && !isNaN(raw.getTime())) return raw;
+
+    const text = String(raw).trim();
+    if (!text) return null;
+
+    // 支援 yyyy/MM/dd、yyyy-MM-dd、yyyy.MM.dd
+    let m = text.match(/(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})/);
+    if (m) {
+        const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+        return isNaN(d.getTime()) ? null : d;
+    }
+
+    // 支援 Google/ISO 日期字串
+    const d = new Date(text);
+    return isNaN(d.getTime()) ? null : d;
+}
+
+function formatMemberExpiryDate(date) {
+    if (!(date instanceof Date) || isNaN(date.getTime())) return "";
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}/${m}/${d}`;
+}
+
+function toggleRenewalReminder(show) {
+    const overlay = document.getElementById("renewal-reminder-overlay");
+    if (!overlay) return;
+    if (show) overlay.classList.add("active");
+    else overlay.classList.remove("active");
+}
+
+function checkMemberRenewalReminder(forceCheck) {
+    if (!deptIsLoggedIn || !deptMemberData) return;
+
+    const expiry = parseMemberExpiryDate(getMemberExpiryRaw(deptMemberData));
+    if (!expiry) return;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    expiry.setHours(0, 0, 0, 0);
+
+    // 續約開放日 = 到期日往前 2 個月
+    const renewalOpen = new Date(expiry);
+    renewalOpen.setMonth(renewalOpen.getMonth() - 2);
+
+    // 尚未進入續約期，不提醒
+    if (today < renewalOpen) return;
+
+    const expiryText = formatMemberExpiryDate(expiry);
+    const content = document.getElementById("renewal-reminder-content");
+    if (!content) return;
+
+    if (today <= expiry) {
+        content.innerHTML = `
+            您的會員資格將於 <strong>${expiryText}</strong> 到期，目前已進入續約期間。<br><br>
+            會員續約於<strong>到期日前兩個月開放辦理</strong>，請於會員效期內完成續約；<strong>逾期後將視為新加入會員辦理</strong>。<br><br>
+            如需辦理續約，請洽
+            <a class="renewal-line-link" href="${MEMBER_SERVICE_LINE_URL}" target="_blank" rel="noopener noreferrer">客服</a>。
+        `;
+    } else {
+        content.innerHTML = `
+            您的會員資格已於 <strong>${expiryText}</strong> 到期。<br><br>
+            依會員規則，<strong>逾期後將視為新加入會員辦理</strong>。<br><br>
+            如需重新加入會員，請洽
+            <a class="renewal-line-link" href="${MEMBER_SERVICE_LINE_URL}" target="_blank" rel="noopener noreferrer">客服</a>。
+        `;
+    }
+
+    // 同一個瀏覽器工作階段、同一到期日只自動跳一次；
+    // 重新登入或重新開啟瀏覽器工作階段可再次提醒。
+    const key = "renewalReminderShown_" + (deptMemberData.phone || deptMemberData.name || "member") + "_" + expiryText;
+    if (!forceCheck && sessionStorage.getItem(key) === "1") return;
+
+    sessionStorage.setItem(key, "1");
+    toggleRenewalReminder(true);
+}
+
 function renderMemberHeader() {
     const area = document.getElementById('member-status-area');
     if (!area) return;
 
     if (deptIsLoggedIn && deptMemberData) {
+        const expiryDate = parseMemberExpiryDate(getMemberExpiryRaw(deptMemberData));
+        const expiryText = expiryDate ? formatMemberExpiryDate(expiryDate) : "";
+
         area.innerHTML = `
             <div class="user-info">
                 <span>✨ 歡迎，<b>${deptMemberData.name}</b></span>
                 <span class="badge" style="background: var(--primary-color); color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500;">${deptMemberData.member_level}</span>
                 <span class="balance">儲值金: <span style="color: var(--accent-color); font-weight: 600;">$${Number(deptMemberData.balance).toLocaleString()}</span></span>
+                ${expiryText ? `<span class="member-expiry">到期日：<b>${expiryText}</b></span>` : ""}
                 <a class="logout-link" onclick="executeLogout()">登出</a>
             </div>
         `;
@@ -10528,6 +10662,7 @@ function executeLogin() {
             localStorage.setItem("deptMemberData", JSON.stringify(deptMemberData));
             
             renderMemberHeader();
+            setTimeout(() => checkMemberRenewalReminder(false), 250);
             
             if (typeof updateHomepageProductPrices === 'function') {
                 updateHomepageProductPrices(); 
@@ -12641,6 +12776,7 @@ function scrollToOrderForm() {
 // =============================================================
 document.addEventListener("DOMContentLoaded", function() {
     renderMemberHeader();
+    setTimeout(() => checkMemberRenewalReminder(false), 350);
     updateHomepageProductPrices(); 
     
     const shippingSelect = document.getElementById("shipping");
@@ -12811,5 +12947,18 @@ addToCart = function(productId) {
     }, 10);
 };
 </script>
+
+<!-- 會員續約提醒 -->
+<div id="renewal-reminder-overlay" class="modal-overlay">
+    <div class="custom-modal renewal-modal-card">
+        <button class="modal-close" type="button" onclick="toggleRenewalReminder(false)">×</button>
+        <div class="renewal-modal-title">會員續約提醒</div>
+        <div id="renewal-reminder-content" class="renewal-modal-text"></div>
+        <div class="renewal-modal-actions">
+            <button class="btn" type="button" onclick="toggleRenewalReminder(false)">我知道了</button>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
