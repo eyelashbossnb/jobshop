@@ -10814,12 +10814,27 @@ function executeDeptDiscountCalculate() {
 function autoFillMemberContact() {
     if (!deptIsLoggedIn || !deptMemberData || !deptMemberData.phone) return;
 
-    const memberKey = "contact_" + deptMemberData.phone;
-    const savedContactStr = localStorage.getItem(memberKey);
-
     const nameInput = document.getElementById("name");
     const phoneInput = document.getElementById("phone");
     const addressInput = document.getElementById("address");
+    const companyTitleInput = document.getElementById("company-title");
+    const taxIdInput = document.getElementById("tax-id");
+
+    // 進階會員：登入後直接以會員資料表內容作為預設訂購資料。
+    // 客人可以自行修改畫面內容，修改不會回寫會員資料表。
+    if (deptMemberData.profile_source === "advanced") {
+        if (nameInput) nameInput.value = String(deptMemberData.name || "");
+        if (phoneInput) phoneInput.value = String(deptMemberData.phone || "");
+        if (addressInput) addressInput.value = String(deptMemberData.address || "");
+        if (companyTitleInput) companyTitleInput.value = String(deptMemberData.company_title || "");
+        if (taxIdInput) taxIdInput.value = String(deptMemberData.tax_id || "");
+        console.log("✨ 已自動帶入進階會員預設訂購資料");
+        return;
+    }
+
+    // 一般會員完全維持原本邏輯。
+    const memberKey = "contact_" + deptMemberData.phone;
+    const savedContactStr = localStorage.getItem(memberKey);
 
     if (savedContactStr) {
         try {
@@ -10836,7 +10851,6 @@ function autoFillMemberContact() {
         if (phoneInput && !phoneInput.value) phoneInput.value = deptMemberData.phone;
     }
 }
-
 function saveMemberContact() {
     if (!deptIsLoggedIn || !deptMemberData || !deptMemberData.phone) return;
 
