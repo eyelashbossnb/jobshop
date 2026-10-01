@@ -10567,7 +10567,8 @@ function renderMemberHeader() {
     if (!area) return;
 
     if (deptIsLoggedIn && deptMemberData) {
-        const expiryRaw = getMemberExpiryRaw(deptMemberData);
+        const isBusinessProfile = deptMemberData.profile_source === "business";
+        const expiryRaw = isBusinessProfile ? "" : getMemberExpiryRaw(deptMemberData);
         const expiryDate = parseMemberExpiryDate(expiryRaw);
         const expiryText = String(expiryRaw || "").trim() === "無期限"
             ? "無期限"
@@ -10577,7 +10578,7 @@ function renderMemberHeader() {
             <div class="user-info">
                 <span>✨ 歡迎，<b>${deptMemberData.name}</b></span>
                 <span class="badge" style="background: var(--primary-color); color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500;">${deptMemberData.member_level}</span>
-                <span class="balance balance-clickable" onclick="openBalanceHistory()" title="點擊查看使用紀錄">儲值金: <span style="color: var(--accent-color); font-weight: 600;">$${Number(deptMemberData.balance).toLocaleString()}</span></span>
+                ${deptMemberData.profile_source === "business" ? "" : `<span class="balance balance-clickable" onclick="openBalanceHistory()" title="點擊查看使用紀錄">儲值金: <span style="color: var(--accent-color); font-weight: 600;">$${Number(deptMemberData.balance).toLocaleString()}</span></span>`}
                 ${expiryText ? `<span class="member-expiry">到期日：<b>${expiryText}</b></span>` : ""}
                 <a class="logout-link" onclick="executeLogout()">登出</a>
             </div>
@@ -10820,15 +10821,25 @@ function autoFillMemberContact() {
     const companyTitleInput = document.getElementById("company-title");
     const taxIdInput = document.getElementById("tax-id");
 
-    // 進階會員：登入後直接以會員資料表內容作為預設訂購資料。
-    // 客人可以自行修改畫面內容，修改不會回寫會員資料表。
-    if (deptMemberData.profile_source === "advanced") {
+    // 進階會員／業務會員：登入後直接以會員資料表內容作為預設訂購資料。
+    // advanced：姓名、電話、地址、公司抬頭、統編
+    // business：C姓名/店名、E電話、F地址（由會員 API 統一回傳為 name / phone / address）
+    // 客人仍可在訂單畫面自行修改；修改不會回寫會員資料表。
+    if (deptMemberData.profile_source === "advanced" || deptMemberData.profile_source === "business") {
         if (nameInput) nameInput.value = String(deptMemberData.name || "");
         if (phoneInput) phoneInput.value = String(deptMemberData.phone || "");
         if (addressInput) addressInput.value = String(deptMemberData.address || "");
-        if (companyTitleInput) companyTitleInput.value = String(deptMemberData.company_title || "");
-        if (taxIdInput) taxIdInput.value = String(deptMemberData.tax_id || "");
-        console.log("✨ 已自動帶入進階會員預設訂購資料");
+
+        if (deptMemberData.profile_source === "advanced") {
+            if (companyTitleInput) companyTitleInput.value = String(deptMemberData.company_title || "");
+            if (taxIdInput) taxIdInput.value = String(deptMemberData.tax_id || "");
+            console.log("✨ 已自動帶入進階會員預設訂購資料");
+        } else {
+            // 業務會員沒有公司抬頭／統編預設資料，避免殘留上一位會員資料。
+            if (companyTitleInput) companyTitleInput.value = "";
+            if (taxIdInput) taxIdInput.value = "";
+            console.log("✨ 已自動帶入業務會員姓名、電話與地址");
+        }
         return;
     }
 
