@@ -10623,9 +10623,19 @@ function openBalanceHistory() {
             const amountText=amount>0?`+$${Math.abs(amount).toLocaleString()}`:(amount<0?`-$${Math.abs(amount).toLocaleString()}`:"$0");
             let note=item.note||"";
             if(item.transaction_id) note=`${note?note+"｜":""}${item.transaction_id}`;
+
+            // 儲值金紀錄類型：相容新版後台與舊歷史資料
+            const rawType=String(item.type||"").trim();
+            let displayType=rawType;
+            if(rawType==="使用") displayType="訂單扣款";
+            else if(rawType==="增加") displayType="後台增加";
+            else if(rawType==="訂單扣款") displayType="訂單扣款";
+            else if(rawType==="後台扣除") displayType="後台扣除";
+            else if(rawType==="後台增加") displayType="後台增加";
+
             return `<tr>
                 <td>${escapeBalanceHistoryHtml(item.date)}</td>
-                <td>${escapeBalanceHistoryHtml(item.type)}</td>
+                <td>${escapeBalanceHistoryHtml(displayType)}</td>
                 <td class="num">${formatBalanceHistoryMoney(item.old_balance)}</td>
                 <td class="num ${amount>=0?"balance-history-plus":"balance-history-minus"}">${amountText}</td>
                 <td class="num">${formatBalanceHistoryMoney(item.balance)}</td>
