@@ -10857,7 +10857,8 @@ function renderMemberContactSelector() {
     contacts.forEach((contact, index) => {
         const option = document.createElement("option");
         option.value = String(index);
-        option.textContent = String(contact.name || "").trim() ||
+        option.textContent = String(contact.label || "").trim() ||
+                             String(contact.name || "").trim() ||
                              String(contact.address || "").trim() ||
                              ("常用資料 " + (index + 1));
         select.appendChild(option);
