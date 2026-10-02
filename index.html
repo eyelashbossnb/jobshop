@@ -12766,24 +12766,23 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
                     const isEyeMask = itemId.startsWith('A70_') || itemId.startsWith('A74_') || itemId.startsWith('A76_');
 
                     if (isEyeMask) {
-                        // V5：50對／100對為六個獨立正式商品。
-                        // 不再把 100對換算成 50對 × 2。
-                        const eyeMaskBackendMap = {
-                            "A70_50對":  "A70超薄U型切口眼膜(對稱)/50對",
-                            "A70_100對": "A71超薄U型切口眼膜(對稱)/100對",
-                            "A74_50對":  "A74超薄型眼膜(對稱)/50對",
-                            "A74_100對": "A75超薄型眼膜(對稱)/100對",
-                            "A76_50對":  "A76超薄卸睫專用眼膜(左右眼)/50對",
-                            "A76_100對": "A77超薄卸睫專用眼膜(左右眼)/100對"
-                        };
+                        // V6：訂單/月銷使用六個正式編號，但庫存仍使用三個共用庫存池。
+                        // A70 = U型庫存池、A74 = 超薄型庫存池、A76 = 卸睫左右眼庫存池。
+                        // 50對扣 1 單位；100對等於兩盒50對，因此扣 2 單位。
+                        let backendEyeMaskName = "";
+                        if (itemId.startsWith('A70_')) backendEyeMaskName = "A70超薄U型切口眼膜(對稱)";
+                        if (itemId.startsWith('A74_')) backendEyeMaskName = "A74超薄型眼膜(對稱)";
+                        if (itemId.startsWith('A76_')) backendEyeMaskName = "A76超薄卸睫專用眼膜(左右眼)";
 
-                        const backendEyeMaskName = eyeMaskBackendMap[itemId];
+                        const is100Pairs = itemId.endsWith('100對');
+                        const finalDeductQty = is100Pairs ? (qty * 2) : qty;
 
                         if (backendEyeMaskName) {
-                            cartBackup[backendEyeMaskName] = (cartBackup[backendEyeMaskName] || 0) + qty;
+                            cartBackup[backendEyeMaskName] =
+                                (cartBackup[backendEyeMaskName] || 0) + finalDeductQty;
                         } else {
                             const fallbackKey = pInfo.backendStockKey || pInfo.name || itemId;
-                            cartBackup[fallbackKey] = (cartBackup[fallbackKey] || 0) + qty;
+                            cartBackup[fallbackKey] = (cartBackup[fallbackKey] || 0) + finalDeductQty;
                         }
                     } else {
                         // 規格／睫毛商品使用實際匹配到的後台 SKU，
