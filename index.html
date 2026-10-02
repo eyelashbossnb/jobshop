@@ -675,219 +675,249 @@
         .balance-history-plus,.balance-history-minus { font-weight:700; }
         .balance-history-empty { padding:28px 16px; text-align:center; color:var(--text-muted); font-size:13px; }
 
-
-
         /* =========================================================
-           📱 手機版操作優化（僅 <= 768px 生效）
-           電腦版維持原樣
+           📱 手機版精緻微調（僅 <= 768px 生效）
+           原網站風格保留／電腦版完全不變
            ========================================================= */
         @media (max-width: 768px) {
-            html { scroll-behavior: smooth; }
-            body { padding-bottom: 76px; letter-spacing: 0.03em; }
 
-            /* 頂部：Logo、搜尋、訂單、會員操作更適合手指點擊 */
-            header { position: sticky; top: 0; }
+            /* 頂部維持原風格，只改善排列 */
             .header-container {
-                padding: 8px 12px 10px;
-                gap: 8px;
+                padding: 8px 14px 12px;
+                gap: 10px;
             }
-            .logo-img { height: 52px; }
+
+            .logo-img {
+                height: 58px;
+            }
+
             .nav-tools {
                 width: 100%;
-                display: grid;
-                grid-template-columns: minmax(0, 1fr) auto;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
                 gap: 8px;
-                align-items: center;
             }
+
             .search-bar,
             .search-bar:focus {
                 width: 100%;
-                min-width: 0;
                 box-sizing: border-box;
-                height: 42px;
-                padding: 9px 14px;
-                font-size: 14px;
+                height: 38px;
             }
-            .nav-tools > .nav-btn { height: 42px; padding: 7px 13px; white-space: nowrap; }
+
+            .nav-tools > .nav-btn {
+                flex: 1 1 auto;
+                min-height: 36px;
+                padding: 6px 12px;
+            }
+
             #member-status-area {
-                grid-column: 1 / -1;
+                width: 100%;
                 display: flex;
                 justify-content: center;
                 flex-wrap: wrap;
-                gap: 7px;
-                width: 100%;
+                gap: 6px;
             }
-            #member-status-area > .nav-btn { min-height: 40px; margin-left: 0 !important; }
+
+            #member-status-area > .nav-btn {
+                margin-left: 0 !important;
+            }
+
             .user-info {
                 width: 100%;
                 box-sizing: border-box;
                 justify-content: center;
+                padding: 7px 10px;
                 gap: 7px 10px;
-                padding: 8px 10px;
-                border-radius: 12px;
             }
-            .logout-link { padding-left: 9px; }
 
-            /* 主內容：手機減少左右留白 */
+            /* 主內容保留原本留白感 */
             .main-container {
-                margin: 14px auto 24px;
-                padding: 0 10px;
-                gap: 18px;
+                margin: 22px auto;
+                padding: 0 14px;
+                gap: 24px;
             }
-            .card {
-                padding: 16px 12px;
-                margin-bottom: 16px;
-                border-radius: 13px;
-            }
-            .card-title { margin-bottom: 15px; }
 
-            /* 電子型錄區：覆寫 inline 的 320px 最小寬，避免窄手機橫向溢出 */
+            .card {
+                padding: 20px 16px;
+                margin-bottom: 22px;
+            }
+
+            .card-title {
+                margin-bottom: 18px;
+            }
+
+            /* 電子型錄：窄手機改單欄，視覺仍沿用原卡片 */
             .main-container > div > div:first-child {
                 grid-template-columns: minmax(0, 1fr) !important;
-                gap: 10px !important;
-                margin-bottom: 16px !important;
+                gap: 12px !important;
+                margin-bottom: 22px !important;
             }
+
             .main-container > div > div:first-child .card {
-                padding: 14px !important;
+                padding: 16px 18px !important;
             }
-            .main-container > div > div:first-child .card > div:first-child { gap: 12px !important; min-width: 0; }
-            .main-container > div > div:first-child .card img { width: 52px !important; height: 70px !important; }
+
+            .main-container > div > div:first-child .card > div:first-child {
+                gap: 14px !important;
+                min-width: 0;
+            }
+
+            .main-container > div > div:first-child .card img {
+                width: 60px !important;
+                height: 80px !important;
+            }
+
             .main-container > div > div:first-child .card > div:last-child {
-                padding: 8px 11px !important;
-                margin-left: 6px !important;
+                padding: 7px 12px !important;
+                margin-left: 8px !important;
             }
 
-            #banner-image-block { margin-bottom: 16px !important; }
+            #banner-image-block {
+                margin-bottom: 22px !important;
+            }
 
-            /* 主分類：單排左右滑，不再堆成很多行 */
+            /* 分類保留原本膠囊按鈕與自動換行，不改成橫向滑動 */
             .category-container {
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                overflow-y: hidden;
-                gap: 8px;
-                margin: 0 -12px 15px;
-                padding: 2px 12px 8px;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                scroll-snap-type: x proximity;
-            }
-            .category-container::-webkit-scrollbar { display: none; }
-            .category-tab {
-                flex: 0 0 auto;
-                min-height: 40px;
-                padding: 8px 14px;
-                font-size: 13px;
-                white-space: nowrap;
-                scroll-snap-align: start;
+                gap: 7px;
+                margin-bottom: 18px;
+                flex-wrap: wrap;
             }
 
-            /* 子分類同樣改成橫向滑動 */
-            .sub-category-menu {
-                flex-wrap: nowrap !important;
-                overflow-x: auto;
-                overflow-y: hidden;
-                align-items: center;
-                gap: 7px;
-                margin: 0 0 15px;
-                padding: 9px;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-            }
-            .sub-category-menu::-webkit-scrollbar { display: none; }
-            .sub-category-menu > span { flex: 0 0 auto; white-space: nowrap; }
-            .sub-tab {
-                flex: 0 0 auto;
-                min-height: 38px;
-                padding: 8px 12px;
+            .category-tab {
+                padding: 7px 12px;
                 font-size: 12px;
-                white-space: nowrap;
+                min-height: 34px;
             }
+
+            /* 子分類同樣維持原本換行方式 */
+            .sub-category-menu {
+                gap: 7px;
+                margin-bottom: 18px;
+                padding: 11px;
+                flex-wrap: wrap !important;
+            }
+
+            .sub-tab {
+                padding: 6px 10px;
+                font-size: 11px;
+                min-height: 32px;
+            }
+
             #lashes-series-menu,
             #nail-brush-series-menu {
-                flex: 0 0 100%;
-                overflow-x: auto;
-                flex-wrap: nowrap !important;
+                flex-wrap: wrap !important;
             }
 
-            /* 商品：手機固定一欄，卡片放大可點區域 */
+            /* 商品手機單欄，但維持原本卡片比例 */
             .product-grid {
                 grid-template-columns: minmax(0, 1fr);
-                gap: 12px;
+                gap: 16px;
             }
+
             .product-item {
                 width: 100%;
                 box-sizing: border-box;
-                padding: 15px 12px;
-                border-radius: 12px;
+                padding: 18px 16px;
             }
-            .product-item:hover { transform: none; }
-            .product-name { font-size: 15px; line-height: 1.5; }
-            .product-price { font-size: 17px; }
-            .product-stock { margin-bottom: 10px; line-height: 1.45; }
 
-            /* 睫毛規格：按鈕加大，長規格可自然換行 */
-            .lash-variant-container { padding: 10px; margin: 9px 0 12px; }
-            .variant-title { font-size: 12px; margin-bottom: 6px; }
-            .btn-tabs-container { gap: 7px; }
+            .product-item:hover {
+                transform: none;
+            }
+
+            .product-name {
+                font-size: 15px;
+                line-height: 1.5;
+            }
+
+            /* 睫毛規格只小幅增加可點擊範圍 */
+            .lash-variant-container {
+                padding: 10px;
+            }
+
+            .btn-tabs-container {
+                gap: 5px;
+            }
+
             .spec-btn {
-                min-height: 38px;
-                min-width: 46px;
-                padding: 7px 10px;
-                font-size: 12px;
-                border-radius: 7px;
+                min-height: 32px;
+                padding: 5px 9px;
+                font-size: 11px;
+                border-radius: 5px;
             }
 
-            /* 數量按鈕放大 */
-            .product-item .quantity-selector { margin-bottom: 10px; }
-            .quantity-btn { width: 42px; height: 40px; font-size: 20px; }
-            .quantity-input { width: 48px; height: 40px; font-size: 16px; }
-            .btn { min-height: 44px; font-size: 14px; }
+            /* 數量選擇只稍微加大，不做超大按鈕 */
+            .quantity-btn {
+                width: 34px;
+                height: 32px;
+                font-size: 16px;
+            }
 
-            /* 購物車/訂單明細避免文字擠壓 */
-            .cart-item { align-items: flex-start; gap: 10px; }
-            .cart-item-info { max-width: 58%; min-width: 0; }
-            .cart-item-name { overflow-wrap: anywhere; line-height: 1.45; }
-            .cart-item-actions { gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
-            .cart-item-price { min-width: 54px; }
+            .quantity-input {
+                width: 40px;
+                height: 32px;
+                font-size: 14px;
+            }
 
-            /* 彈窗手機滿版化 */
+            /* 購物車明細避免窄螢幕文字擠在一起 */
+            .cart-item {
+                gap: 8px;
+            }
+
+            .cart-item-info {
+                max-width: 55%;
+                min-width: 0;
+            }
+
+            .cart-item-name {
+                overflow-wrap: anywhere;
+            }
+
+            .cart-item-actions {
+                gap: 7px;
+            }
+
+            /* 彈窗只做必要的手機寬度修正 */
             .custom-modal {
-                width: calc(100% - 24px);
-                max-width: none;
-                max-height: calc(100vh - 30px);
+                width: calc(100% - 28px);
+                max-width: 380px;
+                max-height: calc(100vh - 32px);
                 overflow-y: auto;
                 box-sizing: border-box;
-                padding: 28px 18px 20px;
-                border-radius: 14px;
+                padding: 32px 22px;
             }
-            .modal-close { top: 12px; right: 14px; width: 36px; height: 36px; }
-            .search-result-box { max-height: 46vh; }
 
-            /* 原圓形浮動購物車 → 手機底部固定購物車列 */
+            /* 保留原本右下角圓形購物車 */
             #floating-cart-btn {
-                left: 10px !important;
-                right: 10px !important;
-                bottom: calc(10px + env(safe-area-inset-bottom)) !important;
-                width: auto !important;
-                height: 52px !important;
-                border-radius: 16px !important;
-                font-size: 0 !important;
-                box-shadow: 0 7px 22px rgba(74,63,53,.22) !important;
-            }
-            #floating-cart-btn::before {
-                content: "🛒  查看購物車 / 填寫訂單";
-                font-size: 15px;
-                font-weight: 700;
-                letter-spacing: .04em;
+                left: auto !important;
+                right: 14px !important;
+                bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+                width: 56px !important;
+                height: 56px !important;
+                border-radius: 50% !important;
+                font-size: 1.4rem !important;
             }
 
-            /* 套組在手機避免超寬 */
+            #floating-cart-btn::before {
+                content: none !important;
+            }
+
+            /* 套組窄螢幕微調 */
             .product-item[data-sub="professional-kit"],
-            .product-item[data-sub="beauty-professional-kit"] { padding: 15px 12px; }
-            .professional-kit-summary { padding: 13px 42px 13px 13px; }
-            .professional-kit-content { padding: 14px 12px; }
-            .a313-choice-box, .wax-kit-choice-box { padding: 12px; }
+            .product-item[data-sub="beauty-professional-kit"] {
+                padding: 18px 16px;
+            }
+
+            .professional-kit-summary {
+                padding: 13px 42px 13px 14px;
+            }
+
+            .professional-kit-content {
+                padding: 15px 14px;
+            }
         }
+
     </style>
 </head>
 <body>
