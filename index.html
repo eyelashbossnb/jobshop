@@ -11330,12 +11330,33 @@ function addLashToCart(productId) {
             max: currentStock,
             isSharedStock: isEyeMask,
             _isSpecialSku: true,
+            // V5：眼膜內部 SKU 與正式訂單編號分離。
+            displayId: isEyeMask ? ({
+                "A70_50對": "A70",
+                "A70_100對": "A71",
+                "A74_50對": "A74",
+                "A74_100對": "A75",
+                "A76_50對": "A76",
+                "A76_100對": "A77"
+            }[cartItemSku] || productId) : cartItemSku,
             // ✅ 保存實際在 Google Sheets 匹配成功的庫存鍵，結帳時用它精準扣庫存
             backendStockKey: skuKey
         };
     } else {
         productConfig[cartItemSku].price = basePrice;
         productConfig[cartItemSku].max = currentStock;
+
+        if (isEyeMask) {
+            productConfig[cartItemSku].displayId = ({
+                "A70_50對": "A70",
+                "A70_100對": "A71",
+                "A74_50對": "A74",
+                "A74_100對": "A75",
+                "A76_50對": "A76",
+                "A76_100對": "A77"
+            }[cartItemSku] || productId);
+        }
+
         // ✅ 每次加入購物車都重新保存最新匹配到的實際後台 SKU
         productConfig[cartItemSku].backendStockKey = skuKey;
     }
@@ -11824,6 +11845,21 @@ function changeCartItemQty(cartKey, change) {
 // =============================================================
 
 function getOrderDisplayProductId(itemId) {
+    // V5：眼膜購物車內部仍保留「基礎編號_規格」，
+    // 但訂單明細一律顯示正式商品編號。
+    const eyeMaskOfficialIdMap = {
+        "A70_50對": "A70",
+        "A70_100對": "A71",
+        "A74_50對": "A74",
+        "A74_100對": "A75",
+        "A76_50對": "A76",
+        "A76_100對": "A77"
+    };
+
+    if (eyeMaskOfficialIdMap[itemId]) {
+        return eyeMaskOfficialIdMap[itemId];
+    }
+
     const pInfo = (typeof productConfig !== 'undefined') ? productConfig[itemId] : null;
     return (pInfo && pInfo.displayId) ? pInfo.displayId : itemId;
 }
@@ -12730,14 +12766,25 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
                     const isEyeMask = itemId.startsWith('A70_') || itemId.startsWith('A74_') || itemId.startsWith('A76_');
 
                     if (isEyeMask) {
-                        let backendEyeMaskName = "";
-                        if (itemId.startsWith('A70_')) backendEyeMaskName = "A70超薄U型切口眼膜(對稱)";
-                        if (itemId.startsWith('A74_')) backendEyeMaskName = "A74超薄型眼膜(對稱)";
-                        if (itemId.startsWith('A76_')) backendEyeMaskName = "A76超薄卸睫專用眼膜(左右眼)";
+                        // V5：50對／100對為六個獨立正式商品。
+                        // 不再把 100對換算成 50對 × 2。
+                        const eyeMaskBackendMap = {
+                            "A70_50對":  "A70超薄U型切口眼膜(對稱)/50對",
+                            "A70_100對": "A71超薄U型切口眼膜(對稱)/100對",
+                            "A74_50對":  "A74超薄型眼膜(對稱)/50對",
+                            "A74_100對": "A75超薄型眼膜(對稱)/100對",
+                            "A76_50對":  "A76超薄卸睫專用眼膜(左右眼)/50對",
+                            "A76_100對": "A77超薄卸睫專用眼膜(左右眼)/100對"
+                        };
 
-                        const is100Pairs = itemId.endsWith('100對');
-                        const finalDeductQty = is100Pairs ? (qty * 2) : qty;
-                        cartBackup[backendEyeMaskName] = (cartBackup[backendEyeMaskName] || 0) + finalDeductQty;
+                        const backendEyeMaskName = eyeMaskBackendMap[itemId];
+
+                        if (backendEyeMaskName) {
+                            cartBackup[backendEyeMaskName] = (cartBackup[backendEyeMaskName] || 0) + qty;
+                        } else {
+                            const fallbackKey = pInfo.backendStockKey || pInfo.name || itemId;
+                            cartBackup[fallbackKey] = (cartBackup[fallbackKey] || 0) + qty;
+                        }
                     } else {
                         // 規格／睫毛商品使用實際匹配到的後台 SKU，
                         // 精準對應水貂絲的捲度、粗度及長度。
