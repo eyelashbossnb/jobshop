@@ -675,6 +675,219 @@
         .balance-history-plus,.balance-history-minus { font-weight:700; }
         .balance-history-empty { padding:28px 16px; text-align:center; color:var(--text-muted); font-size:13px; }
 
+
+
+        /* =========================================================
+           📱 手機版操作優化（僅 <= 768px 生效）
+           電腦版維持原樣
+           ========================================================= */
+        @media (max-width: 768px) {
+            html { scroll-behavior: smooth; }
+            body { padding-bottom: 76px; letter-spacing: 0.03em; }
+
+            /* 頂部：Logo、搜尋、訂單、會員操作更適合手指點擊 */
+            header { position: sticky; top: 0; }
+            .header-container {
+                padding: 8px 12px 10px;
+                gap: 8px;
+            }
+            .logo-img { height: 52px; }
+            .nav-tools {
+                width: 100%;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto;
+                gap: 8px;
+                align-items: center;
+            }
+            .search-bar,
+            .search-bar:focus {
+                width: 100%;
+                min-width: 0;
+                box-sizing: border-box;
+                height: 42px;
+                padding: 9px 14px;
+                font-size: 14px;
+            }
+            .nav-tools > .nav-btn { height: 42px; padding: 7px 13px; white-space: nowrap; }
+            #member-status-area {
+                grid-column: 1 / -1;
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 7px;
+                width: 100%;
+            }
+            #member-status-area > .nav-btn { min-height: 40px; margin-left: 0 !important; }
+            .user-info {
+                width: 100%;
+                box-sizing: border-box;
+                justify-content: center;
+                gap: 7px 10px;
+                padding: 8px 10px;
+                border-radius: 12px;
+            }
+            .logout-link { padding-left: 9px; }
+
+            /* 主內容：手機減少左右留白 */
+            .main-container {
+                margin: 14px auto 24px;
+                padding: 0 10px;
+                gap: 18px;
+            }
+            .card {
+                padding: 16px 12px;
+                margin-bottom: 16px;
+                border-radius: 13px;
+            }
+            .card-title { margin-bottom: 15px; }
+
+            /* 電子型錄區：覆寫 inline 的 320px 最小寬，避免窄手機橫向溢出 */
+            .main-container > div > div:first-child {
+                grid-template-columns: minmax(0, 1fr) !important;
+                gap: 10px !important;
+                margin-bottom: 16px !important;
+            }
+            .main-container > div > div:first-child .card {
+                padding: 14px !important;
+            }
+            .main-container > div > div:first-child .card > div:first-child { gap: 12px !important; min-width: 0; }
+            .main-container > div > div:first-child .card img { width: 52px !important; height: 70px !important; }
+            .main-container > div > div:first-child .card > div:last-child {
+                padding: 8px 11px !important;
+                margin-left: 6px !important;
+            }
+
+            #banner-image-block { margin-bottom: 16px !important; }
+
+            /* 主分類：單排左右滑，不再堆成很多行 */
+            .category-container {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                overflow-y: hidden;
+                gap: 8px;
+                margin: 0 -12px 15px;
+                padding: 2px 12px 8px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                scroll-snap-type: x proximity;
+            }
+            .category-container::-webkit-scrollbar { display: none; }
+            .category-tab {
+                flex: 0 0 auto;
+                min-height: 40px;
+                padding: 8px 14px;
+                font-size: 13px;
+                white-space: nowrap;
+                scroll-snap-align: start;
+            }
+
+            /* 子分類同樣改成橫向滑動 */
+            .sub-category-menu {
+                flex-wrap: nowrap !important;
+                overflow-x: auto;
+                overflow-y: hidden;
+                align-items: center;
+                gap: 7px;
+                margin: 0 0 15px;
+                padding: 9px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+            .sub-category-menu::-webkit-scrollbar { display: none; }
+            .sub-category-menu > span { flex: 0 0 auto; white-space: nowrap; }
+            .sub-tab {
+                flex: 0 0 auto;
+                min-height: 38px;
+                padding: 8px 12px;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+            #lashes-series-menu,
+            #nail-brush-series-menu {
+                flex: 0 0 100%;
+                overflow-x: auto;
+                flex-wrap: nowrap !important;
+            }
+
+            /* 商品：手機固定一欄，卡片放大可點區域 */
+            .product-grid {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 12px;
+            }
+            .product-item {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 15px 12px;
+                border-radius: 12px;
+            }
+            .product-item:hover { transform: none; }
+            .product-name { font-size: 15px; line-height: 1.5; }
+            .product-price { font-size: 17px; }
+            .product-stock { margin-bottom: 10px; line-height: 1.45; }
+
+            /* 睫毛規格：按鈕加大，長規格可自然換行 */
+            .lash-variant-container { padding: 10px; margin: 9px 0 12px; }
+            .variant-title { font-size: 12px; margin-bottom: 6px; }
+            .btn-tabs-container { gap: 7px; }
+            .spec-btn {
+                min-height: 38px;
+                min-width: 46px;
+                padding: 7px 10px;
+                font-size: 12px;
+                border-radius: 7px;
+            }
+
+            /* 數量按鈕放大 */
+            .product-item .quantity-selector { margin-bottom: 10px; }
+            .quantity-btn { width: 42px; height: 40px; font-size: 20px; }
+            .quantity-input { width: 48px; height: 40px; font-size: 16px; }
+            .btn { min-height: 44px; font-size: 14px; }
+
+            /* 購物車/訂單明細避免文字擠壓 */
+            .cart-item { align-items: flex-start; gap: 10px; }
+            .cart-item-info { max-width: 58%; min-width: 0; }
+            .cart-item-name { overflow-wrap: anywhere; line-height: 1.45; }
+            .cart-item-actions { gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+            .cart-item-price { min-width: 54px; }
+
+            /* 彈窗手機滿版化 */
+            .custom-modal {
+                width: calc(100% - 24px);
+                max-width: none;
+                max-height: calc(100vh - 30px);
+                overflow-y: auto;
+                box-sizing: border-box;
+                padding: 28px 18px 20px;
+                border-radius: 14px;
+            }
+            .modal-close { top: 12px; right: 14px; width: 36px; height: 36px; }
+            .search-result-box { max-height: 46vh; }
+
+            /* 原圓形浮動購物車 → 手機底部固定購物車列 */
+            #floating-cart-btn {
+                left: 10px !important;
+                right: 10px !important;
+                bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+                width: auto !important;
+                height: 52px !important;
+                border-radius: 16px !important;
+                font-size: 0 !important;
+                box-shadow: 0 7px 22px rgba(74,63,53,.22) !important;
+            }
+            #floating-cart-btn::before {
+                content: "🛒  查看購物車 / 填寫訂單";
+                font-size: 15px;
+                font-weight: 700;
+                letter-spacing: .04em;
+            }
+
+            /* 套組在手機避免超寬 */
+            .product-item[data-sub="professional-kit"],
+            .product-item[data-sub="beauty-professional-kit"] { padding: 15px 12px; }
+            .professional-kit-summary { padding: 13px 42px 13px 13px; }
+            .professional-kit-content { padding: 14px 12px; }
+            .a313-choice-box, .wax-kit-choice-box { padding: 12px; }
+        }
     </style>
 </head>
 <body>
