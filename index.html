@@ -675,62 +675,80 @@
         .balance-history-plus,.balance-history-minus { font-weight:700; }
         .balance-history-empty { padding:28px 16px; text-align:center; color:var(--text-muted); font-size:13px; }
 
-
-        /* ===== 電腦版購物車易用性優化 ===== */
+        /* ==================================================
+           電腦版：商品明細標題旁的前往結帳按鈕 + 明細獨立滾動
+           ================================================== */
+        .cart-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .cart-title-row .card-title {
+            margin-bottom: 0;
+            flex: 1;
+        }
+        .cart-checkout-btn {
+            border: 0;
+            background: var(--accent-color);
+            color: #fff;
+            border-radius: 22px;
+            padding: 9px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: .03em;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(232, 165, 152, .22);
+            transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+        }
+        .cart-checkout-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(232, 165, 152, .32);
+        }
+        .cart-checkout-count {
+            min-width: 22px;
+            height: 22px;
+            padding: 0 5px;
+            box-sizing: border-box;
+            border-radius: 999px;
+            background: #fff;
+            color: var(--accent-color);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1;
+        }
         @media (min-width: 769px) {
             #cart-items-container {
                 max-height: 390px;
                 overflow-y: auto;
                 padding-right: 8px;
                 scrollbar-width: thin;
-                scrollbar-color: #d8c8be transparent;
+                scrollbar-color: #e8d9d2 transparent;
             }
             #cart-items-container::-webkit-scrollbar { width: 6px; }
-            #cart-items-container::-webkit-scrollbar-thumb {
-                background: #d8c8be;
-                border-radius: 10px;
-            }
             #cart-items-container::-webkit-scrollbar-track { background: transparent; }
-
-            #floating-cart-btn {
-                width: auto !important;
-                min-width: 150px;
-                height: 52px !important;
-                padding: 0 18px;
-                border-radius: 28px !important;
-                gap: 8px;
-                font-size: 14px !important;
-                font-weight: 600;
-                letter-spacing: .04em;
-                white-space: nowrap;
+            #cart-items-container::-webkit-scrollbar-thumb {
+                background: #e8d9d2;
+                border-radius: 999px;
             }
-            #floating-cart-btn .floating-cart-icon { font-size: 20px; line-height: 1; }
-            #floating-cart-btn .floating-cart-count {
-                min-width: 22px;
-                height: 22px;
-                padding: 0 5px;
-                box-sizing: border-box;
-                border-radius: 11px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                background: #fff;
-                color: var(--accent-color);
-                font-size: 12px;
-                font-weight: 700;
-            }
+        }
+        @media (max-width: 768px) {
+            .cart-title-row { display: block; }
+            .cart-title-row .card-title { margin-bottom: 25px; }
+            .cart-checkout-btn { display: none; }
         }
 
     </style>
 </head>
 <body>
-
-<div id="floating-cart-btn" onclick="scrollToCartDetails()" style="position: fixed; bottom: 20px; right: 20px; background-color: var(--accent-color); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; z-index: 999; font-size: 1.5rem;" title="查看已選商品">
-    <span class="floating-cart-icon">🛒</span>
-    <span class="floating-cart-label">查看購物車</span>
-    <span class="floating-cart-count" id="floating-cart-count">0</span>
-</div>
-
 <header>
     <div class="header-container">
         <!-- 🆕 超大版圖片 Logo -->
@@ -9120,7 +9138,14 @@
 
     <div>
         <div class="card" style="position: sticky; top: 90px;">
-            <div class="card-title">商品明細</div>
+            <div class="cart-title-row">
+                <div class="card-title">商品明細</div>
+                <button type="button" class="cart-checkout-btn" onclick="scrollToOrderForm()" title="前往填寫收件與結帳資料">
+                    <span aria-hidden="true">🛒</span>
+                    <span>前往結帳</span>
+                    <span id="cart-checkout-count" class="cart-checkout-count">0</span>
+                </button>
+            </div>
             
             <div id="cart-items-container">
                 <div class="empty-cart-text">購物車目前是空的</div>
@@ -11921,7 +11946,6 @@ function renderCart() {
 
     if (productIds.length === 0) {
         container.innerHTML = '<div class="empty-cart-text">購物車目前是空的</div>';
-        updateFloatingCartCount();
         updateCartSummary();
         return;
     }
@@ -11951,18 +11975,17 @@ function renderCart() {
             container.insertAdjacentHTML('beforeend', itemHtml);
         }
     });
-    updateFloatingCartCount();
     updateCartSummary();
 }
 
-function updateFloatingCartCount() {
-    const countEl = document.getElementById('floating-cart-count');
-    if (!countEl) return;
-    const total = Object.values(cart || {}).reduce((sum, qty) => sum + (Number(qty) || 0), 0);
-    countEl.textContent = total;
-}
-
 function updateCartSummary() {
+    // 同步更新「商品明細」旁的前往結帳商品總數量
+    const checkoutCountEl = document.getElementById('cart-checkout-count');
+    if (checkoutCountEl) {
+        const checkoutTotalQty = Object.values(cart || {}).reduce((sum, qty) => sum + (parseInt(qty, 10) || 0), 0);
+        checkoutCountEl.textContent = checkoutTotalQty;
+    }
+
     let totalQty = 0;
     let subtotal = 0;
 
@@ -12993,18 +13016,6 @@ if (typeof mockOrderDatabase !== 'undefined') {
             alert("❌ 網路發送錯誤，請重新確認！");
             if (typeof setSubmittingState === 'function') setSubmittingState(false);
         });
-    }
-}
-
-function scrollToCartDetails() {
-    if (window.innerWidth <= 768) {
-        scrollToOrderForm();
-        return;
-    }
-    const cartDetails = document.getElementById('cart-items-container');
-    if (cartDetails) {
-        cartDetails.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        cartDetails.scrollTop = 0;
     }
 }
 
