@@ -9001,6 +9001,13 @@
         <div class="card">
             <div class="card-title">填寫收件與結帳資訊</div>
             <form id="order-form">
+                <div class="form-group" id="member-contact-selector-wrap" style="display:none;">
+                    <label for="member-contact-selector">常用收件資料</label>
+                    <select id="member-contact-selector" class="form-control" onchange="applyMemberContactSelection(this.value)">
+                        <option value="default">預設資料</option>
+                    </select>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">選擇後會自動帶入收件人、電話、地址、公司抬頭與統一編號；仍可自行修改本次訂單資料。</div>
+                </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="name">收件人姓名</label>
@@ -10812,62 +10819,75 @@ function executeDeptDiscountCalculate() {
 // =============================================================
 // 6. 會員專屬：收件人資訊自動記憶與填入功能
 // =============================================================
-function autoFillMemberContact() {
-    // 只要已登入且有會員資料就繼續。
-    // 不再要求 phone 必須有值，避免業務會員 E欄電話空白時，
-    // 連 C欄姓名/店名與 F欄地址都一起無法自動帶入。
-    if (!deptIsLoggedIn || !deptMemberData) return;
+function getDefaultMemberContact() {
+    if (!deptMemberData) return {};
+    return {
+        name: String(deptMemberData.name || "").trim(),
+        phone: String(deptMemberData.phone || "").trim(),
+        address: String(deptMemberData.address || "").trim(),
+        company_title: String(deptMemberData.company_title || "").trim(),
+        tax_id: String(deptMemberData.tax_id || "").trim()
+    };
+}
 
-    const nameInput = document.getElementById("name");
-    const phoneInput = document.getElementById("phone");
-    const addressInput = document.getElementById("address");
-    const companyTitleInput = document.getElementById("company-title");
-    const taxIdInput = document.getElementById("tax-id");
+function fillOrderContactFields(contact) {
+    contact = contact || {};
+    const fields = {
+        "name": contact.name,
+        "phone": contact.phone,
+        "address": contact.address,
+        "company-title": contact.company_title,
+        "tax-id": contact.tax_id
+    };
+    Object.keys(fields).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = String(fields[id] || "").trim();
+    });
+}
 
-    // 進階會員／業務會員：登入後直接以會員資料表內容作為預設訂購資料。
-    // advanced：姓名、電話、地址、公司抬頭、統編
-    // business：C姓名/店名、E電話、F地址（由會員 API 統一回傳為 name / phone / address）
-    // 客人仍可在訂單畫面自行修改；修改不會回寫會員資料表。
-    const profileSource = String(deptMemberData.profile_source || "").trim().toLowerCase();
+function renderMemberContactSelector() {
+    const wrap = document.getElementById("member-contact-selector-wrap");
+    const select = document.getElementById("member-contact-selector");
+    if (!wrap || !select) return;
 
-    if (profileSource === "advanced" || profileSource === "business") {
-        // 三個欄位各自獨立填入，不互相依賴。
-        if (nameInput) nameInput.value = String(deptMemberData.name || "").trim();
-        if (phoneInput) phoneInput.value = String(deptMemberData.phone || "").trim();
-        if (addressInput) addressInput.value = String(deptMemberData.address || "").trim();
+    const contacts = (deptMemberData && Array.isArray(deptMemberData.common_contacts))
+        ? deptMemberData.common_contacts : [];
 
-        if (profileSource === "advanced") {
-            if (companyTitleInput) companyTitleInput.value = String(deptMemberData.company_title || "");
-            if (taxIdInput) taxIdInput.value = String(deptMemberData.tax_id || "");
-            console.log("✨ 已自動帶入進階會員預設訂購資料");
-        } else {
-            // 業務會員沒有公司抬頭／統編預設資料，避免殘留上一位會員資料。
-            if (companyTitleInput) companyTitleInput.value = "";
-            if (taxIdInput) taxIdInput.value = "";
-            console.log("✨ 已自動帶入業務會員姓名、電話與地址");
-        }
+    select.innerHTML = '<option value="default">預設資料</option>';
+    contacts.forEach((contact, index) => {
+        const option = document.createElement("option");
+        option.value = String(index);
+        option.textContent = String(contact.name || "").trim() ||
+                             String(contact.address || "").trim() ||
+                             ("常用資料 " + (index + 1));
+        select.appendChild(option);
+    });
+
+    wrap.style.display = contacts.length ? "block" : "none";
+    select.value = "default";
+}
+
+function applyMemberContactSelection(value) {
+    if (!deptMemberData) return;
+    if (value === "default") {
+        fillOrderContactFields(getDefaultMemberContact());
         return;
     }
-
-    // 一般會員完全維持原本邏輯。
-    const memberKey = "contact_" + deptMemberData.phone;
-    const savedContactStr = localStorage.getItem(memberKey);
-
-    if (savedContactStr) {
-        try {
-            const savedData = JSON.parse(savedContactStr);
-            if (nameInput && savedData.name) nameInput.value = savedData.name;
-            if (phoneInput && savedData.phone) phoneInput.value = savedData.phone;
-            if (addressInput && savedData.address) addressInput.value = savedData.address;
-            console.log("✨ 已為您自動填入上次使用的收件資訊！");
-        } catch (e) {
-            console.error("讀取常用聯絡資訊失敗", e);
-        }
-    } else {
-        if (nameInput && !nameInput.value) nameInput.value = deptMemberData.name;
-        if (phoneInput && !phoneInput.value) phoneInput.value = deptMemberData.phone;
+    const contacts = Array.isArray(deptMemberData.common_contacts) ? deptMemberData.common_contacts : [];
+    const index = Number(value);
+    if (Number.isInteger(index) && index >= 0 && index < contacts.length) {
+        fillOrderContactFields(contacts[index]);
     }
 }
+
+function autoFillMemberContact() {
+    if (!deptIsLoggedIn || !deptMemberData) return;
+    // 登入後先顯示會員名單原本的預設資料。
+    fillOrderContactFields(getDefaultMemberContact());
+    // 有額外常用資料時才顯示下拉選單。
+    renderMemberContactSelector();
+}
+
 function saveMemberContact() {
     if (!deptIsLoggedIn || !deptMemberData || !deptMemberData.phone) return;
 
