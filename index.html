@@ -926,6 +926,7 @@
         <button type="button" onclick="mobileQuickGo('cart')">🛒 商品明細</button>
         <button type="button" onclick="mobileQuickGo('form')">📝 填寫收件資料</button>
         <button type="button" onclick="mobileQuickGo('balance')">💰 儲值金使用紀錄</button>
+        <button type="button" onclick="mobileQuickGo('top')">⬆️ 返回頁首</button>
     </div>
     <button id="mobile-floating-checkout" type="button" onclick="toggleMobileQuickNav()" aria-expanded="false" aria-controls="mobile-quick-menu">
         <span>☰</span><span>快速導覽</span><span id="mobile-cart-count">0</span>
@@ -13443,6 +13444,10 @@ function toggleMobileQuickNav(force) {
 }
 function mobileQuickGo(where) {
     toggleMobileQuickNav(false);
+    if (where==='top') {
+        window.scrollTo({top:0,behavior:'smooth'});
+        return;
+    }
     if (where==='balance') {
         if (!deptIsLoggedIn || !deptMemberData || !deptMemberData.phone) {
             alert('請先登入會員後再查看儲值金使用紀錄。');
