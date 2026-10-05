@@ -675,233 +675,14 @@
         .balance-history-plus,.balance-history-minus { font-weight:700; }
         .balance-history-empty { padding:28px 16px; text-align:center; color:var(--text-muted); font-size:13px; }
 
-        /* ==================================================
-           電腦版：商品明細標題旁的前往結帳按鈕 + 明細獨立滾動
-           ================================================== */
-        .cart-title-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-        .cart-title-row .card-title {
-            margin-bottom: 0;
-            flex: 1;
-        }
-        .cart-checkout-btn {
-            border: 0;
-            background: var(--accent-color);
-            color: #fff;
-            border-radius: 22px;
-            padding: 9px 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: .03em;
-            white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(232, 165, 152, .22);
-            transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
-        }
-        .cart-checkout-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(232, 165, 152, .32);
-        }
-        .cart-checkout-count {
-            min-width: 22px;
-            height: 22px;
-            padding: 0 5px;
-            box-sizing: border-box;
-            border-radius: 999px;
-            background: #fff;
-            color: var(--accent-color);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 700;
-            line-height: 1;
-        }
-        @media (min-width: 769px) {
-            #cart-items-container {
-                max-height: 390px;
-                overflow-y: auto;
-                padding-right: 8px;
-                scrollbar-width: thin;
-                scrollbar-color: #e8d9d2 transparent;
-            }
-            #cart-items-container::-webkit-scrollbar { width: 6px; }
-            #cart-items-container::-webkit-scrollbar-track { background: transparent; }
-            #cart-items-container::-webkit-scrollbar-thumb {
-                background: #e8d9d2;
-                border-radius: 999px;
-            }
-        }
-        @media (max-width: 768px) {
-            .cart-title-row { display: block; }
-            .cart-title-row .card-title { margin-bottom: 25px; }
-            .cart-checkout-btn { display: none; }
-        }
-
-    
-        /* 手機版專屬優化：電腦版 CSS 與購物流程維持原樣 */
-        #mobile-floating-checkout { display:none; }
-        @media (max-width: 768px) {
-            html { scroll-padding-top: 16px; }
-            body { padding-bottom: 76px; }
-            header { position:relative; }
-            .header-container { padding:14px 16px 16px; gap:12px; }
-            .logo-img { max-width: min(88vw, 340px); height:auto; max-height:72px; }
-            .nav-tools {
-                display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
-                gap:9px; width:100%; align-items:stretch;
-            }
-            .nav-tools .search-bar {
-                grid-column:1/-1; width:100%; min-width:0; height:42px;
-                box-sizing:border-box; font-size:14px; padding:10px 15px;
-            }
-            .nav-tools .search-bar:focus { width:100%; }
-            .nav-tools > .nav-btn, #member-status-area > .nav-btn {
-                width:100%; min-width:0; margin:0 !important;
-                padding:10px 3px; font-size:12px; line-height:1.3;
-                white-space:nowrap; box-sizing:border-box;
-            }
-            #member-status-area { display:contents; }
-            #member-status-area .user-info {
-                grid-column:2/-1; width:100%; box-sizing:border-box;
-                padding:8px; gap:5px; font-size:11px;
-            }
-            .main-container {
-                display:flex; flex-direction:column; gap:0;
-                padding:0 14px; margin:22px auto;
-            }
-            /* 只在手機將商品明細排在收件資料前，不移動 DOM 或改變下單程式 */
-            .main-container > div:first-child { display:contents; }
-            .main-container > div:first-child > * { order:0; min-width:0; }
-            .main-container > div:nth-child(2) { order:1; min-width:0; }
-            .main-container .mobile-order-form-card { order:2 !important; }
-            .main-container .mobile-cart-card { position:static !important; }
-            .mobile-cart-card { scroll-margin-top:16px; }
-            .main-container .card { padding:20px 16px; margin-bottom:22px; }
-            .category-container {
-                display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
-                gap:9px; margin-bottom:20px;
-            }
-            .category-tab {
-                width:100%; min-width:0; min-height:42px; padding:9px 6px;
-                font-size:12px; line-height:1.4; white-space:normal;
-                text-align:center; box-sizing:border-box;
-            }
-            /* 手機版子分類：橫向單列滑動，僅限手機 */
-            .sub-category-menu {
-                padding:12px !important;
-                gap:8px !important;
-                flex-wrap:nowrap !important;
-                align-items:center;
-                overflow-x:auto;
-                overflow-y:hidden;
-                -webkit-overflow-scrolling:touch;
-                overscroll-behavior-x:contain;
-                scrollbar-width:thin;
-                box-sizing:border-box;
-            }
-            .sub-category-menu > span {
-                flex:0 0 auto;
-                width:auto;
-                margin:0 5px 0 0 !important;
-                white-space:nowrap;
-            }
-            .sub-category-menu > .sub-tab {
-                flex:0 0 auto;
-                width:auto;
-                max-width:none;
-                min-height:38px;
-                padding:8px 14px;
-                border-radius:22px;
-                box-sizing:border-box;
-                white-space:nowrap;
-                overflow-wrap:normal;
-                text-align:center;
-                font-size:12px;
-            }
-            /* 有第三層子分類時，保留第三層獨立可滑動列 */
-            .sub-category-menu > div[id$="-series-menu"] {
-                flex:0 0 auto;
-                width:auto;
-                box-sizing:border-box;
-                flex-wrap:nowrap !important;
-                overflow-x:auto;
-                overflow-y:hidden;
-                -webkit-overflow-scrolling:touch;
-            }
-            .sub-category-menu > div[id$="-series-menu"] > span,
-            .sub-category-menu > div[id$="-series-menu"] > .sub-tab {
-                flex:0 0 auto;
-                width:auto;
-                max-width:none;
-                white-space:nowrap;
-            }
-            .cart-item { gap:7px; }
-            .cart-item-actions { gap:6px; }
-            .cart-item-info { max-width:52%; min-width:0; overflow-wrap:anywhere; }
-            .cart-item-price { min-width:0; }
-            .cart-title-row { display:block; }
-            #mobile-floating-checkout {
-                display:flex; align-items:center; justify-content:center;
-                gap:10px; position:fixed; z-index:500;
-                left:12px; right:12px; bottom:calc(10px + env(safe-area-inset-bottom,0px));
-                width:calc(100% - 24px); min-height:48px; box-sizing:border-box;
-                border:0; border-radius:28px; background:var(--accent-color);
-                color:#fff; font-size:15px; font-weight:600;
-                box-shadow:0 4px 18px rgba(74,63,53,.23); cursor:pointer;
-            }
-            #mobile-cart-count {
-                display:inline-flex; align-items:center; justify-content:center;
-                min-width:24px; height:24px; padding:0 5px; box-sizing:border-box;
-                background:#fff; color:#c77c70; border-radius:999px;
-                font-size:12px; font-weight:700;
-            }
-        }
-        @media (max-width: 360px) {
-            .main-container { padding:0 10px; }
-            .nav-tools { gap:5px; }
-            .nav-tools > .nav-btn, #member-status-area > .nav-btn { font-size:11px; }
-        }
-
-    
-
-        /* 手機版：快速導覽，沿用原有商品數量同步元素 */
-        #mobile-quick-nav { display:none; }
-        @media (max-width:768px) {
-            #mobile-quick-nav {
-                display:block; position:fixed; z-index:500;
-                bottom:calc(10px + env(safe-area-inset-bottom,0px));
-                right:12px; width:min(230px,calc(100vw - 24px));
-            }
-            #mobile-quick-nav #mobile-floating-checkout {
-                position:static; width:100%; min-height:48px;
-                left:auto; right:auto; bottom:auto;
-            }
-            #mobile-quick-menu {
-                background:#fff; border:1px solid var(--border-color);
-                box-shadow:0 6px 25px rgba(74,63,53,.17);
-                border-radius:16px; padding:8px; margin-bottom:9px;
-            }
-            #mobile-quick-menu[hidden] { display:none !important; }
-            #mobile-quick-menu button {
-                display:block; width:100%; text-align:left;
-                background:#fff; border:0; border-radius:9px;
-                padding:12px 10px; color:var(--text-main);
-                font-size:14px; cursor:pointer;
-            }
-            #mobile-quick-menu button:active { background:#faf7f5; }
-        }
-</style>
+    </style>
 </head>
 <body>
+
+<div id="floating-cart-btn" onclick="scrollToOrderForm()" style="position: fixed; bottom: 20px; right: 20px; background-color: var(--accent-color); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; z-index: 999; font-size: 1.5rem;">
+    🛒
+</div>
+
 <header>
     <div class="header-container">
         <!-- 🆕 超大版圖片 Logo -->
@@ -918,20 +699,6 @@
         </div>
     </div>
 </header>
-
-<nav id="mobile-quick-nav" aria-label="手機快速導覽">
-    <div id="mobile-quick-menu" hidden>
-        <button type="button" onclick="mobileQuickGo('search')">🔍 搜尋商品</button>
-        <button type="button" onclick="mobileQuickGo('categories')">📦 商品分類</button>
-        <button type="button" onclick="mobileQuickGo('cart')">🛒 商品明細</button>
-        <button type="button" onclick="mobileQuickGo('form')">📝 填寫收件資料</button>
-        <button type="button" onclick="mobileQuickGo('balance')">💰 儲值金使用紀錄</button>
-        <button type="button" onclick="mobileQuickGo('top')">⬆️ 返回頁首</button>
-    </div>
-    <button id="mobile-floating-checkout" type="button" onclick="toggleMobileQuickNav()" aria-expanded="false" aria-controls="mobile-quick-menu">
-        <span>☰</span><span>快速導覽</span><span id="mobile-cart-count">0</span>
-    </button>
-</nav>
 
 <main class="main-container">
     <div>
@@ -9231,7 +8998,7 @@
             </div>
         </div>
 
-        <div class="card mobile-order-form-card">
+        <div class="card">
             <div class="card-title">填寫收件與結帳資訊</div>
             <form id="order-form">
                 <div class="form-group" id="member-contact-selector-wrap" style="display:none;">
@@ -9261,7 +9028,6 @@
                     <div class="form-group">
                         <label for="payment">付款方式</label>
                         <select id="payment" class="form-control">
-                            <option value="" selected disabled>請選擇付款方式</option>
                             <option value="cod">貨到付款</option>
                             <option value="transfer">轉帳( 中國信託-銀行代號：822 帳號：7275401-24855 )</option>
                             <option value="stored">扣儲值金</option>
@@ -9283,7 +9049,6 @@
                 <div class="form-group">
                     <label for="shipping">配送方式</label>
                     <select id="shipping" class="form-control" onchange="updateCartSummary()">
-                        <option value="" selected disabled>請選擇配送方式</option>
                         <option value="normal">常溫宅配</option>
                         <option value="cvs">7-11店到店</option>
                         <option value="blackcat">指定黑貓</option>
@@ -9306,15 +9071,8 @@
     </div>
 
     <div>
-        <div class="card mobile-cart-card" style="position: sticky; top: 90px;">
-            <div class="cart-title-row">
-                <div class="card-title">商品明細</div>
-                <button type="button" class="cart-checkout-btn" onclick="scrollToOrderForm()" title="前往填寫收件與結帳資料">
-                    <span aria-hidden="true">🛒</span>
-                    <span>前往結帳</span>
-                    <span id="cart-checkout-count" class="cart-checkout-count">0</span>
-                </button>
-            </div>
+        <div class="card" style="position: sticky; top: 90px;">
+            <div class="card-title">商品明細</div>
             
             <div id="cart-items-container">
                 <div class="empty-cart-text">購物車目前是空的</div>
@@ -9351,7 +9109,7 @@
 				<div>• 國外寄送：順豐/EMS依包裹大小/重量自付運費</div>
             </div>
             
-            <button id="final-order-submit-btn" type="button" class="btn" style="background-color: var(--accent-color); margin-top: 20px;" onclick="submitOrder()">確認送出訂單</button><span id="original-submit-anchor" hidden></span>
+            <button class="btn" style="background-color: var(--accent-color); margin-top: 20px;" onclick="submitOrder()">確認送出訂單</button>
         </div>
     </div>
 </main>
@@ -10318,6 +10076,10 @@ window.addEventListener('DOMContentLoaded', refreshStockDisplay);
 function refreshStockDisplay() {
     // 0. 🌟 自動恢復會員登入狀態與購物車資料
     checkAndRestoreMemberLogin();
+    // 重新整理或送出訂單後，還原登入會員的常用收件資料選單。
+    if (deptIsLoggedIn && deptMemberData) {
+        autoFillMemberContact();
+    }
     loadCartFromStorage(); // 👈 載入 localStorage 購物車快存
 
     // 1. 🌟 【核心修復】：依據會員身份即時動態計算並渲染商品折扣價格
@@ -10811,25 +10573,7 @@ function checkMemberRenewalReminder(forceCheck) {
     toggleRenewalReminder(true);
 }
 
-// 指定會員預設「貨到付款＋常溫宅配」，但可自由更改選項。
-const AUTO_DEFAULT_DELIVERY_LEVELS = new Set([
-    '業務A', '業務B', '連鎖店B', '加盟A', '加盟B', '儲值商A', '儲值商B'
-]);
-function applyMemberPaymentDeliveryDefaults() {
-    const level = (deptIsLoggedIn && deptMemberData)
-        ? String(deptMemberData.member_level || '').trim() : '';
-    if (!AUTO_DEFAULT_DELIVERY_LEVELS.has(level)) return;
-    const payment = document.getElementById('payment');
-    const shipping = document.getElementById('shipping');
-    // 只填入空白欄位；會員已自行選擇時，絕不覆蓋。
-    let changed = false;
-    if (payment && !payment.value) { payment.value = 'cod'; changed = true; }
-    if (shipping && !shipping.value) { shipping.value = 'normal'; changed = true; }
-    if (changed && typeof updateCartSummary === 'function') updateCartSummary();
-}
-
 function renderMemberHeader() {
-    applyMemberPaymentDeliveryDefaults();
     const area = document.getElementById('member-status-area');
     if (!area) return;
 
@@ -11590,33 +11334,12 @@ function addLashToCart(productId) {
             max: currentStock,
             isSharedStock: isEyeMask,
             _isSpecialSku: true,
-            // V5：眼膜內部 SKU 與正式訂單編號分離。
-            displayId: isEyeMask ? ({
-                "A70_50對": "A70",
-                "A70_100對": "A71",
-                "A74_50對": "A74",
-                "A74_100對": "A75",
-                "A76_50對": "A76",
-                "A76_100對": "A77"
-            }[cartItemSku] || productId) : cartItemSku,
             // ✅ 保存實際在 Google Sheets 匹配成功的庫存鍵，結帳時用它精準扣庫存
             backendStockKey: skuKey
         };
     } else {
         productConfig[cartItemSku].price = basePrice;
         productConfig[cartItemSku].max = currentStock;
-
-        if (isEyeMask) {
-            productConfig[cartItemSku].displayId = ({
-                "A70_50對": "A70",
-                "A70_100對": "A71",
-                "A74_50對": "A74",
-                "A74_100對": "A75",
-                "A76_50對": "A76",
-                "A76_100對": "A77"
-            }[cartItemSku] || productId);
-        }
-
         // ✅ 每次加入購物車都重新保存最新匹配到的實際後台 SKU
         productConfig[cartItemSku].backendStockKey = skuKey;
     }
@@ -12105,21 +11828,6 @@ function changeCartItemQty(cartKey, change) {
 // =============================================================
 
 function getOrderDisplayProductId(itemId) {
-    // V5：眼膜購物車內部仍保留「基礎編號_規格」，
-    // 但訂單明細一律顯示正式商品編號。
-    const eyeMaskOfficialIdMap = {
-        "A70_50對": "A70",
-        "A70_100對": "A71",
-        "A74_50對": "A74",
-        "A74_100對": "A75",
-        "A76_50對": "A76",
-        "A76_100對": "A77"
-    };
-
-    if (eyeMaskOfficialIdMap[itemId]) {
-        return eyeMaskOfficialIdMap[itemId];
-    }
-
     const pInfo = (typeof productConfig !== 'undefined') ? productConfig[itemId] : null;
     return (pInfo && pInfo.displayId) ? pInfo.displayId : itemId;
 }
@@ -12166,15 +11874,6 @@ function renderCart() {
 }
 
 function updateCartSummary() {
-    // 同步更新「商品明細」旁的前往結帳商品總數量
-    const checkoutCountEl = document.getElementById('cart-checkout-count');
-    if (checkoutCountEl) {
-        const checkoutTotalQty = Object.values(cart || {}).reduce((sum, qty) => sum + (parseInt(qty, 10) || 0), 0);
-        checkoutCountEl.textContent = checkoutTotalQty;
-    }
-    const mobileCountEl = document.getElementById('mobile-cart-count');
-    if (mobileCountEl) mobileCountEl.textContent = Object.values(cart || {}).reduce((sum, qty) => sum + (parseInt(qty, 10) || 0), 0);
-
     let totalQty = 0;
     let subtotal = 0;
 
@@ -12277,14 +11976,14 @@ function updateCartSummary() {
     });
 
     const shippingSelect = document.getElementById('shipping');
-    const shippingMethod = shippingSelect ? shippingSelect.value : "";
+    const shippingMethod = shippingSelect ? shippingSelect.value : "normal";
     
     // 取得當前選擇的付款方式名稱
     const paymentSelect = document.getElementById('payment');
-    const paymentMethodText = paymentSelect && paymentSelect.value ? paymentSelect.options[paymentSelect.selectedIndex].text : "";
+    const paymentMethodText = paymentSelect ? paymentSelect.options[paymentSelect.selectedIndex].text : "";
 
     let shippingFee = 0; let shippingText = "$0";
-    if (subtotal > 0 && shippingMethod) {
+    if (subtotal > 0) {
         if (subtotal >= 3000) {
             if (shippingMethod === 'blackcat') { shippingFee = 60; shippingText = "$60 (滿額優惠)"; }
             else if (shippingMethod === 'blackcat-cold') { shippingFee = 160; shippingText = "$160"; }
@@ -12696,24 +12395,6 @@ async function requestStoredValueDeduction(payload) {
 }
 
 function submitOrder(evt) {
-    // 僅指定且已登入的會員等級，可略過付款與配送選擇。
-    const skipSelectionLevels = new Set(['業務A','業務B','連鎖店B','加盟A','加盟B','儲值商A','儲值商B']);
-    const memberLevel = (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn &&
-        typeof deptMemberData !== 'undefined' && deptMemberData)
-        ? String(deptMemberData.member_level || '').trim() : '';
-    const canSkipSelection = skipSelectionLevels.has(memberLevel);
-    const requiredPayment = document.getElementById('payment');
-    const requiredShipping = document.getElementById('shipping');
-    if (!canSkipSelection && (!requiredPayment || !requiredPayment.value)) {
-        alert('請先選擇付款方式，再送出訂單。');
-        if (requiredPayment) { requiredPayment.scrollIntoView({behavior:'smooth',block:'center'}); requiredPayment.focus(); }
-        return;
-    }
-    if (!canSkipSelection && (!requiredShipping || !requiredShipping.value)) {
-        alert('請先選擇配送方式，再送出訂單。');
-        if (requiredShipping) { requiredShipping.scrollIntoView({behavior:'smooth',block:'center'}); requiredShipping.focus(); }
-        return;
-    }
     saveMemberContact();
 
     const e = evt || window.event;
@@ -12775,10 +12456,10 @@ function submitOrder(evt) {
     const orderNotes = document.getElementById('notes')?.value?.trim() || "無備註";
     
     const paymentElement = document.getElementById('payment');
-    const paymentMethod = paymentElement && paymentElement.value ? paymentElement.options[paymentElement.selectedIndex].text : "未指定";
+    const paymentMethod = paymentElement ? paymentElement.options[paymentElement.selectedIndex].text : "未選擇";
     
     const shippingElement = document.getElementById('shipping');
-    const shippingMethod = shippingElement && shippingElement.value ? shippingElement.options[shippingElement.selectedIndex].text : "未指定";
+    const shippingMethod = shippingElement ? shippingElement.options[shippingElement.selectedIndex].text : "未選擇";
 
     if (!customerName || !customerPhone || !customerAddress) {
         alert("❌ 送出失敗：請完整填寫收件人「姓名」、「電話」與「配送地址 / 取貨門市」！");
@@ -13053,9 +12734,6 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
                     const isEyeMask = itemId.startsWith('A70_') || itemId.startsWith('A74_') || itemId.startsWith('A76_');
 
                     if (isEyeMask) {
-                        // V6：訂單/月銷使用六個正式編號，但庫存仍使用三個共用庫存池。
-                        // A70 = U型庫存池、A74 = 超薄型庫存池、A76 = 卸睫左右眼庫存池。
-                        // 50對扣 1 單位；100對等於兩盒50對，因此扣 2 單位。
                         let backendEyeMaskName = "";
                         if (itemId.startsWith('A70_')) backendEyeMaskName = "A70超薄U型切口眼膜(對稱)";
                         if (itemId.startsWith('A74_')) backendEyeMaskName = "A74超薄型眼膜(對稱)";
@@ -13063,14 +12741,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
 
                         const is100Pairs = itemId.endsWith('100對');
                         const finalDeductQty = is100Pairs ? (qty * 2) : qty;
-
-                        if (backendEyeMaskName) {
-                            cartBackup[backendEyeMaskName] =
-                                (cartBackup[backendEyeMaskName] || 0) + finalDeductQty;
-                        } else {
-                            const fallbackKey = pInfo.backendStockKey || pInfo.name || itemId;
-                            cartBackup[fallbackKey] = (cartBackup[fallbackKey] || 0) + finalDeductQty;
-                        }
+                        cartBackup[backendEyeMaskName] = (cartBackup[backendEyeMaskName] || 0) + finalDeductQty;
                     } else {
                         // 規格／睫毛商品使用實際匹配到的後台 SKU，
                         // 精準對應水貂絲的捲度、粗度及長度。
@@ -13197,6 +12868,10 @@ if (typeof mockOrderDatabase !== 'undefined') {
 
             const orderForm = document.getElementById('order-form');
             if (orderForm) orderForm.reset();
+            // 連續下單：重設表單後，保留登入並重新帶入預設收件資料及常用選單。
+            if (deptIsLoggedIn && deptMemberData) {
+                autoFillMemberContact();
+            }
 
             const specCards = ['A112', 'A190', 'A256'];
             specCards.forEach(id => {
@@ -13436,81 +13111,5 @@ addToCart = function(productId) {
     </div>
 </div>
 
-
-<script>
-// 手機版懸浮結帳入口：先核對商品明細，再填寫收件資料。
-function goToMobileCart() {
-    const target = document.querySelector('.mobile-cart-card');
-    if (target) target.scrollIntoView({behavior:'smooth', block:'start'});
-}
-</script>
-
-<script>
-/* 手機版將原本的送出訂單按鈕移到收件表單最下方；電腦版還原原位。 */
-(function () {
-    function placeSubmitButton() {
-        const cart = document.querySelector('.mobile-cart-card');
-        const form = document.querySelector('.mobile-order-form-card');
-        if (!cart || !form) return;
-        const submit = document.getElementById('final-order-submit-btn');
-        const anchor = document.getElementById('original-submit-anchor');
-        if (!submit || !anchor) return;
-        if (window.matchMedia('(max-width: 768px)').matches) {
-            const formElement = form.querySelector('#order-form');
-            if (formElement && submit.parentElement !== formElement) formElement.appendChild(submit);
-        } else if (submit.nextElementSibling !== anchor) {
-            anchor.parentElement.insertBefore(submit, anchor);
-        }
-    }
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', placeSubmitButton);
-    } else {
-        placeSubmitButton();
-    }
-    window.addEventListener('resize', placeSubmitButton);
-})();
-</script>
-
-<script>
-function toggleMobileQuickNav(force) {
-    const menu=document.getElementById('mobile-quick-menu');
-    const trigger=document.getElementById('mobile-floating-checkout');
-    if (!menu || !trigger) return;
-    const show=(typeof force==='boolean')?force:menu.hidden;
-    menu.hidden=!show;
-    trigger.setAttribute('aria-expanded',String(show));
-}
-function mobileQuickGo(where) {
-    toggleMobileQuickNav(false);
-    if (where==='top') {
-        window.scrollTo({top:0,behavior:'smooth'});
-        return;
-    }
-    if (where==='balance') {
-        if (!deptIsLoggedIn || !deptMemberData || !deptMemberData.phone) {
-            alert('請先登入會員後再查看儲值金使用紀錄。');
-            toggleLoginModal(true);
-            return;
-        }
-        openBalanceHistory();
-        return;
-    }
-    const selectors={
-        search:'#product-search-input',
-        categories:'.category-container',
-        cart:'.mobile-cart-card',
-        form:'.mobile-order-form-card'
-    };
-    const target=document.querySelector(selectors[where]);
-    if (target) {
-        target.scrollIntoView({behavior:'smooth',block:'start'});
-        if (where==='search') setTimeout(()=>target.focus({preventScroll:true}),350);
-    }
-}
-document.addEventListener('click',function(e){
-    const nav=document.getElementById('mobile-quick-nav');
-    if(nav && !nav.contains(e.target)) toggleMobileQuickNav(false);
-});
-</script>
 </body>
 </html>
