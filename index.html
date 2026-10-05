@@ -9260,8 +9260,7 @@
                     </div>
                     <div class="form-group">
                         <label for="payment">付款方式</label>
-                        <select id="payment" class="form-control" required>
-                            <option value="" selected disabled>請選擇付款方式</option>
+                        <select id="payment" class="form-control">
                             <option value="cod">貨到付款</option>
                             <option value="transfer">轉帳( 中國信託-銀行代號：822 帳號：7275401-24855 )</option>
                             <option value="stored">扣儲值金</option>
@@ -9282,8 +9281,7 @@
 
                 <div class="form-group">
                     <label for="shipping">配送方式</label>
-                    <select id="shipping" class="form-control" onchange="updateCartSummary()" required>
-                        <option value="" selected disabled>請選擇配送方式</option>
+                    <select id="shipping" class="form-control" onchange="updateCartSummary()">
                         <option value="normal">常溫宅配</option>
                         <option value="cvs">7-11店到店</option>
                         <option value="blackcat">指定黑貓</option>
@@ -12259,14 +12257,14 @@ function updateCartSummary() {
     });
 
     const shippingSelect = document.getElementById('shipping');
-    const shippingMethod = shippingSelect ? shippingSelect.value : "";
+    const shippingMethod = shippingSelect ? shippingSelect.value : "normal";
     
     // 取得當前選擇的付款方式名稱
     const paymentSelect = document.getElementById('payment');
-    const paymentMethodText = paymentSelect && paymentSelect.value ? paymentSelect.options[paymentSelect.selectedIndex].text : "";
+    const paymentMethodText = paymentSelect ? paymentSelect.options[paymentSelect.selectedIndex].text : "";
 
     let shippingFee = 0; let shippingText = "$0";
-    if (subtotal > 0 && shippingMethod) {
+    if (subtotal > 0) {
         if (subtotal >= 3000) {
             if (shippingMethod === 'blackcat') { shippingFee = 60; shippingText = "$60 (滿額優惠)"; }
             else if (shippingMethod === 'blackcat-cold') { shippingFee = 160; shippingText = "$160"; }
@@ -12678,19 +12676,6 @@ async function requestStoredValueDeduction(payload) {
 }
 
 function submitOrder(evt) {
-    // 桌機、手機皆須明確選擇付款與配送方式，未選擇禁止送出。
-    const requiredPayment = document.getElementById('payment');
-    const requiredShipping = document.getElementById('shipping');
-    if (!requiredPayment || !requiredPayment.value) {
-        alert('請先選擇付款方式，再送出訂單。');
-        if (requiredPayment) { requiredPayment.scrollIntoView({behavior:'smooth',block:'center'}); requiredPayment.focus(); }
-        return;
-    }
-    if (!requiredShipping || !requiredShipping.value) {
-        alert('請先選擇配送方式，再送出訂單。');
-        if (requiredShipping) { requiredShipping.scrollIntoView({behavior:'smooth',block:'center'}); requiredShipping.focus(); }
-        return;
-    }
     saveMemberContact();
 
     const e = evt || window.event;
