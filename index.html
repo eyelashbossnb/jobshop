@@ -10318,6 +10318,8 @@ window.addEventListener('DOMContentLoaded', refreshStockDisplay);
 function refreshStockDisplay() {
     // 0. 🌟 自動恢復會員登入狀態與購物車資料
     checkAndRestoreMemberLogin();
+    // 重新進入網站時，恢復會員預設資料與常用分店選單。
+    if (deptIsLoggedIn && deptMemberData) autoFillMemberContact();
     loadCartFromStorage(); // 👈 載入 localStorage 購物車快存
 
     // 1. 🌟 【核心修復】：依據會員身份即時動態計算並渲染商品折扣價格
@@ -13197,6 +13199,8 @@ if (typeof mockOrderDatabase !== 'undefined') {
 
             const orderForm = document.getElementById('order-form');
             if (orderForm) orderForm.reset();
+            // 訂單完成後，重設下一筆訂單的預設資料及常用分店選單。
+            if (deptIsLoggedIn && deptMemberData) autoFillMemberContact();
 
             const specCards = ['A112', 'A190', 'A256'];
             specCards.forEach(id => {
