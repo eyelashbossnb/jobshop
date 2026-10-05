@@ -9261,6 +9261,7 @@
                     <div class="form-group">
                         <label for="payment">付款方式</label>
                         <select id="payment" class="form-control">
+                            <option value="" selected disabled>請選擇付款方式</option>
                             <option value="cod">貨到付款</option>
                             <option value="transfer">轉帳( 中國信託-銀行代號：822 帳號：7275401-24855 )</option>
                             <option value="stored">扣儲值金</option>
@@ -9282,6 +9283,7 @@
                 <div class="form-group">
                     <label for="shipping">配送方式</label>
                     <select id="shipping" class="form-control" onchange="updateCartSummary()">
+                        <option value="" selected disabled>請選擇配送方式</option>
                         <option value="normal">常溫宅配</option>
                         <option value="cvs">7-11店到店</option>
                         <option value="blackcat">指定黑貓</option>
@@ -10809,7 +10811,25 @@ function checkMemberRenewalReminder(forceCheck) {
     toggleRenewalReminder(true);
 }
 
+// 指定會員預設「貨到付款＋常溫宅配」，但可自由更改選項。
+const AUTO_DEFAULT_DELIVERY_LEVELS = new Set([
+    '業務A', '業務B', '連鎖店B', '加盟A', '加盟B', '儲值商A', '儲值商B'
+]);
+function applyMemberPaymentDeliveryDefaults() {
+    const level = (deptIsLoggedIn && deptMemberData)
+        ? String(deptMemberData.member_level || '').trim() : '';
+    if (!AUTO_DEFAULT_DELIVERY_LEVELS.has(level)) return;
+    const payment = document.getElementById('payment');
+    const shipping = document.getElementById('shipping');
+    // 只填入空白欄位；會員已自行選擇時，絕不覆蓋。
+    let changed = false;
+    if (payment && !payment.value) { payment.value = 'cod'; changed = true; }
+    if (shipping && !shipping.value) { shipping.value = 'normal'; changed = true; }
+    if (changed && typeof updateCartSummary === 'function') updateCartSummary();
+}
+
 function renderMemberHeader() {
+    applyMemberPaymentDeliveryDefaults();
     const area = document.getElementById('member-status-area');
     if (!area) return;
 
@@ -12257,14 +12277,14 @@ function updateCartSummary() {
     });
 
     const shippingSelect = document.getElementById('shipping');
-    const shippingMethod = shippingSelect ? shippingSelect.value : "normal";
+    const shippingMethod = shippingSelect ? shippingSelect.value : "";
     
     // 取得當前選擇的付款方式名稱
     const paymentSelect = document.getElementById('payment');
-    const paymentMethodText = paymentSelect ? paymentSelect.options[paymentSelect.selectedIndex].text : "";
+    const paymentMethodText = paymentSelect && paymentSelect.value ? paymentSelect.options[paymentSelect.selectedIndex].text : "";
 
     let shippingFee = 0; let shippingText = "$0";
-    if (subtotal > 0) {
+    if (subtotal > 0 && shippingMethod) {
         if (subtotal >= 3000) {
             if (shippingMethod === 'blackcat') { shippingFee = 60; shippingText = "$60 (滿額優惠)"; }
             else if (shippingMethod === 'blackcat-cold') { shippingFee = 160; shippingText = "$160"; }
@@ -12676,6 +12696,24 @@ async function requestStoredValueDeduction(payload) {
 }
 
 function submitOrder(evt) {
+    // 僅指定且已登入的會員等級，可略過付款與配送選擇。
+    const skipSelectionLevels = new Set(['業務A','業務B','連鎖店B','加盟A','加盟B','儲值商A','儲值商B']);
+    const memberLevel = (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn &&
+        typeof deptMemberData !== 'undefined' && deptMemberData)
+        ? String(deptMemberData.member_level || '').trim() : '';
+    const canSkipSelection = skipSelectionLevels.has(memberLevel);
+    const requiredPayment = document.getElementById('payment');
+    const requiredShipping = document.getElementById('shipping');
+    if (!canSkipSelection && (!requiredPayment || !requiredPayment.value)) {
+        alert('請先選擇付款方式，再送出訂單。');
+        if (requiredPayment) { requiredPayment.scrollIntoView({behavior:'smooth',block:'center'}); requiredPayment.focus(); }
+        return;
+    }
+    if (!canSkipSelection && (!requiredShipping || !requiredShipping.value)) {
+        alert('請先選擇配送方式，再送出訂單。');
+        if (requiredShipping) { requiredShipping.scrollIntoView({behavior:'smooth',block:'center'}); requiredShipping.focus(); }
+        return;
+    }
     saveMemberContact();
 
     const e = evt || window.event;
@@ -12737,10 +12775,10 @@ function submitOrder(evt) {
     const orderNotes = document.getElementById('notes')?.value?.trim() || "無備註";
     
     const paymentElement = document.getElementById('payment');
-    const paymentMethod = paymentElement ? paymentElement.options[paymentElement.selectedIndex].text : "未選擇";
+    const paymentMethod = paymentElement && paymentElement.value ? paymentElement.options[paymentElement.selectedIndex].text : "未指定";
     
     const shippingElement = document.getElementById('shipping');
-    const shippingMethod = shippingElement ? shippingElement.options[shippingElement.selectedIndex].text : "未選擇";
+    const shippingMethod = shippingElement && shippingElement.value ? shippingElement.options[shippingElement.selectedIndex].text : "未指定";
 
     if (!customerName || !customerPhone || !customerAddress) {
         alert("❌ 送出失敗：請完整填寫收件人「姓名」、「電話」與「配送地址 / 取貨門市」！");
