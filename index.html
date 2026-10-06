@@ -12620,6 +12620,19 @@ function updateLashVariantStockDisplay(productId) {
             currentStock = clearanceMatch.stock;
             matchedKey = clearanceMatch.key;
         }
+    } else if (productId === 'E23_UP') {
+        // 現有試算表 A 欄：奢華手工真貂毛 (J-單一粗度-MIX 8-14mm)
+        // 依完整中文品名、捲度及長度精確比對，絕不誤抓其他睫毛。
+        const chosenCurl = String(curl || '').trim().toUpperCase();
+        const chosenLength = String(length || '').replace(/\s/g, '').toUpperCase();
+        if (/^[JBCD]$/.test(chosenCurl) && chosenLength === 'MIX8-14') {
+            const e23Pattern = new RegExp('^奢華手工真貂毛\\s*[（(]\\s*' + chosenCurl + '\\s*[-－–—]\\s*單一粗度\\s*[-－–—]\\s*MIX\\s*8\\s*[-－–—]\\s*14\\s*mm\\s*[)）]$', 'i');
+            const foundKey = Object.keys(globalInventoryData || {}).find(k => e23Pattern.test(k));
+            if (foundKey) {
+                matchedKey = foundKey;
+                currentStock = Number(globalInventoryData[foundKey]) || 0;
+            }
+        }
     } else {
         currentStock = getStockFromDatabase(productId + combinedName);
 
@@ -12930,6 +12943,16 @@ function resolveBackendStockKeyForSpecialItem(itemId, pInfo) {
                     const cleanedCandidate = cleanString(candidate);
                     const realKey = findRealInventoryKey(candidate);
                     if (realKey) return realKey;
+                }
+            }
+
+            // E23 既有庫存 A 欄沒有 E23_UP 編號，舊購物車仍按捲度還原。
+            if (baseId === 'E23_UP') {
+                const e23Curl = suffix.split('_')[0];
+                if (/^[JBCD]$/.test(e23Curl)) {
+                    const e23Pattern = new RegExp('^奢華手工真貂毛\\s*[（(]\\s*' + e23Curl + '\\s*[-－–—]\\s*單一粗度\\s*[-－–—]\\s*MIX\\s*8\\s*[-－–—]\\s*14\\s*mm\\s*[)）]$', 'i');
+                    const existing = Object.keys(globalInventoryData || {}).find(k => e23Pattern.test(k));
+                    if (existing) return existing;
                 }
             }
 
