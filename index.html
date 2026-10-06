@@ -1954,35 +1954,6 @@
                     </div>
                 </div>
 
-                <!-- 新增 E23_UP 奢華手工真貂毛：無粗度選項，以固定值「無」傳遞 -->
-                <div class="product-item" data-id="E23_UP" data-name="奢華手工真貂毛" data-category="eyelash" data-sub="lash-straight" data-lash="true" data-base-price="720" data-selected-curl="" data-selected-thickness="無" data-selected-length="MIX8-14">
-                    <div>
-                        <div style="font-size:11px;color:var(--text-muted);font-weight:500;margin-bottom:2px;">商品編號：E23_UP</div>
-                        <div class="product-name">奢華手工真貂毛</div>
-                        <div class="lash-variant-container">
-                            <div class="variant-group"><div class="variant-title">捲度：</div><div class="btn-tabs-container">
-                                <button class="spec-btn" data-type="curl" data-value="J" onclick="executeLashSpecSelect(this,'E23_UP')">J55˚</button>
-                                <button class="spec-btn" data-type="curl" data-value="B" onclick="executeLashSpecSelect(this,'E23_UP')">B65˚</button>
-                                <button class="spec-btn" data-type="curl" data-value="C" onclick="executeLashSpecSelect(this,'E23_UP')">C75˚</button>
-                                <button class="spec-btn" data-type="curl" data-value="D" onclick="executeLashSpecSelect(this,'E23_UP')">D90˚</button>
-                            </div></div>
-                            <div class="variant-group"><div class="variant-title">粗度：無（固定規格）</div></div>
-                            <div class="variant-group"><div class="variant-title">長度：MIX 8-14（固定規格）</div></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="product-price" id="price-display-E23_UP">$720</div>
-                        <div class="product-stock" id="stock-text-E23_UP" style="color:var(--accent-color);font-weight:600;">請選擇捲度</div>
-                        <div class="quantity-selector">
-                            <button class="quantity-btn" onclick="changeLeftQty('E23_UP',-1)">-</button>
-                            <input type="number" class="quantity-input" id="left-input-E23_UP" value="0" min="0">
-                            <button class="quantity-btn" onclick="changeLeftQty('E23_UP',1)">+</button>
-                        </div>
-                        <button class="btn" onclick="addLashToCart('E23_UP')">加入購物車</button>
-                        <a href="https://ibb.co/VWLb8tRP" target="_blank" rel="noopener noreferrer" style="display:block;margin-top:10px;font-size:12px;">查看商品圖片</a>
-                    </div>
-                </div>
-
                 <!-- 🆕 睫毛款式：睛艷第五大道(全彩) (E21_UP) -->
                 <div class="product-item" data-id="E21_UP" data-name="睛艷第五大道(全彩)" data-category="eyelash" data-sub="lash-color" data-lash="true" data-base-price="390" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
@@ -12605,13 +12576,7 @@ function updateLashVariantStockDisplay(productId) {
     // 並把標題列當成 0 庫存，導致真正的規格列永遠沒有機會被搜尋。
     // 這也是水貂絲、凱莉絲、真貂毛、第五大道、麥斯雅及茶花不同步的主因。
     const isClearanceLash = /^W(?:[1-9]|1[0-9])_UP$/.test(productId || '');
-    if (productId === 'E23_UP') {
-        // 專用精準庫存比對，避免誤抓出清五折同名商品。
-        // 後台庫存表 A 欄請使用 E23_UP奢華手工真貂毛J_無_MIX8-14 等四個鍵。
-        const requiredKey = 'E23_UP' + baseName + curl + '_無_MIX8-14';
-        const exactEntry = Object.keys(globalInventoryData || {}).find(key => cleanString(key) === cleanString(requiredKey));
-        if (exactEntry) { matchedKey = exactEntry; currentStock = Number(globalInventoryData[exactEntry]) || 0; }
-    } else if (isClearanceLash) {
+    if (isClearanceLash) {
         const clearanceMatch = findClearanceLashInventoryMatch(
             productId, baseName, colorStr, curl, thickness, length
         );
