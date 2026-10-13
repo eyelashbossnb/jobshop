@@ -725,20 +725,21 @@
             font-weight: 700;
             line-height: 1;
         }
-        @media (min-width: 769px) {
-            #cart-items-container {
-                max-height: 390px;
-                overflow-y: auto;
-                padding-right: 8px;
-                scrollbar-width: thin;
-                scrollbar-color: #e8d9d2 transparent;
-            }
-            #cart-items-container::-webkit-scrollbar { width: 6px; }
-            #cart-items-container::-webkit-scrollbar-track { background: transparent; }
-            #cart-items-container::-webkit-scrollbar-thumb {
-                background: #e8d9d2;
-                border-radius: 999px;
-            }
+        /* 商品明細獨立滾動：桌機及手機皆適用 */
+        #cart-items-container {
+            max-height: 260px;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+            padding-right: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: #e8d9d2 transparent;
+        }
+        #cart-items-container::-webkit-scrollbar { width: 6px; }
+        #cart-items-container::-webkit-scrollbar-track { background: transparent; }
+        #cart-items-container::-webkit-scrollbar-thumb { background: #e8d9d2; border-radius: 999px; }
+        @media (max-width: 768px) {
+            #cart-items-container { max-height: 220px; }
         }
         @media (max-width: 768px) {
             .cart-title-row { display: block; }
