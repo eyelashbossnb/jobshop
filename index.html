@@ -11049,7 +11049,6 @@ function executeLogin() {
             localStorage.setItem("deptMemberData", JSON.stringify(deptMemberData));
             
             renderMemberHeader();
-            couponCheckoutLoad();
             setTimeout(() => checkMemberRenewalReminder(false), 250);
             
             if (typeof updateHomepageProductPrices === 'function') {
@@ -12205,36 +12204,6 @@ function renderCart() {
     updateCartSummary();
 }
 
-
-
-// 優惠券預覽元件（未啟用核銷時，嚴禁送出含券訂單）
-const couponCheckoutState = {coupons:[], shoppingId:'', shippingId:'', loading:false};
-function couponCheckoutSelected(type) {
-  const id=type==='購物金'?couponCheckoutState.shoppingId:couponCheckoutState.shippingId;
-  return couponCheckoutState.coupons.find(x=>x.id===id&&x.type===type)||null;
-}
-async function couponCheckoutLoad(){
-  if(!deptIsLoggedIn||!deptMemberData){couponCheckoutState.coupons=[];couponCheckoutState.shoppingId='';couponCheckoutState.shippingId='';couponCheckoutRender();return;}
-  try{
-    const res=await fetch(GAS_API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'coupon_list',phone:deptMemberData.phone})});
-    const data=await res.json();
-    if(!data.success)throw new Error(data.message||'無法查詢');
-    couponCheckoutState.coupons=data.coupons||[];
-    couponCheckoutRender();
-  }catch(e){console.warn('優惠券載入失敗',e);couponCheckoutState.coupons=[];couponCheckoutRender();}
-}
-function couponCheckoutRender(){
-  const parent=document.getElementById('grand-total')?.closest('.summary-block');
-  if(!parent)return;
-  let box=document.getElementById('coupon-checkout-box');
-  if(!box){box=document.createElement('div');box.id='coupon-checkout-box';box.style.cssText='padding:12px;margin:12px 0;border:1px solid #e6d7ca;border-radius:10px;background:white';parent.appendChild(box);}
-  if(!deptIsLoggedIn){box.innerHTML='<b>🎟️ 我的優惠券</b><p style="font-size:12px">登入會員後可查看購物金與免運券。</p>';return;}
-  const opts=(type,selected)=>'<option value="">不使用</option>'+couponCheckoutState.coupons.filter(x=>x.type===type).map(x=>'<option value="'+x.id+'" '+(x.id===selected?'selected':'')+'>'+x.name+'｜'+(type==='購物金'?'$'+x.amount:'免運')+(x.end?'｜'+x.end:'')+'</option>').join('');
-  box.innerHTML='<b>🎟️ 我的優惠券</b><label style="display:block;margin-top:9px">購物金（最多一張）</label><select id="coupon-shopping-select" class="form-control">'+opts('購物金',couponCheckoutState.shoppingId)+'</select><label style="display:block;margin-top:9px">免運券（最多一張）</label><select id="coupon-shipping-select" class="form-control">'+opts('免運券',couponCheckoutState.shippingId)+'</select><small style="display:block;margin-top:8px;color:#a05c50">可預覽優惠折抵，核銷流程完成前仍不可使用優惠券送單。</small>';
-  box.querySelector('#coupon-shopping-select').onchange=e=>{couponCheckoutState.shoppingId=e.target.value;updateCartSummary();};
-  box.querySelector('#coupon-shipping-select').onchange=e=>{couponCheckoutState.shippingId=e.target.value;updateCartSummary();};
-}
-
 function updateCartSummary() {
     // 同步更新「商品明細」旁的前往結帳商品總數量
     const checkoutCountEl = document.getElementById('cart-checkout-count');
@@ -12354,16 +12323,8 @@ function updateCartSummary() {
     const paymentMethodText = paymentSelect && paymentSelect.value ? paymentSelect.options[paymentSelect.selectedIndex].text : "";
 
     let shippingFee = 0; let shippingText = "$0";
-    // 優惠券預覽：購物金一次折完，不保留餘額；免運門檻依折抵後商品金額。
-    const selectedShoppingCoupon = couponCheckoutSelected('購物金');
-    const selectedShippingCoupon = couponCheckoutSelected('免運券');
-    const shoppingCredit = selectedShoppingCoupon ? Math.max(0, Number(selectedShoppingCoupon.amount) || 0) : 0;
-    const couponMinimum = selectedShoppingCoupon ? Math.max(0, Number(selectedShoppingCoupon.minSpend) || 0) : 0;
-    const shoppingCouponValid = !selectedShoppingCoupon || (subtotal >= couponMinimum && shoppingCredit <= subtotal);
-    const couponDiscount = shoppingCouponValid ? shoppingCredit : 0;
-    const shippingThresholdSubtotal = Math.max(0, subtotal - couponDiscount);
     if (subtotal > 0 && shippingMethod) {
-        if (shippingThresholdSubtotal >= 3000) {
+        if (subtotal >= 3000) {
             if (shippingMethod === 'blackcat') { shippingFee = 60; shippingText = "$60 (滿額優惠)"; }
             else if (shippingMethod === 'blackcat-cold') { shippingFee = 160; shippingText = "$160"; }
             else { shippingFee = 0; shippingText = "免運 (滿額)"; }
@@ -12388,18 +12349,7 @@ function updateCartSummary() {
         }
     }
 
-    // 免運券僅抵運費；特殊配送仍需於正式串接時由後台驗證適用規則。
-    const freeShippingApplied = !!selectedShippingCoupon && subtotal >= Math.max(0, Number(selectedShippingCoupon.minSpend) || 0);
-    if (freeShippingApplied) { shippingFee = 0; shippingText = '免運（優惠券預覽）'; }
-    couponCheckoutRender();
-    let grandTotal = Math.max(0, subtotal - couponDiscount + shippingFee);
-    const couponPreview = document.getElementById('coupon-preview-breakdown') || document.createElement('div');
-    couponPreview.id = 'coupon-preview-breakdown';
-    couponPreview.style.cssText = 'font-size:13px;color:#805c4d;margin:8px 0;line-height:1.7;';
-    couponPreview.textContent = !shoppingCouponValid ? '購物金不符合最低消費或面額超過商品金額，無法使用。' :
-        '購物金折抵：-$' + couponDiscount.toLocaleString() + '；免運券：' + (freeShippingApplied ? '已套用' : '未套用') + '（目前僅預覽，尚不能用券下單）';
-    const couponContainer = document.getElementById('coupon-checkout-area');
-    if (couponContainer && !couponPreview.parentNode) couponContainer.appendChild(couponPreview);
+    let grandTotal = subtotal + shippingFee;
 
     if(document.getElementById('total-qty')) document.getElementById('total-qty').innerText = `${totalQty} 件`;
     if(document.getElementById('subtotal-price')) document.getElementById('subtotal-price').innerText = `$${subtotal.toLocaleString()}`;
@@ -12798,11 +12748,6 @@ async function requestStoredValueDeduction(payload) {
 }
 
 function submitOrder(evt) {
-    if (couponCheckoutState.shoppingId || couponCheckoutState.shippingId) {
-        alert('優惠券核銷與訂單確認尚未完成串接，為避免誤扣，請先選擇「不使用」優惠券後再下單。');
-        return;
-    }
-
     // 僅指定且已登入的會員等級，可略過付款與配送選擇。
     const skipSelectionLevels = new Set(['業務A','業務B','連鎖店B','加盟A','加盟B','儲值商A','儲值商B']);
     const memberLevel = (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn &&
@@ -13689,6 +13634,5 @@ function showTransferPayment(orderId,amount){
 function closeTransferPayment(){document.getElementById('transfer-payment-overlay').classList.remove('active');document.body.style.overflow='';location.reload();}
 async function copyTransferAccount(){try{await navigator.clipboard.writeText('727540124855');alert('已複製匯款帳號');}catch(e){prompt('請複製匯款帳號：','727540124855');}}
 </script>
-<script>window.addEventListener("load",()=>{setTimeout(()=>{couponCheckoutLoad();couponCheckoutRender();},1200);});</script>
 </body>
 </html>
