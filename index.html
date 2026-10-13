@@ -725,21 +725,20 @@
             font-weight: 700;
             line-height: 1;
         }
-        /* 商品明細獨立滾動：桌機及手機皆適用 */
-        #cart-items-container {
-            max-height: 260px;
-            overflow-y: auto;
-            overscroll-behavior: contain;
-            -webkit-overflow-scrolling: touch;
-            padding-right: 8px;
-            scrollbar-width: thin;
-            scrollbar-color: #e8d9d2 transparent;
-        }
-        #cart-items-container::-webkit-scrollbar { width: 6px; }
-        #cart-items-container::-webkit-scrollbar-track { background: transparent; }
-        #cart-items-container::-webkit-scrollbar-thumb { background: #e8d9d2; border-radius: 999px; }
-        @media (max-width: 768px) {
-            #cart-items-container { max-height: 220px; }
+        @media (min-width: 769px) {
+            #cart-items-container {
+                max-height: 390px;
+                overflow-y: auto;
+                padding-right: 8px;
+                scrollbar-width: thin;
+                scrollbar-color: #e8d9d2 transparent;
+            }
+            #cart-items-container::-webkit-scrollbar { width: 6px; }
+            #cart-items-container::-webkit-scrollbar-track { background: transparent; }
+            #cart-items-container::-webkit-scrollbar-thumb {
+                background: #e8d9d2;
+                border-radius: 999px;
+            }
         }
         @media (max-width: 768px) {
             .cart-title-row { display: block; }
@@ -910,15 +909,6 @@
 #transfer-payment-overlay.active{display:flex}
 .transfer-payment-panel{background:#fffaf7;color:#4a3023;border-radius:18px;padding:24px;max-width:440px;width:100%;max-height:92vh;overflow-y:auto;box-sizing:border-box;text-align:center;box-shadow:0 20px 65px #0003}
 .transfer-payment-panel h2{font-size:23px;margin:0 0 8px}.transfer-payment-panel p{font-size:13px;line-height:1.7}.transfer-payment-qr{display:block;width:min(240px,80%);height:auto;margin:12px auto;background:white}.transfer-payment-account{font-size:19px;font-weight:bold;letter-spacing:.04em;overflow-wrap:anywhere}.transfer-payment-btn{padding:12px 16px;border:0;border-radius:25px;background:#e8a598;color:white;cursor:pointer;margin:7px 4px;font-size:14px}.transfer-payment-btn.secondary{background:#806b60}
-
-/* 滿額贈專區 */
-.gift-panel{margin-top:18px;padding:17px;border:1px solid var(--border-color);border-radius:12px;background:#fff;text-align:left}
-.gift-panel h3{font-size:17px;margin:0 0 10px}.gift-tier{margin:12px 0;border-top:1px dashed var(--border-color);padding-top:10px}
-.gift-choice{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;font-size:13px}
-.gift-choice label{flex:1}.gift-choice input{width:58px;padding:5px;border:1px solid #ddd;border-radius:6px;text-align:center}
-.gift-choice button{border:1px solid #ddd;border-radius:6px;background:#faf7f5;padding:5px 9px;cursor:pointer}
-.gift-choice button:disabled{opacity:.3;cursor:not-allowed}.gift-mode{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;margin:10px 0}
-.gift-summary{background:#faf7f5;padding:10px;border-radius:8px;font-size:13px;line-height:1.8}
 </style>
 </head>
 <body>
@@ -9387,11 +9377,6 @@
                 </div>
             </div>
 
-<section id="gift-panel" class="gift-panel" aria-label="滿額贈品選擇">
-<h3>🎁 滿額贈品自由選</h3><div id="gift-budget-label">購物車金額更新中…</div>
-<div class="gift-mode"><label><input type="radio" name="gift-mode" value="choose" onchange="setGiftMode('choose')"> 我要選擇滿額贈品</label><label><input type="radio" name="gift-mode" value="none" onchange="setGiftMode('none')"> 不需要滿額贈品</label></div>
-<div id="gift-options" hidden></div><div id="gift-summary" class="gift-summary"></div>
-</section>
             <div class="shipping-policy-box">
                 <div><strong>🚚 運費優惠規範：</strong></div>
                 <div><span class="policy-tag">滿額免運</span>單筆滿 NT 3,000 元(含)以上享本島/外島常溫與 7-11 免運。</div>
@@ -12178,81 +12163,6 @@ function getOrderDisplayProductId(itemId) {
     return (pInfo && pInfo.displayId) ? pInfo.displayId : itemId;
 }
 
-
-// === 2026/03/01 滿額贈：會員折扣後商品小計，運費及儲值金折抵不計 ===
-// 每個品項使用的「額度」為所屬階段門檻，並非商品售價。
-const GIFT_CATALOG = [
- [1000,'D19-D26','奢華優雅抗暈眼影筆（顏色請於備註註明）'],
- [1000,'D121-D124','愛戀保濕潤唇頰筆（顏色請於備註註明）'],
- [2000,'D30','局部橡皮擦修妝筆'],[2000,'D38','假睫毛黏著劑專用卸除液 6ml'],
- [2000,'D58','Bad Girl 極速成型抗淚眼線液'],[2000,'D60','溫和眼唇卸除液 30ml'],
- [2000,'D81-D86','完美持久可削轉式眼膠筆（顏色請於備註註明）'],
- [2000,'東方之綉','3點定位眉型設計筆（黑／咖，請於備註註明）'],
- [3000,'A52','四效合一深層潔淨卸妝棉 100片'],[3000,'F62','完美呵護私密淨化噴霧 20ml'],
- [3000,'東方之綉','紋飾修護素 10ml'],
- [4000,'TB4','紋繡唇部去角質霜 10g'],[4000,'TB1','紋繡眉眼唇專用鎖色精華 10ml'],
- [4000,'TB3','紋繡唇部持久留色修復精華 10入裝'],
- [5000,'DB2','淨妍晶透雙效洗卸凝膠 150ml'],[5000,'DA1','淨妍雙效保濕卸妝水 230ml'],
- [5000,'DA3','極淨精粹雙效卸妝液 30ml'],
- [6000,'無暇奇肌','賦活露'],[6000,'無暇奇肌','煥亮精華'],[6000,'無暇奇肌','熬夜霜'],
- [6000,'無暇奇肌','緊顏露'],[6000,'無暇奇肌','緊顏精華'],[6000,'無暇奇肌','撫紋眼霜'],
- [6000,'無暇奇肌','貴婦霜'],[6000,'無暇奇肌','黃金膠囊50入']
-].map((x,i)=>({tier:x[0],code:x[1],name:x[2],id:'gift-'+i}));
-let giftMode = ''; // 客人必須明確選擇
-let giftQuantities = {};
-let giftBudget = 0;
-const giftMoney = n=>'$'+Math.floor(n).toLocaleString('zh-TW');
-function giftUsed(){return GIFT_CATALOG.reduce((v,g)=>v+g.tier*(giftQuantities[g.id]||0),0)}
-function setGiftMode(mode){
- giftMode=mode;
- if(mode==='none')giftQuantities={};
- renderGiftChoices();
-}
-function changeGiftQty(id,delta){
- if(giftMode!=='choose')return;
- const g=GIFT_CATALOG.find(x=>x.id===id);if(!g)return;
- const old=giftQuantities[id]||0, next=Math.max(0,old+delta);
- if(giftUsed()+(next-old)*g.tier>giftBudget)return;
- giftQuantities[id]=next;renderGiftChoices();
-}
-function renderGiftChoices(){
- const root=document.getElementById('gift-panel');if(!root)return;
- const subtotalEl=document.getElementById('subtotal-price');
- // 商品小計已套用會員等級及商品專屬折扣；不含運費、儲值金扣款。
- giftBudget=Math.max(0,Math.floor(Number((subtotalEl?.textContent||'0').replace(/[^0-9.]/g,''))||0));
- // 購物車金額下降時，移除超出額度的最後一筆贈品，防止超額。
- while(giftUsed()>giftBudget){const last=[...GIFT_CATALOG].reverse().find(g=>giftQuantities[g.id]>0);if(!last)break;giftQuantities[last.id]--;}
- const label=document.getElementById('gift-budget-label');
- label.textContent='可用贈品額度：'+giftMoney(giftBudget)+'（依會員折扣後商品小計，不含運費及購物金折抵）';
- const options=document.getElementById('gift-options');options.hidden=giftMode!=='choose';
- const modeRadio=root.querySelector('input[name="gift-mode"][value="'+giftMode+'"]');if(modeRadio)modeRadio.checked=true;
- if(giftMode==='choose'){
-  const available=GIFT_CATALOG.filter(g=>g.tier<=giftBudget);
-  let tier=0,html='';
-  for(const g of available){
-   if(tier!==g.tier){if(tier)html+='</div>';tier=g.tier;html+='<div class="gift-tier"><strong>滿 '+giftMoney(tier)+' 贈品任選</strong>';}
-   const n=giftQuantities[g.id]||0;
-   html+='<div class="gift-choice"><label>['+g.code+'] '+g.name+'</label><button type="button" '+(!n?'disabled':'')+' onclick="changeGiftQty(\''+g.id+'\',-1)">−</button><input aria-label="'+g.name+'數量" value="'+n+'" readonly><button type="button" '+(giftUsed()+g.tier>giftBudget?'disabled':'')+' onclick="changeGiftQty(\''+g.id+'\',1)">＋</button></div>';
-  }
-  if(tier)html+='</div>';
-  options.innerHTML=html||'<p>未達滿額贈門檻（最低 $1,000）。</p>';
- }
- document.getElementById('gift-summary').textContent=giftMode==='none'?'本次不領取滿額贈品。':giftMode==='choose'?'已使用 '+giftMoney(giftUsed())+'／剩餘 '+giftMoney(giftBudget-giftUsed()):'請選擇是否領取滿額贈品，才能送出訂單。';
-}
-function validateGiftSelection(){
- renderGiftChoices();
- if(!giftMode){alert('請選擇「我要選擇滿額贈品」或「不需要滿額贈品」。');document.getElementById('gift-panel')?.scrollIntoView({behavior:'smooth'});return false;}
- if(giftMode==='choose'&&giftBudget>=1000&&giftUsed()===0){alert('請先選擇贈品，或改選「不需要滿額贈品」。');return false;}
- if(giftUsed()>giftBudget){alert('滿額贈品額度超過訂單金額，請重新選擇。');return false;}
- return true;
-}
-function giftOrderDetailText(){
- if(giftMode==='none')return '\n【滿額贈】不需要滿額贈品\n';
- let text='\n【滿額贈】可用額度 '+giftMoney(giftBudget)+'；已使用 '+giftMoney(giftUsed())+'\n';
- for(const g of GIFT_CATALOG){const n=giftQuantities[g.id]||0;if(n)text+='[贈品 '+g.code+'] '+g.name+' ($0) x '+n+'（使用額度 '+giftMoney(g.tier*n)+'）\n';}
- return text;
-}
-
 function renderCart() {
     const container = document.getElementById('cart-items-container');
     if (!container) return;
@@ -12450,7 +12360,6 @@ function updateCartSummary() {
     const discountRow = document.getElementById("discount-row");
     if (discountRow) discountRow.style.display = "none";
     if(document.getElementById('grand-total')) document.getElementById('grand-total').innerText = `$${grandTotal.toLocaleString()}`;
-    renderGiftChoices();
 };
 
 function toggleLashesMenu(show) {
@@ -12839,7 +12748,6 @@ async function requestStoredValueDeduction(payload) {
 }
 
 function submitOrder(evt) {
-    if (!validateGiftSelection()) return;
     // 僅指定且已登入的會員等級，可略過付款與配送選擇。
     const skipSelectionLevels = new Set(['業務A','業務B','連鎖店B','加盟A','加盟B','儲值商A','儲值商B']);
     const memberLevel = (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn &&
@@ -13253,7 +13161,6 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
         orderDetails = "前台商品明細解析異常：" + e.message;
     }
 
-    orderDetails += giftOrderDetailText();
     const subtotal = document.getElementById('subtotal-price')?.innerText || "$0";
     const shippingFeeText = document.getElementById('shipping-fee')?.innerText || "$0";
     const grandTotalText = document.getElementById('grand-total')?.innerText || "$0";
@@ -13308,18 +13215,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
         formData.append("entry.476162635", paymentMethod);      
         formData.append("entry.1954918173", companyTitle);      
         formData.append("entry.10145728", taxId);               
-        // 滿額贈另存至既有「訂單備註」欄位（Q欄），不更動 Google 表單欄位 ID。
-        // 這樣即使尚未安裝後台 W 欄同步程式，訂單仍能收到完整贈品資料。
-        // W 欄可由後台觸發器自動解析 Q 欄；不能只靠前台直接寫入試算表 W 欄。
-        const giftNoteLines = giftMode === 'none'
-            ? '【滿額贈品】\n不需要滿額贈品\n【滿額贈結束】'
-            : '【滿額贈品】\n' +
-              '可用額度：' + giftMoney(giftBudget) + '；使用額度：' + giftMoney(giftUsed()) + '\n' +
-              GIFT_CATALOG.filter(g => (giftQuantities[g.id] || 0) > 0)
-                .map(g => '[' + g.code + '] ' + g.name + ' × ' + giftQuantities[g.id] + '（$0；額度 ' + giftMoney(g.tier * giftQuantities[g.id]) + '）')
-                .join('\n') + '\n【滿額贈結束】';
-        const notesWithGift = [orderNotes, giftNoteLines].filter(Boolean).join('\n\n');
-        formData.append("entry.394405044", notesWithGift);
+        formData.append("entry.394405044", orderNotes);
 
         fetch(googleFormUrl, {
             method: "POST",
