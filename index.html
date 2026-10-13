@@ -11096,7 +11096,14 @@ function executeDeptDiscountCalculate() {
     const currentShippingText = shippingEl ? shippingEl.textContent : "0";
     const shippingFee = parseInt(currentShippingText.replace(/[^0-9]/g, ""), 10) || 0;
 
-    const finalTotal = subtotal - discountAmount + shippingFee;
+    // Coupon discounts are calculated after membership discount, without changing gift thresholds.
+    const couponBase=Math.max(0,subtotal-discountAmount);
+    const couponMoney=typeof eyelashCouponState!=='undefined'&&eyelashCouponState.money?Math.min(couponBase,Number(eyelashCouponState.money.amount)||0):0;
+    const couponFreeShip=typeof eyelashCouponState!=='undefined'&&eyelashCouponState.shipping?shippingFee:0;
+    const finalTotal = Math.max(0,couponBase-couponMoney+shippingFee-couponFreeShip);
+    const couponStatus=document.getElementById('eyelash-coupon-status');
+    if(couponStatus&&(couponMoney||couponFreeShip))couponStatus.textContent='已折抵購物金 $'+couponMoney+'，運費 $'+couponFreeShip;
+
 
     const discountRow = document.getElementById("discount-row");
     if (discountRow) {
@@ -12360,6 +12367,8 @@ function updateCartSummary() {
     const discountRow = document.getElementById("discount-row");
     if (discountRow) discountRow.style.display = "none";
     if(document.getElementById('grand-total')) document.getElementById('grand-total').innerText = `$${grandTotal.toLocaleString()}`;
+    // Keep member + coupon total synchronized after cart/shipping changes.
+    if(typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
 };
 
 function toggleLashesMenu(show) {
@@ -13165,6 +13174,10 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
     const shippingFeeText = document.getElementById('shipping-fee')?.innerText || "$0";
     const grandTotalText = document.getElementById('grand-total')?.innerText || "$0";
     const discountText = "$0"; 
+    const couponPayload=typeof eyelashCouponPayload==='function'?eyelashCouponPayload():null;
+    const couponMoneyAmount=eyelashCouponState.money?Math.min(couponPayload.subtotal,Number(eyelashCouponState.money.amount)||0):0;
+    const couponShippingAmount=eyelashCouponState.shipping?(Number(shippingFeeText.replace(/[^0-9]/g,''))||0):0;
+    const couponMarker=couponPayload&&(couponPayload.moneyCouponId||couponPayload.shippingCouponId)?'\n【優惠券資料】'+JSON.stringify({...couponPayload,discount:couponMoneyAmount,freeShipping:couponShippingAmount}):'';
     const fullAddressInfo = `【${shippingMethod}】${customerAddress}`;
 
     console.log("🚀 [第一階段] 正在向 Apps Script 送出即時扣除總庫存請求...");
@@ -13215,7 +13228,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
         formData.append("entry.476162635", paymentMethod);      
         formData.append("entry.1954918173", companyTitle);      
         formData.append("entry.10145728", taxId);               
-        formData.append("entry.394405044", orderNotes);
+        formData.append("entry.394405044", orderNotes+couponMarker);
 
         fetch(googleFormUrl, {
             method: "POST",
@@ -13633,6 +13646,53 @@ function showTransferPayment(orderId,amount){
 }
 function closeTransferPayment(){document.getElementById('transfer-payment-overlay').classList.remove('active');document.body.style.overflow='';location.reload();}
 async function copyTransferAccount(){try{await navigator.clipboard.writeText('727540124855');alert('已複製匯款帳號');}catch(e){prompt('請複製匯款帳號：','727540124855');}}
+</script>
+
+<section id="eyelash-coupon-panel" style="margin:14px 0;padding:16px;border:1px solid #ddd;border-radius:12px;background:#fff">
+ <div style="font-weight:700;margin-bottom:9px">🎟️ 我的優惠券</div>
+ <div style="font-size:12px;color:#666;margin-bottom:8px">限一般會員與三種 VIP，購物金券及免運券可各使用一張</div>
+ <button type="button" onclick="eyelashLoadCoupons()" style="padding:7px 12px;margin-bottom:8px">查詢可用優惠券</button>
+ <div style="margin:6px 0">購物金折抵券 <select id="eyelash-money-coupon" onchange="eyelashCouponChanged()"><option value="">不使用</option></select></div>
+ <div style="margin:6px 0">免運券 <select id="eyelash-shipping-coupon" onchange="eyelashCouponChanged()"><option value="">不使用</option></select></div>
+ <div id="eyelash-coupon-status" style="font-size:12px;color:#666"></div>
+</section>
+
+<script>
+// Coupon UI is moved beside the order totals; admin issuing remains in Google Sheets.
+const eyelashCouponState={coupons:[],money:null,shipping:null};
+function eyelashCouponPhone(){return String((typeof deptMemberData!=='undefined'&&deptMemberData&&deptMemberData.phone)||'').replace(/\D/g,'');}
+function eyelashCouponBase(){
+ const el=document.getElementById('subtotal-price');const raw=Number((el?.textContent||'0').replace(/[^0-9]/g,''))||0;
+ const level=(typeof deptMemberData!=='undefined'&&deptMemberData&&deptMemberData.member_level)||'一般會員';
+ const cfg=(typeof DEPT_MEMBER_LEVEL_SETTINGS!=='undefined'&&DEPT_MEMBER_LEVEL_SETTINGS[level])||DEPT_MEMBER_LEVEL_SETTINGS['一般會員'];
+ return Math.max(0,raw-Math.round(raw*(1-cfg.discountRate)));
+}
+async function eyelashLoadCoupons(){
+ const status=document.getElementById('eyelash-coupon-status');
+ if(typeof deptIsLoggedIn==='undefined'||!deptIsLoggedIn||!eyelashCouponPhone()){status.textContent='請先登入會員';return;}
+ status.textContent='查詢中…';
+ try{
+  const r=await fetch(GAS_API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'coupon_list',phone:eyelashCouponPhone(),subtotal:eyelashCouponBase()})});
+  const data=await r.json();if(!data.success)throw Error(data.message||'查詢失敗');
+  eyelashCouponState.coupons=data.coupons||[];
+  for(const [type,id] of [['money','eyelash-money-coupon'],['shipping','eyelash-shipping-coupon']]){
+   const sel=document.getElementById(id),prev=sel.value;sel.replaceChildren(new Option('不使用',''));
+   eyelashCouponState.coupons.filter(c=>type==='money'?/購物金|折抵/.test(c.type):/免運/.test(c.type)).forEach(c=>sel.add(new Option(c.name+'（'+(type==='money'?'折抵 $'+c.amount:'免運')+'）',c.id)));
+   if([...sel.options].some(o=>o.value===prev))sel.value=prev;
+  }
+  status.textContent='已更新可用優惠券';eyelashCouponChanged();
+ }catch(e){status.textContent='查詢失敗：'+e.message;}
+}
+function eyelashCouponChanged(){
+ const get=id=>eyelashCouponState.coupons.find(c=>c.id===document.getElementById(id)?.value)||null;
+ eyelashCouponState.money=get('eyelash-money-coupon');eyelashCouponState.shipping=get('eyelash-shipping-coupon');
+ if(typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
+}
+function eyelashCouponPayload(){return {phone:eyelashCouponPhone(),moneyCouponId:eyelashCouponState.money?.id||'',shippingCouponId:eyelashCouponState.shipping?.id||'',subtotal:eyelashCouponBase()};}
+window.addEventListener('DOMContentLoaded',()=>{
+ const panel=document.getElementById('eyelash-coupon-panel'),target=document.getElementById('grand-total');
+ if(panel&&target){const container=target.closest('div');(container?.parentElement||target.parentElement).before(panel);}
+});
 </script>
 </body>
 </html>
