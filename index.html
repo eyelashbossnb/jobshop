@@ -13308,7 +13308,18 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
         formData.append("entry.476162635", paymentMethod);      
         formData.append("entry.1954918173", companyTitle);      
         formData.append("entry.10145728", taxId);               
-        formData.append("entry.394405044", orderNotes);
+        // 滿額贈另存至既有「訂單備註」欄位（Q欄），不更動 Google 表單欄位 ID。
+        // 這樣即使尚未安裝後台 W 欄同步程式，訂單仍能收到完整贈品資料。
+        // W 欄可由後台觸發器自動解析 Q 欄；不能只靠前台直接寫入試算表 W 欄。
+        const giftNoteLines = giftMode === 'none'
+            ? '【滿額贈品】\n不需要滿額贈品\n【滿額贈結束】'
+            : '【滿額贈品】\n' +
+              '可用額度：' + giftMoney(giftBudget) + '；使用額度：' + giftMoney(giftUsed()) + '\n' +
+              GIFT_CATALOG.filter(g => (giftQuantities[g.id] || 0) > 0)
+                .map(g => '[' + g.code + '] ' + g.name + ' × ' + giftQuantities[g.id] + '（$0；額度 ' + giftMoney(g.tier * giftQuantities[g.id]) + '）')
+                .join('\n') + '\n【滿額贈結束】';
+        const notesWithGift = [orderNotes, giftNoteLines].filter(Boolean).join('\n\n');
+        formData.append("entry.394405044", notesWithGift);
 
         fetch(googleFormUrl, {
             method: "POST",
