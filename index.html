@@ -11099,9 +11099,8 @@ function executeLogin() {
                 updateHomepageProductPrices(); 
             }
             
-            if (typeof updateCartSummary === 'function') {
-                updateCartSummary(); 
-            }
+            if (typeof renderCart === 'function') renderCart();
+            else if (typeof updateCartSummary === 'function') updateCartSummary();
             autoFillMemberContact();
         } else {
             if (errorEl) {
@@ -11123,18 +11122,10 @@ function executeDeptDiscountCalculate() {
     const subtotalText = subtotalEl.textContent;
     const subtotal = parseInt(subtotalText.replace(/[^0-9]/g, ""), 10) || 0;
     
-    let discountAmount = 0;
-    let appliedDiscountName = "";
-
-    if (subtotal > 0) {
-        let currentLevel = (deptIsLoggedIn && deptMemberData) ? deptMemberData.member_level : "一般會員";
-        let levelConfig = DEPT_MEMBER_LEVEL_SETTINGS[currentLevel] || DEPT_MEMBER_LEVEL_SETTINGS["一般會員"];
-        
-        discountAmount = Math.round(subtotal * (1 - levelConfig.discountRate));
-        appliedDiscountName = `${currentLevel}專屬優惠 (${levelConfig.note})`;
-    }
-
-    if (discountAmount > subtotal) discountAmount = subtotal;
+    // updateCartSummary() 已逐項計算會員／特惠價，subtotal 是實際售價。
+    // 此處不得再次套用會員 9 折，否則 $8 × 2 會錯誤折成 $14。
+    const discountAmount = 0;
+    const appliedDiscountName = "";
 
     const shippingEl = document.getElementById("shipping-fee");
     const currentShippingText = shippingEl ? shippingEl.textContent : "0";
@@ -12219,12 +12210,13 @@ function renderCart() {
     const container = document.getElementById('cart-items-container');
     if (!container) return;
 
+    // 先依會員等級更新購物車單價，避免畫面沿用原價。
+    updateCartSummary();
     container.innerHTML = '';
     const productIds = Object.keys(cart);
 
     if (productIds.length === 0) {
         container.innerHTML = '<div class="empty-cart-text">購物車目前是空的</div>';
-        updateCartSummary();
         return;
     }
 
@@ -12253,7 +12245,6 @@ function renderCart() {
             container.insertAdjacentHTML('beforeend', itemHtml);
         }
     });
-    updateCartSummary();
 }
 
 function updateCartSummary() {
