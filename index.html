@@ -13962,7 +13962,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   window.bossGiftSubmissionValue=function(){
     if(!syncGiftEligibility() || available()<1000)return '';
     if(spent()>available())throw new Error('滿額贈額度超出可用金額，請重新選擇贈品');
-    const lines=gifts.filter(g=>chosen[g.id]).map(g=>g.id+' '+g.name+' ×'+chosen[g.id]);
+    const lines=gifts.filter(g=>chosen[g.id]).map(g=>(/^[A-Z]{1,3}\d+[A-Z0-9_-]*$/.test(g.id) ? g.id+'｜'+g.name : g.name)+' ×'+chosen[g.id]);
     if(lines.length)return lines.join('\n');
     return giftDeclined?'不需要滿額贈品':'';
   };
