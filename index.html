@@ -9409,8 +9409,16 @@
                     <span>運費金額</span>
                     <span id="shipping-fee">$0</span>
                 </div>
+                <div class="summary-line" id="coupon-money-summary-row" style="display:none;">
+                    <span>使用購物金券</span>
+                    <span id="coupon-money-summary-value" style="color:#b36d61;">-$0</span>
+                </div>
+                <div class="summary-line" id="coupon-shipping-summary-row" style="display:none;">
+                    <span>使用免運券</span>
+                    <span id="coupon-shipping-summary-value" style="color:#b36d61;">-$0</span>
+                </div>
                 <div class="summary-line total">
-                    <span>總金額</span>
+                    <span>訂單金額</span>
                     <span id="grand-total" style="color: var(--accent-color); font-size: 18px;">$0</span>
                 </div>
             </div>
@@ -11155,8 +11163,17 @@ function executeDeptDiscountCalculate() {
         }
     }
 
+    // 結帳明細：原運費照列，購物金券與免運券分開列示，避免誤以為沒有運費。
+    const moneyRow = document.getElementById('coupon-money-summary-row');
+    const moneyValue = document.getElementById('coupon-money-summary-value');
+    const shippingRow = document.getElementById('coupon-shipping-summary-row');
+    const shippingValue = document.getElementById('coupon-shipping-summary-value');
+    if (moneyRow) moneyRow.style.display = couponMoney > 0 ? 'flex' : 'none';
+    if (moneyValue) moneyValue.textContent = '-$' + couponMoney.toLocaleString('zh-TW');
+    if (shippingRow) shippingRow.style.display = couponFreeShip > 0 ? 'flex' : 'none';
+    if (shippingValue) shippingValue.textContent = '-$' + couponFreeShip.toLocaleString('zh-TW');
     const grandTotalEl = document.getElementById("grand-total");
-    if (grandTotalEl) grandTotalEl.textContent = `$${finalTotal}`;
+    if (grandTotalEl) grandTotalEl.textContent = '$' + finalTotal.toLocaleString('zh-TW');
 }
 
 // =============================================================
