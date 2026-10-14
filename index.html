@@ -10781,10 +10781,16 @@ function switchModalToLogin() {
 }
 
 function scrollToOrderForm() {
-    const orderForm = document.getElementById('order-form') || document.getElementById('name');
-    if (orderForm) {
-        orderForm.scrollIntoView({ behavior: 'smooth' });
-    }
+    // 直接定位收件資料卡片的頂端；避免平滑捲動被 sticky 購物車或重新排版打斷。
+    const target = document.querySelector('.mobile-order-form-card') || document.getElementById('order-form');
+    if (!target) return;
+    const getTop = () => Math.max(0, window.scrollY + target.getBoundingClientRect().top - 18);
+    window.scrollTo({ top: getTop(), behavior: 'instant' });
+    // 排版更新後再次校準，使用者不必點第二次。
+    requestAnimationFrame(() => {
+        const diff = target.getBoundingClientRect().top - 18;
+        if (Math.abs(diff) > 5) window.scrollTo({ top: getTop(), behavior: 'instant' });
+    });
 }
 
 // =============================================================
@@ -13212,7 +13218,8 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
     const subtotal = document.getElementById('subtotal-price')?.innerText || "$0";
     const shippingFeeText = document.getElementById('shipping-fee')?.innerText || "$0";
     const grandTotalText = document.getElementById('grand-total')?.innerText || "$0";
-    const discountText = "$0"; 
+    // 表單 I 欄只記錄會員/商品折扣，不含優惠券。
+    const discountText = document.getElementById('discount-price')?.innerText || '$0'; 
     const couponPayload=typeof eyelashCouponPayload==='function'?eyelashCouponPayload():null;
     const couponMoneyAmount=eyelashCouponState.money?Math.min(couponPayload.subtotal,Number(eyelashCouponState.money.amount)||0):0;
     const couponShippingAmount=eyelashCouponState.shipping?Math.min(100,(Number(shippingFeeText.replace(/[^0-9]/g,''))||0)):0;
@@ -13352,10 +13359,16 @@ if (typeof mockOrderDatabase !== 'undefined') {
 // 12. 頁面平滑跳轉功能
 // =============================================================
 function scrollToOrderForm() {
-    const orderForm = document.getElementById('order-form') || document.getElementById('name');
-    if (orderForm) {
-        orderForm.scrollIntoView({ behavior: 'smooth' });
-    }
+    // 直接定位收件資料卡片的頂端；避免平滑捲動被 sticky 購物車或重新排版打斷。
+    const target = document.querySelector('.mobile-order-form-card') || document.getElementById('order-form');
+    if (!target) return;
+    const getTop = () => Math.max(0, window.scrollY + target.getBoundingClientRect().top - 18);
+    window.scrollTo({ top: getTop(), behavior: 'instant' });
+    // 排版更新後再次校準，使用者不必點第二次。
+    requestAnimationFrame(() => {
+        const diff = target.getBoundingClientRect().top - 18;
+        if (Math.abs(diff) > 5) window.scrollTo({ top: getTop(), behavior: 'instant' });
+    });
 }
 
 // =============================================================
