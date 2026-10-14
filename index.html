@@ -947,6 +947,23 @@
             #cart-items-container { max-height: 300px; padding-right: 4px; }
         }
 
+
+/* 2026-10-14 手機商品雙欄：套組維持全寬，電腦版不受影響 */
+@media (max-width: 768px) {
+  #main-product-grid.product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
+  #main-product-grid > .product-item { min-width: 0; box-sizing: border-box; padding: 12px 8px; margin: 0; overflow-wrap: anywhere; }
+  #main-product-grid > .product-item:not([data-sub="professional-kit"]):not([data-sub="beauty-professional-kit"]) .product-name { font-size: 13px; line-height: 1.5; }
+  #main-product-grid > .product-item:not([data-sub="professional-kit"]):not([data-sub="beauty-professional-kit"]) .product-price { font-size: 15px; }
+  #main-product-grid > .product-item:not([data-sub="professional-kit"]):not([data-sub="beauty-professional-kit"]) .product-stock { font-size: 11px; margin-bottom: 10px; }
+  #main-product-grid > .product-item:not([data-sub="professional-kit"]):not([data-sub="beauty-professional-kit"]) .boss-product-photo { height: 120px; max-width: 100%; object-fit: contain; }
+  #main-product-grid > .product-item:not([data-sub="professional-kit"]):not([data-sub="beauty-professional-kit"]) .lash-variant-container { padding: 7px 5px; margin: 7px 0; }
+  #main-product-grid > .product-item:not([data-sub="professional-kit"]):not([data-sub="beauty-professional-kit"]) .spec-btn { font-size: 10px; padding: 5px 6px; }
+  #main-product-grid > .product-item:not([data-sub="professional-kit"]):not([data-sub="beauty-professional-kit"]) .quantity-selector { max-width: 100%; }
+  #main-product-grid > .product-item:not([data-sub="professional-kit"]):not([data-sub="beauty-professional-kit"]) .btn { padding: 11px 4px; font-size: 12px; letter-spacing: 0; white-space: normal; }
+  #main-product-grid > .product-item[data-sub="professional-kit"],
+  #main-product-grid > .product-item[data-sub="beauty-professional-kit"] { grid-column: 1 / -1 !important; padding: 20px; }
+}
+
 </style>
 </head>
 <body>
@@ -13647,8 +13664,18 @@ function mobileQuickGo(where) {
     };
     const target=document.querySelector(selectors[where]);
     if (target) {
-        target.scrollIntoView({behavior:'smooth',block:'start'});
-        if (where==='search') setTimeout(()=>target.focus({preventScroll:true}),350);
+        // 手機商品清單很長時，smooth 捲動可能被瀏覽器中斷；改為精準定位。
+        // 商品明細直接定位到標題，避免整張卡片被錯誤對齊。
+        const destination = where === 'cart'
+            ? (target.querySelector('.cart-title-row') || target)
+            : target;
+        const offset = 12;
+        const jump = () => {
+            const y = window.pageYOffset + destination.getBoundingClientRect().top - offset;
+            window.scrollTo({top: Math.max(0, y), behavior: 'instant'});
+        };
+        requestAnimationFrame(() => requestAnimationFrame(jump));
+        if (where==='search') setTimeout(()=>target.focus({preventScroll:true}),100);
     }
 }
 document.addEventListener('click',function(e){
