@@ -13328,7 +13328,9 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
         formData.append("entry.476162635", paymentMethod);      
         formData.append("entry.1954918173", companyTitle);      
         formData.append("entry.10145728", taxId);               
-        formData.append("entry.394405044", orderNotes+couponMarker+(typeof bossGiftOrderMarker === "function" ? bossGiftOrderMarker() : ""));
+        formData.append("entry.394405044", orderNotes + couponMarker);
+        // 滿額贈直接送到 Google 表單獨立題目，不再寫入訂單備註。
+        formData.append("entry.873435827", typeof bossGiftSubmissionValue === "function" ? bossGiftSubmissionValue() : "");
 
         fetch(googleFormUrl, {
             method: "POST",
@@ -13859,7 +13861,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     <div id="boss-gift-summary" class="boss-gift-summary"></div>
     <div id="boss-gift-tiers"></div>
     <div id="boss-gift-status"></div>
-    <div class="boss-gift-actions"><button type="button" onclick="bossGiftClear()">清除選擇</button><button type="button" onclick="bossGiftDecline()">不需要贈品</button><button class="primary" type="button" onclick="bossGiftClose()">確認贈品</button></div>
+    <div class="boss-gift-actions"><button type="button" onclick="bossGiftClear()">清除選擇</button><button type="button" onclick="bossGiftDecline()">不需要滿額贈品</button><button class="primary" type="button" onclick="bossGiftClose()">確認贈品</button></div>
   </div>
 </div>
 
@@ -13888,13 +13890,14 @@ window.addEventListener('DOMContentLoaded',()=>{
   add(5000,'DA3','極淨精粹雙效卸妝液／30ml');
   [['賦活露','亮肌因活膚系列'],['煥亮精華','亮肌因活膚系列'],['熬夜霜','亮肌因活膚系列'],['緊顏露','奇肌胜肽逆齡系列'],['緊顏精華','奇肌胜肽逆齡系列'],['撫紋眼霜','奇肌胜肽逆齡系列'],['貴婦霜','奇肌胜肽逆齡系列'],['黃金膠囊50入','奇肌胜肽逆齡系列']].forEach(([name,series],i)=>add(6000,'無限奇肌-'+(i+1),series+'／'+name));
   const chosen={};
+  let giftDeclined=false;
   // 與優惠券相同：只有已登入的一般會員與三種 VIP 可使用滿額贈。
   const giftAllowed=()=>typeof bossCouponIsEligible==='function' && bossCouponIsEligible();
   function syncGiftEligibility(){
     const panel=document.getElementById('boss-gift-checkout');
     const allowed=giftAllowed();
     if(panel)panel.style.display=allowed?'':'none';
-    if(!allowed){Object.keys(chosen).forEach(k=>delete chosen[k]);visited=false;
+    if(!allowed){Object.keys(chosen).forEach(k=>delete chosen[k]);giftDeclined=false;visited=false;
       const overlay=document.getElementById('boss-gift-overlay');
       if(overlay?.classList.contains('open')){overlay.classList.remove('open');document.body.style.overflow='';}
     }
@@ -13933,7 +13936,7 @@ window.addEventListener('DOMContentLoaded',()=>{
           if(spent()+(next-prev)*tier>available()){
             alert('贈品額度不足，請調整數量。');input.value=prev;return;
           }
-          if(next)chosen[g.id]=next;else delete chosen[g.id];update();
+          if(next){chosen[g.id]=next;giftDeclined=false;}else delete chosen[g.id];update();
         });
         row.append(name,input);section.appendChild(row);
       });container.appendChild(section);
@@ -13948,18 +13951,23 @@ window.addEventListener('DOMContentLoaded',()=>{
     document.body.style.overflow='hidden';
   };
   window.bossGiftClose=function(){getEl('boss-gift-overlay')?.classList.remove('open');document.body.style.overflow='';update();};
-  window.bossGiftClear=function(){Object.keys(chosen).forEach(k=>delete chosen[k]);build();};
+  window.bossGiftClear=function(){Object.keys(chosen).forEach(k=>delete chosen[k]);giftDeclined=false;build();};
   window.bossGiftDecline=function(){
     if(!window.confirm('確定本次訂單不需要滿額贈品嗎？'))return;
     Object.keys(chosen).forEach(k=>delete chosen[k]);
+    giftDeclined=true;
     bossGiftClose();
   };
-  window.bossGiftOrderMarker=function(){
-    if(!syncGiftEligibility())return "";
+  // 回傳給表單獨立欄位；未達門檻或非一般/VIP會員時保持空白。
+  window.bossGiftSubmissionValue=function(){
+    if(!syncGiftEligibility() || available()<1000)return '';
     if(spent()>available())throw new Error('滿額贈額度超出可用金額，請重新選擇贈品');
     const lines=gifts.filter(g=>chosen[g.id]).map(g=>g.id+' '+g.name+' ×'+chosen[g.id]);
-    return lines.length?'\n【滿額贈品】\n'+lines.join('\n'):'';
+    if(lines.length)return lines.join('\n');
+    return giftDeclined?'不需要滿額贈品':'';
   };
+  // 相容其他舊呼叫；不再將贈品文字寫進備註。
+  window.bossGiftOrderMarker=function(){return '';};
   window.bossGiftValidate=function(){
     if(!syncGiftEligibility())return true;
     if(spent()>available()){alert('滿額贈額度已超出資格金額，請重新選擇贈品。');bossGiftOpen(true);return false;}
