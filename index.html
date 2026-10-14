@@ -13328,7 +13328,10 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
         formData.append("entry.476162635", paymentMethod);      
         formData.append("entry.1954918173", companyTitle);      
         formData.append("entry.10145728", taxId);               
-        formData.append("entry.394405044", orderNotes + couponMarker);
+        const promoGiftResult=typeof bossPromoGiftPayload==='function'?bossPromoGiftPayload():{ok:true,items:[]};
+        // 此欄沿用現有表單「備註」，由後台分離至「優惠活動紀錄」；不影響商品明細與金額。
+        const promoGiftMarker=promoGiftResult.ok&&promoGiftResult.items.length?'\n【優惠活動贈品】'+JSON.stringify(promoGiftResult.items):'';
+        formData.append("entry.394405044", orderNotes + couponMarker + promoGiftMarker);
         // 滿額贈直接送到 Google 表單獨立題目，不再寫入訂單備註。
         formData.append("entry.873435827", typeof bossGiftSubmissionValue === "function" ? bossGiftSubmissionValue() : "");
 
@@ -14040,46 +14043,30 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 
 <script>
-// V3 贈品選擇互動測試：只記錄選擇，不更改正式結帳及庫存。
+// V4 活動贈品：原價分組、會員限制、自選/自動、送單前確認。
 (function(){
-  const api='https://script.google.com/macros/s/AKfycbxz6vwBoJznRPoJy7-ldlbdpSPwL1736tGqxZGPEHcTo5W2mm3kqUTvWRCfKJm-N9Oz/exec?action=promotions';
-  let promotions=[];
-  const picks={};
-  function priceFor(id){const x=typeof productConfig!=='undefined'&&productConfig[id];return x?Number(x._originPrice||x.originPrice||x.originalPrice||x.basePrice||x.price):NaN;}
-  function countFor(id){let q=0;if(typeof cart==='undefined')return q;for(const [k,n] of Object.entries(cart))if(k===id||k.startsWith(id+'_'))q+=Number(n)||0;return q;}
-  function render(){
-    const host=document.getElementById('boss-promo-eligibility');if(!host)return;host.replaceChildren();
-    const head=document.createElement('strong');head.textContent='活動贈品選擇測試（尚未寫入訂單）';host.append(head);
-    let shown=0;
-    for(const p of promotions){if(p.type!=='買X送Y')continue;
-      const groups=new Map();
-      for(const r of p.products||[]){const id=String(r.product_id||'').trim(),price=priceFor(id);if(!id||!Number.isFinite(price)||price<=0)continue;
-        const g=groups.get(price)||{qty:0,buy:Number(r.buy_qty)||0,gift:Number(r.gift_qty)||0,options:[]};g.qty+=countFor(id);g.options.push(r);groups.set(price,g);
-      }
-      for(const [price,g] of groups){if(!g.buy||!g.gift||!g.qty)continue;
-        const allowance=Math.floor(g.qty/g.buy)*g.gift;shown++;
-        const wrap=document.createElement('div');wrap.style.cssText='padding:12px 0;border-top:1px solid #eee';
-        const desc=document.createElement('div');desc.textContent=`${p.name}｜原價 $${price}｜已購 ${g.qty} 件｜可選 ${allowance} 件`;wrap.append(desc);
-        if(allowance&&p.gift_mode==='客人自選'){
-          const key=p.id+'|'+price,selected=(picks[key]||[]).slice(0,allowance);picks[key]=selected;
-          for(let i=0;i<allowance;i++){
-            const sel=document.createElement('select');sel.style.cssText='max-width:100%;width:320px;margin:6px 0;padding:9px;border:1px solid #ddd;border-radius:6px';
-            const empty=document.createElement('option');empty.value='';empty.textContent=`選擇第 ${i+1} 件贈品（測試）`;sel.append(empty);
-            for(const r of g.options){const op=document.createElement('option');op.value=r.product_id;op.textContent=r.product_name||r.product_id;sel.append(op);}
-            sel.value=selected[i]||'';sel.addEventListener('change',()=>{selected[i]=sel.value;picks[key]=selected;});wrap.append(sel);
-          }
-          const tip=document.createElement('div');tip.style.color='#a56c61';tip.textContent='此版本尚未核對贈品規格及即時庫存，選擇不會寫入訂單。';wrap.append(tip);
-        }else if(allowance&&p.gift_mode==='自動贈送'){
-          const tip=document.createElement('div');tip.textContent='自動贈送資格已成立；實際贈品加入訂單功能尚未啟用。';wrap.append(tip);
-        }
-        host.append(wrap);
-      }
-    }
-    if(!shown){const d=document.createElement('div');d.textContent='購物車尚無符合活動的商品';host.append(d);}
-  }
-  const host=document.getElementById('boss-promo-test');if(host){const d=document.createElement('div');d.id='boss-promo-eligibility';d.style.cssText='background:#fff;border:1px solid #eee;border-radius:10px;margin-top:8px;padding:12px;font-size:13px;line-height:1.8';host.append(d);}
-  fetch(api).then(r=>r.json()).then(d=>{promotions=Array.isArray(d.promotions)?d.promotions:[];render();}).catch(e=>console.error('活動讀取失敗',e));
-  document.addEventListener('click',e=>{if(e.target.closest('#boss-promo-eligibility'))return;setTimeout(render,100);});render();
+'use strict';
+const api='https://script.google.com/macros/s/AKfycbxz6vwBoJznRPoJy7-ldlbdpSPwL1736tGqxZGPEHcTo5W2mm3kqUTvWRCfKJm-N9Oz/exec?action=promotions';
+let promotions=[],ready=false,loadError=false;
+const picks={};
+function priceFor(id){const x=typeof productConfig!=='undefined'&&productConfig[id];return x?Number(x._originPrice||x.originPrice||x.originalPrice||x.basePrice||x.price):NaN;}
+function countFor(id){let q=0;if(typeof cart==='undefined')return q;for(const [k,n] of Object.entries(cart))if(k===id||k.startsWith(id+'_'))q+=Number(n)||0;return q;}
+function level(){return (typeof deptIsLoggedIn!=='undefined'&&deptIsLoggedIn&&typeof deptMemberData!=='undefined'&&deptMemberData)?String(deptMemberData.member_level||'').trim():'一般會員';}
+function eligible(p){let levels=String(p.member_levels||'').trim();return !levels||levels==='全部會員'||levels==='全部'||levels.split(/[,，、;；\/\n]+/).map(s=>s.trim()).includes(level());}
+function giftGroups(){const out=[];for(const p of promotions){if(p.type!=='買X送Y'||!eligible(p))continue;const groups=new Map();for(const r of p.products||[]){const id=String(r.product_id||'').trim(),price=priceFor(id),x=Number(r.buy_qty),y=Number(r.gift_qty);if(!id||!Number.isFinite(price)||price<=0||!Number.isInteger(x)||x<1||!Number.isInteger(y)||y<1)continue;const key=price+'|'+x+'|'+y;let g=groups.get(key);if(!g){g={p,price,x,y,qty:0,options:[]};groups.set(key,g);}g.qty+=countFor(id);g.options.push(r);}for(const g of groups.values()){g.allowance=Math.floor(g.qty/g.x)*g.y;if(g.allowance)out.push(g);}}return out;}
+function key(g){return g.p.id+'|'+g.price+'|'+g.x+'|'+g.y;}
+function render(){const host=document.getElementById('boss-promo-eligibility');if(!host)return;host.replaceChildren();const head=document.createElement('strong');head.textContent='🎁 活動贈品選擇';host.append(head);if(loadError){host.append(document.createTextNode('活動資料讀取失敗，請重新整理後再測試。'));return;}if(!ready){host.append(document.createTextNode('正在讀取活動…'));return;}const groups=giftGroups();if(!groups.length){host.append(document.createElement('div')).textContent='目前購物車沒有符合買送資格的商品。';return;}
+for(const g of groups){const k=key(g),w=document.createElement('div');w.style.cssText='padding:12px 0;border-top:1px solid #eee';const title=document.createElement('div');title.textContent=`${g.p.name}｜原價 $${g.price}｜已購 ${g.qty} 件｜可領 ${g.allowance} 件`;w.append(title);let selections=(picks[k]||[]).slice(0,g.allowance);picks[k]=selections;
+if(g.p.gift_mode==='客人自選')for(let i=0;i<g.allowance;i++){const sel=document.createElement('select');sel.style.cssText='display:block;width:min(100%,440px);padding:9px;margin:7px 0;border:1px solid #ddd;border-radius:7px';const blank=document.createElement('option');blank.value='';blank.textContent=`請選擇第 ${i+1} 件贈品`;sel.append(blank);for(const r of g.options){const op=document.createElement('option');op.value=r.product_id;op.textContent=r.product_name||r.product_id;sel.append(op);}sel.value=selections[i]||'';sel.onchange=()=>{selections[i]=sel.value;picks[k]=selections;};w.append(sel);}
+else if(g.p.gift_mode==='自動贈送'){const d=document.createElement('div');d.textContent='系統依活動指定贈品自動帶入（下單前將再次確認）。';w.append(d);}else{const d=document.createElement('div');d.textContent='活動未設定有效贈品方式，暫時不能領取。';w.append(d);}host.append(w);}}
+function selected(){if(!ready||loadError)return {ok:false,message:'活動資料尚未讀取完成'};const result=[];for(const g of giftGroups()){const k=key(g),ids=g.p.gift_mode==='客人自選'?(picks[k]||[]).slice(0,g.allowance):g.p.gift_mode==='自動贈送'?Array(g.allowance).fill(g.options[0]?.gift_id||g.options[0]?.product_id):[];if(ids.length!==g.allowance||ids.some(id=>!id))return {ok:false,message:`「${g.p.name}」原價 $${g.price}，請選滿 ${g.allowance} 件贈品。`};for(const id of ids){const r=g.options.find(x=>String(x.product_id)===String(id)||String(x.gift_id)===String(id));if(!r)return {ok:false,message:'活動贈品不在指定商品清單內'};if(g.p.gift_mode==='自動贈送'&&r.gift_id&&priceFor(r.gift_id)!==g.price)return {ok:false,message:'自動贈品原價不符，請檢查活動設定'};result.push({activity:g.p.id,activity_name:g.p.name,id:String(id),name:r.gift_id===id&&r.gift_name?r.gift_name:r.product_name,original_price:g.price,qty:1});}}return {ok:true,items:result};}
+window.bossPromoGiftPayload=function(){return selected();};
+const oldSubmit=window.submitOrder;
+if(typeof oldSubmit==='function')window.submitOrder=function(){const v=selected();if(!v.ok){alert('活動贈品：'+v.message);document.getElementById('boss-promo-eligibility')?.scrollIntoView({behavior:'smooth',block:'center'});return;}return oldSubmit.apply(this,arguments);};
+const host=document.getElementById('boss-promo-test');if(host){const d=document.createElement('div');d.id='boss-promo-eligibility';d.style.cssText='background:#fff;border:1px solid #eee;border-radius:10px;margin-top:8px;padding:12px;font-size:13px;line-height:1.8';host.append(d);}
+fetch(api).then(r=>r.json()).then(d=>{if(d.status!=='success'||!Array.isArray(d.promotions))throw Error(d.message||'資料格式錯誤');promotions=d.promotions;ready=true;render();}).catch(e=>{loadError=true;render();console.error('活動讀取失敗',e);});
+document.addEventListener('click',e=>{if(e.target.closest('#boss-promo-eligibility'))return;setTimeout(render,120);});
+render();
 })();
 </script>
 </body>
