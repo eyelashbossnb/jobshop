@@ -13998,5 +13998,45 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.addEventListener('click',()=>setTimeout(syncGiftEligibility,0));
 })();
 </script>
+
+<!-- 睫老闆優惠活動：第一階段串接測試（僅顯示，不影響結帳） -->
+<style>
+#boss-promo-test{max-width:1200px;margin:16px auto;padding:0 20px;box-sizing:border-box}
+#boss-promo-test .boss-promo-box{background:#fff;border:1px solid #f1eae4;border-radius:14px;padding:18px;color:#4a3f35}
+#boss-promo-test .boss-promo-heading{font-weight:700;margin-bottom:8px}
+#boss-promo-test .boss-promo-card{padding:10px 0;border-top:1px solid #f1eae4;font-size:13px;line-height:1.7}
+#boss-promo-test .boss-promo-muted{font-size:12px;color:#8a7e72}
+</style>
+<section id="boss-promo-test" aria-label="限時優惠活動"><div class="boss-promo-box"><div class="boss-promo-heading">🎁 限時優惠活動</div><div id="boss-promo-test-result" class="boss-promo-muted">正在讀取活動資料…</div></div></section>
+<script>
+(function(){
+  // 請使用「已部署最新版優惠活動後台」的 Apps Script /exec 網址。
+  // 若訂單查詢網址仍指向舊版部署，請修改此常數。
+  const PROMO_API_URL = 'https://script.google.com/macros/s/AKfycbzGS2QhX4G_hVVSWytGN8_46YFoLn_GwwCnrwcS9JdkWcFtQQeSBo-iKGxaGQgAQdPC/exec';
+  const target=document.getElementById('boss-promo-test-result');
+  function line(text,klass){const d=document.createElement('div');d.className=klass||'';d.textContent=text;return d;}
+  async function loadPromos(){
+    try{
+      const url=PROMO_API_URL+(PROMO_API_URL.includes('?')?'&':'?')+'action=promotions';
+      const response=await fetch(url,{method:'GET',redirect:'follow'});
+      if(!response.ok)throw Error('HTTP '+response.status);
+      const data=await response.json();
+      if(data.status!=='success'||!Array.isArray(data.promotions))throw Error(data.message||'後台未回傳優惠活動資料');
+      target.replaceChildren();
+      if(!data.promotions.length){target.append(line('目前沒有進行中的優惠活動。'));return;}
+      data.promotions.forEach(p=>{
+        const box=line('','boss-promo-card');
+        box.append(line(p.name||p.id));
+        if(p.type)box.append(line('活動類型：'+p.type,'boss-promo-muted'));
+        if(p.message)box.append(line(p.message,'boss-promo-muted'));
+        if(p.description)box.append(line(p.description,'boss-promo-muted'));
+        target.append(box);
+      });
+    }catch(err){target.textContent='優惠活動讀取失敗：請確認優惠活動後台已重新部署，並檢查 API 網址。';console.error('優惠活動讀取錯誤',err);}
+  }
+  loadPromos();
+})();
+</script>
+
 </body>
 </html>
