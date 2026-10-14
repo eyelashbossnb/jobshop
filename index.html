@@ -1021,6 +1021,14 @@
     </button>
 </nav>
 
+<style id="boss-promo-v5-layout">
+#boss-promo-test{max-width:1200px;margin:22px auto 0;padding:0 20px;box-sizing:border-box}
+#boss-promo-eligibility.boss-promo-gift-inline{margin:16px 0 10px;padding:16px;background:#fffbf9;border:1px solid #f1eae4;border-radius:12px;color:#4a3f35;font-size:13px;line-height:1.8}
+#boss-promo-eligibility.boss-promo-gift-inline:empty{display:none}
+#boss-promo-eligibility select{display:block;width:100%;max-width:100%;box-sizing:border-box;margin:8px 0;padding:10px;border:1px solid #e9ded7;border-radius:8px;background:white;color:#4a3f35}
+@media(max-width:768px){#boss-promo-test{margin:14px auto 0;padding:0 14px}#boss-promo-eligibility.boss-promo-gift-inline{padding:12px}}
+</style>
+<section id="boss-promo-test" aria-label="限時優惠活動"><div class="boss-promo-box"><div class="boss-promo-heading">🎁 限時優惠活動</div><div id="boss-promo-test-result" class="boss-promo-muted">正在讀取活動資料…</div></div></section>
 <main class="main-container">
     <div>
         <!-- 🆕 特大尊榮美業雙電子型錄區塊 -->
@@ -1072,7 +1080,7 @@
             
             <div class="category-container">
                 <button class="category-tab active" onclick="selectCategory('all', this); toggleSaleMenu(false);">全部商品</button>
-                <button class="category-tab" onclick="selectCategory('event', this); toggleSaleMenu(false);">活動專區</button>
+                
                 <button class="category-tab" onclick="selectCategory('eyelash', this); toggleSaleMenu(false);">睫毛款式專區</button>
                 <button class="category-tab" onclick="selectCategory('perimeter', this); toggleSaleMenu(false);">美睫周邊</button>
                 <button class="category-tab" onclick="selectCategory('wax', this); toggleSaleMenu(false);">頂級熱蠟</button>
@@ -9436,6 +9444,7 @@
                 <div class="empty-cart-text">購物車目前是空的</div>
             </div>
             
+            <div id="boss-promo-eligibility" class="boss-promo-gift-inline" aria-live="polite"></div>
             <div class="summary-block">
                 <div class="summary-line">
                     <span>商品總數量</span>
@@ -14010,7 +14019,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 #boss-promo-test .boss-promo-card{padding:10px 0;border-top:1px solid #f1eae4;font-size:13px;line-height:1.7}
 #boss-promo-test .boss-promo-muted{font-size:12px;color:#8a7e72}
 </style>
-<section id="boss-promo-test" aria-label="限時優惠活動"><div class="boss-promo-box"><div class="boss-promo-heading">🎁 限時優惠活動</div><div id="boss-promo-test-result" class="boss-promo-muted">正在讀取活動資料…</div></div></section>
+
 <script>
 (function(){
   // 請使用「已部署最新版優惠活動後台」的 Apps Script /exec 網址。
@@ -14055,7 +14064,7 @@ function level(){return (typeof deptIsLoggedIn!=='undefined'&&deptIsLoggedIn&&ty
 function eligible(p){let levels=String(p.member_levels||'').trim();return !levels||levels==='全部會員'||levels==='全部'||levels.split(/[,，、;；\/\n]+/).map(s=>s.trim()).includes(level());}
 function giftGroups(){const out=[];for(const p of promotions){if(p.type!=='買X送Y'||!eligible(p))continue;const groups=new Map();for(const r of p.products||[]){const id=String(r.product_id||'').trim(),price=priceFor(id),x=Number(r.buy_qty),y=Number(r.gift_qty);if(!id||!Number.isFinite(price)||price<=0||!Number.isInteger(x)||x<1||!Number.isInteger(y)||y<1)continue;const key=price+'|'+x+'|'+y;let g=groups.get(key);if(!g){g={p,price,x,y,qty:0,options:[]};groups.set(key,g);}g.qty+=countFor(id);g.options.push(r);}for(const g of groups.values()){g.allowance=Math.floor(g.qty/g.x)*g.y;if(g.allowance)out.push(g);}}return out;}
 function key(g){return g.p.id+'|'+g.price+'|'+g.x+'|'+g.y;}
-function render(){const host=document.getElementById('boss-promo-eligibility');if(!host)return;host.replaceChildren();const head=document.createElement('strong');head.textContent='🎁 活動贈品選擇';host.append(head);if(loadError){host.append(document.createTextNode('活動資料讀取失敗，請重新整理後再測試。'));return;}if(!ready){host.append(document.createTextNode('正在讀取活動…'));return;}const groups=giftGroups();if(!groups.length){host.append(document.createElement('div')).textContent='目前購物車沒有符合買送資格的商品。';return;}
+function render(){const host=document.getElementById('boss-promo-eligibility');if(!host)return;host.replaceChildren();const head=document.createElement('strong');head.textContent='🎁 活動贈品';host.append(head);if(loadError){host.append(document.createTextNode('活動資料讀取失敗，請重新整理後再測試。'));return;}if(!ready){host.append(document.createTextNode('正在讀取活動…'));return;}const groups=giftGroups();if(!groups.length){host.append(document.createElement('div')).textContent='目前購物車沒有符合買送資格的商品。';return;}
 for(const g of groups){const k=key(g),w=document.createElement('div');w.style.cssText='padding:12px 0;border-top:1px solid #eee';const title=document.createElement('div');title.textContent=`${g.p.name}｜原價 $${g.price}｜已購 ${g.qty} 件｜可領 ${g.allowance} 件`;w.append(title);let selections=(picks[k]||[]).slice(0,g.allowance);picks[k]=selections;
 if(g.p.gift_mode==='客人自選')for(let i=0;i<g.allowance;i++){const sel=document.createElement('select');sel.style.cssText='display:block;width:min(100%,440px);padding:9px;margin:7px 0;border:1px solid #ddd;border-radius:7px';const blank=document.createElement('option');blank.value='';blank.textContent=`請選擇第 ${i+1} 件贈品`;sel.append(blank);for(const r of g.options){const op=document.createElement('option');op.value=r.product_id;op.textContent=r.product_name||r.product_id;sel.append(op);}sel.value=selections[i]||'';sel.onchange=()=>{selections[i]=sel.value;picks[k]=selections;};w.append(sel);}
 else if(g.p.gift_mode==='自動贈送'){const d=document.createElement('div');d.textContent='系統依活動指定贈品自動帶入（下單前將再次確認）。';w.append(d);}else{const d=document.createElement('div');d.textContent='活動未設定有效贈品方式，暫時不能領取。';w.append(d);}host.append(w);}}
@@ -14063,7 +14072,7 @@ function selected(){if(!ready||loadError)return {ok:false,message:'活動資料�
 window.bossPromoGiftPayload=function(){return selected();};
 const oldSubmit=window.submitOrder;
 if(typeof oldSubmit==='function')window.submitOrder=function(){const v=selected();if(!v.ok){alert('活動贈品：'+v.message);document.getElementById('boss-promo-eligibility')?.scrollIntoView({behavior:'smooth',block:'center'});return;}return oldSubmit.apply(this,arguments);};
-const host=document.getElementById('boss-promo-test');if(host){const d=document.createElement('div');d.id='boss-promo-eligibility';d.style.cssText='background:#fff;border:1px solid #eee;border-radius:10px;margin-top:8px;padding:12px;font-size:13px;line-height:1.8';host.append(d);}
+
 fetch(api).then(r=>r.json()).then(d=>{if(d.status!=='success'||!Array.isArray(d.promotions))throw Error(d.message||'資料格式錯誤');promotions=d.promotions;ready=true;render();}).catch(e=>{loadError=true;render();console.error('活動讀取失敗',e);});
 document.addEventListener('click',e=>{if(e.target.closest('#boss-promo-eligibility'))return;setTimeout(render,120);});
 render();
