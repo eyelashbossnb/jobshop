@@ -13924,7 +13924,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     const container=getEl('boss-gift-tiers');if(!container)return;
     container.replaceChildren();
     [1000,2000,3000,4000,5000,6000].forEach(tier=>{
-      const section=document.createElement('details');section.className='boss-gift-tier';section.open=tier===1000;
+      const section=document.createElement('details');section.className='boss-gift-tier';section.open=false;
       const head=document.createElement('summary');head.textContent='滿 '+money(tier)+'｜贈品任選一件（每件使用 '+money(tier)+' 額度）';section.appendChild(head);
       gifts.filter(g=>g.tier===tier).forEach(g=>{
         const row=document.createElement('div');row.className='boss-gift-item';
