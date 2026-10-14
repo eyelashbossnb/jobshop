@@ -14038,5 +14038,39 @@ window.addEventListener('DOMContentLoaded',()=>{
 })();
 </script>
 
+
+<script>
+// 活動買送資格預覽（不更動購物車金額、不自動加入贈品；防止測試階段錯算實收）
+(function(){
+  const api='https://script.google.com/macros/s/AKfycbxz6vwBoJznRPoJy7-ldlbdpSPwL1736tGqxZGPEHcTo5W2mm3kqUTvWRCfKJm-N9Oz/exec?action=promotions';
+  let promotions=[];
+  function render(){
+    const host=document.getElementById('boss-promo-eligibility');if(!host)return;
+    if(typeof cart==='undefined'||typeof productConfig==='undefined'){host.textContent='購物車資料尚未載入';return;}
+    const out=[];
+    for(const p of promotions){if(p.type!=='買X送Y')continue;
+      const rules=p.products||[];const groups={};
+      for(const rule of rules){const key=String(rule.product_id||'').trim();if(!key)continue;
+        const base=productConfig[key];if(!base)continue;
+        const price=Number(base._originPrice||base.originPrice||base.originalPrice||base.basePrice||base.price);
+        if(!Number.isFinite(price)||price<=0)continue;
+        let qty=0;for(const [sku,n] of Object.entries(cart)){if(sku===key||sku.startsWith(key+'_'))qty+=Number(n)||0;}
+        if(!qty)continue;
+        const g=groups[price]||(groups[price]={qty:0,buy:Number(rule.buy_qty)||0,gift:Number(rule.gift_qty)||0});g.qty+=qty;
+      }
+      for(const [price,g] of Object.entries(groups)){if(!g.buy||!g.gift)continue;const free=Math.floor(g.qty/g.buy)*g.gift;
+        out.push(p.name+'｜原價 $'+price+'：已購 '+g.qty+' 件，可獲 '+free+' 件活動贈品');
+      }
+    }
+    host.replaceChildren();const head=document.createElement('strong');head.textContent='活動資格預覽（尚未套用結帳）';host.append(head);
+    if(!out.length){const d=document.createElement('div');d.textContent='購物車尚無符合活動的商品';host.append(d);}
+    else out.forEach(t=>{const d=document.createElement('div');d.textContent=t;host.append(d);});
+  }
+  fetch(api).then(r=>r.json()).then(d=>{promotions=Array.isArray(d.promotions)?d.promotions:[];render();}).catch(()=>{});
+  document.addEventListener('click',()=>setTimeout(render,80));
+  const host=document.getElementById('boss-promo-test');if(host){const d=document.createElement('div');d.id='boss-promo-eligibility';d.style.cssText='background:#fff;border:1px solid #eee;border-radius:10px;margin-top:8px;padding:12px;font-size:13px;line-height:1.8';host.append(d);}
+  render();
+})();
+</script>
 </body>
 </html>
