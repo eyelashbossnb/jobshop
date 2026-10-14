@@ -964,6 +964,29 @@
   #main-product-grid > .product-item[data-sub="beauty-professional-kit"] { grid-column: 1 / -1 !important; padding: 20px; }
 }
 
+
+/* 結帳滿額贈彈窗 */
+#boss-gift-overlay{position:fixed;inset:0;z-index:2500;background:rgba(48,40,37,.58);display:none;align-items:center;justify-content:center;padding:14px;box-sizing:border-box}
+#boss-gift-overlay.open{display:flex}
+.boss-gift-dialog{background:#fffdfb;width:min(720px,100%);max-height:92dvh;overflow:auto;border-radius:20px;padding:22px;box-sizing:border-box;box-shadow:0 15px 45px #0003;color:#4a3f35}
+.boss-gift-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.boss-gift-heading h2{font-size:21px;margin:0}
+.boss-gift-heading button{border:0;background:transparent;font-size:27px;cursor:pointer;color:#6c625c}
+.boss-gift-summary{background:#faf4f0;border-radius:12px;padding:13px 15px;line-height:1.9;font-size:14px;margin-bottom:14px}
+.boss-gift-tier{border:1px solid #eaded8;border-radius:13px;margin:12px 0;overflow:hidden}
+.boss-gift-tier summary{cursor:pointer;padding:13px 15px;font-weight:700;background:#f9f6f3;list-style:none}
+.boss-gift-tier summary::-webkit-details-marker{display:none}
+.boss-gift-tier summary::after{content:'＋';float:right}
+.boss-gift-tier[open] summary::after{content:'－'}
+.boss-gift-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-top:1px solid #f0e8e3;font-size:13px}
+.boss-gift-item span{flex:1;min-width:0;line-height:1.6}
+.boss-gift-item input{width:62px;max-width:28%;padding:8px;border:1px solid #dfd0c7;border-radius:8px;text-align:center;font-size:14px}
+.boss-gift-actions{position:sticky;bottom:-22px;background:#fffdfb;padding:13px 0 2px;display:flex;gap:10px}
+.boss-gift-actions button,.boss-gift-open{padding:11px 15px;border:1px solid #d5aaa1;background:#fff;border-radius:25px;cursor:pointer;color:#77564f;font-size:13px}
+.boss-gift-actions button.primary{flex:1;background:#e8a598;color:#fff;border-color:#e8a598;font-weight:700}
+#boss-gift-status{font-size:12px;color:#9b665f;margin-top:8px}
+@media(max-width:768px){.boss-gift-dialog{padding:16px}.boss-gift-item{padding:9px}.boss-gift-item input{width:48px}.boss-gift-actions{bottom:-16px}}
+
 </style>
 </head>
 <body>
@@ -9440,6 +9463,11 @@
                 </div>
             </div>
 
+            <div id="boss-gift-checkout" style="margin:18px 0;padding:14px;border:1px solid #efddd7;border-radius:12px;background:#fffaf8;">
+                <div style="font-weight:700;margin-bottom:6px;">🎁 滿額贈品</div>
+                <div id="boss-gift-checkout-text" style="font-size:12px;line-height:1.8;color:#8a7e72;">將依商品金額計算可選贈品額度</div>
+                <button type="button" class="boss-gift-open" onclick="bossGiftOpen(true)" style="margin-top:9px;">選擇／修改贈品</button>
+            </div>
             <div class="shipping-policy-box">
                 <div><strong>🚚 運費優惠規範：</strong></div>
                 <div><span class="policy-tag">滿額免運</span>單筆滿 NT 3,000 元(含)以上享本島/外島常溫與 7-11 免運。</div>
@@ -13300,7 +13328,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
         formData.append("entry.476162635", paymentMethod);      
         formData.append("entry.1954918173", companyTitle);      
         formData.append("entry.10145728", taxId);               
-        formData.append("entry.394405044", orderNotes+couponMarker);
+        formData.append("entry.394405044", orderNotes+couponMarker+(typeof bossGiftOrderMarker === "function" ? bossGiftOrderMarker() : ""));
 
         fetch(googleFormUrl, {
             method: "POST",
@@ -13824,6 +13852,115 @@ window.addEventListener('DOMContentLoaded',()=>{
  if(panel&&target){const container=target.closest('div');(container?.parentElement||target.parentElement).before(panel);}
  bossCouponSyncVisibility();
 });
+</script>
+<div id="boss-gift-overlay" role="dialog" aria-modal="true" aria-label="滿額贈品選擇">
+  <div class="boss-gift-dialog">
+    <div class="boss-gift-heading"><h2>🎁 滿額贈品自由選</h2><button type="button" onclick="bossGiftClose()" aria-label="關閉">×</button></div>
+    <div id="boss-gift-summary" class="boss-gift-summary"></div>
+    <div id="boss-gift-tiers"></div>
+    <div id="boss-gift-status"></div>
+    <div class="boss-gift-actions"><button type="button" onclick="bossGiftClear()">清除選擇</button><button type="button" onclick="bossGiftClose()">暫不選擇</button><button class="primary" type="button" onclick="bossGiftClose()">確認贈品</button></div>
+  </div>
+</div>
+
+<script>
+/* 睫老闆 2026/03/01 起滿額贈：跨階段額度累計，結帳選色與後台備註 */
+(function(){
+  const gifts=[];
+  const add=(tier,id,name)=>gifts.push({tier,id,name});
+  [['D19','古銅金'],['D20','玫瑰金'],['D21','珍珠米'],['D22','嬰兒粉'],['D23','焦糖棕'],['D24','魔幻紅'],['D25','蜜糖橘'],['D26','微醺紫']].forEach(([id,c])=>add(1000,id,'奢華優雅抗暈眼影筆／'+c));
+  [['D121','草莓奶昔'],['D122','櫻桃泡泡'],['D123','橙汁甜心'],['D124','魅惑紅酒']].forEach(([id,c])=>add(1000,id,'愛戀保濕潤唇頰筆／'+c));
+  add(2000,'D30','局部橡皮擦修妝筆');
+  add(2000,'D38','假睫毛黏著劑專用卸除液／6ml');
+  add(2000,'D58','Bad Girl 極速成型抗淚眼線液');
+  add(2000,'D60','溫和眼唇卸除液／30ml');
+  [['D81','奢華濃黑'],['D82','甜蜜深棕'],['D83','星緞銀白'],['D84','優雅銀棕'],['D85','搖滾銀黑'],['D86','蜜糖金棕']].forEach(([id,c])=>add(2000,id,'完美持久可削轉式眼膠筆／'+c));
+  add(2000,'東方之綉-眼膠筆-黑','3點定位眉型設計筆／黑');
+  add(2000,'東方之綉-眼膠筆-咖','3點定位眉型設計筆／咖');
+  add(3000,'A52','四效合一深層潔淨卸妝棉／100片');
+  add(3000,'F62','完美呵護私密淨化噴霧／20ml');
+  add(3000,'東方之綉-紋飾修護素','紋飾修護素／10ml');
+  add(4000,'TB4','紋繡唇部去角質霜／10g');
+  add(4000,'TB1','紋繡眉眼唇專用鎖色精華／10ml');
+  add(4000,'TB3','紋繡唇部持久留色修復精華／10入裝');
+  add(5000,'DB2','淨妍晶透雙效洗卸凝膠／150ml');
+  add(5000,'DA1','淨妍雙效保濕卸妝水／230ml');
+  add(5000,'DA3','極淨精粹雙效卸妝液／30ml');
+  [['賦活露','亮肌因活膚系列'],['煥亮精華','亮肌因活膚系列'],['熬夜霜','亮肌因活膚系列'],['緊顏露','奇肌胜肽逆齡系列'],['緊顏精華','奇肌胜肽逆齡系列'],['撫紋眼霜','奇肌胜肽逆齡系列'],['貴婦霜','奇肌胜肽逆齡系列'],['黃金膠囊50入','奇肌胜肽逆齡系列']].forEach(([name,series],i)=>add(6000,'無限奇肌-'+(i+1),series+'／'+name));
+  const chosen={};
+  let visited=false;
+  const money=n=>'$'+Math.floor(n||0).toLocaleString('zh-TW');
+  const available=()=>Math.max(0,Math.floor(Number(window.eyelashGiftEligibleAmount)||0));
+  const spent=()=>gifts.reduce((sum,g)=>sum+g.tier*(chosen[g.id]||0),0);
+  const getEl=id=>document.getElementById(id);
+  function update(){
+    const eligible=available(),used=spent(),remaining=eligible-used;
+    const summary=getEl('boss-gift-summary');
+    if(summary)summary.innerHTML='符合資格商品金額：<b>'+money(eligible)+'</b><br>已選贈品額度：<b>'+money(used)+'</b><br>剩餘可選額度：<b>'+money(remaining)+'</b>';
+    const status=getEl('boss-gift-status');
+    if(status)status.textContent=remaining<0?'已超出可用贈品額度，請減少選擇。':eligible<1000?'未達滿額贈門檻。':'每個滿額階段任選一件；可跨階段、多次選擇，總額度不可超過符合資格金額。';
+    const checkout=getEl('boss-gift-checkout-text');
+    if(checkout){const count=Object.values(chosen).reduce((a,b)=>a+b,0);checkout.textContent='符合資格 '+money(eligible)+'｜已選 '+count+' 件｜已用 '+money(used)+'｜剩餘 '+money(remaining);}
+    gifts.forEach(g=>{const inp=getEl('boss-gift-qty-'+gifts.indexOf(g));if(inp && document.activeElement!==inp)inp.value=chosen[g.id]||0;});
+  }
+  function build(){
+    const container=getEl('boss-gift-tiers');if(!container)return;
+    container.replaceChildren();
+    [1000,2000,3000,4000,5000,6000].forEach(tier=>{
+      const section=document.createElement('details');section.className='boss-gift-tier';section.open=tier===1000;
+      const head=document.createElement('summary');head.textContent='滿 '+money(tier)+'｜贈品任選一件（每件使用 '+money(tier)+' 額度）';section.appendChild(head);
+      gifts.filter(g=>g.tier===tier).forEach(g=>{
+        const row=document.createElement('div');row.className='boss-gift-item';
+        const name=document.createElement('span');name.textContent=g.id+'｜'+g.name;
+        const input=document.createElement('input');input.type='number';input.min='0';input.step='1';input.inputMode='numeric';input.setAttribute('aria-label',g.name+'數量');input.id='boss-gift-qty-'+gifts.indexOf(g);input.value=chosen[g.id]||0;
+        input.addEventListener('change',()=>{
+          const next=Math.max(0,Math.floor(Number(input.value)||0));
+          const prev=chosen[g.id]||0;
+          if(spent()+(next-prev)*tier>available()){
+            alert('贈品額度不足，請調整數量。');input.value=prev;return;
+          }
+          if(next)chosen[g.id]=next;else delete chosen[g.id];update();
+        });
+        row.append(name,input);section.appendChild(row);
+      });container.appendChild(section);
+    });update();
+  }
+  window.bossGiftOpen=function(force){
+    if(typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
+    const overlay=getEl('boss-gift-overlay');if(!overlay)return;
+    if(!force && (visited||available()<1000))return;
+    visited=true;build();overlay.classList.add('open');
+    document.body.style.overflow='hidden';
+  };
+  window.bossGiftClose=function(){getEl('boss-gift-overlay')?.classList.remove('open');document.body.style.overflow='';update();};
+  window.bossGiftClear=function(){Object.keys(chosen).forEach(k=>delete chosen[k]);build();};
+  window.bossGiftOrderMarker=function(){
+    if(spent()>available())throw new Error('滿額贈額度超出可用金額，請重新選擇贈品');
+    const lines=gifts.filter(g=>chosen[g.id]).map(g=>g.id+' '+g.name+' ×'+chosen[g.id]);
+    return lines.length?'\n【滿額贈品】\n'+lines.join('\n'):'';
+  };
+  window.bossGiftValidate=function(){
+    if(spent()>available()){alert('滿額贈額度已超出資格金額，請重新選擇贈品。');bossGiftOpen(true);return false;}
+    return true;
+  };
+  const originalScroll=window.scrollToOrderForm;
+  if(typeof originalScroll==='function')window.scrollToOrderForm=function(){originalScroll.apply(this,arguments);setTimeout(()=>bossGiftOpen(false),120);};
+  const originalQuick=window.mobileQuickGo;
+  if(typeof originalQuick==='function')window.mobileQuickGo=function(where){originalQuick.apply(this,arguments);if(where==='form')setTimeout(()=>bossGiftOpen(false),120);};
+  const originalSubmit=window.submitOrder;
+  if(typeof originalSubmit==='function')window.submitOrder=function(){if(!bossGiftValidate())return;return originalSubmit.apply(this,arguments);};
+  window.addEventListener('DOMContentLoaded',()=>{
+    const overlay=getEl('boss-gift-overlay');overlay?.addEventListener('click',e=>{if(e.target===overlay)bossGiftClose();});
+    const target=getEl('subtotal-price');
+    if(target){new MutationObserver(()=>{
+      if(spent()>available()){
+        // 商品金額下降時先保留已選資料，提醒顧客自行調整，送出時再次驗證。
+        const text=getEl('boss-gift-checkout-text');if(text)text.textContent='⚠️ 商品或優惠券已變動，贈品額度不足，請重新選擇。';
+      }else update();
+    }).observe(target,{childList:true,characterData:true,subtree:true});}
+    update();
+  });
+})();
 </script>
 </body>
 </html>
