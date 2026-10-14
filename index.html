@@ -13859,7 +13859,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     <div id="boss-gift-summary" class="boss-gift-summary"></div>
     <div id="boss-gift-tiers"></div>
     <div id="boss-gift-status"></div>
-    <div class="boss-gift-actions"><button type="button" onclick="bossGiftClear()">清除選擇</button><button type="button" onclick="bossGiftClose()">暫不選擇</button><button class="primary" type="button" onclick="bossGiftClose()">確認贈品</button></div>
+    <div class="boss-gift-actions"><button type="button" onclick="bossGiftClear()">清除選擇</button><button type="button" onclick="bossGiftDecline()">不需要贈品</button><button class="primary" type="button" onclick="bossGiftClose()">確認贈品</button></div>
   </div>
 </div>
 
@@ -13888,12 +13888,26 @@ window.addEventListener('DOMContentLoaded',()=>{
   add(5000,'DA3','極淨精粹雙效卸妝液／30ml');
   [['賦活露','亮肌因活膚系列'],['煥亮精華','亮肌因活膚系列'],['熬夜霜','亮肌因活膚系列'],['緊顏露','奇肌胜肽逆齡系列'],['緊顏精華','奇肌胜肽逆齡系列'],['撫紋眼霜','奇肌胜肽逆齡系列'],['貴婦霜','奇肌胜肽逆齡系列'],['黃金膠囊50入','奇肌胜肽逆齡系列']].forEach(([name,series],i)=>add(6000,'無限奇肌-'+(i+1),series+'／'+name));
   const chosen={};
+  // 與優惠券相同：只有已登入的一般會員與三種 VIP 可使用滿額贈。
+  const giftAllowed=()=>typeof bossCouponIsEligible==='function' && bossCouponIsEligible();
+  function syncGiftEligibility(){
+    const panel=document.getElementById('boss-gift-checkout');
+    const allowed=giftAllowed();
+    if(panel)panel.style.display=allowed?'':'none';
+    if(!allowed){Object.keys(chosen).forEach(k=>delete chosen[k]);visited=false;
+      const overlay=document.getElementById('boss-gift-overlay');
+      if(overlay?.classList.contains('open')){overlay.classList.remove('open');document.body.style.overflow='';}
+    }
+    return allowed;
+  }
+  window.bossGiftSyncEligibility=syncGiftEligibility;
   let visited=false;
   const money=n=>'$'+Math.floor(n||0).toLocaleString('zh-TW');
-  const available=()=>Math.max(0,Math.floor(Number(window.eyelashGiftEligibleAmount)||0));
+  const available=()=>giftAllowed()?Math.max(0,Math.floor(Number(window.eyelashGiftEligibleAmount)||0)):0;
   const spent=()=>gifts.reduce((sum,g)=>sum+g.tier*(chosen[g.id]||0),0);
   const getEl=id=>document.getElementById(id);
   function update(){
+    syncGiftEligibility();
     const eligible=available(),used=spent(),remaining=eligible-used;
     const summary=getEl('boss-gift-summary');
     if(summary)summary.innerHTML='符合資格商品金額：<b>'+money(eligible)+'</b><br>已選贈品額度：<b>'+money(used)+'</b><br>剩餘可選額度：<b>'+money(remaining)+'</b>';
@@ -13926,6 +13940,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     });update();
   }
   window.bossGiftOpen=function(force){
+    if(!syncGiftEligibility())return;
     if(typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
     const overlay=getEl('boss-gift-overlay');if(!overlay)return;
     if(!force && (visited||available()<1000))return;
@@ -13934,12 +13949,19 @@ window.addEventListener('DOMContentLoaded',()=>{
   };
   window.bossGiftClose=function(){getEl('boss-gift-overlay')?.classList.remove('open');document.body.style.overflow='';update();};
   window.bossGiftClear=function(){Object.keys(chosen).forEach(k=>delete chosen[k]);build();};
+  window.bossGiftDecline=function(){
+    if(!window.confirm('確定本次訂單不需要滿額贈品嗎？'))return;
+    Object.keys(chosen).forEach(k=>delete chosen[k]);
+    bossGiftClose();
+  };
   window.bossGiftOrderMarker=function(){
+    if(!syncGiftEligibility())return "";
     if(spent()>available())throw new Error('滿額贈額度超出可用金額，請重新選擇贈品');
     const lines=gifts.filter(g=>chosen[g.id]).map(g=>g.id+' '+g.name+' ×'+chosen[g.id]);
     return lines.length?'\n【滿額贈品】\n'+lines.join('\n'):'';
   };
   window.bossGiftValidate=function(){
+    if(!syncGiftEligibility())return true;
     if(spent()>available()){alert('滿額贈額度已超出資格金額，請重新選擇贈品。');bossGiftOpen(true);return false;}
     return true;
   };
@@ -13960,6 +13982,12 @@ window.addEventListener('DOMContentLoaded',()=>{
     }).observe(target,{childList:true,characterData:true,subtree:true});}
     update();
   });
+  // 登入、登出與會員等級變更時同步顯示資格。
+  const originalCouponSync=window.bossCouponSyncVisibility;
+  if(typeof originalCouponSync==='function')window.bossCouponSyncVisibility=function(){
+    const result=originalCouponSync.apply(this,arguments);syncGiftEligibility();return result;
+  };
+  document.addEventListener('click',()=>setTimeout(syncGiftEligibility,0));
 })();
 </script>
 </body>
