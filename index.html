@@ -14152,26 +14152,27 @@ function giftGroups(){const out=[];for(const p of promotions){if(p.type!=='買X�
 function key(g){return g.p.id+'|'+g.price+'|'+g.x+'|'+g.y;}
 // 活動商品庫存：只接受可確認對應「庫存表 A 欄」的商品，不猜測其他商品庫存。
 function giftStock(r){
- const id=String(r.product_id||'').trim(), name=String(r.product_name||'').trim();
+ const id=String(r.product_id||'').trim().toUpperCase();
+ const name=String(r.product_name||'').trim();
+ if(!id)return {qty:0,reason:'缺少商品編號'};
  if(typeof globalInventoryData==='undefined'||!globalInventoryData||!Object.keys(globalInventoryData).length)
   return {qty:0,reason:'庫存資料載入中',loading:true};
- // 庫存後台的商品名稱常含商品編號；活動表 C 欄又可能已包含編號。
- // 以「完整名稱、移除編號後的名稱、商品編號＋名稱」比對，避免重複加上 A2。
+ // 商品庫存 A 欄以「A2嫁接睫毛...」為格式；精準讀取開頭商品編號。
+ // 邊界 (?![A-Z0-9_]) 避免 A2 誤配 A21、A20 等其他編號。
+ const escapeRegex=x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+ const idPattern=new RegExp('^\\s*'+escapeRegex(id)+'(?![A-Z0-9_])','i');
  const normalize=x=>String(x||'').replace(/[\s　]/g,'').toUpperCase();
- const bare=name.replace(new RegExp('^'+id+'\\s*','i'),'').trim();
- const candidates=new Set([normalize(name),normalize(bare),normalize(id+bare)]);
- const entries=Object.entries(globalInventoryData);
- let matches=entries.filter(([k])=>candidates.has(normalize(k)));
- // 原本商品庫存 API 支援名稱包含比對；這裡僅允許「同商品編號」的唯一匹配。
- if(matches.length===0&&id){
-  matches=entries.filter(([k])=>{
-   const nk=normalize(k),ni=normalize(id),nb=normalize(bare);
-   return nk.startsWith(ni)&&(!/[A-Z0-9_]/.test(nk.charAt(ni.length)))&&nb&&nk.includes(nb);
-  });
- }
- if(matches.length!==1)return {qty:0,reason:matches.length?'庫存商品名稱重複':'尚未對應庫存商品'};
- const qty=Number(matches[0][1]);
- return {qty:Number.isFinite(qty)?Math.max(0,Math.floor(qty)):0,stock_key:matches[0][0],reason:'已售完'};
+ const candidates=Object.entries(globalInventoryData).filter(([k,v])=>idPattern.test(String(k))&&Number.isFinite(Number(v)));
+ if(!candidates.length)return {qty:0,reason:'找不到商品編號 '+id};
+ // API 可能同時提供商品名稱別名；優先與「優惠活動商品」C 欄名稱一致的鍵。
+ const target=normalize(name);
+ const exact=candidates.filter(([k])=>normalize(k)===target);
+ const matched=exact.length?exact:candidates;
+ // 同一商品若 API 回傳重複別名且庫存相同，視為同一筆；不同庫存不猜測。
+ const quantities=[...new Set(matched.map(([,v])=>Math.max(0,Math.floor(Number(v)))))];
+ if(quantities.length!==1)return {qty:0,reason:'同編號庫存資料不一致'};
+ const chosen=matched[0];
+ return {qty:quantities[0],stock_key:chosen[0],stock_id:id,reason:quantities[0]?'':'已售完'};
 }
 function giftAvailable(g,id,selections,skip){
  const r=g.options.find(x=>String(x.product_id)===String(id));if(!r)return 0;
@@ -14223,7 +14224,7 @@ function selected(){
   if(g.p.gift_mode==='自動贈送'){
    ids=[];
    for(let i=0;i<g.allowance;i++){
-    const available=g.options.find(r=>{const v=giftStock(r);return v.qty>(stockUsed[v.stock_key]||0)+ids.filter(x=>x===r.product_id).length;});
+    const available=g.options.find(r=>{const v=giftStock(r);return v.qty>(stockUsed[v.stock_id]||0)+ids.filter(x=>x===r.product_id).length;});
     if(!available)return {ok:false,message:`${g.p.name} 贈品庫存不足，請聯絡客服`};
     ids.push(available.product_id);
    }
@@ -14235,7 +14236,7 @@ function selected(){
   for(const id of ids){
    const r=g.options.find(x=>String(x.product_id)===String(id));
    if(!r)return {ok:false,message:'活動贈品不在指定商品清單內'};
-   const stock=giftStock(r),stockKey=stock.stock_key;
+   const stock=giftStock(r),stockKey=stock.stock_id;
    if(!stockKey||stock.qty<=(stockUsed[stockKey]||0))
     return {ok:false,message:`${r.product_name||id} 庫存不足，請改選同價位其他商品`};
    stockUsed[stockKey]=(stockUsed[stockKey]||0)+1;
