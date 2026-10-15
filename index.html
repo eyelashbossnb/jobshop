@@ -9505,6 +9505,24 @@
                 <div class="empty-cart-text">購物車目前是空的</div>
             </div>
             
+            <div id="boss-promo-eligibility" class="boss-promo-gift-inline" aria-live="polite" style="display:none"></div>
+            <div id="boss-gift-checkout" style="margin:18px 0;padding:14px;border:1px solid #efddd7;border-radius:12px;background:#fffaf8;">
+                <div style="font-weight:700;margin-bottom:6px;">🎁 滿額贈品</div>
+                <div id="boss-gift-checkout-text" style="font-size:12px;line-height:1.8;color:#8a7e72;">將依商品金額計算可選贈品額度</div>
+                <button type="button" class="boss-gift-open" onclick="bossGiftOpen(true)" style="margin-top:9px;">選擇／修改贈品</button>
+            </div>
+            <div class="shipping-policy-box">
+                <div><strong>🚚 運費優惠規範：</strong></div>
+                <div><span class="policy-tag">滿額免運</span>單筆滿 NT 3,000 元(含)以上享本島/外島常溫與 7-11 免運。</div>
+                <div style="margin-top: 8px; border-top: 1px dashed #eedcd9; padding-top: 8px;"><strong>⚠️ 未滿 NT 3,000 元運費計算：</strong></div>
+                <div>• 常溫宅配：NT 100</div>
+                <div>• 7-11 店到店：NT 38(貨到付款)/NT 60</div>
+                <div>• 指定黑貓：NT 160</div>
+                <div>• 黑貓低溫：依包裹大小計算</div>
+                <div>• 門市自取：免運費</div>
+				<div>• 國外寄送：順豐/EMS依包裹大小/重量自付運費</div>
+            </div>
+            
             <div class="summary-block">
                 <div class="summary-line">
                     <span>商品總數量</span>
@@ -9532,24 +9550,6 @@
                 </div>
             </div>
 
-            <div id="boss-promo-eligibility" class="boss-promo-gift-inline" aria-live="polite" style="display:none"></div>
-            <div id="boss-gift-checkout" style="margin:18px 0;padding:14px;border:1px solid #efddd7;border-radius:12px;background:#fffaf8;">
-                <div style="font-weight:700;margin-bottom:6px;">🎁 滿額贈品</div>
-                <div id="boss-gift-checkout-text" style="font-size:12px;line-height:1.8;color:#8a7e72;">將依商品金額計算可選贈品額度</div>
-                <button type="button" class="boss-gift-open" onclick="bossGiftOpen(true)" style="margin-top:9px;">選擇／修改贈品</button>
-            </div>
-            <div class="shipping-policy-box">
-                <div><strong>🚚 運費優惠規範：</strong></div>
-                <div><span class="policy-tag">滿額免運</span>單筆滿 NT 3,000 元(含)以上享本島/外島常溫與 7-11 免運。</div>
-                <div style="margin-top: 8px; border-top: 1px dashed #eedcd9; padding-top: 8px;"><strong>⚠️ 未滿 NT 3,000 元運費計算：</strong></div>
-                <div>• 常溫宅配：NT 100</div>
-                <div>• 7-11 店到店：NT 38(貨到付款)/NT 60</div>
-                <div>• 指定黑貓：NT 160</div>
-                <div>• 黑貓低溫：依包裹大小計算</div>
-                <div>• 門市自取：免運費</div>
-				<div>• 國外寄送：順豐/EMS依包裹大小/重量自付運費</div>
-            </div>
-            
             <button id="final-order-submit-btn" type="button" class="btn" style="background-color: var(--accent-color); margin-top: 20px;" onclick="submitOrder()">確認送出訂單</button><span id="original-submit-anchor" hidden></span>
         </div>
     </div>
