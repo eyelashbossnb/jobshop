@@ -11272,8 +11272,10 @@ function executeDeptDiscountCalculate() {
     
     // updateCartSummary() 已逐項計算會員／特惠價，subtotal 是實際售價。
     // 此處不得再次套用會員 9 折，否則 $8 × 2 會錯誤折成 $14。
-    const discountAmount = 0;
-    const appliedDiscountName = "";
+    const promoResult = typeof bossCalculateActivityDiscount === 'function' ? bossCalculateActivityDiscount(subtotal) : {amount:0,details:[]};
+    const discountAmount = promoResult.amount;
+    const appliedDiscountName = promoResult.details.map(x=>x.name).join('、');
+    window.bossActivityDiscountResult = promoResult;
 
     const shippingEl = document.getElementById("shipping-fee");
     const currentShippingText = shippingEl ? shippingEl.textContent : "0";
@@ -11282,7 +11284,7 @@ function executeDeptDiscountCalculate() {
     // 購物金券折抵後的商品金額才是滿額贈計算基準；免運券不影響商品金額。
     const couponBase=Math.max(0,subtotal-discountAmount);
     const couponMoney=typeof bossCouponIsEligible==='function'&&bossCouponIsEligible()&&typeof eyelashCouponState!=='undefined'&&eyelashCouponState.money?Math.min(couponBase,Number(eyelashCouponState.money.amount)||0):0;
-    window.eyelashGiftEligibleAmount=Math.max(0,couponBase-couponMoney);
+    window.eyelashGiftEligibleAmount=subtotal;
     const couponFreeShip=typeof bossCouponIsEligible==='function'&&bossCouponIsEligible()&&typeof eyelashCouponState!=='undefined'&&eyelashCouponState.shipping?Math.min(100,shippingFee):0;
     const finalTotal = Math.max(0,couponBase-couponMoney+shippingFee-couponFreeShip);
     const couponStatus=document.getElementById('eyelash-coupon-status');
@@ -13426,7 +13428,8 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
         const promoGiftResult=typeof bossPromoGiftPayload==='function'?bossPromoGiftPayload():{ok:true,items:[]};
         // 此欄沿用現有表單「備註」，由後台分離至「優惠活動紀錄」；不影響商品明細與金額。
         const promoGiftMarker=promoGiftResult.ok&&promoGiftResult.items.length?'\n【優惠活動贈品】'+JSON.stringify(promoGiftResult.items):'';
-        formData.append("entry.394405044", orderNotes + couponMarker + promoGiftMarker);
+        const promoDiscountMarker=window.bossActivityDiscountResult?.amount>0?'\n【活動折扣紀錄】'+JSON.stringify(window.bossActivityDiscountResult):'';
+        formData.append("entry.394405044", orderNotes + couponMarker + promoGiftMarker + promoDiscountMarker);
         // 滿額贈直接送到 Google 表單獨立題目，不再寫入訂單備註。
         formData.append("entry.873435827", typeof bossGiftSubmissionValue === "function" ? bossGiftSubmissionValue() : "");
 
@@ -14137,6 +14140,53 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 
 <script>
+const BOSS_PROMO_BLOCKED_IDS=["B10", "B22", "B23", "B36", "B42", "B43", "B44", "B45", "DDE1", "DE10", "DE11", "DE12", "DE13", "DE2", "DE20", "DE21", "DE22", "DE25", "DE26", "DE3", "DE30", "DE31", "DE32", "DE33", "DE34", "DE35", "DE36", "DE37", "DE38", "DE39", "DE4", "DE40", "DE41", "DE5", "DE6", "DE7", "DE8", "DE9", "DG1", "DG3", "G10", "G102", "G103", "G108", "G111", "G112", "G113", "G118", "G12", "G121", "G127", "G128", "G129", "G130", "G136", "G137", "G15", "G151", "G153", "G16", "G160", "G18", "G180", "G183", "G186", "G20", "G200", "G210", "G211", "G212", "G213", "G215", "G217", "G218", "G25", "G26", "G27", "G29", "G31", "G33", "G34", "G36", "G37", "G41", "G43", "G5", "G51", "G52", "G53", "G54", "G55", "G56", "G74", "G79", "G8", "G85", "G86", "G87", "G88", "G89", "G90", "G91", "G96", "N1", "N11", "N12", "N13", "N14", "N15", "N16", "N17", "N18", "N19", "N2", "N20", "N21", "N22", "N23", "N24", "N29", "N3", "N30", "N31", "N32", "N33", "N34", "N36", "N37", "N4", "N43", "N44", "N49", "N5", "N50", "N56", "N59", "N6", "N7", "N8", "N9", "P21", "P22", "P23", "P24", "P25", "P26", "P27", "P28", "P29", "P30", "P31", "P32", "P33", "P34", "P35", "P36", "P37", "P38", "P39", "P40", "P41", "Q11", "Q12", "Q31", "Q34", "Q37", "Q38", "Q39", "Q41", "Q44", "Q47", "Q50", "Q51", "Q53", "Q61", "Q62", "R1", "R17", "R18", "R3", "R4", "R5", "R7", "S1", "S10", "S11", "S12", "S13", "S3", "S4", "S5", "S7", "S8", "S9"];
+// 活動折扣計算：商品會員價為基準，活動折數於結帳時另外扣除。
+// 僅四種零售會員適用；不對採耳、美甲、出清五折商品再折扣。
+function bossCalculateActivityDiscount(subtotal){
+ const empty={amount:0,details:[]};
+ if(typeof deptIsLoggedIn==='undefined'||!deptIsLoggedIn||typeof deptMemberData==='undefined'||!deptMemberData)return empty;
+ const level=String(deptMemberData.member_level||'').trim();
+ if(!['一般會員','凱莉VIP','柏金VIP','頂極VIP'].includes(level))return empty;
+ const promos=Array.isArray(window.bossActivePromotions)?window.bossActivePromotions:[];
+ if(!promos.length||typeof cart==='undefined')return empty;
+ const blocked=new Set(BOSS_PROMO_BLOCKED_IDS);
+ const lines=[];
+ for(const [sku,rawQty] of Object.entries(cart)){
+  const qty=Number(rawQty)||0;if(qty<=0)continue;
+  const id=String(sku).split('_')[0].toUpperCase();
+  const product=typeof productConfig!=='undefined'?(productConfig[sku]||productConfig[id]):null;
+  const card=document.querySelector('.product-item[data-id="'+id+'"]');
+  const cat=String(card?.dataset.category||'').toLowerCase();
+  const sub=String(card?.dataset.sub||'').toLowerCase();
+  const name=String(product?.name||card?.dataset.name||'');
+  if(blocked.has(id)||/採耳|美甲|出清五折/.test(name)||/nail|ear-pick|clearance/.test(cat+' '+sub))continue;
+  const price=Number(product?.price);
+  if(!Number.isFinite(price)||price<=0)continue;
+  lines.push({id,qty,price});
+ }
+ const details=[];let amount=0;
+ for(const p of promos){
+  const type=String(p.activity_type||'');
+  if(type!=='全館商品折後再打折'&&type!=='指定商品再打折')continue;
+  const allowed=String(p.member_levels||'').trim();
+  if(allowed&&allowed!=='全部會員'&&!allowed.split(/[,，、;；\/\n]+/).map(x=>x.trim()).includes(level))continue;
+  const rate=Number(p.discount_rate);
+  if(!Number.isFinite(rate)||rate<=0||rate>=1)continue;
+  const included=new Set((p.products||[]).map(x=>String(x.product_id||'').trim().toUpperCase()));
+  const eligibleLines=lines.filter(x=>type==='全館商品折後再打折'||included.has(x.id));
+  const base=eligibleLines.reduce((sum,x)=>sum+x.price*x.qty,0);
+  if(base<=0)continue;
+  const value=Math.min(base,Math.max(0,Math.round(base*(1-rate))));
+  if(value<=0)continue;
+  details.push({id:String(p.id||''),name:String(p.name||p.id||'活動'),type,rate,base,discount:value});
+  amount+=value;
+  // 其他活動不可併用時，依後台排序僅套用第一項折扣。
+  if(!p.combine_other)break;
+ }
+ return {amount:Math.min(Math.max(0,Number(subtotal)||0),amount),details};
+}
+
 // V4 活動贈品：原價分組、會員限制、自選/自動、送單前確認。
 (function(){
 'use strict';
@@ -14263,10 +14313,10 @@ async function loadGiftPromotions(){
   const d=await response.json();
   if(d.status!=='success'||!Array.isArray(d.promotions))throw Error(d.message||'活動 API 回傳格式不正確');
   if(requestId!==giftPromoRequestId)return;
-  promotions=d.promotions;ready=true;loadError=false;
+  promotions=d.promotions;window.bossActivePromotions=promotions;ready=true;loadError=false; if(typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
  }catch(e){
   if(requestId!==giftPromoRequestId)return;
-  loadError=true;ready=false;
+  loadError=true;ready=false;window.bossActivePromotions=[]; if(typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
   console.error('活動讀取失敗，請檢查優惠活動 API 與網路連線',e);
  }finally{
   clearTimeout(timeout);
