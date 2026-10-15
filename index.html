@@ -14149,14 +14149,88 @@ const allowedMemberLevels=new Set(['一般會員','凱莉VIP','柏金VIP','頂�
 function eligible(p){const current=level();if(!allowedMemberLevels.has(current))return false;let levels=String(p.member_levels||'').trim();return !levels||levels==='全部會員'||levels==='全部'||levels==='一般會員'||levels.split(/[,，、;；\/\n]+/).map(s=>s.trim()).includes(current);}
 function giftGroups(){const out=[];for(const p of promotions){if(p.type!=='買X送Y'||!eligible(p))continue;const groups=new Map();for(const r of p.products||[]){const id=String(r.product_id||'').trim(),price=priceFor(id),x=Number(r.buy_qty),y=Number(r.gift_qty);if(!id||!Number.isFinite(price)||price<=0||!Number.isInteger(x)||x<1||!Number.isInteger(y)||y<1)continue;const key=price+'|'+x+'|'+y;let g=groups.get(key);if(!g){g={p,price,x,y,qty:0,options:[]};groups.set(key,g);}g.qty+=countFor(id);g.options.push(r);}for(const g of groups.values()){g.allowance=Math.floor(g.qty/g.x)*g.y;if(g.allowance)out.push(g);}}return out;}
 function key(g){return g.p.id+'|'+g.price+'|'+g.x+'|'+g.y;}
-function render(){const host=document.getElementById('boss-promo-eligibility');if(!host)return;const canSee=allowedMemberLevels.has(level());host.style.display=canSee?'':'none';if(!canSee){host.replaceChildren();return;}host.replaceChildren();const head=document.createElement('strong');head.textContent='🎁 活動贈品';host.append(head);if(loadError){host.append(document.createTextNode('活動資料讀取失敗，請重新整理後再測試。'));return;}if(!ready){host.append(document.createTextNode('正在讀取活動…'));return;}if(!promotions.length){host.append(document.createElement('div')).textContent='暫無優惠活動';return;}if(!allowedMemberLevels.has(level())){host.append(document.createElement('div')).textContent=level()?'此優惠活動僅限一般會員及 VIP 會員參加。':'請先登入一般會員或 VIP 會員，即可參加優惠活動。';return;}const groups=giftGroups();if(!groups.length){host.append(document.createElement('div')).textContent='尚未符合活動贈品資格';return;}
-for(const g of groups){const k=key(g),w=document.createElement('div');w.style.cssText='padding:12px 0;border-top:1px solid #eee';const title=document.createElement('div');title.textContent=`${g.p.name}｜原價 $${g.price}｜已購 ${g.qty} 件｜可領 ${g.allowance} 件`;w.append(title);let selections=(picks[k]||[]).slice(0,g.allowance);picks[k]=selections;
-if(g.p.gift_mode==='客人自選')for(let i=0;i<g.allowance;i++){const sel=document.createElement('select');sel.style.cssText='display:block;width:min(100%,440px);padding:9px;margin:7px 0;border:1px solid #ddd;border-radius:7px';const blank=document.createElement('option');blank.value='';blank.textContent=`請選擇第 ${i+1} 件贈品`;sel.append(blank);for(const r of g.options){const op=document.createElement('option');op.value=r.product_id;op.textContent=r.product_name||r.product_id;sel.append(op);}sel.value=selections[i]||'';sel.onchange=()=>{selections[i]=sel.value;picks[k]=selections;};w.append(sel);}
-else if(g.p.gift_mode==='自動贈送'){const d=document.createElement('div');d.textContent='系統依活動指定贈品自動帶入（下單前將再次確認）。';w.append(d);}else{const d=document.createElement('div');d.textContent='活動未設定有效贈品方式，暫時不能領取。';w.append(d);}host.append(w);}}
-function selected(){if(!ready||loadError)return {ok:true,items:[]};if(!promotions.length||!allowedMemberLevels.has(level()))return {ok:true,items:[]};const result=[];for(const g of giftGroups()){const k=key(g);let ids=g.p.gift_mode==='客人自選'?(picks[k]||[]).slice(0,g.allowance):g.p.gift_mode==='自動贈送'?Array(g.allowance).fill(g.options[0]?.gift_id||g.options[0]?.product_id):[];// V5.4：符合資格時須選滿所有贈品；未達門檻不影響送單。
-if(g.p.gift_mode==='客人自選'&&(ids.length<g.allowance||ids.some(id=>!String(id||'').trim())))return {ok:false,message:`${g.p.name} 可領 ${g.allowance} 件贈品，請先選滿才能送出訂單`};
-if(g.p.gift_mode!=='客人自選'&&g.p.gift_mode!=='自動贈送')return {ok:false,message:`${g.p.name} 尚未設定有效的贈品方式`};
-for(const id of ids){const r=g.options.find(x=>String(x.product_id)===String(id)||String(x.gift_id)===String(id));if(!r)return {ok:false,message:'活動贈品不在指定商品清單內'};if(g.p.gift_mode==='自動贈送'&&r.gift_id&&priceFor(r.gift_id)!==g.price)return {ok:false,message:'自動贈品原價不符，請檢查活動設定'};result.push({activity:g.p.id,activity_name:g.p.name,id:String(id),name:r.gift_id===id&&r.gift_name?r.gift_name:r.product_name,original_price:g.price,qty:1});}}return {ok:true,items:result};}
+// 活動商品庫存：只接受可確認對應「庫存表 A 欄」的商品，不猜測其他商品庫存。
+function giftStock(r){
+ const id=String(r.product_id||'').trim(), name=String(r.product_name||'').trim();
+ if(typeof globalInventoryData==='undefined'||!globalInventoryData||!Object.keys(globalInventoryData).length)return {qty:0,reason:'庫存資料載入中'};
+ const entries=Object.entries(globalInventoryData);
+ const normalize=x=>String(x||'').replace(/[\s　]/g,'').toLowerCase();
+ const matches=entries.filter(([k])=>normalize(k)===normalize(name)||normalize(k)===normalize(id+name));
+ if(matches.length!==1)return {qty:0,reason:'尚未對應庫存商品'};
+ const qty=Number(matches[0][1]);
+ return {qty:Number.isFinite(qty)?Math.max(0,Math.floor(qty)):0,stock_key:matches[0][0],reason:'已售完'};
+}
+function giftAvailable(g,id,selections,skip){
+ const r=g.options.find(x=>String(x.product_id)===String(id));if(!r)return 0;
+ const stock=giftStock(r);
+ const used=selections.filter((v,i)=>i!==skip&&String(v)===String(id)).length;
+ return Math.max(0,stock.qty-used);
+}
+function render(){
+ const host=document.getElementById('boss-promo-eligibility');if(!host)return;
+ const canSee=allowedMemberLevels.has(level());host.style.display=canSee?'':'none';
+ if(!canSee){host.replaceChildren();return;}
+ host.replaceChildren();const head=document.createElement('strong');head.textContent='🎁 活動贈品';host.append(head);
+ if(loadError){host.append(document.createTextNode('活動資料讀取失敗，請重新整理後再試。'));return;}
+ if(!ready){host.append(document.createTextNode('正在讀取活動…'));return;}
+ if(!promotions.length){host.append(document.createElement('div')).textContent='暫無優惠活動';return;}
+ const groups=giftGroups();
+ if(!groups.length){host.append(document.createElement('div')).textContent='尚未符合活動贈品資格';return;}
+ for(const g of groups){
+  const k=key(g),w=document.createElement('div');w.style.cssText='padding:12px 0;border-top:1px solid #eee';
+  const title=document.createElement('div');title.textContent=`${g.p.name}｜原價 $${g.price}｜已購 ${g.qty} 件｜可領 ${g.allowance} 件`;w.append(title);
+  let selections=(picks[k]||[]).slice(0,g.allowance);picks[k]=selections;
+  if(g.p.gift_mode==='客人自選'){
+   for(let i=0;i<g.allowance;i++){
+    const sel=document.createElement('select');sel.style.cssText='display:block;width:min(100%,440px);padding:9px;margin:7px 0;border:1px solid #ddd;border-radius:7px';
+    const blank=document.createElement('option');blank.value='';blank.textContent=`請選擇第 ${i+1} 件贈品`;sel.append(blank);
+    for(const r of g.options){
+     const stock=giftStock(r),available=giftAvailable(g,r.product_id,selections,i);
+     const op=document.createElement('option');op.value=r.product_id;
+     op.textContent=(r.product_name||r.product_id)+`（庫存 ${stock.qty}）`;
+     op.disabled=available<=0;sel.append(op);
+    }
+    if(selections[i]&&!giftAvailable(g,selections[i],selections,i))selections[i]='';
+    sel.value=selections[i]||'';
+    sel.onchange=()=>{selections[i]=sel.value;picks[k]=selections;render();};w.append(sel);
+   }
+  }else if(g.p.gift_mode==='自動贈送'){
+   const d=document.createElement('div');d.textContent='系統自動贈送，將依活動商品實際庫存確認。';w.append(d);
+  }else{const d=document.createElement('div');d.textContent='活動尚未設定有效贈品方式。';w.append(d);}
+  host.append(w);
+ }
+}
+function selected(){
+ if(!ready||loadError)return {ok:true,items:[]};
+ if(!promotions.length||!allowedMemberLevels.has(level()))return {ok:true,items:[]};
+ const result=[],stockUsed={};
+ for(const g of giftGroups()){
+  const k=key(g);
+  let ids=g.p.gift_mode==='客人自選'?(picks[k]||[]).slice(0,g.allowance):[];
+  if(g.p.gift_mode==='自動贈送'){
+   ids=[];
+   for(let i=0;i<g.allowance;i++){
+    const available=g.options.find(r=>{const v=giftStock(r);return v.qty>(stockUsed[v.stock_key]||0)+ids.filter(x=>x===r.product_id).length;});
+    if(!available)return {ok:false,message:`${g.p.name} 贈品庫存不足，請聯絡客服`};
+    ids.push(available.product_id);
+   }
+  }
+  if(g.p.gift_mode==='客人自選'&&(ids.length<g.allowance||ids.some(id=>!String(id||'').trim())))
+   return {ok:false,message:`${g.p.name} 可領 ${g.allowance} 件贈品，請先選滿有庫存的商品`};
+  if(g.p.gift_mode!=='客人自選'&&g.p.gift_mode!=='自動贈送')
+   return {ok:false,message:`${g.p.name} 尚未設定有效的贈品方式`};
+  for(const id of ids){
+   const r=g.options.find(x=>String(x.product_id)===String(id));
+   if(!r)return {ok:false,message:'活動贈品不在指定商品清單內'};
+   const stock=giftStock(r),stockKey=stock.stock_key;
+   if(!stockKey||stock.qty<=(stockUsed[stockKey]||0))
+    return {ok:false,message:`${r.product_name||id} 庫存不足，請改選同價位其他商品`};
+   stockUsed[stockKey]=(stockUsed[stockKey]||0)+1;
+   result.push({activity:g.p.id,activity_name:g.p.name,id:String(id),name:r.product_name,stock_key:stockKey,original_price:g.price,qty:1});
+  }
+ }
+ return {ok:true,items:result};
+}
 window.bossPromoGiftRefresh=render;
 window.bossPromoGiftPayload=function(){return selected();};
 const oldSubmit=window.submitOrder;
