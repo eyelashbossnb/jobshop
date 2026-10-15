@@ -13791,7 +13791,7 @@ async function copyTransferAccount(){try{await navigator.clipboard.writeText('72
 // Coupon UI is moved beside the order totals; admin issuing remains in Google Sheets.
 const eyelashCouponState={coupons:[],money:null,shipping:null};
 // 僅一般會員與三種 VIP 可查看及使用優惠券；其他會員不得套用折抵。
-const BOSS_COUPON_ALLOWED_LEVELS=new Set(['一般會員','凱莉VIP','柏金VIP','頂極VIP','頂極VIP']);
+const BOSS_COUPON_ALLOWED_LEVELS=new Set(['一般會員','凱莉VIP','柏金VIP','頂極VIP']);
 function bossCouponIsEligible(){
  return typeof deptIsLoggedIn!=='undefined' && !!deptIsLoggedIn &&
         typeof deptMemberData!=='undefined' && !!deptMemberData &&
@@ -14082,6 +14082,37 @@ if(typeof oldSubmit==='function')window.submitOrder=function(){const v=selected(
 fetch(api).then(r=>r.json()).then(d=>{if(d.status!=='success'||!Array.isArray(d.promotions))throw Error(d.message||'資料格式錯誤');promotions=d.promotions;ready=true;render();}).catch(e=>{loadError=true;render();console.error('活動讀取失敗',e);});
 document.addEventListener('click',e=>{if(e.target.closest('#boss-promo-eligibility'))return;setTimeout(render,120);});
 render();
+})();
+</script>
+
+<!-- V5.5：優惠區集中於結帳區，保留既有會員、折扣、送單功能 -->
+<style id="boss-v55-checkout-layout">
+#boss-checkout-benefits{margin:18px 0 20px;display:flex;flex-direction:column;gap:14px}
+#boss-checkout-benefits > #eyelash-coupon-panel,
+#boss-checkout-benefits > #boss-promo-eligibility,
+#boss-checkout-benefits > #boss-gift-checkout{margin:0!important;width:100%;box-sizing:border-box}
+#boss-checkout-benefits > #boss-promo-eligibility{border-radius:14px}
+#boss-checkout-benefits > #boss-promo-eligibility[style*="display: none"],
+#boss-checkout-benefits > #eyelash-coupon-panel[style*="display: none"],
+#boss-checkout-benefits > #boss-gift-checkout[style*="display: none"]{display:none!important}
+</style>
+<script>
+(function(){
+  function arrange(){
+    const summary=document.querySelector('.summary-block');
+    const coupon=document.getElementById('eyelash-coupon-panel');
+    const promo=document.getElementById('boss-promo-eligibility');
+    const gift=document.getElementById('boss-gift-checkout');
+    if(!summary||!coupon||!promo||!gift)return;
+    let wrap=document.getElementById('boss-checkout-benefits');
+    if(!wrap){wrap=document.createElement('section');wrap.id='boss-checkout-benefits';wrap.setAttribute('aria-label','結帳優惠專區');summary.insertAdjacentElement('afterend',wrap);}
+    wrap.append(coupon,promo,gift);
+    if(typeof bossCouponSyncVisibility==='function')bossCouponSyncVisibility();
+    if(typeof bossGiftSyncEligibility==='function')bossGiftSyncEligibility();
+    if(typeof bossPromoGiftRefresh==='function')bossPromoGiftRefresh();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(arrange,0));
+  else setTimeout(arrange,0);
 })();
 </script>
 </body>
