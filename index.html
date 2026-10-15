@@ -14184,7 +14184,7 @@ function render(){
  const canSee=allowedMemberLevels.has(level());host.style.display=canSee?'':'none';
  if(!canSee){host.replaceChildren();return;}
  host.replaceChildren();const head=document.createElement('strong');head.textContent='🎁 活動贈品';host.append(head);
- if(loadError){host.append(document.createTextNode('活動資料讀取失敗，請重新整理後再試。'));return;}
+ if(loadError){const msg=document.createElement('div');msg.textContent='活動資料暫時無法讀取，請按「重新讀取活動」。';host.append(msg);const btn=document.createElement('button');btn.type='button';btn.textContent='重新讀取活動';btn.style.cssText='margin-top:10px;padding:8px 14px;border:1px solid #e6a69b;border-radius:8px;background:white;cursor:pointer';btn.onclick=loadGiftPromotions;host.append(btn);return;}
  if(!ready){host.append(document.createTextNode('正在讀取活動…'));return;}
  if(!promotions.length){host.append(document.createElement('div')).textContent='暫無優惠活動';return;}
  const groups=giftGroups();
@@ -14249,7 +14249,30 @@ window.bossPromoGiftPayload=function(){return selected();};
 const oldSubmit=window.submitOrder;
 if(typeof oldSubmit==='function')window.submitOrder=function(){const v=selected();if(!v.ok){alert('活動贈品：'+v.message);document.getElementById('boss-promo-eligibility')?.scrollIntoView({behavior:'smooth',block:'center'});return;}return oldSubmit.apply(this,arguments);};
 
-fetch(api).then(r=>r.json()).then(d=>{if(d.status!=='success'||!Array.isArray(d.promotions))throw Error(d.message||'資料格式錯誤');promotions=d.promotions;ready=true;render();}).catch(e=>{loadError=true;render();console.error('活動讀取失敗',e);});
+// 設定讀取逾時與重試入口，避免網路/API 無回應時永久停留在「正在讀取活動」。
+let giftPromoRequestId=0;
+async function loadGiftPromotions(){
+ const requestId=++giftPromoRequestId;
+ ready=false;loadError=false;render();
+ const controller=new AbortController();
+ const timeout=setTimeout(()=>controller.abort(),12000);
+ try{
+  const response=await fetch(api,{signal:controller.signal,cache:'no-store'});
+  if(!response.ok)throw Error('HTTP '+response.status);
+  const d=await response.json();
+  if(d.status!=='success'||!Array.isArray(d.promotions))throw Error(d.message||'活動 API 回傳格式不正確');
+  if(requestId!==giftPromoRequestId)return;
+  promotions=d.promotions;ready=true;loadError=false;
+ }catch(e){
+  if(requestId!==giftPromoRequestId)return;
+  loadError=true;ready=false;
+  console.error('活動讀取失敗，請檢查優惠活動 API 與網路連線',e);
+ }finally{
+  clearTimeout(timeout);
+  if(requestId===giftPromoRequestId)render();
+ }
+}
+loadGiftPromotions();
 document.addEventListener('click',e=>{if(e.target.closest('#boss-promo-eligibility'))return;setTimeout(render,120);});
 render();
 })();
