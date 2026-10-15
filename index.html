@@ -1055,6 +1055,38 @@
 #boss-promo-eligibility.boss-promo-gift-inline:empty{display:none}
 #boss-promo-eligibility select{display:block;width:100%;max-width:100%;box-sizing:border-box;margin:8px 0;padding:10px;border:1px solid #e9ded7;border-radius:8px;background:white;color:#4a3f35}
 @media(max-width:768px){#boss-promo-test{margin:0 0 16px;padding:0}#boss-promo-eligibility.boss-promo-gift-inline{padding:12px}}
+/* V5.9｜活動贈品／滿額贈品：同寬、同內距、同最小高度；內容多時自然展開 */
+#boss-promo-eligibility.boss-promo-gift-inline,
+#boss-gift-checkout {
+  width: 100% !important;
+  min-height: 146px;
+  box-sizing: border-box !important;
+  margin: 18px 0 !important;
+  padding: 16px !important;
+  border: 1px solid #efddd7 !important;
+  border-radius: 12px !important;
+  background: #fffaf8 !important;
+  overflow-wrap: anywhere;
+}
+/* 會員未登入或無權限時，沿用 JavaScript 控制的隱藏狀態 */
+#boss-promo-eligibility.boss-promo-gift-inline[style*="display: none"],
+#boss-promo-eligibility.boss-promo-gift-inline[style*="display:none"] {
+  display: none !important;
+}
+#boss-promo-eligibility.boss-promo-gift-inline strong {
+  display: block;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+#boss-gift-checkout > div:first-child {
+  font-size: 14px;
+  margin-bottom: 8px !important;
+}
+@media (max-width:768px) {
+  #boss-promo-eligibility.boss-promo-gift-inline,
+  #boss-gift-checkout { min-height: 136px; padding: 14px !important; }
+}
 </style>
 <main class="main-container">
     <div>
@@ -11003,19 +11035,22 @@ function applyMemberPaymentDeliveryDefaults() {
 }
 
 function renderMemberHeader() {
-    applyMemberPaymentDeliveryDefaults();
-    if (typeof bossCouponSyncVisibility === "function") bossCouponSyncVisibility();
-    if (typeof window.bossPromoGiftRefresh === "function") window.bossPromoGiftRefresh();
+    // 先更新會員導覽列，再更新其他面板。避免優惠面板拋出錯誤時，
+    // 已登入的會員仍看到「會員登入／免費註冊」。
     const area = document.getElementById('member-status-area');
     if (!area) return;
 
     if (deptIsLoggedIn && deptMemberData) {
         const isBusinessProfile = deptMemberData.profile_source === "business";
-        const expiryRaw = isBusinessProfile ? "" : getMemberExpiryRaw(deptMemberData);
-        const expiryDate = parseMemberExpiryDate(expiryRaw);
-        const expiryText = String(expiryRaw || "").trim() === "無期限"
-            ? "無期限"
-            : (expiryDate ? formatMemberExpiryDate(expiryDate) : "");
+        // 登入成功當下的 API 資料可能缺少日期欄位；到期日解析失敗不應阻止導覽列更新。
+        let expiryText = "";
+        try {
+            const expiryRaw = isBusinessProfile ? "" : getMemberExpiryRaw(deptMemberData);
+            const expiryDate = parseMemberExpiryDate(expiryRaw);
+            expiryText = String(expiryRaw || "").trim() === "無期限"
+                ? "無期限"
+                : (expiryDate ? formatMemberExpiryDate(expiryDate) : "");
+        } catch (err) { console.warn('會員到期日暫無法顯示', err); }
 
         area.innerHTML = `
             <div class="user-info">
@@ -11032,6 +11067,13 @@ function renderMemberHeader() {
             <button class="nav-btn secondary" onclick="toggleRegisterModal(true)" style="margin-left: 6px;">免費註冊</button>
         `;
     }
+    // 各面板獨立執行，互不影響會員名稱與登入狀態顯示。
+    try { if (typeof applyMemberPaymentDeliveryDefaults === 'function') applyMemberPaymentDeliveryDefaults(); }
+    catch (err) { console.error('會員付款配送預設更新失敗', err); }
+    try { if (typeof bossCouponSyncVisibility === 'function') bossCouponSyncVisibility(); }
+    catch (err) { console.error('優惠券顯示更新失敗', err); }
+    try { if (typeof window.bossPromoGiftRefresh === 'function') window.bossPromoGiftRefresh(); }
+    catch (err) { console.error('活動贈品顯示更新失敗', err); }
 }
 
 
@@ -11137,6 +11179,7 @@ function executeRegister() {
             localStorage.setItem("deptMemberData", JSON.stringify(deptMemberData));
             
             renderMemberHeader();
+            requestAnimationFrame(() => renderMemberHeader());
             
             if (typeof updateHomepageProductPrices === 'function') {
                 updateHomepageProductPrices();
@@ -11185,7 +11228,9 @@ function executeLogin() {
             
             localStorage.setItem("deptMemberData", JSON.stringify(deptMemberData));
             
+            // 先同步會員導覽列，再更新其他功能；避免登入後必須重新整理。
             renderMemberHeader();
+            requestAnimationFrame(() => renderMemberHeader());
             setTimeout(() => checkMemberRenewalReminder(false), 250);
             
             if (typeof updateHomepageProductPrices === 'function') {
