@@ -12612,6 +12612,7 @@ function fetchInventoryFromSheet() {
             globalInventoryData = data;
             console.log("=== 遠端 10 個工作表雲端總庫存同步成功 ===");
             updateAllLoadedStocks();
+            if (typeof window.bossPromoGiftRefresh === 'function') window.bossPromoGiftRefresh();
             refreshAllA313StockOptions();
             refreshAllWaxKitStockOptions();
         })
@@ -14152,11 +14153,23 @@ function key(g){return g.p.id+'|'+g.price+'|'+g.x+'|'+g.y;}
 // 活動商品庫存：只接受可確認對應「庫存表 A 欄」的商品，不猜測其他商品庫存。
 function giftStock(r){
  const id=String(r.product_id||'').trim(), name=String(r.product_name||'').trim();
- if(typeof globalInventoryData==='undefined'||!globalInventoryData||!Object.keys(globalInventoryData).length)return {qty:0,reason:'庫存資料載入中'};
+ if(typeof globalInventoryData==='undefined'||!globalInventoryData||!Object.keys(globalInventoryData).length)
+  return {qty:0,reason:'庫存資料載入中',loading:true};
+ // 庫存後台的商品名稱常含商品編號；活動表 C 欄又可能已包含編號。
+ // 以「完整名稱、移除編號後的名稱、商品編號＋名稱」比對，避免重複加上 A2。
+ const normalize=x=>String(x||'').replace(/[\s　]/g,'').toUpperCase();
+ const bare=name.replace(new RegExp('^'+id+'\\s*','i'),'').trim();
+ const candidates=new Set([normalize(name),normalize(bare),normalize(id+bare)]);
  const entries=Object.entries(globalInventoryData);
- const normalize=x=>String(x||'').replace(/[\s　]/g,'').toLowerCase();
- const matches=entries.filter(([k])=>normalize(k)===normalize(name)||normalize(k)===normalize(id+name));
- if(matches.length!==1)return {qty:0,reason:'尚未對應庫存商品'};
+ let matches=entries.filter(([k])=>candidates.has(normalize(k)));
+ // 原本商品庫存 API 支援名稱包含比對；這裡僅允許「同商品編號」的唯一匹配。
+ if(matches.length===0&&id){
+  matches=entries.filter(([k])=>{
+   const nk=normalize(k),ni=normalize(id),nb=normalize(bare);
+   return nk.startsWith(ni)&&(!/[A-Z0-9_]/.test(nk.charAt(ni.length)))&&nb&&nk.includes(nb);
+  });
+ }
+ if(matches.length!==1)return {qty:0,reason:matches.length?'庫存商品名稱重複':'尚未對應庫存商品'};
  const qty=Number(matches[0][1]);
  return {qty:Number.isFinite(qty)?Math.max(0,Math.floor(qty)):0,stock_key:matches[0][0],reason:'已售完'};
 }
@@ -14187,7 +14200,7 @@ function render(){
     for(const r of g.options){
      const stock=giftStock(r),available=giftAvailable(g,r.product_id,selections,i);
      const op=document.createElement('option');op.value=r.product_id;
-     op.textContent=(r.product_name||r.product_id)+`（庫存 ${stock.qty}）`;
+     op.textContent=(r.product_name||r.product_id)+`（${stock.loading?'庫存載入中':stock.stock_key?'庫存 '+stock.qty:stock.reason}）`;
      op.disabled=available<=0;sel.append(op);
     }
     if(selections[i]&&!giftAvailable(g,selections[i],selections,i))selections[i]='';
