@@ -434,6 +434,14 @@
             color: #7a6661;
             text-align: left;
         }
+        /* V6.2：運費說明預設收合，點擊標題才展開 */
+        .shipping-policy-box { background: #fff; border-color: #e9a79c; padding: 0; overflow: hidden; }
+        .shipping-policy-toggle { display:flex; align-items:center; justify-content:space-between; cursor:pointer; padding:16px 18px; font-size:14px; font-weight:600; color:var(--text-main); list-style:none; user-select:none; }
+        .shipping-policy-toggle::-webkit-details-marker { display:none; }
+        .shipping-policy-toggle:focus-visible { outline:2px solid #d58b7c; outline-offset:-3px; border-radius:12px; }
+        .shipping-policy-indicator::after { content:'＋'; font-size:19px; color:#db998c; font-weight:400; }
+        .shipping-policy-box[open] .shipping-policy-indicator::after { content:'－'; }
+        .shipping-policy-content { padding:0 18px 16px; border-top:1px solid #f5e6e3; padding-top:12px; background:var(--warning-bg); }
         .shipping-policy-box div { margin-bottom: 6px; }
         .shipping-policy-box div:last-child { margin-bottom: 0; }
         .policy-tag {
@@ -9511,8 +9519,9 @@
                 <div id="boss-gift-checkout-text" style="font-size:12px;line-height:1.8;color:#8a7e72;">將依商品金額計算可選贈品額度</div>
                 <button type="button" class="boss-gift-open" onclick="bossGiftOpen(true)" style="margin-top:9px;">選擇／修改贈品</button>
             </div>
-            <div class="shipping-policy-box">
-                <div><strong>🚚 運費優惠規範：</strong></div>
+            <details class="shipping-policy-box" id="shipping-policy-details">
+                <summary class="shipping-policy-toggle"><span>🚚 運費優惠規範</span><span class="shipping-policy-indicator" aria-hidden="true"></span></summary>
+                <div class="shipping-policy-content">
                 <div><span class="policy-tag">滿額免運</span>單筆滿 NT 3,000 元(含)以上享本島/外島常溫與 7-11 免運。</div>
                 <div style="margin-top: 8px; border-top: 1px dashed #eedcd9; padding-top: 8px;"><strong>⚠️ 未滿 NT 3,000 元運費計算：</strong></div>
                 <div>• 常溫宅配：NT 100</div>
@@ -9521,7 +9530,8 @@
                 <div>• 黑貓低溫：依包裹大小計算</div>
                 <div>• 門市自取：免運費</div>
 				<div>• 國外寄送：順豐/EMS依包裹大小/重量自付運費</div>
-            </div>
+                </div>
+            </details>
             
             <div class="summary-block">
                 <div class="summary-line">
@@ -14158,6 +14168,33 @@ render();
 })();
 </script>
 
+<!-- V6.1：結帳金額固定在送出按鈕正上方，手機與電腦共用同一組金額欄位 -->
+<script>
+(function(){
+  function positionFinalSummary(){
+    const summary=document.querySelector('.mobile-cart-card .summary-block, .mobile-order-form-card .summary-block');
+    const submit=document.getElementById('final-order-submit-btn');
+    const cart=document.querySelector('.mobile-cart-card');
+    const form=document.querySelector('.mobile-order-form-card #order-form');
+    if(!summary||!submit||!cart||!form)return;
+    const mobile=window.matchMedia('(max-width: 768px)').matches;
+    if(mobile){
+      // 手機版送出按鈕位於收件表單底部，金額統計跟隨按鈕。
+      if(submit.parentElement!==form)form.appendChild(submit);
+      if(summary.nextElementSibling!==submit)submit.insertAdjacentElement('beforebegin',summary);
+    }else{
+      // 電腦版還原到右側商品明細，緊接在送出按鈕上方。
+      const anchor=document.getElementById('original-submit-anchor');
+      if(anchor && submit.parentElement!==cart)anchor.insertAdjacentElement('beforebegin',submit);
+      if(summary.nextElementSibling!==submit)submit.insertAdjacentElement('beforebegin',summary);
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(positionFinalSummary,30));
+  else setTimeout(positionFinalSummary,30);
+  window.addEventListener('resize',positionFinalSummary);
+})();
+</script>
+
 <!-- V5.5：優惠區集中於結帳區，保留既有會員、折扣、送單功能 -->
 <style id="boss-v55-checkout-layout">
 #boss-checkout-benefits{margin:18px 0 20px;display:flex;flex-direction:column;gap:14px}
@@ -14178,8 +14215,11 @@ render();
     const gift=document.getElementById('boss-gift-checkout');
     if(!summary||!coupon||!promo||!gift)return;
     let wrap=document.getElementById('boss-checkout-benefits');
-    if(!wrap){wrap=document.createElement('section');wrap.id='boss-checkout-benefits';wrap.setAttribute('aria-label','結帳優惠專區');summary.insertAdjacentElement('afterend',wrap);}
+    if(!wrap){wrap=document.createElement('section');wrap.id='boss-checkout-benefits';wrap.setAttribute('aria-label','結帳優惠專區');summary.insertAdjacentElement('beforebegin',wrap);}
+    if (wrap.nextElementSibling !== summary) summary.insertAdjacentElement('beforebegin',wrap);
     wrap.append(coupon,promo,gift);
+    const shipping=document.querySelector('.mobile-cart-card .shipping-policy-box');
+    if(shipping && shipping.previousElementSibling !== wrap) wrap.insertAdjacentElement('afterend',shipping);
     if(typeof bossCouponSyncVisibility==='function')bossCouponSyncVisibility();
     if(typeof bossGiftSyncEligibility==='function')bossGiftSyncEligibility();
     if(typeof bossPromoGiftRefresh==='function')bossPromoGiftRefresh();
