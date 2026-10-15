@@ -11286,7 +11286,7 @@ function executeDeptDiscountCalculate() {
     const couponMoney=typeof bossCouponIsEligible==='function'&&bossCouponIsEligible()&&typeof eyelashCouponState!=='undefined'&&eyelashCouponState.money?Math.min(couponBase,Number(eyelashCouponState.money.amount)||0):0;
     window.eyelashGiftEligibleAmount=subtotal;
     const couponFreeShip=typeof bossCouponIsEligible==='function'&&bossCouponIsEligible()&&typeof eyelashCouponState!=='undefined'&&eyelashCouponState.shipping?Math.min(100,shippingFee):0;
-    const finalTotal = Math.max(0,couponBase-couponMoney+shippingFee-couponFreeShip);
+    const finalTotal = Math.round(Math.max(0,couponBase-couponMoney+shippingFee-couponFreeShip));
     const couponStatus=document.getElementById('eyelash-coupon-status');
     if(couponStatus&&(couponMoney||couponFreeShip))couponStatus.textContent='已折抵購物金 $'+couponMoney+'，運費 $'+couponFreeShip;
 
@@ -12418,6 +12418,7 @@ function updateCartSummary() {
 
     let totalQty = 0;
     let subtotal = 0;
+    const bossCartActualPrices = {}; // 每次重算均重建，活動優惠依購物車實際售價計算
 
     const absoluteOriginalPriceIds = ['V1', 'V2', 'V3'];
     const fixedHalfDiscountIds = ['A116', 'A129', 'A275'];
@@ -12514,8 +12515,11 @@ function updateCartSummary() {
             if (productConfig[id]) productConfig[id].price = itemRealPrice;
         }
 
-        subtotal += itemRealPrice * qty;
+        bossCartActualPrices[id] = Math.round(Number(itemRealPrice) || 0);
+        subtotal += bossCartActualPrices[id] * qty;
     });
+
+    window.bossCartActualPrices = bossCartActualPrices;
 
     const shippingSelect = document.getElementById('shipping');
     const shippingMethod = shippingSelect ? shippingSelect.value : "";
@@ -14161,7 +14165,7 @@ function bossCalculateActivityDiscount(subtotal){
   const sub=String(card?.dataset.sub||'').toLowerCase();
   const name=String(product?.name||card?.dataset.name||'');
   if(blocked.has(id)||/採耳|美甲|出清五折/.test(name)||/nail|ear-pick|clearance/.test(cat+' '+sub))continue;
-  const price=Number(product?.price);
+  const price=Number(window.bossCartActualPrices?.[sku]);
   if(!Number.isFinite(price)||price<=0)continue;
   lines.push({id,qty,price});
  }
@@ -14177,7 +14181,8 @@ function bossCalculateActivityDiscount(subtotal){
   const eligibleLines=lines.filter(x=>type==='全館商品折後再打折'||included.has(x.id));
   const base=eligibleLines.reduce((sum,x)=>sum+x.price*x.qty,0);
   if(base<=0)continue;
-  const value=Math.min(base,Math.max(0,Math.round(base*(1-rate))));
+  // 以實際會員售價乘活動折數，四捨五入到元；折抵額為原金額減折後金額。
+  const value=Math.min(base,Math.max(0,base-Math.round(base*rate)));
   if(value<=0)continue;
   details.push({id:String(p.id||''),name:String(p.name||p.id||'活動'),type,rate,base,discount:value});
   amount+=value;
