@@ -10784,7 +10784,7 @@ async function bossSubmitCancelRequest(index) {
     for (let attempt=0; attempt<3; attempt++) {
         await new Promise(resolve => setTimeout(resolve, 1100 + attempt*700));
         try {
-            const queryBase = ORDER_QUERY_API_URL; // 保留原本已正常運作的訂單查詢網址
+            const queryBase = url; // 取消申請結果必須向同一個部署查詢，避免跨部署資料不同步
             const queryUrl = queryBase + (queryBase.includes('?')?'&':'?') + 'action=query&query=' + encodeURIComponent(orderId) + '&_=' + Date.now();
             const response = await fetch(queryUrl, {method:'GET',cache:'no-store'});
             if (!response.ok) throw new Error('HTTP '+response.status);
