@@ -1067,7 +1067,7 @@
 #boss-promo-eligibility.boss-promo-gift-inline,
 #boss-gift-checkout {
   width: 100% !important;
-  min-height: 146px;
+  min-height: 0;
   box-sizing: border-box !important;
   margin: 18px 0 !important;
   padding: 16px !important;
@@ -1093,7 +1093,7 @@
 }
 @media (max-width:768px) {
   #boss-promo-eligibility.boss-promo-gift-inline,
-  #boss-gift-checkout { min-height: 136px; padding: 14px !important; }
+  #boss-gift-checkout { min-height: 0; padding: 14px !important; }
 }
 </style>
 <main class="main-container">
@@ -14249,7 +14249,15 @@ function render(){
  if(!ready){host.append(document.createTextNode('正在讀取活動…'));return;}
  if(!promotions.length){host.append(document.createElement('div')).textContent='暫無優惠活動';return;}
  const groups=giftGroups();
- if(!groups.length){const active=promotions.filter(p=>p.type==='買X送Y'&&eligible(p));host.append(document.createElement('div')).textContent=active.length?'目前活動：'+active.map(p=>p.name).join('、')+'｜尚未達到活動贈品門檻':'目前沒有符合會員資格的活動贈品';return;}
+ if(!groups.length){
+  const active=promotions.filter(p=>p.type==='買X送Y'&&eligible(p));
+  const note=document.createElement('div');
+  note.style.cssText='font-size:12px;line-height:1.8;color:#8a7e72';
+  note.textContent=active.length
+    ? '目前活動：'+active.map(p=>p.name).join('、')+'。購買指定商品達到活動門檻後，即可在此選擇贈品。'
+    : '目前尚無符合資格的活動贈品；有適用活動時，將在這裡顯示贈品選擇。';
+  host.append(note);return;
+ }
  for(const g of groups){
   const k=key(g),w=document.createElement('div');w.style.cssText='padding:12px 0;border-top:1px solid #eee';
   const title=document.createElement('div');title.textContent=`${g.p.name}｜原價 $${g.price}｜已購 ${g.qty} 件｜可領 ${g.allowance} 件`;w.append(title);
@@ -14397,6 +14405,37 @@ render();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(arrange,0));
   else setTimeout(arrange,0);
+})();
+</script>
+<style id="boss-promo-empty-fix">
+#boss-promo-eligibility.boss-promo-gift-inline{min-height:0!important}
+#boss-promo-eligibility.boss-promo-gift-inline:empty{display:none!important}
+</style>
+<script id="boss-promo-empty-status-fix">
+(function(){
+  function fixEmpty(){
+    var el=document.getElementById('boss-promo-eligibility');
+    if(!el||el.style.display==='none')return;
+    var text=(el.textContent||'').replace(/\s/g,'');
+    if(text && text!=='🎁活動贈品')return;
+    var status=el.querySelector('[data-boss-promo-empty-status]');
+    if(!status){
+      status=document.createElement('div');
+      status.setAttribute('data-boss-promo-empty-status','');
+      status.style.cssText='font-size:12px;line-height:1.8;color:#8a7e72;margin-top:8px';
+      el.appendChild(status);
+    }
+    var all=Array.isArray(window.bossActivePromotions)?window.bossActivePromotions:[];
+    var gifts=all.filter(function(p){return p.type==='買X送Y';});
+    status.textContent=gifts.length
+      ? '目前活動：'+gifts.map(function(p){return p.name||'指定商品贈品活動';}).join('、')+'。購買指定商品並達到門檻後，即可在此選擇贈品。'
+      : '目前尚無符合資格的活動贈品；有適用活動時，將在這裡顯示贈品選擇。';
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(fixEmpty,600);});
+  else setTimeout(fixEmpty,600);
+  document.addEventListener('click',function(){setTimeout(fixEmpty,250);});
+  window.addEventListener('focus',fixEmpty);
+  setTimeout(fixEmpty,2500);
 })();
 </script>
 </body>
