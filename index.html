@@ -14203,12 +14203,54 @@ function bossCalculateActivityDiscount(subtotal){
 const api='https://script.google.com/macros/s/AKfycbxz6vwBoJznRPoJy7-ldlbdpSPwL1736tGqxZGPEHcTo5W2mm3kqUTvWRCfKJm-N9Oz/exec?action=promotions';
 let promotions=[],ready=false,loadError=false;
 const picks={};
-function priceFor(id){const x=typeof productConfig!=='undefined'&&productConfig[id];return x?Number(x._originPrice||x.originPrice||x.originalPrice||x.basePrice||x.price):NaN;}
+function priceFor(id){
+ const x=typeof productConfig!=='undefined'&&productConfig[id];
+ const raw=x?Number(x._originPrice||x.originPrice||x.originalPrice||x.basePrice||x.price):NaN;
+ if(Number.isFinite(raw)&&raw>0)return raw;
+ const card=document.querySelector('.product-item[data-id="'+String(id).replace(/"/g,'')+'"]');
+ const fallback=Number(card?.dataset.basePrice||card?.dataset.price);
+ return Number.isFinite(fallback)&&fallback>0?fallback:NaN;
+}
 function countFor(id){let q=0;if(typeof cart==='undefined')return q;for(const [k,n] of Object.entries(cart))if(k===id||k.startsWith(id+'_'))q+=Number(n)||0;return q;}
 function level(){return (typeof deptIsLoggedIn!=='undefined'&&deptIsLoggedIn&&typeof deptMemberData!=='undefined'&&deptMemberData)?String(deptMemberData.member_level||'').trim():'';}
 const allowedMemberLevels=new Set(['一般會員','凱莉VIP','柏金VIP','頂極VIP']);
 function eligible(p){const current=level();if(!allowedMemberLevels.has(current))return false;let levels=String(p.member_levels||'').trim();return !levels||levels==='全部會員'||levels==='全部'||levels==='一般會員'||levels.split(/[,，、;；\/\n]+/).map(s=>s.trim()).includes(current);}
-function giftGroups(){const out=[];for(const p of promotions){if(p.type!=='買X送Y'||!eligible(p))continue;const groups=new Map();for(const r of p.products||[]){const id=String(r.product_id||'').trim(),price=priceFor(id),x=Number(r.buy_qty),y=Number(r.gift_qty);if(!id||!Number.isFinite(price)||price<=0||!Number.isInteger(x)||x<1||!Number.isInteger(y)||y<1)continue;const key=price+'|'+x+'|'+y;let g=groups.get(key);if(!g){g={p,price,x,y,qty:0,options:[]};groups.set(key,g);}g.qty+=countFor(id);g.options.push(r);}for(const g of groups.values()){g.allowance=Math.floor(g.qty/g.x)*g.y;if(g.allowance)out.push(g);}}return out;}
+// 規格型睫毛的贈品選項使用實際購物車 SKU，避免把 E7_UP_C_0.07_MIX7-14 當成 E7_UP 的一般庫存。
+// 僅開放已加入購物車且庫存可核對的規格，避免顧客選到沒有庫存的規格。
+function promoOptions(r){
+ const id=String(r.product_id||'').trim();
+ const card=document.querySelector('.product-item[data-id="'+id.replace(/"/g,'')+'"]');
+ if(!card?.hasAttribute('data-lash'))return [r];
+ const opts=[];
+ if(typeof cart!=='undefined')for(const sku of Object.keys(cart)){
+  if(!(sku.startsWith(id+'_')&&Number(cart[sku])>0))continue;
+  const cfg=typeof productConfig!=='undefined'?productConfig[sku]:null;
+  if(!cfg?.backendStockKey)continue;
+  opts.push({...r,product_id:sku,product_name:cfg.name||r.product_name||sku,base_product_id:id,cart_sku:sku,backend_stock_key:cfg.backendStockKey});
+ }
+ return opts;
+}
+function giftGroups(){
+ const out=[];
+ for(const p of promotions){
+  if(p.type!=='買X送Y'||!eligible(p))continue;
+  const groups=new Map();
+  for(const r of p.products||[]){
+   const id=String(r.product_id||'').trim(),price=priceFor(id),x=Number(r.buy_qty),y=Number(r.gift_qty);
+   if(!id||!Number.isFinite(price)||price<=0||!Number.isInteger(x)||x<1||!Number.isInteger(y)||y<1)continue;
+   const groupKey=price+'|'+x+'|'+y;
+   let g=groups.get(groupKey);
+   if(!g){g={p,price,x,y,qty:0,options:[]};groups.set(groupKey,g);}
+   g.qty+=countFor(id);
+   g.options.push(...promoOptions(r));
+  }
+  for(const g of groups.values()){
+   g.allowance=Math.floor(g.qty/g.x)*g.y;
+   if(g.allowance)out.push(g);
+  }
+ }
+ return out;
+}
 function key(g){return g.p.id+'|'+g.price+'|'+g.x+'|'+g.y;}
 // 活動商品庫存：只接受可確認對應「庫存表 A 欄」的商品，不猜測其他商品庫存。
 function giftStock(r){
@@ -14217,22 +14259,25 @@ function giftStock(r){
  if(!id)return {qty:0,reason:'缺少商品編號'};
  if(typeof globalInventoryData==='undefined'||!globalInventoryData||!Object.keys(globalInventoryData).length)
   return {qty:0,reason:'庫存資料載入中',loading:true};
- // 商品庫存 A 欄以「A2嫁接睫毛...」為格式；精準讀取開頭商品編號。
- // 邊界 (?![A-Z0-9_]) 避免 A2 誤配 A21、A20 等其他編號。
+ // 睫毛規格：只查原本加入購物車時核對過的完整庫存鍵，不將不同規格的庫存合併。
+ if(r.backend_stock_key){
+  const k=String(r.backend_stock_key);
+  const v=globalInventoryData[k];
+  if(v===undefined||!Number.isFinite(Number(v)))return {qty:0,reason:'無法確認此規格庫存'};
+  const qty=Math.max(0,Math.floor(Number(v)));
+  return {qty,stock_key:k,stock_id:k,reason:qty?'':'已售完'};
+ }
  const escapeRegex=x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
  const idPattern=new RegExp('^\\s*'+escapeRegex(id)+'(?![A-Z0-9_])','i');
  const normalize=x=>String(x||'').replace(/[\s　]/g,'').toUpperCase();
  const candidates=Object.entries(globalInventoryData).filter(([k,v])=>idPattern.test(String(k))&&Number.isFinite(Number(v)));
  if(!candidates.length)return {qty:0,reason:'找不到商品編號 '+id};
- // API 可能同時提供商品名稱別名；優先與「優惠活動商品」C 欄名稱一致的鍵。
  const target=normalize(name);
  const exact=candidates.filter(([k])=>normalize(k)===target);
  const matched=exact.length?exact:candidates;
- // 同一商品若 API 回傳重複別名且庫存相同，視為同一筆；不同庫存不猜測。
  const quantities=[...new Set(matched.map(([,v])=>Math.max(0,Math.floor(Number(v)))))];
  if(quantities.length!==1)return {qty:0,reason:'同編號庫存資料不一致'};
- const chosen=matched[0];
- return {qty:quantities[0],stock_key:chosen[0],stock_id:id,reason:quantities[0]?'':'已售完'};
+ return {qty:quantities[0],stock_key:matched[0][0],stock_id:id,reason:quantities[0]?'':'已售完'};
 }
 function giftAvailable(g,id,selections,skip){
  const r=g.options.find(x=>String(x.product_id)===String(id));if(!r)return 0;
