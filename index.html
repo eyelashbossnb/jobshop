@@ -11957,7 +11957,7 @@ function addLashToCart(productId) {
     const isClearanceLash = /^W(?:[1-9]|1[0-9])_UP$/.test(productId);
     const clearanceLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5,
-        '柏金VIP': 0.3, '頂級VIP': 0.3,
+        '柏金VIP': 0.3, '頂極VIP': 0.3,
         '業務A': 0.3, '加盟A': 0.3, '儲值商A': 0.3,
         '加盟B': 0.3, '儲值商B': 0.3, '業務B': 0.3, '連鎖店B': 0.3
     };
@@ -14036,7 +14036,7 @@ async function copyTransferAccount(){try{await navigator.clipboard.writeText('72
 // Coupon UI is moved beside the order totals; admin issuing remains in Google Sheets.
 const eyelashCouponState={coupons:[],money:null,shipping:null};
 // 僅一般會員與三種 VIP 可查看及使用優惠券；其他會員不得套用折抵。
-const BOSS_COUPON_ALLOWED_LEVELS=new Set(['一般會員','凱莉VIP','柏金VIP','頂級VIP']);
+const BOSS_COUPON_ALLOWED_LEVELS=new Set(['一般會員','凱莉VIP','柏金VIP','頂極VIP']);
 function bossCouponIsEligible(){
  return typeof deptIsLoggedIn!=='undefined' && !!deptIsLoggedIn &&
         typeof deptMemberData!=='undefined' && !!deptMemberData &&
@@ -14306,7 +14306,7 @@ function bossCalculateActivityDiscount(subtotal){
  const empty={amount:0,details:[]};
  if(typeof deptIsLoggedIn==='undefined'||!deptIsLoggedIn||typeof deptMemberData==='undefined'||!deptMemberData)return empty;
  const level=String(deptMemberData.member_level||'').trim();
- if(!['一般會員','凱莉VIP','柏金VIP','頂級VIP'].includes(level))return empty;
+ if(!['一般會員','凱莉VIP','柏金VIP','頂極VIP'].includes(level))return empty;
  const promos=Array.isArray(window.bossActivePromotions)?window.bossActivePromotions:[];
  if(!promos.length||typeof cart==='undefined')return empty;
  const blocked=new Set(BOSS_PROMO_BLOCKED_IDS);
@@ -14363,7 +14363,7 @@ function priceFor(id){
 }
 function countFor(id){let q=0;if(typeof cart==='undefined')return q;for(const [k,n] of Object.entries(cart))if(k===id||k.startsWith(id+'_'))q+=Number(n)||0;return q;}
 function level(){return (typeof deptIsLoggedIn!=='undefined'&&deptIsLoggedIn&&typeof deptMemberData!=='undefined'&&deptMemberData)?String(deptMemberData.member_level||'').trim():'';}
-const allowedMemberLevels=new Set(['一般會員','凱莉VIP','柏金VIP','頂級VIP']);
+const allowedMemberLevels=new Set(['一般會員','凱莉VIP','柏金VIP','頂極VIP']);
 function eligible(p){const current=level();if(!allowedMemberLevels.has(current))return false;let levels=String(p.member_levels||'').trim();return !levels||levels==='全部會員'||levels==='全部'||levels==='一般會員'||levels.split(/[,，、;；\/\n]+/).map(s=>s.trim()).includes(current);}
 // 規格型睫毛的贈品選項使用實際購物車 SKU，避免把 E7_UP_C_0.07_MIX7-14 當成 E7_UP 的一般庫存。
 // 僅開放已加入購物車且庫存可核對的規格，避免顧客選到沒有庫存的規格。
