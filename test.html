@@ -10766,7 +10766,7 @@ async function bossSubmitCancelRequest(index) {
     const phone = phoneInput.replace(/\s/g, '');
     if (!/^09\d{8}$/.test(phone)) return alert('請輸入正確的10碼手機號碼。');
     if (!confirm('確定申請取消訂單 ' + orderId + ' 嗎？\n客服確認後才會進行庫存及付款相關處理。')) return;
-    const url = 'https://script.google.com/macros/s/AKfycbyLiLDiuuyd1T2l7u7PlkeeoMwjJfP6tobOG7I-LqQnoGAcrCGXXEW2AwFf_bMQZ_fY/exec';
+    const url = ORDER_QUERY_API_URL; // 與訂單查詢共用同一個訂單後台部署
     try {
         const response = await fetch(url, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({action:'request_cancel',orderId,phone})});
         if (!response.ok) throw new Error('HTTP '+response.status);
