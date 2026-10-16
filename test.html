@@ -10744,6 +10744,41 @@ function bossCanReorder(order) {
            /已出貨|配送完成|已送達|已簽收|已完成/.test(delivery) ||
            /已出貨/.test(status);
 }
+// 取消訂單申請：只顯示於尚未出貨、尚未取消的訂單。
+// 實際申請必須搭配訂單後台 request_cancel API；不會直接退款或退庫存。
+function bossCanRequestCancel(order) {
+    const status = String(order.status || '').replace(/\s/g, '');
+    const delivery = String(order.delivery_status || '').replace(/\s/g, '');
+    if (/已取消|申請取消|取消中|取消完成|已完成|訂單完成/.test(status)) return false;
+    if (/已出貨|配送中|已送達|已簽收|配送完成|已完成/.test(status + ' ' + delivery)) return false;
+    return true;
+}
+function bossCancelButton(order, index) {
+    if (!bossCanRequestCancel(order)) return '';
+    return `<button type="button" class="btn" style="margin:12px 8px 4px 0;background:#fff;color:#a94442;border:1px solid #a94442;" onclick="bossSubmitCancelRequest(${index})">申請取消訂單</button>`;
+}
+async function bossSubmitCancelRequest(index) {
+    const order = bossReorderSearchOrders[index];
+    if (!order || !bossCanRequestCancel(order)) return alert('此訂單目前不開放取消申請，請重新查詢。');
+    const orderId = String(order.id || '').trim();
+    const phoneInput = prompt('請輸入此訂單下單時的完整10碼手機號碼，以確認取消申請：');
+    if (phoneInput === null) return;
+    const phone = phoneInput.replace(/\s/g, '');
+    if (!/^09\d{8}$/.test(phone)) return alert('請輸入正確的10碼手機號碼。');
+    if (!confirm('確定申請取消訂單 ' + orderId + ' 嗎？\n客服確認後才會進行庫存及付款相關處理。')) return;
+    const url = 'https://script.google.com/macros/s/AKfycbyLiLDiuuyd1T2l7u7PlkeeoMwjJfP6tobOG7I-LqQnoGAcrCGXXEW2AwFf_bMQZ_fY/exec';
+    try {
+        const response = await fetch(url, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({action:'request_cancel',orderId,phone})});
+        if (!response.ok) throw new Error('HTTP '+response.status);
+        const data = await response.json();
+        if (!data || typeof data.success !== 'boolean') throw new Error('後台未回傳取消申請結果');
+        alert(data.message || (data.success ? '已送出取消申請' : '取消申請失敗'));
+        if (data.success && typeof queryOrderFromServer === 'function') queryOrderFromServer();
+    } catch (error) {
+        console.error('取消申請未能確認', error);
+        alert('無法確認取消申請是否成功。請先查詢訂單狀態，勿重複提交；若仍無法申請，請聯絡客服。');
+    }
+}
 function bossReorderButton(order, index) {
     if (!bossCanReorder(order)) return '';
     return `<button type="button" class="btn" style="margin:12px 0 4px;background:#d4a373;" onclick="bossReorderFromSearch(${index})">🛒 再買一次</button>`;
@@ -10842,6 +10877,7 @@ function queryOrderFromServer() {
                         </div>
                         ${buildDeliveryTrackingHtml(matchedOrder)}
                         ${buildCustomerOrderDetailHtml(matchedOrder)}
+                        ${bossCancelButton(matchedOrder, orderIndex)}
                         ${bossReorderButton(matchedOrder, orderIndex)}
                     </div>
                 `;
@@ -10883,6 +10919,7 @@ function queryOrderFromServer() {
                         </div>
                         ${buildDeliveryTrackingHtml(matchedOrder)}
                         ${buildCustomerOrderDetailHtml(matchedOrder)}
+                        ${bossCancelButton(matchedOrder, orderIndex)}
                         ${bossReorderButton(matchedOrder, orderIndex)}
                     </div>
                 `;
