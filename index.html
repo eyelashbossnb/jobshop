@@ -14221,12 +14221,36 @@ function promoOptions(r){
  const id=String(r.product_id||'').trim();
  const card=document.querySelector('.product-item[data-id="'+id.replace(/"/g,'')+'"]');
  if(!card?.hasAttribute('data-lash'))return [r];
- const opts=[];
+ const opts=[],seen=new Set();
+ // 從該商品實際可選的捲度／粗度／長度建立所有規格，
+ // 不再限制顧客只能選購物車內已買過的規格。
+ const curls=[...card.querySelectorAll('.spec-btn[data-type="curl"]')].map(x=>x.dataset.value);
+ const thicknesses=[...card.querySelectorAll('.spec-btn[data-type="thickness"]')].map(x=>x.dataset.value);
+ const lengths=[...card.querySelectorAll('.spec-btn[data-type="length"]')].map(x=>x.dataset.value);
+ const norm=x=>String(x||'').toUpperCase().replace(/[\\s　()（）_\\-°˚]/g,'');
+ const inventory=(typeof globalInventoryData!=='undefined'&&globalInventoryData)?globalInventoryData:{};
+ for(const curl of curls)for(const thick of thicknesses)for(const len of lengths){
+  // 與原商品規格限制保持一致。
+  if(id==='E7_UP'&&((curl==='O'&&len!=='MIX7-13')||(curl!=='O'&&len==='MIX7-13')))continue;
+  if(id==='E8_UP'&&curl==='J'&&len!=='MIX7-14')continue;
+  const matches=Object.keys(inventory).filter(k=>{
+   const key=norm(k);
+   return key.startsWith(norm(id))&&key.includes(norm(curl+thick+len));
+  });
+  if(matches.length!==1)continue; // 庫存鍵有歧義時不提供選購，避免扣錯規格
+  const stockKey=matches[0],qty=Number(inventory[stockKey]);
+  if(!Number.isFinite(qty)||qty<=0||seen.has(stockKey))continue;
+  seen.add(stockKey);
+  const sku='PROMOGIFT:'+stockKey;
+  opts.push({...r,product_id:sku,product_name:(r.product_name||id)+' ('+curl+'-'+thick+'-'+len+')',base_product_id:id,backend_stock_key:stockKey});
+ }
+ // 兼容舊版庫存鍵：已成功加入購物車的規格仍可選。
  if(typeof cart!=='undefined')for(const sku of Object.keys(cart)){
   if(!(sku.startsWith(id+'_')&&Number(cart[sku])>0))continue;
   const cfg=typeof productConfig!=='undefined'?productConfig[sku]:null;
-  if(!cfg?.backendStockKey)continue;
-  opts.push({...r,product_id:sku,product_name:cfg.name||r.product_name||sku,base_product_id:id,cart_sku:sku,backend_stock_key:cfg.backendStockKey});
+  if(!cfg?.backendStockKey||seen.has(cfg.backendStockKey))continue;
+  seen.add(cfg.backendStockKey);
+  opts.push({...r,product_id:sku,product_name:cfg.name||r.product_name||sku,base_product_id:id,backend_stock_key:cfg.backendStockKey});
  }
  return opts;
 }
