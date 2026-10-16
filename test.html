@@ -10729,80 +10729,69 @@ function buildCustomerOrderDetailHtml(order) {
                     ${order.notes && order.notes !== "無備註" ? `<div style="margin-top:6px;">訂單備註：${escapeOrderHtml(order.notes)}</div>` : ""}
                 </div>
             </div>
-            ${bossOrderActionsHtml(order)}
         </details>`;
 }
 
-function bossOrderActionsHtml(order) {
-    const status = String(order.status || '').trim();
-    const delivery = String(order.delivery_status || '').trim();
-    const shipped = /已出貨|已完成|配送中|已送達|已簽收/.test(status+' '+delivery);
-    const cancelled = /已取消/.test(status);
-    const pending = /申請取消/.test(status);
-    const id = encodeURIComponent(String(order.id||''));
-    let actions = '';
-    if (!shipped && !cancelled && !pending) {
-        actions += `<button type="button" class="btn" style="background:#fff;color:#a94442;border:1px solid #a94442;margin:8px 8px 0 0" onclick="bossRequestCancel('${id}')">申請取消訂單</button>`;
-    }
-    if (cancelled || /已出貨|已完成/.test(status)) {
-        actions += `<button type="button" class="btn" style="margin:8px 8px 0 0" onclick="bossBuyAgain('${id}')">再買一次</button>`;
-    }
-    return actions ? `<div style="margin-top:12px">${actions}</div>` : '';
+// =============================================================
+// 測試版：已取消／已出貨／已完成訂單「再買一次」
+// 只修改前台購物車，不送出訂單、不操作後台庫存或退款。
+// =============================================================
+let bossReorderSearchOrders = [];
+function bossCanReorder(order) {
+    const status = String(order.status || '').replace(/\s/g, '');
+    const delivery = String(order.delivery_status || '').replace(/\s/g, '');
+    return /已取消|取消完成|已完成|訂單完成/.test(status) ||
+           /已出貨|配送完成|已送達|已簽收|已完成/.test(delivery) ||
+           /已出貨/.test(status);
 }
-
-let bossLastQueryOrders = [];
-async function bossRequestCancel(encodedId) {
-    const id = decodeURIComponent(encodedId);
-    const order = bossLastQueryOrders.find(o => String(o.id) === id);
-    if (!order) return alert('請重新查詢訂單');
-    const phone = prompt('為確認訂單，請輸入下單時完整的10碼手機號碼：');
-    if (phone === null) return;
-    if (!/^09\d{8}$/.test(phone.trim())) return alert('請輸入完整10碼手機號碼');
-    if (!confirm(`確定申請取消訂單 ${id} 嗎？\n客服確認後才會處理退款及退庫存。`)) return;
-    try {
-        // text/plain avoids CORS preflight for Apps Script web apps.
-        const response = await fetch('https://script.google.com/macros/s/AKfycbyLiLDiuuyd1T2l7u7PlkeeoMwjJfP6tobOG7I-LqQnoGAcrCGXXEW2AwFf_bMQZ_fY/exec', {
-            method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-            body:JSON.stringify({action:'request_cancel',orderId:id,phone:phone.trim()})
-        });
-        const result = await response.json();
-        alert(result.message || (result.success?'已提出取消申請':'申請失敗'));
-        if (result.success) queryOrderFromServer();
-    } catch (error) {
-        alert('無法確認是否送出成功，請重新查詢訂單狀態，勿重複操作。');
-    }
+function bossReorderButton(order, index) {
+    if (!bossCanReorder(order)) return '';
+    return `<button type="button" class="btn" style="margin:12px 0 4px;background:#d4a373;" onclick="bossReorderFromSearch(${index})">🛒 再買一次</button>`;
 }
-
-function bossBuyAgain(encodedId) {
-    const id = decodeURIComponent(encodedId);
-    const order = bossLastQueryOrders.find(o => String(o.id) === id);
-    if (!order) return alert('請重新查詢訂單');
-    const status = String(order.status||'');
-    if (!/已取消|已出貨|已完成/.test(status)) return alert('此訂單目前不可再買一次');
-    const rows = String(order.items||'').split(/\r?\n/);
+function bossReorderFromSearch(index) {
+    const order = bossReorderSearchOrders[index];
+    if (!order || !bossCanReorder(order)) { alert('此訂單目前不開放再買一次。'); return; }
+    const lines = parseOrderItemsForCustomer(order.items);
+    if (!lines.length) { alert('此訂單沒有可辨識的商品明細。'); return; }
+    const normalize = value => String(value || '').replace(/\s+/g, '').toUpperCase();
     const unavailable = [];
     let added = 0;
-    for (const line of rows) {
-        const match = line.match(/^\s*\d+\.\s*\[([^\]]+)\]\s*(.*?)\s*\(\$[\d,.]+\)\s*x\s*(\d+)\s*$/i);
-        if (!match) { if (line.trim()) unavailable.push(line.trim()); continue; }
-        const productId = match[1].trim();
-        const qty = Number(match[3]);
-        // Only use a uniquely identifiable current SKU. Never guess an old variant.
-        const candidates = Object.keys(productConfig).filter(key =>
-            key === productId || key.startsWith(productId+'_'));
-        const currentKey = candidates.length === 1 ? candidates[0] :
-            (productConfig[productId] && !/\([^)]*\)/.test(match[2]) ? productId : null);
-        if (!currentKey || !productConfig[currentKey]) {unavailable.push(line.trim());continue;}
-        const config = productConfig[currentKey];
-        const max = Math.max(0,Number(config.max)||0);
-        const existing = Number(cart[currentKey]||0);
-        const toAdd = Math.min(qty,Math.max(0,max-existing));
-        if (toAdd>0) {cart[currentKey]=existing+toAdd;added+=toAdd;}
-        if (toAdd<qty) unavailable.push(line.trim());
+    for (const line of lines) {
+        const raw = String(line.name || '').trim();
+        const qty = Math.floor(Number(line.qty) || 0);
+        if (!raw || qty <= 0) continue;
+        // 排除贈品／滿額贈品，避免當作付費商品重新加入。
+        if (/^(贈品|滿額贈|活動贈)/.test(raw.replace(/^\[[^\]]+\]\s*/, ''))) continue;
+        const code = (raw.match(/^\[([^\]]+)\]/) || [])[1] || '';
+        const withoutCode = raw.replace(/^\[[^\]]+\]\s*/, '').trim();
+        let key = '';
+        if (code && productConfig[code] && normalize(productConfig[code].name) === normalize(withoutCode)) key = code;
+        if (!key) {
+            const matches = Object.keys(productConfig).filter(k => productConfig[k] &&
+                (normalize(productConfig[k].name) === normalize(withoutCode) ||
+                 normalize(productConfig[k].name) === normalize(raw)));
+            if (matches.length === 1) key = matches[0];
+        }
+        // 規格／套組必須完全匹配既有 SKU，不能擅自改成基本款。
+        if (!key || /_KIT_/.test(key)) { unavailable.push(raw); continue; }
+        const config = productConfig[key];
+        let max = Number(config.max);
+        if (!Number.isFinite(max) || max < 0) max = 0;
+        if (typeof getStockFromDatabase === 'function' && config.backendStockKey) {
+            const stock = getStockFromDatabase(config.backendStockKey);
+            if (stock !== null && stock !== undefined && Number.isFinite(Number(stock))) max = Math.min(max, Number(stock));
+        }
+        const oldQty = Number(cart[key]) || 0;
+        const canAdd = Math.max(0, Math.min(qty, Math.floor(max) - oldQty));
+        if (canAdd > 0) { cart[key] = oldQty + canAdd; added += canAdd; }
+        if (canAdd < qty) unavailable.push(raw + '（規格或庫存不足）');
     }
-    if (added) {saveCartToStorage();renderCart();}
-    alert(`已加入 ${added} 件商品至購物車。` + (unavailable.length?`\n以下商品或規格需手動選購：\n${unavailable.slice(0,12).join('\n')}`:''));
-    if (added) {toggleOrderModal(false);if(typeof scrollToOrderForm==='function')scrollToOrderForm();}
+    if (added) { saveCartToStorage(); renderCart(); if (typeof updateCartSummary === 'function') updateCartSummary(); }
+    const msg = `已加入 ${added} 件商品至購物車，原有商品不變。` +
+        (unavailable.length ? '\n\n以下商品未完整加入，請手動確認規格及庫存：\n' + unavailable.slice(0,15).join('\n') + (unavailable.length>15?'\n…':'') : '') +
+        '\n\n請檢查購物車內容及目前售價後再結帳。';
+    alert(msg);
+    if (added) { toggleOrderModal(false); document.querySelector('.mobile-cart-card')?.scrollIntoView({behavior:'smooth',block:'start'}); }
 }
 
 function queryOrderFromServer() {
@@ -10836,10 +10825,10 @@ function queryOrderFromServer() {
 
         if (data.status === "success" && data.orders && data.orders.length > 0) {
             let htmlContent = `<div class="result-title">✨ 查詢到您的訂單資料：</div>`;
-            bossLastQueryOrders = data.orders;
             const displayOrders = [...data.orders].reverse();
+            bossReorderSearchOrders = displayOrders;
 
-            displayOrders.forEach(matchedOrder => {
+            displayOrders.forEach((matchedOrder, orderIndex) => {
                 const formattedItems = matchedOrder.items ? String(matchedOrder.items).replace(/\n/g, '<br>') : "無商品明細";
                 
                 htmlContent += `
@@ -10853,6 +10842,7 @@ function queryOrderFromServer() {
                         </div>
                         ${buildDeliveryTrackingHtml(matchedOrder)}
                         ${buildCustomerOrderDetailHtml(matchedOrder)}
+                        ${bossReorderButton(matchedOrder, orderIndex)}
                     </div>
                 `;
             });
@@ -10876,9 +10866,10 @@ function queryOrderFromServer() {
 
         if(matchedOrders.length > 0) {
             const displayLocalOrders = [...matchedOrders].reverse();
+            bossReorderSearchOrders = displayLocalOrders;
             let localHtml = `<div class="result-title">✨ 查詢到您的訂單資料（本地測試）：</div>`;
             
-            displayLocalOrders.forEach(matchedOrder => {
+            displayLocalOrders.forEach((matchedOrder, orderIndex) => {
                 const formattedItems = matchedOrder.items ? String(matchedOrder.items).replace(/\n/g, '<br>') : "無商品明細";
                 
                 localHtml += `
@@ -10892,6 +10883,7 @@ function queryOrderFromServer() {
                         </div>
                         ${buildDeliveryTrackingHtml(matchedOrder)}
                         ${buildCustomerOrderDetailHtml(matchedOrder)}
+                        ${bossReorderButton(matchedOrder, orderIndex)}
                     </div>
                 `;
             });
