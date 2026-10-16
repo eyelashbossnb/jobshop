@@ -10766,7 +10766,7 @@ async function bossSubmitCancelRequest(index) {
     const phone = phoneInput.replace(/\s/g, '');
     if (!/^09\d{8}$/.test(phone)) return alert('請輸入正確的10碼手機號碼。');
     if (!confirm('確定申請取消訂單 ' + orderId + ' 嗎？\n客服確認後才會進行庫存及付款相關處理。')) return;
-    const url = ORDER_QUERY_API_URL;
+    const url = "https://script.google.com/macros/s/AKfycbxz6vwBoJznRPoJy7-ldlbdpSPwL1736tGqxZGPEHcTo5W2mm3kqUTvWRCfKJm-N9Oz/exec"; // 已部署取消申請功能的訂單後台
     const body = JSON.stringify({action:'request_cancel',orderId,phone});
     // Apps Script ContentService 可能跨網域重新導向，導致 POST 寫入成功但回應被瀏覽器阻擋。
     // 使用 no-cors 傳送簡單 POST，隨後用原本已可運作的訂單查詢 GET 驗證結果。
@@ -10784,7 +10784,8 @@ async function bossSubmitCancelRequest(index) {
     for (let attempt=0; attempt<3; attempt++) {
         await new Promise(resolve => setTimeout(resolve, 1100 + attempt*700));
         try {
-            const queryUrl = url + (url.includes('?')?'&':'?') + 'action=query&query=' + encodeURIComponent(orderId) + '&_=' + Date.now();
+            const queryBase = ORDER_QUERY_API_URL; // 保留原本已正常運作的訂單查詢網址
+            const queryUrl = queryBase + (queryBase.includes('?')?'&':'?') + 'action=query&query=' + encodeURIComponent(orderId) + '&_=' + Date.now();
             const response = await fetch(queryUrl, {method:'GET',cache:'no-store'});
             if (!response.ok) throw new Error('HTTP '+response.status);
             const data = await response.json();
