@@ -14219,38 +14219,38 @@ function eligible(p){const current=level();if(!allowedMemberLevels.has(current))
 // 僅開放已加入購物車且庫存可核對的規格，避免顧客選到沒有庫存的規格。
 function promoOptions(r){
  const id=String(r.product_id||'').trim();
- const card=document.querySelector('.product-item[data-id="'+id.replace(/"/g,'')+'"]');
+ const card=[...document.querySelectorAll('.product-item[data-id]')].find(x=>x.dataset.id===id);
  if(!card?.hasAttribute('data-lash'))return [r];
  const opts=[],seen=new Set();
- // 從該商品實際可選的捲度／粗度／長度建立所有規格，
- // 不再限制顧客只能選購物車內已買過的規格。
- const curls=[...card.querySelectorAll('.spec-btn[data-type="curl"]')].map(x=>x.dataset.value);
- const thicknesses=[...card.querySelectorAll('.spec-btn[data-type="thickness"]')].map(x=>x.dataset.value);
- const lengths=[...card.querySelectorAll('.spec-btn[data-type="length"]')].map(x=>x.dataset.value);
- const norm=x=>String(x||'').toUpperCase().replace(/[\\s　()（）_\\-°˚]/g,'');
+ const curls=[...new Set([...card.querySelectorAll('.spec-btn[data-type="curl"]')].map(x=>x.dataset.value))];
+ const thicknesses=[...new Set([...card.querySelectorAll('.spec-btn[data-type="thickness"]')].map(x=>x.dataset.value))];
+ const lengths=[...new Set([...card.querySelectorAll('.spec-btn[data-type="length"]')].map(x=>x.dataset.value))];
  const inventory=(typeof globalInventoryData!=='undefined'&&globalInventoryData)?globalInventoryData:{};
+ const baseName=String(card.dataset.name||'');
+ // 以官網原本的「商品名稱 + 捲度_粗度_長度」組成規格，
+ // 對照庫存表 A 欄完整名稱；不能假設庫存鍵一定以商品編號開頭。
+ const norm=x=>String(x||'').normalize('NFKC').replace(/[\s　]/g,'').toUpperCase();
+ const inventoryRows=Object.entries(inventory).filter(([k,v])=>Number.isFinite(Number(v)));
  for(const curl of curls)for(const thick of thicknesses)for(const len of lengths){
-  // 與原商品規格限制保持一致。
-  if(id==='E7_UP'&&((curl==='O'&&len!=='MIX7-13')||(curl!=='O'&&len==='MIX7-13')))continue;
-  if(id==='E8_UP'&&curl==='J'&&len!=='MIX7-14')continue;
-  const matches=Object.keys(inventory).filter(k=>{
-   const key=norm(k);
-   return key.startsWith(norm(id))&&key.includes(norm(curl+thick+len));
-  });
-  if(matches.length!==1)continue; // 庫存鍵有歧義時不提供選購，避免扣錯規格
-  const stockKey=matches[0],qty=Number(inventory[stockKey]);
-  if(!Number.isFinite(qty)||qty<=0||seen.has(stockKey))continue;
+  const fullName=baseName+curl+'_'+thick+'_'+len;
+  const candidates=[id+fullName,fullName];
+  const matches=inventoryRows.filter(([k])=>candidates.some(v=>norm(k)===norm(v)));
+  if(matches.length!==1)continue;
+  const [stockKey,value]=matches[0],qty=Math.floor(Number(value));
+  if(qty<=0||seen.has(stockKey))continue;
   seen.add(stockKey);
-  const sku='PROMOGIFT:'+stockKey;
-  opts.push({...r,product_id:sku,product_name:(r.product_name||id)+' ('+curl+'-'+thick+'-'+len+')',base_product_id:id,backend_stock_key:stockKey});
+  opts.push({...r,product_id:'PROMOGIFT:'+id+'_'+curl+'_'+thick+'_'+len,
+   product_name:baseName+' ('+curl+'-'+thick+'-'+len+')',base_product_id:id,backend_stock_key:stockKey});
  }
- // 兼容舊版庫存鍵：已成功加入購物車的規格仍可選。
+ // 兼容已在購物車中，且已成功核對原始庫存鍵的規格。
  if(typeof cart!=='undefined')for(const sku of Object.keys(cart)){
   if(!(sku.startsWith(id+'_')&&Number(cart[sku])>0))continue;
   const cfg=typeof productConfig!=='undefined'?productConfig[sku]:null;
-  if(!cfg?.backendStockKey||seen.has(cfg.backendStockKey))continue;
-  seen.add(cfg.backendStockKey);
-  opts.push({...r,product_id:sku,product_name:cfg.name||r.product_name||sku,base_product_id:id,backend_stock_key:cfg.backendStockKey});
+  const stockKey=cfg?.backendStockKey;
+  if(!stockKey||seen.has(stockKey)||!Object.prototype.hasOwnProperty.call(inventory,stockKey)||Number(inventory[stockKey])<=0)continue;
+  seen.add(stockKey);
+  opts.push({...r,product_id:'PROMOGIFT:'+sku,product_name:cfg.name||r.product_name||sku,
+   base_product_id:id,backend_stock_key:stockKey});
  }
  return opts;
 }
