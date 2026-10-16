@@ -14231,12 +14231,31 @@ function promoOptions(r){
  // 對照庫存表 A 欄完整名稱；不能假設庫存鍵一定以商品編號開頭。
  const norm=x=>String(x||'').normalize('NFKC').replace(/[\s　]/g,'').toUpperCase();
  const inventoryRows=Object.entries(inventory).filter(([k,v])=>Number.isFinite(Number(v)));
+ // E1/E5 庫存表可能省略「上睫毛」或使用不同空格；以系列及完整規格核對。
+ // 不接受只符合規格卻不符合商品系列的庫存列，避免誤送咖啡色或其他款式。
+ function matchInventory(curl,thick,len){
+  const suffix=norm(curl+'_'+thick+'_'+len);
+  const exactNames=[id+baseName+curl+'_'+thick+'_'+len,baseName+curl+'_'+thick+'_'+len];
+  let found=inventoryRows.filter(([k])=>exactNames.some(n=>norm(k)===norm(n)));
+  if(found.length===1)return found[0];
+  if(found.length>1)return null;
+  if(id!=='E1_UP'&&id!=='E5_UP')return null;
+  const series=id==='E1_UP'?'黑耀魔幻羽扇':'頂級人造水貂絲';
+  const candidates=inventoryRows.filter(([k])=>{
+   const nk=norm(k);
+   if(!nk.endsWith(suffix)||!nk.includes(norm(series)))return false;
+   // E5 是黑色水貂絲，不能把 E6 咖啡色系列誤判為 E5。
+   if(id==='E5_UP'&&/咖啡|咖色|咖色|咖啡色|\(咖\)|（咖）/.test(String(k)))return false;
+   if(id==='E5_UP'&&/E6_UP/i.test(k))return false;
+   if(id==='E1_UP'&&/E[2-9]_UP/i.test(k))return false;
+   return true;
+  });
+  return candidates.length===1?candidates[0]:null;
+ }
  for(const curl of curls)for(const thick of thicknesses)for(const len of lengths){
-  const fullName=baseName+curl+'_'+thick+'_'+len;
-  const candidates=[id+fullName,fullName];
-  const matches=inventoryRows.filter(([k])=>candidates.some(v=>norm(k)===norm(v)));
-  if(matches.length!==1)continue;
-  const [stockKey,value]=matches[0],qty=Math.floor(Number(value));
+  const match=matchInventory(curl,thick,len);
+  if(!match)continue;
+  const [stockKey,value]=match,qty=Math.floor(Number(value));
   if(qty<=0||seen.has(stockKey))continue;
   seen.add(stockKey);
   opts.push({...r,product_id:'PROMOGIFT:'+id+'_'+curl+'_'+thick+'_'+len,
