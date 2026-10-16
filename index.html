@@ -11807,7 +11807,7 @@ function addLashToCart(productId) {
     const isClearanceLash = /^W(?:[1-9]|1[0-9])_UP$/.test(productId);
     const clearanceLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5,
-        '柏金VIP': 0.3, '頂極VIP': 0.3,
+        '柏金VIP': 0.3, '頂級VIP': 0.3,
         '業務A': 0.3, '加盟A': 0.3, '儲值商A': 0.3,
         '加盟B': 0.3, '儲值商B': 0.3, '業務B': 0.3, '連鎖店B': 0.3
     };
@@ -12458,7 +12458,7 @@ function updateCartSummary() {
     ]; 
     const customLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5, 
-        '柏金VIP': 0.3,  '頂極VIP': 0.3,
+        '柏金VIP': 0.3,  '頂級VIP': 0.3,
         '業務A': 0.3, '加盟A': 0.3, '儲值商A': 0.3, 
         '加盟B': 0.3, '儲值商B': 0.3, '業務B': 0.3, '連鎖店B': 0.3
     };
@@ -12469,7 +12469,7 @@ function updateCartSummary() {
         'D10', 'D60'
     ];
     const specialRates = {
-        '一般會員': 0.8, '凱莉VIP': 0.48, '柏金VIP': 0.43, '頂極VIP': 0.38,
+        '一般會員': 0.8, '凱莉VIP': 0.48, '柏金VIP': 0.43, '頂級VIP': 0.38,
         '業務A': 0.48, '加盟A': 0.43, '儲值商A': 0.43, '加盟B': 0.38, '儲值商B': 0.38, '業務B': 0.38, '連鎖店B': 0.38
     };
 
@@ -13573,7 +13573,7 @@ function updateHomepageProductPrices() {
         'D10', 'D60', 
     ];
     const specialRates = {
-        '一般會員': 0.8, '凱莉VIP': 0.48, '柏金VIP': 0.43,  '頂極VIP': 0.38,
+        '一般會員': 0.8, '凱莉VIP': 0.48, '柏金VIP': 0.43,  '頂級VIP': 0.38,
         '業務A': 0.48, '加盟A': 0.43, '儲值商A': 0.43, '加盟B': 0.38, '儲值商B': 0.38, '業務B': 0.38, '連鎖店B': 0.38
     };
 
@@ -13612,7 +13612,7 @@ function updateHomepageProductPrices() {
 
     const customLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5, 
-        '柏金VIP': 0.3, '頂極VIP': 0.3, '頂極VIP': 0.3,
+        '柏金VIP': 0.3, '頂級VIP': 0.3, '頂級VIP': 0.3,
         '業務A': 0.3, '加盟A': 0.3, '儲值商A': 0.3, 
         '加盟B': 0.3, '儲值商B': 0.3, '業務B': 0.3, '連鎖店B': 0.3
     };
@@ -13886,7 +13886,7 @@ async function copyTransferAccount(){try{await navigator.clipboard.writeText('72
 // Coupon UI is moved beside the order totals; admin issuing remains in Google Sheets.
 const eyelashCouponState={coupons:[],money:null,shipping:null};
 // 僅一般會員與三種 VIP 可查看及使用優惠券；其他會員不得套用折抵。
-const BOSS_COUPON_ALLOWED_LEVELS=new Set(['一般會員','凱莉VIP','柏金VIP','頂極VIP']);
+const BOSS_COUPON_ALLOWED_LEVELS=new Set(['一般會員','凱莉VIP','柏金VIP','頂級VIP']);
 function bossCouponIsEligible(){
  return typeof deptIsLoggedIn!=='undefined' && !!deptIsLoggedIn &&
         typeof deptMemberData!=='undefined' && !!deptMemberData &&
@@ -14156,7 +14156,7 @@ function bossCalculateActivityDiscount(subtotal){
  const empty={amount:0,details:[]};
  if(typeof deptIsLoggedIn==='undefined'||!deptIsLoggedIn||typeof deptMemberData==='undefined'||!deptMemberData)return empty;
  const level=String(deptMemberData.member_level||'').trim();
- if(!['一般會員','凱莉VIP','柏金VIP','頂極VIP'].includes(level))return empty;
+ if(!['一般會員','凱莉VIP','柏金VIP','頂級VIP'].includes(level))return empty;
  const promos=Array.isArray(window.bossActivePromotions)?window.bossActivePromotions:[];
  if(!promos.length||typeof cart==='undefined')return empty;
  const blocked=new Set(BOSS_PROMO_BLOCKED_IDS);
@@ -14213,44 +14213,49 @@ function priceFor(id){
 }
 function countFor(id){let q=0;if(typeof cart==='undefined')return q;for(const [k,n] of Object.entries(cart))if(k===id||k.startsWith(id+'_'))q+=Number(n)||0;return q;}
 function level(){return (typeof deptIsLoggedIn!=='undefined'&&deptIsLoggedIn&&typeof deptMemberData!=='undefined'&&deptMemberData)?String(deptMemberData.member_level||'').trim():'';}
-const allowedMemberLevels=new Set(['一般會員','凱莉VIP','柏金VIP','頂極VIP']);
+const allowedMemberLevels=new Set(['一般會員','凱莉VIP','柏金VIP','頂級VIP']);
 function eligible(p){const current=level();if(!allowedMemberLevels.has(current))return false;let levels=String(p.member_levels||'').trim();return !levels||levels==='全部會員'||levels==='全部'||levels==='一般會員'||levels.split(/[,，、;；\/\n]+/).map(s=>s.trim()).includes(current);}
 // 規格型睫毛的贈品選項使用實際購物車 SKU，避免把 E7_UP_C_0.07_MIX7-14 當成 E7_UP 的一般庫存。
 // 僅開放已加入購物車且庫存可核對的規格，避免顧客選到沒有庫存的規格。
+// V6：直接以已編號的庫存 A 欄產生規格；每次庫存同步只建立一次索引。
+// 不再做「捲度 × 粗度 × 長度 × 全庫存掃描」，避免大量規格造成卡頓或漏列。
+let promoInventorySource=null;
+let promoInventoryIndex=new Map();
+function promoStockIndex(){
+ const inventory=(typeof globalInventoryData!=='undefined'&&globalInventoryData)?globalInventoryData:{};
+ if(inventory===promoInventorySource)return promoInventoryIndex;
+ promoInventorySource=inventory;promoInventoryIndex=new Map();
+ for(const [stockKey,raw] of Object.entries(inventory)){
+  const qty=Number(raw);if(!Number.isFinite(qty)||qty<=0)continue;
+  const full=String(stockKey).trim();
+  const match=full.match(/^\s*(E\d+_UP)(?![A-Z0-9_])/i);
+  if(!match)continue;
+  const id=match[1].toUpperCase();
+  // 規格必須出現在名稱末端，避免把商品名稱中的字母誤認成捲度。
+  // 支援 B_0.07_MIX8-14、D-0.10-10mm、J_0.07_MIX5-7 等寫法。
+  const spec=full.match(/([JBCDO])\s*[_-]\s*(0[._]\d{2})\s*[_-]\s*(MIX\s*\d+\s*[-~～]\s*\d+|\d+\s*mm)\s*$/i);
+  if(!spec)continue;
+  const curl=spec[1].toUpperCase();
+  const thick=spec[2].replace('_','.');
+  const len=spec[3].toUpperCase().replace(/\s+/g,'').replace(/[~～]/g,'-');
+  const entry={stockKey,qty,curl,thick,len};
+  if(!promoInventoryIndex.has(id))promoInventoryIndex.set(id,[]);
+  promoInventoryIndex.get(id).push(entry);
+ }
+ return promoInventoryIndex;
+}
 function promoOptions(r){
- const id=String(r.product_id||'').trim();
+ const id=String(r.product_id||'').trim().toUpperCase();
  const card=document.querySelector('.product-item[data-id="'+id.replace(/"/g,'')+'"]');
  if(!card?.hasAttribute('data-lash'))return [r];
- const opts=[],seen=new Set();
- // 從該商品實際可選的捲度／粗度／長度建立所有規格，
- // 不再限制顧客只能選購物車內已買過的規格。
- const curls=[...card.querySelectorAll('.spec-btn[data-type="curl"]')].map(x=>x.dataset.value);
- const thicknesses=[...card.querySelectorAll('.spec-btn[data-type="thickness"]')].map(x=>x.dataset.value);
- const lengths=[...card.querySelectorAll('.spec-btn[data-type="length"]')].map(x=>x.dataset.value);
- const norm=x=>String(x||'').toUpperCase().replace(/[\\s　()（）_\\-°˚]/g,'');
- const inventory=(typeof globalInventoryData!=='undefined'&&globalInventoryData)?globalInventoryData:{};
- for(const curl of curls)for(const thick of thicknesses)for(const len of lengths){
-  // 與原商品規格限制保持一致。
-  if(id==='E7_UP'&&((curl==='O'&&len!=='MIX7-13')||(curl!=='O'&&len==='MIX7-13')))continue;
-  if(id==='E8_UP'&&curl==='J'&&len!=='MIX7-14')continue;
-  const matches=Object.keys(inventory).filter(k=>{
-   const key=norm(k);
-   return key.startsWith(norm(id))&&key.includes(norm(curl+thick+len));
-  });
-  if(matches.length!==1)continue; // 庫存鍵有歧義時不提供選購，避免扣錯規格
-  const stockKey=matches[0],qty=Number(inventory[stockKey]);
-  if(!Number.isFinite(qty)||qty<=0||seen.has(stockKey))continue;
-  seen.add(stockKey);
-  const sku='PROMOGIFT:'+stockKey;
-  opts.push({...r,product_id:sku,product_name:(r.product_name||id)+' ('+curl+'-'+thick+'-'+len+')',base_product_id:id,backend_stock_key:stockKey});
- }
- // 兼容舊版庫存鍵：已成功加入購物車的規格仍可選。
- if(typeof cart!=='undefined')for(const sku of Object.keys(cart)){
-  if(!(sku.startsWith(id+'_')&&Number(cart[sku])>0))continue;
-  const cfg=typeof productConfig!=='undefined'?productConfig[sku]:null;
-  if(!cfg?.backendStockKey||seen.has(cfg.backendStockKey))continue;
-  seen.add(cfg.backendStockKey);
-  opts.push({...r,product_id:sku,product_name:cfg.name||r.product_name||sku,base_product_id:id,backend_stock_key:cfg.backendStockKey});
+ const entries=promoStockIndex().get(id)||[];
+ const seen=new Set(),opts=[];
+ for(const e of entries){
+  if(seen.has(e.stockKey))continue;
+  seen.add(e.stockKey);
+  opts.push({...r,product_id:'PROMOGIFT:'+e.stockKey,
+   product_name:(r.product_name||id)+' ('+e.curl+'-'+e.thick+'-'+e.len+')',
+   base_product_id:id,backend_stock_key:e.stockKey});
  }
  return opts;
 }
@@ -14411,7 +14416,7 @@ async function loadGiftPromotions(){
  }
 }
 loadGiftPromotions();
-document.addEventListener('click',e=>{if(e.target.closest('#boss-promo-eligibility'))return;setTimeout(render,120);});
+// 購物車及庫存同步處已有 bossPromoGiftRefresh；避免每次點擊整頁都重建贈品選單。
 render();
 })();
 </script>
