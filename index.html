@@ -14422,12 +14422,14 @@ function bossCalculateActivityDiscount(subtotal){
  for(const [sku,rawQty] of Object.entries(cart)){
   const qty=Number(rawQty)||0;if(qty<=0)continue;
   const id=String(sku).split('_')[0].toUpperCase();
+  // 出清五折 W1_UP～W19_UP：規格 SKU 仍以 W 編號開頭，直接排除避免二次折扣。
+  if(/^W\d+_UP(?:_|$)/i.test(String(sku)))continue;
   const product=typeof productConfig!=='undefined'?(productConfig[sku]||productConfig[id]):null;
   const card=document.querySelector('.product-item[data-id="'+id+'"]');
   const cat=String(card?.dataset.category||'').toLowerCase();
   const sub=String(card?.dataset.sub||'').toLowerCase();
   const name=String(product?.name||card?.dataset.name||'');
-  if(blocked.has(id)||/採耳|美甲|出清五折/.test(name)||/nail|ear-pick|clearance/.test(cat+' '+sub))continue;
+  if(blocked.has(id)||/採耳|美甲|出清五折/.test(name)||/nail|ear-pick|clearance|(?:^|[\s-])sale(?:$|[\s-])/.test(cat+' '+sub))continue;
   const price=Number(window.bossCartActualPrices?.[sku]);
   if(!Number.isFinite(price)||price<=0)continue;
   lines.push({id,qty,price});
