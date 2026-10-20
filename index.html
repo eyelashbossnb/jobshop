@@ -14236,7 +14236,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     <div id="boss-gift-summary" class="boss-gift-summary"></div>
     <div id="boss-gift-tiers"></div>
     <div id="boss-gift-status"></div>
-    <div class="boss-gift-actions"><button type="button" onclick="bossGiftClear()">清除選擇</button><button class="primary" type="button" onclick="bossGiftClose()">確認贈品</button></div>
+    <div class="boss-gift-actions"><button type="button" onclick="bossGiftClear()">清除選擇</button><button type="button" onclick="bossGiftDecline()">不需要滿額贈品</button><button class="primary" type="button" onclick="bossGiftClose()">確認贈品</button></div>
   </div>
 </div>
 
@@ -14292,7 +14292,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     const status=getEl('boss-gift-status');
     if(status)status.textContent=remaining<0?'已超出可用贈品額度，請減少選擇。':eligible<1000?'未達滿額贈門檻。':'每個滿額階段任選一件；可跨階段、多次選擇，總額度不可超過符合資格金額。';
     const checkout=getEl('boss-gift-checkout-text');
-    if(checkout){const count=Object.values(chosen).reduce((a,b)=>a+b,0);checkout.textContent='符合資格 '+money(eligible)+'｜已選 '+count+' 件｜已用 '+money(used)+'｜剩餘 '+money(remaining);}
+    if(checkout){const count=Object.values(chosen).reduce((a,b)=>a+b,0);checkout.textContent=giftDeclined?'不需要滿額贈品':'符合資格 '+money(eligible)+'｜已選 '+count+' 件｜已用 '+money(used)+'｜剩餘 '+money(remaining);}
     gifts.forEach(g=>{const inp=getEl('boss-gift-qty-'+gifts.indexOf(g));if(inp && document.activeElement!==inp)inp.value=chosen[g.id]||0;});
   }
   function build(){
@@ -14339,14 +14339,15 @@ window.addEventListener('DOMContentLoaded',()=>{
     if(spent()>available())throw new Error('滿額贈額度超出可用金額，請重新選擇贈品');
     const lines=gifts.filter(g=>chosen[g.id]).map(g=>(/^[A-Z]{1,3}\d+[A-Z0-9_-]*$/.test(g.id) ? g.id+'｜'+g.name : g.name)+' ×'+chosen[g.id]);
     if(lines.length)return lines.join('\n');
-    return ''; // 符合資格時必須選擇贈品，不允許放棄
+    if(giftDeclined)return '不需要滿額贈品';
+    return '';
   };
   // 相容其他舊呼叫；不再將贈品文字寫進備註。
   window.bossGiftOrderMarker=function(){return '';};
   window.bossGiftValidate=function(){
     if(!syncGiftEligibility())return true;
     if(spent()>available()){alert('滿額贈額度已超出資格金額，請重新選擇贈品。');bossGiftOpen(true);return false;}
-    if(available()>=1000 && spent()===0){alert('請先完成滿額贈品選擇，再送出訂單。');bossGiftOpen(true);return false;}
+    if(available()>=1000 && spent()===0 && !giftDeclined){alert('請先選擇滿額贈品，或點選「不需要滿額贈品」，再送出訂單。');bossGiftOpen(true);return false;}
     return true;
   };
   const originalScroll=window.scrollToOrderForm;
