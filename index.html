@@ -14459,11 +14459,20 @@ function bossCalculateActivityDiscount(subtotal){
   if(!isAll&&!isProduct&&!isCategory&&!isQuantity)continue;
   const allowed=String(p.member_levels||'').trim();
   if(allowed&&allowed!=='全部會員'&&!splitValues(allowed).includes(level))continue;
-  const rate=Number(p.discount_rate??p.activity_discount_rate);
+  const rawRate=p.discount_rate??p.activity_discount_rate??p.discount??p.rate;
+  const rateText=String(rawRate??'').trim();
+  let rate=Number(rawRate);
+  if(/折/.test(rateText)){
+   const n=Number(rateText.replace(/[^0-9.]/g,''));
+   rate=n>=10?n/100:n/10; // 95折→0.95、9折→0.9
+  }else if(Number.isFinite(rate)&&rate>1){
+   rate=rate<=10?rate/10:rate/100;
+  }
   if(!Number.isFinite(rate)||rate<=0||rate>=1)continue;
-  const included=new Set((p.products||[]).map(x=>String(x.product_id||'').trim().toUpperCase()));
+  const included=new Set((p.products||[]).map(x=>String(x.product_id||x.id||x.product_code||'').trim().toUpperCase()).filter(Boolean));
   const cats=splitValues(p.target_category??p.selected_categories??p.categories??p.category_list??p.category??p.specified_categories).map(normalizeCategory);
-  const threshold=Number(p.minimum_qty??p.min_qty??p.threshold_qty??p.required_qty??p.quantity_threshold??p.buy_qty??p.min_quantity);
+  const productThreshold=(p.products||[]).map(x=>Number(x.minimum_qty??x.min_qty??x.condition_qty??x.required_qty??x.threshold_qty??x.buy_qty)).find(n=>Number.isInteger(n)&&n>0);
+  const threshold=Number(p.minimum_qty??p.min_qty??p.threshold_qty??p.required_qty??p.quantity_threshold??p.buy_qty??p.min_quantity??p.condition_qty??p.min_purchase_qty??productThreshold);
   // 指定類別必須有後台傳回的類別資料，不能因缺資料誤套用全館。
   if(isCategory&&!cats.length)continue;
   // 滿件活動必須有明確且有效的門檻，不能將空白誤當成滿 0 件。
@@ -14481,7 +14490,7 @@ function bossCalculateActivityDiscount(subtotal){
   details.push({id:String(p.id||''),name:String(p.name||p.id||'活動'),type,rate,base,discount:value,
    eligible_qty:eligibleLines.reduce((n,x)=>n+x.qty,0),minimum_qty:isQuantity?threshold:null});
   amount+=value;
-  if(!p.combine_other)break;
+  if(![true,1,'1','是','YES','yes','true'].includes(p.combine_other))break;
  }
  return {amount:Math.min(Math.max(0,Number(subtotal)||0),amount),details};
 }
