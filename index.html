@@ -11538,6 +11538,7 @@ function executeDeptDiscountCalculate() {
     const discountAmount = promoResult.amount;
     const appliedDiscountName = promoResult.details.map(x=>x.name).join('、');
     window.bossActivityDiscountResult = promoResult;
+    if(typeof window.bossFixedAmountGiftRefresh==='function')window.bossFixedAmountGiftRefresh();
 
     const shippingEl = document.getElementById("shipping-fee");
     const currentShippingText = shippingEl ? shippingEl.textContent : "0";
@@ -13695,7 +13696,8 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
         // 此欄沿用現有表單「備註」，由後台分離至「優惠活動紀錄」；不影響商品明細與金額。
         const promoGiftMarker=promoGiftResult.ok&&promoGiftResult.items.length?'\n【優惠活動贈品】'+JSON.stringify(promoGiftResult.items):'';
         const promoDiscountMarker=window.bossActivityDiscountResult?.amount>0?'\n【活動折扣紀錄】'+JSON.stringify(window.bossActivityDiscountResult):'';
-        formData.append("entry.394405044", orderNotes + couponMarker + promoGiftMarker + promoDiscountMarker);
+        const fixedAmountGiftMarker=typeof bossFixedAmountGiftPayload==='function'?'\n【活動滿額固定贈品】'+JSON.stringify(bossFixedAmountGiftPayload()):'';
+        formData.append("entry.394405044", orderNotes + couponMarker + promoGiftMarker + promoDiscountMarker + fixedAmountGiftMarker);
         // 滿額贈直接送到 Google 表單獨立題目，不再寫入訂單備註。
         formData.append("entry.873435827", typeof bossGiftSubmissionValue === "function" ? bossGiftSubmissionValue() : "");
 
@@ -14723,7 +14725,7 @@ async function loadGiftPromotions(){
   const d=await response.json();
   if(d.status!=='success'||!Array.isArray(d.promotions))throw Error(d.message||'活動 API 回傳格式不正確');
   if(requestId!==giftPromoRequestId)return;
-  promotions=d.promotions;window.bossActivePromotions=promotions;ready=true;loadError=false; if(typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
+  promotions=d.promotions;window.bossActivePromotions=promotions;ready=true;loadError=false;if(typeof window.bossFixedAmountGiftRefresh==='function')window.bossFixedAmountGiftRefresh(); if(typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
  }catch(e){
   if(requestId!==giftPromoRequestId)return;
   loadError=true;ready=false;window.bossActivePromotions=[]; if(typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
@@ -14830,5 +14832,50 @@ render();
   setTimeout(fixEmpty,2500);
 })();
 </script>
+
+<!-- V78｜滿額固定活動贈品：僅顯示活動文字，不佔購物車／原有滿額贈選項 -->
+<script id="boss-fixed-amount-gift-v78">
+(function(){
+ 'use strict';
+ const levels=new Set(['一般會員','凱莉VIP','柏金VIP','頂極VIP','頂級VIP']);
+ const safeText=v=>String(v==null?'':v).trim();
+ const splitLevels=v=>safeText(v).split(/[,，、;；\n]+/).map(s=>s.trim()).filter(Boolean);
+ function currentLevel(){return typeof deptIsLoggedIn!=='undefined'&&deptIsLoggedIn&&typeof deptMemberData!=='undefined'&&deptMemberData?safeText(deptMemberData.member_level):'';}
+ function available(){
+  const lv=currentLevel();if(!levels.has(lv))return [];
+  return (Array.isArray(window.bossActivePromotions)?window.bossActivePromotions:[]).filter(p=>{
+   if(safeText(p.activity_type||p.type)!=='滿額贈固定商品')return false;
+   const allowed=safeText(p.member_levels);
+   if(allowed&&allowed!=='全部會員'&&!splitLevels(allowed).includes(lv))return false;
+   return Number.isFinite(Number(p.amount_threshold))&&Number(p.amount_threshold)>0&&safeText(p.fixed_gift);
+  });
+ }
+ function amount(){
+  const text=document.getElementById('subtotal-price')?.textContent||'0';
+  const subtotal=Number(text.replace(/[^0-9]/g,''))||0;
+  const discount=Number(window.bossActivityDiscountResult?.amount)||0;
+  // 會員價與活動折扣後商品金額；不扣運費、購物金券及儲值金。
+  return Math.max(0,subtotal-discount);
+ }
+ function awarded(){return available().filter(p=>amount()>=Number(p.amount_threshold));}
+ window.bossFixedAmountGiftPayload=function(){return awarded().map(p=>({id:safeText(p.id),name:safeText(p.name),gift:safeText(p.fixed_gift),threshold:Number(p.amount_threshold)}));};
+ function refresh(){
+  let host=document.getElementById('boss-fixed-amount-gift');
+  const anchor=document.getElementById('boss-promo-eligibility');
+  if(!anchor)return;
+  if(!host){host=document.createElement('div');host.id='boss-fixed-amount-gift';host.style.cssText='padding:14px 16px;margin:10px 0;background:#fffbf9;border:1px solid #f1eae4;border-radius:12px;font-size:13px;line-height:1.9';anchor.insertAdjacentElement('afterend',host);}
+  const promos=available();host.replaceChildren();host.style.display=promos.length?'':'none';
+  for(const p of promos){
+   const met=amount()>=Number(p.amount_threshold);
+   const line=document.createElement('div');
+   line.textContent=met?'🎁 已獲得：'+safeText(p.fixed_gift)+'（'+safeText(p.name)+'，隨貨附贈）':'🎁 '+safeText(p.name)+'｜單筆商品滿 $'+Number(p.amount_threshold).toLocaleString('zh-TW')+' 即贈 '+safeText(p.fixed_gift);
+   line.style.color=met?'#76563d':'#8a7e72';host.append(line);
+  }
+ }
+ window.bossFixedAmountGiftRefresh=refresh;
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh);else refresh();
+})();
+</script>
+
 </body>
 </html>
