@@ -14435,8 +14435,8 @@ function bossCalculateActivityDiscount(subtotal){
   if(/^W\d+_UP(?:_|$)/i.test(upper))continue;
   const product=typeof productConfig!=='undefined'?(productConfig[sku]||productConfig[id]):null;
   const card=cards.get(id);
-  const cat=String(card?.dataset.category||'').toLowerCase();
-  const sub=String(card?.dataset.sub||'').toLowerCase();
+  const cat=String(card?.dataset.category||product?.category||'').toLowerCase();
+  const sub=String(card?.dataset.sub||product?.subCategory||'').toLowerCase();
   const name=String(product?.name||card?.dataset.name||'');
   if(blocked.has(id)||/採耳|美甲|出清五折/.test(name)||/nail|ear|sale|clearance/.test(cat))continue;
   const price=Number(window.bossCartActualPrices?.[sku]);
@@ -14454,7 +14454,7 @@ function bossCalculateActivityDiscount(subtotal){
   const type=String(p.activity_type||p.type||'').trim();
   const isAll=type==='全館商品折後再打折';
   const isProduct=type==='指定商品再打折';
-  const isCategory=/指定類別/.test(type)&&/折/.test(type);
+  const isCategory=/指定類別|指定分類/.test(type)&&/折/.test(type);
   const isQuantity=/滿件/.test(type)&&/折/.test(type);
   if(!isAll&&!isProduct&&!isCategory&&!isQuantity)continue;
   const allowed=String(p.member_levels||'').trim();
@@ -14470,7 +14470,23 @@ function bossCalculateActivityDiscount(subtotal){
   }
   if(!Number.isFinite(rate)||rate<=0||rate>=1)continue;
   const included=new Set((p.products||[]).map(x=>String(x.product_id||x.id||x.product_code||'').trim().toUpperCase()).filter(Boolean));
-  const cats=splitValues(p.target_category??p.selected_categories??p.categories??p.category_list??p.category??p.specified_categories).map(normalizeCategory);
+  // 指定類別以主分類為準；細分項目不影響優惠資格。
+  // 相容後台複選類別與前台分類代碼，並避免以商品 ID 猜測分類。
+  const categoryAliases={
+   'skincare':'臉部保養','skin':'臉部保養','臉部保養':'臉部保養',
+   'makeup':'美妝商品','美妝商品':'美妝商品',
+   'wax':'熱蠟商品','熱蠟商品':'熱蠟商品',
+   'permanent':'紋繡商品','紋繡商品':'紋繡商品',
+   'brows':'美睫/黑膠','美睫/黑膠':'美睫/黑膠',
+   'eyelash':'美睫/睫毛款式','美睫/睫毛款式':'美睫/睫毛款式',
+   'perimeter':'美睫/周邊商品','美睫/周邊商品':'美睫/周邊商品',
+   '美睫/專業套組':'美睫/專業套組'
+  };
+  const canonicalCategory=v=>{
+   const key=normalizeCategory(v);
+   return categoryAliases[key]||key;
+  };
+  const cats=splitValues(p.target_category??p.selected_categories??p.categories??p.category_list??p.category??p.specified_categories).map(canonicalCategory);
   // 滿件折扣只讀取「優惠活動設定」的滿件門檻（K 欄）；
   // 買X送Y的 buy_qty、商品設定內的買X數量都不是滿件折扣門檻。
   // 特別注意：空白不可被 Number('') 轉成 0，也不可退回使用 buy_qty。
@@ -14483,7 +14499,7 @@ function bossCalculateActivityDiscount(subtotal){
   if(isQuantity&&(!Number.isInteger(threshold)||threshold<1||!included.size))continue;
   const eligibleLines=lines.filter(x=>{
    if(isAll)return true;
-   if(isCategory)return cats.includes(normalizeCategory(x.category));
+   if(isCategory)return cats.includes(canonicalCategory(x.category));
    return included.has(x.id);
   });
   if(isQuantity&&eligibleLines.reduce((n,x)=>n+x.qty,0)<threshold)continue;
