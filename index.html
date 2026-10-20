@@ -12831,6 +12831,12 @@ function updateCartSummary() {
     if(document.getElementById('grand-total')) document.getElementById('grand-total').innerText = `$${grandTotal.toLocaleString()}`;
     // Keep member + coupon total synchronized after cart/shipping changes.
     if(typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
+    // V80：每次購物車數量、商品增刪變動後立即重算買X送Y資格，
+    // 不必重新整理網頁；不重新讀取 API，保留已選取的有效贈品。
+    if(typeof window.bossPromoGiftRefresh==='function') {
+        try { window.bossPromoGiftRefresh(); }
+        catch (err) { console.error('活動贈品即時更新失敗', err); }
+    }
 };
 
 function toggleLashesMenu(show) {
