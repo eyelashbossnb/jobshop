@@ -14414,44 +14414,73 @@ function bossCalculateActivityDiscount(subtotal){
  const empty={amount:0,details:[]};
  if(typeof deptIsLoggedIn==='undefined'||!deptIsLoggedIn||typeof deptMemberData==='undefined'||!deptMemberData)return empty;
  const level=String(deptMemberData.member_level||'').trim();
- if(!['一般會員','凱莉VIP','柏金VIP','頂極VIP'].includes(level))return empty;
+ if(!['一般會員','凱莉VIP','柏金VIP','頂極VIP','頂級VIP'].includes(level))return empty;
  const promos=Array.isArray(window.bossActivePromotions)?window.bossActivePromotions:[];
  if(!promos.length||typeof cart==='undefined')return empty;
  const blocked=new Set(BOSS_PROMO_BLOCKED_IDS);
+ const cards=new Map(Array.from(document.querySelectorAll('.product-item[data-id]')).map(el=>[String(el.dataset.id||'').toUpperCase(),el]));
+ const ids=[...cards.keys()].sort((a,b)=>b.length-a.length);
+ const categoryMap={
+  brows:'美睫/黑膠',eyelash:'美睫/睫毛款式',perimeter:'美睫/周邊商品',
+  wax:'熱蠟商品',makeup:'美妝商品',skincare:'臉部保養',
+  nail:'美甲商品',ear:'採耳商品',sale:'出清五折'
+ };
+ const splitValues=v=>Array.isArray(v)?v.flatMap(splitValues):String(v||'').split(/[,，、;；\n|]+/).map(x=>x.trim()).filter(Boolean);
+ const normalizeCategory=v=>String(v||'').trim().replace(/\s+/g,'').replace(/／/g,'/');
  const lines=[];
  for(const [sku,rawQty] of Object.entries(cart)){
   const qty=Number(rawQty)||0;if(qty<=0)continue;
-  const id=String(sku).split('_')[0].toUpperCase();
-  // 出清五折 W1_UP～W19_UP：規格 SKU 仍以 W 編號開頭，直接排除避免二次折扣。
-  if(/^W\d+_UP(?:_|$)/i.test(String(sku)))continue;
+  const upper=String(sku).toUpperCase();
+  const id=ids.find(k=>upper===k||upper.startsWith(k+'_'))||upper.split('_')[0];
+  if(/^W\d+_UP(?:_|$)/i.test(upper))continue;
   const product=typeof productConfig!=='undefined'?(productConfig[sku]||productConfig[id]):null;
-  const card=document.querySelector('.product-item[data-id="'+id+'"]');
+  const card=cards.get(id);
   const cat=String(card?.dataset.category||'').toLowerCase();
   const sub=String(card?.dataset.sub||'').toLowerCase();
   const name=String(product?.name||card?.dataset.name||'');
-  if(blocked.has(id)||/採耳|美甲|出清五折/.test(name)||/nail|ear-pick|clearance|(?:^|[\s-])sale(?:$|[\s-])/.test(cat+' '+sub))continue;
+  if(blocked.has(id)||/採耳|美甲|出清五折/.test(name)||/nail|ear|sale|clearance/.test(cat))continue;
   const price=Number(window.bossCartActualPrices?.[sku]);
   if(!Number.isFinite(price)||price<=0)continue;
-  lines.push({id,qty,price});
+  let category=categoryMap[cat]||'';
+  if(cat==='brows'&&/professional-kit/.test(sub))category='美睫/專業套組';
+  if(cat==='perimeter'&&/professional-kit/.test(sub))category='美睫/專業套組';
+  if(cat==='brows'&&/lash|eyelash/.test(sub))category='美睫/睫毛款式';
+  if(cat==='eyelash'&&/professional-kit/.test(sub))category='美睫/專業套組';
+  // 實際分類由商品卡片決定，不能以商品編號字首猜測。
+  lines.push({id,sku,qty,price,category});
  }
  const details=[];let amount=0;
  for(const p of promos){
-  const type=String(p.activity_type||'');
-  if(type!=='全館商品折後再打折'&&type!=='指定商品再打折')continue;
+  const type=String(p.activity_type||p.type||'').trim();
+  const isAll=type==='全館商品折後再打折';
+  const isProduct=type==='指定商品再打折';
+  const isCategory=/指定類別/.test(type)&&/折/.test(type);
+  const isQuantity=/滿件/.test(type)&&/折/.test(type);
+  if(!isAll&&!isProduct&&!isCategory&&!isQuantity)continue;
   const allowed=String(p.member_levels||'').trim();
-  if(allowed&&allowed!=='全部會員'&&!allowed.split(/[,，、;；\/\n]+/).map(x=>x.trim()).includes(level))continue;
-  const rate=Number(p.discount_rate);
+  if(allowed&&allowed!=='全部會員'&&!splitValues(allowed).includes(level))continue;
+  const rate=Number(p.discount_rate??p.activity_discount_rate);
   if(!Number.isFinite(rate)||rate<=0||rate>=1)continue;
   const included=new Set((p.products||[]).map(x=>String(x.product_id||'').trim().toUpperCase()));
-  const eligibleLines=lines.filter(x=>type==='全館商品折後再打折'||included.has(x.id));
+  const cats=splitValues(p.target_category??p.selected_categories??p.categories??p.category_list??p.category??p.specified_categories).map(normalizeCategory);
+  const threshold=Number(p.minimum_qty??p.min_qty??p.threshold_qty??p.required_qty??p.quantity_threshold??p.buy_qty??p.min_quantity);
+  // 指定類別必須有後台傳回的類別資料，不能因缺資料誤套用全館。
+  if(isCategory&&!cats.length)continue;
+  // 滿件活動必須有明確且有效的門檻，不能將空白誤當成滿 0 件。
+  if(isQuantity&&(!Number.isInteger(threshold)||threshold<1||!included.size))continue;
+  const eligibleLines=lines.filter(x=>{
+   if(isAll)return true;
+   if(isCategory)return cats.includes(normalizeCategory(x.category));
+   return included.has(x.id);
+  });
+  if(isQuantity&&eligibleLines.reduce((n,x)=>n+x.qty,0)<threshold)continue;
   const base=eligibleLines.reduce((sum,x)=>sum+x.price*x.qty,0);
   if(base<=0)continue;
-  // 以實際會員售價乘活動折數，四捨五入到元；折抵額為原金額減折後金額。
   const value=Math.min(base,Math.max(0,base-Math.round(base*rate)));
   if(value<=0)continue;
-  details.push({id:String(p.id||''),name:String(p.name||p.id||'活動'),type,rate,base,discount:value});
+  details.push({id:String(p.id||''),name:String(p.name||p.id||'活動'),type,rate,base,discount:value,
+   eligible_qty:eligibleLines.reduce((n,x)=>n+x.qty,0),minimum_qty:isQuantity?threshold:null});
   amount+=value;
-  // 其他活動不可併用時，依後台排序僅套用第一項折扣。
   if(!p.combine_other)break;
  }
  return {amount:Math.min(Math.max(0,Number(subtotal)||0),amount),details};
