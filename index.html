@@ -14876,7 +14876,7 @@ render();
   host.style.cssText='margin-top:10px;padding-top:10px;border-top:1px solid #eee;font-size:13px;line-height:1.9';
   const content=promos.map(p=>{
    const threshold=Number(p.amount_threshold),met=amount()>=threshold;
-   return (met?'🎁 已符合｜':'🎁 活動預告｜')+'單筆訂單滿 $'+threshold.toLocaleString('zh-TW')+'，即贈 '+safeText(p.fixed_gift)+(met?'（已獲得，隨貨附贈）':'');
+   return '🎁 滿額好禮｜'+(met?'已符合單筆訂單滿 $':'單筆訂單滿 $')+threshold.toLocaleString('zh-TW')+(met?' 活動，獲贈 ':'，即贈 ')+safeText(p.fixed_gift)+(met?'（贈品將隨貨附贈，無須選取）':'');
   });
   const signature=content.join('\n');
   if(host.dataset.signature!==signature){
