@@ -14860,20 +14860,37 @@ render();
  function awarded(){return available().filter(p=>amount()>=Number(p.amount_threshold));}
  window.bossFixedAmountGiftPayload=function(){return awarded().map(p=>({id:safeText(p.id),name:safeText(p.name),gift:safeText(p.fixed_gift),threshold:Number(p.amount_threshold)}));};
  function refresh(){
-  let host=document.getElementById('boss-fixed-amount-gift');
   const anchor=document.getElementById('boss-promo-eligibility');
   if(!anchor)return;
-  if(!host){host=document.createElement('div');host.id='boss-fixed-amount-gift';host.style.cssText='padding:14px 16px;margin:10px 0;background:#fffbf9;border:1px solid #f1eae4;border-radius:12px;font-size:13px;line-height:1.9';anchor.insertAdjacentElement('afterend',host);}
-  const promos=available();host.replaceChildren();host.style.display=promos.length?'':'none';
-  for(const p of promos){
-   const met=amount()>=Number(p.amount_threshold);
-   const line=document.createElement('div');
-   line.textContent=met?'🎁 已獲得：'+safeText(p.fixed_gift)+'（'+safeText(p.name)+'，隨貨附贈）':'🎁 '+safeText(p.name)+'｜單筆商品滿 $'+Number(p.amount_threshold).toLocaleString('zh-TW')+' 即贈 '+safeText(p.fixed_gift);
-   line.style.color=met?'#76563d':'#8a7e72';host.append(line);
+  const promos=available();
+  let host=document.getElementById('boss-fixed-amount-gift');
+  if(!promos.length){if(host)host.remove();return;}
+  // 與買X送Y共用同一個「活動贈品」區塊，不另產生獨立卡片。
+  if(!host){host=document.createElement('div');host.id='boss-fixed-amount-gift';}
+  host.style.cssText='margin-top:10px;padding-top:10px;border-top:1px solid #eee;font-size:13px;line-height:1.9';
+  const content=promos.map(p=>{
+   const threshold=Number(p.amount_threshold),met=amount()>=threshold;
+   return (met?'🎁 已符合｜':'🎁 活動預告｜')+'單筆訂單滿 $'+threshold.toLocaleString('zh-TW')+'，即贈 '+safeText(p.fixed_gift)+(met?'（已獲得，隨貨附贈）':'');
+  });
+  const signature=content.join('\n');
+  if(host.dataset.signature!==signature){
+   host.replaceChildren();
+   content.forEach(line=>{const div=document.createElement('div');div.textContent=line;host.append(div);});
+   host.dataset.signature=signature;
   }
+  if(host.parentElement!==anchor)anchor.append(host);
+ }
+ // 買X送Y會重新繪製活動贈品容器，完成後自動將滿額活動內容補回同區塊。
+ let pending=false;
+ function queueRefresh(){if(pending)return;pending=true;Promise.resolve().then(()=>{pending=false;refresh();});}
+ function install(){
+  const anchor=document.getElementById('boss-promo-eligibility');
+  if(!anchor)return;
+  new MutationObserver(queueRefresh).observe(anchor,{childList:true});
+  refresh();
  }
  window.bossFixedAmountGiftRefresh=refresh;
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh);else refresh();
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
 })();
 </script>
 
