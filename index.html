@@ -13702,7 +13702,8 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
         // 此欄沿用現有表單「備註」，由後台分離至「優惠活動紀錄」；不影響商品明細與金額。
         const promoGiftMarker=promoGiftResult.ok&&promoGiftResult.items.length?'\n【優惠活動贈品】'+JSON.stringify(promoGiftResult.items):'';
         const promoDiscountMarker=window.bossActivityDiscountResult?.amount>0?'\n【活動折扣紀錄】'+JSON.stringify(window.bossActivityDiscountResult):'';
-        const fixedAmountGiftMarker=typeof bossFixedAmountGiftPayload==='function'?'\n【活動滿額固定贈品】'+JSON.stringify(bossFixedAmountGiftPayload()):'';
+        const fixedAmountGiftItems=typeof bossFixedAmountGiftPayload==='function'?bossFixedAmountGiftPayload():[];
+        const fixedAmountGiftMarker=Array.isArray(fixedAmountGiftItems)&&fixedAmountGiftItems.length?'\n【活動滿額固定贈品】'+JSON.stringify(fixedAmountGiftItems):'';
         formData.append("entry.394405044", orderNotes + couponMarker + promoGiftMarker + promoDiscountMarker + fixedAmountGiftMarker);
         // 滿額贈直接送到 Google 表單獨立題目，不再寫入訂單備註。
         formData.append("entry.873435827", typeof bossGiftSubmissionValue === "function" ? bossGiftSubmissionValue() : "");
