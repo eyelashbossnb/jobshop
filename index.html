@@ -1023,6 +1023,14 @@
   }
 }
 
+/* V84 優惠券單一區塊分頁 */
+.boss-coupon-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 16px}
+.boss-coupon-tab{border:1px solid #eadbd5;border-radius:10px;padding:11px 6px;background:#fff;color:#786b66;font-weight:700;font-size:13px;cursor:pointer}
+.boss-coupon-tab[aria-selected="true"]{background:#fff3f0;border-color:#e9b4aa;color:#a75f56}
+.boss-coupon-view[hidden]{display:none!important}
+.boss-coupon-actions{display:flex;justify-content:center;margin:14px 0 0}
+.boss-coupon-actions .boss-coupon-query{max-width:100%;width:auto}
+@media(max-width:768px){.boss-coupon-actions .boss-coupon-query{width:100%}}
 </style>
 </head>
 <body>
@@ -14143,18 +14151,40 @@ async function copyTransferAccount(){try{await navigator.clipboard.writeText('72
 </script>
 
 <section id="eyelash-coupon-panel" class="boss-coupon-panel" aria-label="我的優惠券" style="display:none">
-  <div class="boss-coupon-head"><div><div class="boss-coupon-heading">🎟 我的優惠券</div><div class="boss-coupon-sub">會員專屬優惠｜購物金折抵券、免運券可各使用一張</div></div><button type="button" class="boss-coupon-query" onclick="eyelashLoadCoupons()">查詢可用優惠券 →</button></div>
+  <div class="boss-coupon-head"><div><div class="boss-coupon-heading">🎟 我的優惠券</div><div class="boss-coupon-sub">會員專屬優惠｜購物金折抵券、免運券可各使用一張</div></div></div>
+  <div class="boss-coupon-tabs" role="tablist" aria-label="優惠券類別">
+    <button type="button" id="boss-coupon-tab-owned" class="boss-coupon-tab" role="tab" aria-selected="true" aria-controls="boss-coupon-owned-view" onclick="bossCouponSwitchTabV84('owned')">已領取優惠券</button>
+    <button type="button" id="boss-coupon-tab-claim" class="boss-coupon-tab" role="tab" aria-selected="false" aria-controls="boss-coupon-claim-view" onclick="bossCouponSwitchTabV84('claim')">可領取優惠券</button>
+  </div>
+  <div id="boss-coupon-owned-view" class="boss-coupon-view" role="tabpanel" aria-labelledby="boss-coupon-tab-owned">
   <div class="boss-coupon-grid">
     <div class="boss-coupon-tile money"><div class="boss-coupon-label">🏷 購物金折抵券 <span id="boss-money-count" class="boss-coupon-count">尚未查詢</span></div><select id="eyelash-money-coupon" class="boss-coupon-select" onchange="eyelashCouponChanged()"><option value="">不使用優惠券</option></select><div id="boss-money-expiry" class="boss-coupon-expiry">使用期限：選取優惠券後顯示</div><div class="boss-coupon-notes">購物金需一次使用完畢，未使用餘額不保留。<br>購物金折抵金額不列入滿額贈計算。</div></div>
     <div class="boss-coupon-tile shipping"><div class="boss-coupon-label">🚚 免運券 <span id="boss-shipping-count" class="boss-coupon-count">尚未查詢</span></div><select id="eyelash-shipping-coupon" class="boss-coupon-select" onchange="eyelashCouponChanged()"><option value="">不使用優惠券</option></select><div id="boss-shipping-expiry" class="boss-coupon-expiry">使用期限：選取優惠券後顯示</div><div class="boss-coupon-notes">以常溫宅配運費 $100 為折抵上限。<br>指定黑貓宅配及黑貓低溫仍需補差價。</div></div>
   </div>
-  <div id="boss-claim-section" style="margin-top:16px;padding:14px;border:1px solid #f1eae4;border-radius:12px;background:#fff">
-    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><strong>🎟 可領取優惠券</strong><button type="button" class="boss-coupon-query" onclick="bossClaimLoadV82()">查看可領取優惠券</button></div>
-    <div id="boss-claim-list" style="margin-top:10px;font-size:13px">登入後點選查看，可領取的優惠券會顯示在這裡。</div>
-  </div>
+  <div class="boss-coupon-actions"><button type="button" class="boss-coupon-query" onclick="eyelashLoadCoupons()">查詢可用優惠券 →</button></div>
   <div id="eyelash-coupon-status" class="boss-coupon-status" role="status" aria-live="polite">請先登入會員，再查詢可用優惠券</div>
+  </div>
+  <div id="boss-coupon-claim-view" class="boss-coupon-view" role="tabpanel" aria-labelledby="boss-coupon-tab-claim" hidden>
+    <div id="boss-claim-section" style="padding:4px 2px">
+      <div id="boss-claim-list" style="font-size:13px">切換至此頁時會自動查詢可領取優惠券。</div>
+      <div class="boss-coupon-actions"><button type="button" class="boss-coupon-query" onclick="bossClaimLoadV82()">重新查詢可領取優惠券</button></div>
+    </div>
+  </div>
 </section>
 <script>
+// V84：同一個優惠券區塊內切換已領取／可領取，沿用 V83 原有 API。
+function bossCouponSwitchTabV84(which){
+ const claim=which==='claim';
+ const ownedView=document.getElementById('boss-coupon-owned-view');
+ const claimView=document.getElementById('boss-coupon-claim-view');
+ const ownedTab=document.getElementById('boss-coupon-tab-owned');
+ const claimTab=document.getElementById('boss-coupon-tab-claim');
+ if(ownedView)ownedView.hidden=claim;
+ if(claimView)claimView.hidden=!claim;
+ if(ownedTab)ownedTab.setAttribute('aria-selected',String(!claim));
+ if(claimTab)claimTab.setAttribute('aria-selected',String(claim));
+ if(claim && typeof bossClaimLoadV82==='function')bossClaimLoadV82();
+}
 // Coupon UI is moved beside the order totals; admin issuing remains in Google Sheets.
 const eyelashCouponState={coupons:[],money:null,shipping:null};
 // 僅一般會員與三種 VIP 可查看及使用優惠券；其他會員不得套用折抵。
