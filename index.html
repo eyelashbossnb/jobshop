@@ -14147,7 +14147,12 @@ async function copyTransferAccount(){try{await navigator.clipboard.writeText('72
   <div class="boss-coupon-grid">
     <div class="boss-coupon-tile money"><div class="boss-coupon-label">🏷 購物金折抵券 <span id="boss-money-count" class="boss-coupon-count">尚未查詢</span></div><select id="eyelash-money-coupon" class="boss-coupon-select" onchange="eyelashCouponChanged()"><option value="">不使用優惠券</option></select><div id="boss-money-expiry" class="boss-coupon-expiry">使用期限：選取優惠券後顯示</div><div class="boss-coupon-notes">購物金需一次使用完畢，未使用餘額不保留。<br>購物金折抵金額不列入滿額贈計算。</div></div>
     <div class="boss-coupon-tile shipping"><div class="boss-coupon-label">🚚 免運券 <span id="boss-shipping-count" class="boss-coupon-count">尚未查詢</span></div><select id="eyelash-shipping-coupon" class="boss-coupon-select" onchange="eyelashCouponChanged()"><option value="">不使用優惠券</option></select><div id="boss-shipping-expiry" class="boss-coupon-expiry">使用期限：選取優惠券後顯示</div><div class="boss-coupon-notes">以常溫宅配運費 $100 為折抵上限。<br>指定黑貓宅配及黑貓低溫仍需補差價。</div></div>
-  </div><div id="eyelash-coupon-status" class="boss-coupon-status" role="status" aria-live="polite">請先登入會員，再查詢可用優惠券</div>
+  </div>
+  <div id="boss-claim-section" style="margin-top:16px;padding:14px;border:1px solid #f1eae4;border-radius:12px;background:#fff">
+    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><strong>🎟 可領取優惠券</strong><button type="button" class="boss-coupon-query" onclick="bossClaimLoadV82()">查看可領取優惠券</button></div>
+    <div id="boss-claim-list" style="margin-top:10px;font-size:13px">登入後點選查看，可領取的優惠券會顯示在這裡。</div>
+  </div>
+  <div id="eyelash-coupon-status" class="boss-coupon-status" role="status" aria-live="polite">請先登入會員，再查詢可用優惠券</div>
 </section>
 <script>
 // Coupon UI is moved beside the order totals; admin issuing remains in Google Sheets.
@@ -14225,6 +14230,42 @@ function bossCouponUpdateExpiry(){
  }
 }
 function eyelashCouponPayload(){return {phone:bossCouponIsEligible()?eyelashCouponPhone():'',moneyCouponId:bossCouponIsEligible()?(eyelashCouponState.money?.id||''):'',shippingCouponId:bossCouponIsEligible()?(eyelashCouponState.shipping?.id||''):'',subtotal:eyelashCouponBase()};}
+
+// V82：會員自行領取，成功後自動更新原有可用優惠券列表。
+async function bossClaimLoadV82(){
+ const box=document.getElementById('boss-claim-list');if(!box)return;
+ if(!bossCouponIsEligible()){box.textContent='請先登入一般會員或 VIP 帳戶';return;}
+ box.textContent='查詢中…';
+ try{
+  const r=await fetch(GAS_API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'coupon_claim_list',phone:eyelashCouponPhone()})});
+  const data=await r.json();if(!data.success)throw Error(data.message||'查詢失敗');
+  box.replaceChildren();
+  if(!data.coupons?.length){box.textContent='目前沒有開放領取的優惠券';return;}
+  data.coupons.forEach(c=>{
+   const card=document.createElement('div');card.style.cssText='border-top:1px solid #eee;padding:12px 0;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap';
+   const info=document.createElement('div');
+   const title=document.createElement('strong');title.textContent=c.name+'（'+(/免運/.test(c.type)?'免運':'折抵 $'+c.amount)+'）';info.append(title);
+   const desc=document.createElement('div');desc.style.cssText='font-size:12px;color:#8a7e72;margin-top:4px';
+   desc.textContent='每人限領 '+c.perMember+' 張｜已領 '+c.mine+' 張｜'+(c.remaining===null?'不限量':'剩餘 '+c.remaining+' 張')+(c.end?'｜使用期限：'+c.end:'');info.append(desc);
+   const btn=document.createElement('button');btn.type='button';btn.className='boss-coupon-query';btn.disabled=!c.canClaim;
+   btn.textContent=c.mine>=c.perMember?'已達領取上限':c.remaining===0?'已領取完畢':'立即領取';
+   btn.addEventListener('click',()=>bossClaimSubmitV82(c.id,btn));card.append(info,btn);box.append(card);
+  });
+ }catch(err){box.textContent='查詢失敗：'+err.message;}
+}
+async function bossClaimSubmitV82(id,btn){
+ if(!bossCouponIsEligible())return;
+ // 使用登入時取得的短期憑證，無須重複輸入密碼。
+ const claimToken=deptMemberData?.couponClaimToken;
+ if(!claimToken){alert('請重新登入會員後再領取優惠券');return;}
+ btn.disabled=true;btn.textContent='領取中…';
+ try{
+  const r=await fetch(GAS_API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'coupon_claim',phone:eyelashCouponPhone(),couponId:id,claimToken})});
+  const data=await r.json();if(!data.success)throw Error(data.message||'領取失敗');
+  await bossClaimLoadV82();await eyelashLoadCoupons();alert('優惠券領取成功！可於「我的優惠券」使用。');
+ }catch(err){alert('領取失敗：'+err.message);await bossClaimLoadV82();}
+}
+
 window.addEventListener('DOMContentLoaded',()=>{
  const panel=document.getElementById('eyelash-coupon-panel'),target=document.getElementById('grand-total');
  if(panel&&target){const container=target.closest('div');(container?.parentElement||target.parentElement).before(panel);}
