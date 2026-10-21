@@ -14292,7 +14292,7 @@ async function bossClaimSubmitV82(id,btn){
  if(!bossCouponIsEligible())return;
  // 使用登入時取得的短期憑證，無須重複輸入密碼。
  const claimToken=deptMemberData?.couponClaimToken || sessionStorage.getItem('bossCouponClaimTokenV85');
- if(!claimToken){alert('目前登入資料缺少領券憑證，請確認會員後台已部署 V85，並重新登入一次');return;}
+ if(!claimToken){alert('會員登入資料未包含領券授權。請聯絡客服確認會員後台登入回應（錯誤代碼：CLAIM_TOKEN_MISSING）。');return;}
  btn.disabled=true;btn.textContent='領取中…';
  try{
   const r=await fetch(GAS_API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'coupon_claim',phone:eyelashCouponPhone(),couponId:id,claimToken})});
