@@ -11420,6 +11420,7 @@ function executeLogout() {
         deptIsLoggedIn = false;
         deptMemberData = null;
         localStorage.removeItem("deptMemberData");
+        sessionStorage.removeItem("bossCouponClaimTokenV85");
         location.reload();
     }
 }
@@ -11455,6 +11456,8 @@ function executeRegister() {
             toggleRegisterModal(false);
             deptIsLoggedIn = true;
             deptMemberData = data.userData;
+            if (deptMemberData.couponClaimToken) sessionStorage.setItem("bossCouponClaimTokenV85", deptMemberData.couponClaimToken);
+            else sessionStorage.removeItem("bossCouponClaimTokenV85");
             
             localStorage.setItem("deptMemberData", JSON.stringify(deptMemberData));
             
@@ -11505,6 +11508,8 @@ function executeLogin() {
             toggleLoginModal(false);
             deptIsLoggedIn = true;
             deptMemberData = data.userData;
+            if (deptMemberData.couponClaimToken) sessionStorage.setItem("bossCouponClaimTokenV85", deptMemberData.couponClaimToken);
+            else sessionStorage.removeItem("bossCouponClaimTokenV85");
             
             localStorage.setItem("deptMemberData", JSON.stringify(deptMemberData));
             
@@ -14286,8 +14291,8 @@ async function bossClaimLoadV82(){
 async function bossClaimSubmitV82(id,btn){
  if(!bossCouponIsEligible())return;
  // 使用登入時取得的短期憑證，無須重複輸入密碼。
- const claimToken=deptMemberData?.couponClaimToken;
- if(!claimToken){alert('請重新登入會員後再領取優惠券');return;}
+ const claimToken=deptMemberData?.couponClaimToken || sessionStorage.getItem('bossCouponClaimTokenV85');
+ if(!claimToken){alert('目前登入資料缺少領券憑證，請確認會員後台已部署 V85，並重新登入一次');return;}
  btn.disabled=true;btn.textContent='領取中…';
  try{
   const r=await fetch(GAS_API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'coupon_claim',phone:eyelashCouponPhone(),couponId:id,claimToken})});
