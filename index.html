@@ -1032,11 +1032,13 @@
 #boss-announcement-bar.is-visible{display:flex}
 #boss-announcement-label{white-space:nowrap;flex:none;color:var(--text-main);font-weight:600}
 #boss-announcement-viewport{min-width:0;flex:1;overflow:hidden}
-#boss-announcement-track{width:100%;min-width:0;display:block;opacity:1;transition:opacity .35s ease;overflow-wrap:anywhere}
-#boss-announcement-track.boss-fading{opacity:0}
-.boss-announcement-item{display:block;width:100%;box-sizing:border-box;white-space:normal;color:var(--text-muted);text-decoration:none;line-height:1.7}
+#boss-announcement-track{display:flex;align-items:center;width:max-content;max-width:none;will-change:transform}
+#boss-announcement-track.boss-running{animation:boss-announcement-single var(--boss-scroll-duration,12s) linear 1 both}
+#boss-announcement-bar:hover #boss-announcement-track{animation-play-state:paused}
+.boss-announcement-item{flex:none;white-space:nowrap;color:var(--text-muted);text-decoration:none}
 a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underline}
-@media(prefers-reduced-motion:reduce){#boss-announcement-track{transition:none}}
+@keyframes boss-announcement-single{from{transform:translateX(var(--boss-start,0px))}to{transform:translateX(var(--boss-end,-500px))}}
+@media(prefers-reduced-motion:reduce){#boss-announcement-track{animation:none;flex-wrap:wrap;width:auto}.boss-announcement-item{white-space:normal}}
 @media(max-width:768px){#boss-announcement-bar{padding:10px 12px;gap:8px;font-size:12px;margin-bottom:18px}}
 </style>
 </head>
@@ -14949,32 +14951,18 @@ render();
     for(const k of keys)if(row[k]!==undefined)return row[k];
     return '';
   }
-  let timer=null, items=[], current=0, paused=false;
-  const reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const showItem=(index)=>{
-    track.classList.remove('boss-fading');
-    track.replaceChildren(items[index].cloneNode(true));
-  };
-  const advance=()=>{
-    if(paused||items.length<2||document.hidden)return;
-    if(reduceMotion){current=(current+1)%items.length;showItem(current);return;}
-    track.classList.add('boss-fading');
-    window.setTimeout(()=>{
-      current=(current+1)%items.length;
-      track.replaceChildren(items[current].cloneNode(true));
-      requestAnimationFrame(()=>track.classList.remove('boss-fading'));
-    },360);
-  };
-  bar.addEventListener('mouseenter',()=>{paused=true});
-  bar.addEventListener('mouseleave',()=>{paused=false});
-  bar.addEventListener('focusin',()=>{paused=true});
-  bar.addEventListener('focusout',e=>{if(!bar.contains(e.relatedTarget))paused=false});
+  function day(value){
+    if(!value)return null;
+    const d=new Date(value);
+    if(!Number.isNaN(d.getTime()))return new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();
+    return null;
+  }
   function render(payload){
     const today=new Date();const now=new Date(today.getFullYear(),today.getMonth(),today.getDate()).getTime();
     // 後台 bossGetAnnouncements_ 已篩選啟用狀態與有效日期，並依排序回傳。
     // 前台不可再次要求 enabled 欄位，因為 API 僅回傳 id/content/url。
     const rows=rowsFrom(payload);
-    items=[];
+    const items=[];
     for(const r of rows){
       const content=String(pick(r,['content','text','message','公告內容'],2)||'').trim();
       if(!content)continue;
@@ -14984,13 +14972,31 @@ render();
       if(el.tagName==='A'){el.href=url;el.target='_blank';el.rel='noopener noreferrer';}
       items.push(el);
     }
-    if(timer){clearInterval(timer);timer=null;}
-    track.replaceChildren();
-    if(!items.length){bar.classList.remove('is-visible');return;}
-    current=0;
-    showItem(current);
+    track.replaceChildren();if(!items.length){bar.classList.remove('is-visible');return;}
     bar.classList.add('is-visible');
-    if(items.length>1)timer=window.setInterval(advance,5000);
+    // 一次只跑一則：完整從右邊進場，左邊完全離場後才換下一則。
+    let current=0;
+    const viewport=document.getElementById('boss-announcement-viewport');
+    const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function showNext(){
+      track.classList.remove('boss-running');
+      track.replaceChildren(items[current].cloneNode(true));
+      if(reduceMotion){track.style.transform='none';return;}
+      track.style.transform='';
+      const start=viewport.clientWidth;
+      const end=-track.scrollWidth;
+      track.style.setProperty('--boss-start',start+'px');
+      track.style.setProperty('--boss-end',end+'px');
+      track.style.setProperty('--boss-scroll-duration',Math.max(9,(start-end)/65)+'s');
+      void track.offsetWidth; // 重新啟動下一則的動畫
+      track.classList.add('boss-running');
+    }
+    track.addEventListener('animationend',function(e){
+      if(e.animationName!=='boss-announcement-single')return;
+      current=(current+1)%items.length;
+      showNext();
+    });
+    showNext();
   }
   fetch(api+'?action=announcements&_='+Date.now(),{cache:'no-store'})
     .then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json();})
