@@ -14958,12 +14958,9 @@ render();
   }
   function render(payload){
     const today=new Date();const now=new Date(today.getFullYear(),today.getMonth(),today.getDate()).getTime();
-    const rows=rowsFrom(payload).filter(r=>{
-      const enabled=String(pick(r,['enabled','active','status','啟用狀態'],5)).trim().toLowerCase();
-      const start=day(pick(r,['start','startDate','startTime','開始時間'],3));
-      const end=day(pick(r,['end','endDate','endTime','結束時間'],4));
-      return (enabled==='是'||enabled==='true'||enabled==='1')&&(start===null||start<=now)&&(end===null||end>=now);
-    }).sort((a,b)=>Number(pick(a,['sort','order','排序'],1)||9999)-Number(pick(b,['sort','order','排序'],1)||9999));
+    // 後台 bossGetAnnouncements_ 已篩選啟用狀態與有效日期，並依排序回傳。
+    // 前台不可再次要求 enabled 欄位，因為 API 僅回傳 id/content/url。
+    const rows=rowsFrom(payload);
     const items=[];
     for(const r of rows){
       const content=String(pick(r,['content','text','message','公告內容'],2)||'').trim();
