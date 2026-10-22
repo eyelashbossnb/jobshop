@@ -1141,12 +1141,6 @@
 </div>
 <!-- 👆 置中的中間活動圖片區塊 👆 -->
 
-        <!-- 網站公告跑馬燈：Google 試算表管理 -->
-        <section id="boss-notice-bar" aria-label="網站最新公告" style="display:none" >
-          <div class="boss-notice-label">📢 最新公告</div>
-          <div class="boss-notice-viewport"><div id="boss-notice-track" class="boss-notice-track"></div></div>
-        </section>
-
         <section id="boss-promo-test" aria-label="限時優惠活動"><div class="boss-promo-box"><div class="boss-promo-heading">🎁 限時優惠活動</div><div id="boss-promo-test-result" class="boss-promo-muted">正在讀取活動資料…</div></div></section>
 
         <!-- 原本的精選商品卡片區塊 -->
@@ -14907,59 +14901,6 @@ render();
  }
  window.bossFixedAmountGiftRefresh=refresh;
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
-})();
-</script>
-
-
-<style>
-#boss-notice-bar{display:flex;align-items:center;gap:16px;margin:0 auto 24px;padding:12px 17px;background:#fff;border:1px solid #f1eae4;border-radius:13px;overflow:hidden;color:#4a3f35;box-sizing:border-box;max-width:100%}
-#boss-notice-bar .boss-notice-label{font-weight:700;white-space:nowrap;flex-shrink:0;font-size:14px}
-#boss-notice-bar .boss-notice-viewport{min-width:0;overflow:hidden;flex:1}
-#boss-notice-bar .boss-notice-track{display:flex;width:max-content;align-items:center;gap:46px;animation:bossNoticeScroll var(--notice-duration,28s) linear infinite}
-#boss-notice-bar .boss-notice-track:hover{animation-play-state:paused}
-#boss-notice-bar .boss-notice-item{white-space:nowrap;font-size:13px;color:#66564b;text-decoration:none}
-#boss-notice-bar a.boss-notice-item:hover{text-decoration:underline}
-@keyframes bossNoticeScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-@media(max-width:600px){#boss-notice-bar{padding:10px;gap:9px}#boss-notice-bar .boss-notice-label{font-size:12px}#boss-notice-bar .boss-notice-item{font-size:12px}}
-@media(prefers-reduced-motion:reduce){#boss-notice-bar .boss-notice-track{animation:none;max-width:100%;overflow:auto}}
-</style>
-<script>
-(function(){
-  // 與優惠活動使用同一個訂單後台部署網址；修改後台後須更新部署版本。
-  const API='https://script.google.com/macros/s/AKfycbxz6vwBoJznRPoJy7-ldlbdpSPwL1736tGqxZGPEHcTo5W2mm3kqUTvWRCfKJm-N9Oz/exec';
-  const bar=document.getElementById('boss-notice-bar');
-  const track=document.getElementById('boss-notice-track');
-  if(!bar||!track)return;
-  function render(items){
-    track.replaceChildren();
-    if(!items.length){bar.style.display='none';return;}
-    const makeItem=(item)=>{
-      const el=document.createElement(item.url?'a':'span');
-      el.className='boss-notice-item';el.textContent=item.content;
-      if(item.url){el.href=item.url;el.target='_blank';el.rel='noopener noreferrer';}
-      return el;
-    };
-    const group=document.createElement('div');
-    group.style.cssText='display:flex;align-items:center;gap:46px;padding-right:46px';
-    items.forEach(item=>group.append(makeItem(item)));
-    const clone=group.cloneNode(true);clone.setAttribute('aria-hidden','true');
-    clone.querySelectorAll('a').forEach(a=>a.tabIndex=-1);
-    track.append(group,clone);
-    track.style.setProperty('--notice-duration',Math.max(18,items.reduce((n,x)=>n+x.content.length,0)*0.4+12)+'s');
-    bar.style.display='flex';
-  }
-  async function load(){
-    try{
-      const response=await fetch(API+'?action=announcements',{redirect:'follow',cache:'no-store'});
-      if(!response.ok)throw new Error('HTTP '+response.status);
-      const data=await response.json();
-      if(data.status!=='success'||!Array.isArray(data.announcements))throw new Error(data.message||'公告資料格式錯誤');
-      render(data.announcements);
-    }catch(err){console.error('網站公告讀取失敗',err);bar.style.display='none';}
-  }
-  load();
-  // 官網開著時每五分鐘重新讀取公告；更新試算表不需重新部署。
-  setInterval(load,300000);
 })();
 </script>
 
