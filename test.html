@@ -589,7 +589,7 @@
             .professional-kit-list { grid-template-columns: 1fr; }
         }
 
-        /* A313 開花高手套組－尺寸任選 */
+        /* A313 美睫開花高手套組－尺寸任選 */
         .a313-choice-box { margin-top: 18px; padding: 16px; background: #fff; border: 1px solid var(--border-color); border-radius: 10px; }
         .a313-choice-title { font-weight: 600; margin-bottom: 5px; }
         .a313-fixed-spec { font-size: 12px; color: var(--accent-color); margin-bottom: 10px; }
@@ -1170,6 +1170,18 @@
                 <button class="sub-tab" onclick="filterSubCategory('lash-color', this); toggleEyelashMenu('', false);">彩毛</button>
                 <button class="sub-tab" onclick="filterSubCategory('lash-flat', this); toggleEyelashMenu('', false);">扁毛</button>
                 <button class="sub-tab" onclick="filterSubCategory('lash-tech', this); toggleEyelashMenu('', false);">科技毛</button>
+            </div>
+
+
+            <div id="sub-category-skincare" class="sub-category-menu" style="display: none;">
+                <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; margin-right: 5px;">細分項目 ｜</span>
+                <button class="sub-tab active" onclick="filterSubCategory('all', this)">顯示全部</button>
+                <button class="sub-tab" onclick="filterSubCategory('skin-1', this)">洗卸保養系列</button>
+                <button class="sub-tab" onclick="filterSubCategory('skin-2', this)">美肌露系列</button>
+                <button class="sub-tab" onclick="filterSubCategory('skin-3', this)">雙效精粹</button>
+                <button class="sub-tab" onclick="filterSubCategory('skin-4', this)">保濕精華乳/青春凝霜</button>
+                <button class="sub-tab" onclick="filterSubCategory('skin-5', this)">無限奇肌-奇肌胜肽逆齡系列</button>
+                <button class="sub-tab" onclick="filterSubCategory('skin-6', this)">無限奇肌-亮白肌因活膚系列</button>
             </div>
 
             <div id="sub-category-perimeter" class="sub-category-menu" style="display: none;">
@@ -2676,7 +2688,7 @@
                             <div class="variant-group">
                                 <div class="variant-title">粗度：</div>
                                 <div class="btn-tabs-container">
-                                    <button class="spec-btn" data-type="thickness" data-value="無" onclick="executeLashSpecSelect(this, 'W10_UP')">無</button>
+                                    <button class="spec-btn" data-type="thickness" data-value="0.07" onclick="executeLashSpecSelect(this, 'W10_UP')">0.07</button>
                                 </div>
                             </div>
                             <div class="variant-group">
@@ -2722,7 +2734,7 @@
                             <div class="variant-group">
                                 <div class="variant-title">粗度：</div>
                                 <div class="btn-tabs-container">
-                                    <button class="spec-btn" data-type="thickness" data-value="無" onclick="executeLashSpecSelect(this, 'W11_UP')">無</button>
+                                    <button class="spec-btn" data-type="thickness" data-value="0.07" onclick="executeLashSpecSelect(this, 'W11_UP')">0.07</button>
                                 </div>
                             </div>
                             <div class="variant-group">
@@ -2768,7 +2780,7 @@
                             <div class="variant-group">
                                 <div class="variant-title">粗度：</div>
                                 <div class="btn-tabs-container">
-                                    <button class="spec-btn" data-type="thickness" data-value="無" onclick="executeLashSpecSelect(this, 'W12_UP')">無</button>
+                                    <button class="spec-btn" data-type="thickness" data-value="0.07" onclick="executeLashSpecSelect(this, 'W12_UP')">0.07</button>
                                 </div>
                             </div>
                             <div class="variant-group">
@@ -2812,7 +2824,7 @@
                             <div class="variant-group">
                                 <div class="variant-title">粗度：</div>
                                 <div class="btn-tabs-container">
-                                    <button class="spec-btn" data-type="thickness" data-value="無" onclick="executeLashSpecSelect(this, 'W13_UP')">無</button>
+                                    <button class="spec-btn" data-type="thickness" data-value="0.07" onclick="executeLashSpecSelect(this, 'W13_UP')">0.07</button>
                                 </div>
                             </div>
                             <div class="variant-group">
@@ -3077,7 +3089,7 @@
                             <div class="variant-group">
                                 <div class="variant-title">翹度：</div>
                                 <div class="btn-tabs-container">
-                                    <button class="spec-btn" data-type="curl" data-value="無" onclick="executeLashSpecSelect(this, 'W19_UP')">無</button>
+                                    <button class="spec-btn" data-type="curl" data-value="L⁺75°" onclick="executeLashSpecSelect(this, 'W19_UP')">L⁺75°</button>
                                 </div>
                             </div>
                             <div class="variant-group">
@@ -3964,10 +3976,10 @@
 
 
 
-                <!-- 專業套組：A311 基礎入門套組 -->
-                <div class="product-item" data-id="A311" data-name="基礎入門套組" data-category="perimeter" data-sub="professional-kit">
+                <!-- 專業套組：A311 美睫基礎入門套組 -->
+                <div class="product-item" data-id="A311" data-name="美睫基礎入門套組" data-category="perimeter" data-sub="professional-kit">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px;">商品編號：A311</div>
-                    <div class="product-name">基礎入門套組</div>
+                    <div class="product-name">美睫基礎入門套組</div>
                     <details class="professional-kit-details">
                     <summary class="professional-kit-summary">查看套組內容｜共 33 項</summary>
                     <div class="professional-kit-content">
@@ -4014,10 +4026,10 @@
                     <button class="btn" onclick="addToCart('A311')">加入購物車</button>
                 </div>
 				
-				<!-- 專業套組：A312 6D開花套組 -->
+				<!-- 專業套組：A312 美睫6D開花套組 -->
 <div class="product-item"
      data-id="A312"
-     data-name="6D開花套組"
+     data-name="美睫6D開花套組"
      data-category="perimeter"
      data-sub="professional-kit">
 
@@ -4025,7 +4037,7 @@
         商品編號：A312
     </div>
 
-    <div class="product-name">6D開花套組</div>
+    <div class="product-name">美睫6D開花套組</div>
 
     <details class="professional-kit-details">
         <summary class="professional-kit-summary">查看套組內容｜共 15 項</summary>
@@ -4092,10 +4104,10 @@
     <button class="btn" onclick="addToCart('A312')">加入購物車</button>
 </div>
 
-                <!-- 專業套組：A313 開花高手套組 -->
-                <div class="product-item" data-id="A313" data-name="開花高手套組" data-category="perimeter" data-sub="professional-kit">
+                <!-- 專業套組：A313 美睫開花高手套組 -->
+                <div class="product-item" data-id="A313" data-name="美睫開花高手套組" data-category="perimeter" data-sub="professional-kit">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px;">商品編號：A313</div>
-                    <div class="product-name">開花高手套組</div>
+                    <div class="product-name">美睫開花高手套組</div>
 
                     <details class="professional-kit-details">
                         <summary class="professional-kit-summary">查看套組內容｜共 4 項</summary>
@@ -4588,10 +4600,10 @@
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('F246', -1)">-</button><input type="number" class="quantity-input" id="left-input-F246" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('F246', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('F246')">加入購物車</button>
                 </div>
-				  <!-- 熱蠟專業套組：F247 新手基礎套組 -->
-                <div class="product-item" data-id="F247" data-name="新手基礎套組" data-category="wax" data-sub="beauty-professional-kit">
+				  <!-- 熱蠟專業套組：F247 熱蠟新手基礎套組 -->
+                <div class="product-item" data-id="F247" data-name="熱蠟新手基礎套組" data-category="wax" data-sub="beauty-professional-kit">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px;">商品編號：F247</div>
-                    <div class="product-name">新手基礎套組</div>
+                    <div class="product-name">熱蠟新手基礎套組</div>
                     <details class="professional-kit-details">
                         <summary class="professional-kit-summary">查看套組內容｜共 17 項</summary>
                         <div class="professional-kit-content">
@@ -4644,10 +4656,10 @@
                 </div>
 
 
-                <!-- 熱蠟專業套組：F248 頂級全方位套組 -->
-                <div class="product-item" data-id="F248" data-name="頂級全方位套組" data-category="wax" data-sub="beauty-professional-kit">
+                <!-- 熱蠟專業套組：F248 熱蠟頂級全方位套組 -->
+                <div class="product-item" data-id="F248" data-name="熱蠟頂級全方位套組" data-category="wax" data-sub="beauty-professional-kit">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px;">商品編號：F248</div>
-                    <div class="product-name">頂級全方位套組</div>
+                    <div class="product-name">熱蠟頂級全方位套組</div>
                     <details class="professional-kit-details">
                         <summary class="professional-kit-summary">查看套組內容｜共 22 項</summary>
                         <div class="professional-kit-content">
@@ -4875,6 +4887,7 @@
 
                 <!-- 🧪 德國頂級植萃美顏色乳 3ML -->
                 <div class="product-item" data-id="TA13" data-category="brows" data-sub="color-3ml" data-name="德國頂級植萃美顏色乳3ML-01 魅力黑灰" data-price="180">
+                    <img class="boss-product-photo" src="https://i.ibb.co/mWZBnff/TA13-3ml.png" alt="TA13 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TA13</div>
                     <div class="product-name">德國頂級植萃美顏色乳3ML-01 魅力黑灰</div><div class="product-price">$180</div>
                     <div class="product-stock" id="stock-text-TA13">載入中...</div>
@@ -4882,6 +4895,7 @@
                     <button class="btn" onclick="addToCart('TA13')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TA14" data-category="brows" data-sub="color-3ml" data-name="德國頂級植萃美顏色乳3ML-02 焦糖深棕" data-price="180">
+                    <img class="boss-product-photo" src="https://i.ibb.co/m5ymKFQT/TA14-02.png" alt="TA14 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TA14</div>
                     <div class="product-name">德國頂級植萃美顏色乳3ML-02 焦糖深棕</div><div class="product-price">$180</div>
                     <div class="product-stock" id="stock-text-TA14">載入中...</div>
@@ -4889,6 +4903,7 @@
                     <button class="btn" onclick="addToCart('TA14')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TA15" data-category="brows" data-sub="color-3ml" data-name="德國頂級植萃美顏色乳3ML-03 深邃灰棕" data-price="180">
+                    <img class="boss-product-photo" src="https://i.ibb.co/SD039Kfr/TA15-03.png" alt="TA15 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TA15</div>
                     <div class="product-name">德國頂級植萃美顏色乳3ML-03 深邃灰棕</div><div class="product-price">$180</div>
                     <div class="product-stock" id="stock-text-TA15">載入中...</div>
@@ -4896,6 +4911,7 @@
                     <button class="btn" onclick="addToCart('TA15')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TA16" data-category="brows" data-sub="color-3ml" data-name="德國頂級植萃美顏色乳3ML-04 亞麻淺棕" data-price="180">
+                    <img class="boss-product-photo" src="https://i.ibb.co/3bLRbwR/TA16-04.png" alt="TA16 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TA16</div>
                     <div class="product-name">德國頂級植萃美顏色乳3ML-04 亞麻淺棕</div><div class="product-price">$180</div>
                     <div class="product-stock" id="stock-text-TA16">載入中...</div>
@@ -4903,6 +4919,7 @@
                     <button class="btn" onclick="addToCart('TA16')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TA17" data-category="brows" data-sub="color-3ml" data-name="德國頂級植萃美顏色乳3ML-50 極致黑" data-price="180">
+                    <img class="boss-product-photo" src="https://i.ibb.co/GQXGB91P/TA17-3ml.png" alt="TA17 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TA17</div>
                     <div class="product-name">德國頂級植萃美顏色乳3ML-50 極致黑</div><div class="product-price">$180</div>
                     <div class="product-stock" id="stock-text-TA17">載入中...</div>
@@ -4910,6 +4927,7 @@
                     <button class="btn" onclick="addToCart('TA17')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TA18" data-category="brows" data-sub="color-3ml" data-name="德國頂級植萃美顏色乳3ML-61 赫本女伶" data-price="180">
+                    <img class="boss-product-photo" src="https://i.ibb.co/9H3wzwbZ/TA18-3ml.png" alt="TA18 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TA18</div>
                     <div class="product-name">德國頂級植萃美顏色乳3ML-61 赫本女伶</div><div class="product-price">$180</div>
                     <div class="product-stock" id="stock-text-TA18">載入中...</div>
@@ -4917,6 +4935,7 @@
                     <button class="btn" onclick="addToCart('TA18')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TA19" data-category="brows" data-sub="color-3ml" data-name="德國頂級植萃美顏色乳3ML-62 閨密好友" data-price="180">
+                    <img class="boss-product-photo" src="https://i.ibb.co/xZy4gtP/TA19-62.png" alt="TA19 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TA19</div>
                     <div class="product-name">德國頂級植萃美顏色乳3ML-62 閨密好友</div><div class="product-price">$180</div>
                     <div class="product-stock" id="stock-text-TA19">載入中...</div>
@@ -4924,6 +4943,7 @@
                     <button class="btn" onclick="addToCart('TA19')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TA20" data-category="brows" data-sub="color-3ml" data-name="德國頂級植萃美顏色乳3ML-63 誘惑蜜桃" data-price="180">
+                    <img class="boss-product-photo" src="https://i.ibb.co/R4pCbsFH/TA20-63.png" alt="TA20 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TA20</div>
                     <div class="product-name">德國頂級植萃美顏色乳3ML-63 誘惑蜜桃</div><div class="product-price">$180</div>
                     <div class="product-stock" id="stock-text-TA20">載入中...</div>
@@ -4931,6 +4951,7 @@
                     <button class="btn" onclick="addToCart('TA20')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TA21" data-category="brows" data-sub="color-3ml" data-name="德國頂級植萃美顏色乳3ML-64 粉霧玫瑰" data-price="180">
+                    <img class="boss-product-photo" src="https://i.ibb.co/CpQSWsK6/TA21.png" alt="TA21 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TA21</div>
                     <div class="product-name">德國頂級植萃美顏色乳3ML-64 粉霧玫瑰</div><div class="product-price">$180</div>
                     <div class="product-stock" id="stock-text-TA21">載入中...</div>
@@ -4938,6 +4959,7 @@
                     <button class="btn" onclick="addToCart('TA21')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TA22" data-category="brows" data-sub="color-3ml" data-name="德國頂級植萃美顏色乳3ML-66 粉紅芭比" data-price="180">
+                    <img class="boss-product-photo" src="https://i.ibb.co/RWQDwxB/TA22.png" alt="TA22 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TA22</div>
                     <div class="product-name">德國頂級植萃美顏色乳3ML-66 粉紅芭比</div><div class="product-price">$180</div>
                     <div class="product-stock" id="stock-text-TA22">載入中...</div>
@@ -5031,6 +5053,7 @@
                     <button class="btn" onclick="addToCart('EC12')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TO1" data-category="brows" data-sub="oriental" data-name="紋飾修護素" data-price="290">
+                    <img class="boss-product-photo" src="https://i.ibb.co/mZS5pwx/TO1.png" alt="TO1 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TO1</div>
                     <div class="product-name">紋飾修護素</div><div class="product-price">$290</div>
                     <div class="product-stock" id="stock-text-TO1">載入中...</div>
@@ -5038,6 +5061,7 @@
                     <button class="btn" onclick="addToCart('TO1')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="PE1" data-category="brows" data-sub="oriental" data-name="3點定位眉型設計筆-01自然咖" data-price="120">
+                    <img class="boss-product-photo" src="https://i.ibb.co/Df93QSvW/PE1-PE2-3.png" alt="PE1 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：PE1</div>
                     <div class="product-name">3點定位眉型設計筆-01自然咖</div><div class="product-price">$120</div>
                     <div class="product-stock" id="stock-text-PE1">載入中...</div>
@@ -5045,6 +5069,7 @@
                     <button class="btn" onclick="addToCart('PE1')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="PE2" data-category="brows" data-sub="oriental" data-name="3點定位眉型設計筆-02灰咖" data-price="120">
+                    <img class="boss-product-photo" src="https://i.ibb.co/Df93QSvW/PE1-PE2-3.png" alt="PE2 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：PE2</div>
                     <div class="product-name">3點定位眉型設計筆-02灰咖</div><div class="product-price">$120</div>
                     <div class="product-stock" id="stock-text-PE2">載入中...</div>
@@ -5068,6 +5093,7 @@
 
                 <!-- ⚙️ 專業核心儀器機器系列 -->
                 <div class="product-item" data-id="TC1" data-category="brows" data-sub="machine" data-name="紋繡原裝全智能紋繡機-金" data-price="12800">
+                    <img class="boss-product-photo" src="https://i.ibb.co/rGvgDTkz/TC1-TC2.png" alt="TC1 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TC1</div>
                     <div class="product-name">紋繡原裝全智能紋繡機-金</div><div class="product-price">$12,800</div>
                     <div class="product-stock" id="stock-text-TC1">載入中...</div>
@@ -5075,6 +5101,7 @@
                     <button class="btn" onclick="addToCart('TC1')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TC2" data-category="brows" data-sub="machine" data-name="紋繡原裝全智能紋繡機-銀" data-price="12800">
+                    <img class="boss-product-photo" src="https://i.ibb.co/rGvgDTkz/TC1-TC2.png" alt="TC2 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TC2</div>
                     <div class="product-name">紋繡原裝全智能紋繡機-銀</div><div class="product-price">$12,800</div>
                     <div class="product-stock" id="stock-text-TC2">載入中...</div>
@@ -5082,6 +5109,7 @@
                     <button class="btn" onclick="addToCart('TC2')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TC4" data-category="brows" data-sub="machine" data-name="德國V6變速紋繡機" data-price="4250">
+                    <img class="boss-product-photo" src="https://i.ibb.co/xqkr8RBY/TC4-V6.png" alt="TC4 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TC4</div>
                     <div class="product-name">德國V6變速紋繡機</div><div class="product-price">$4,250</div>
                     <div class="product-stock" id="stock-text-TC4">載入中...</div>
@@ -5089,6 +5117,7 @@
                     <button class="btn" onclick="addToCart('TC4')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TC5" data-category="brows" data-sub="machine" data-name="德國六段變速輕巧紋繡機-金/黑" data-price="2750">
+                    <img class="boss-product-photo" src="https://i.ibb.co/fGkpJHx9/TC5.png" alt="TC5 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TC5</div>
                     <div class="product-name">德國六段變速輕巧紋繡機-金/黑</div><div class="product-price">$2,750</div>
                     <div class="product-stock" id="stock-text-TC5">載入中...</div>
@@ -5096,6 +5125,7 @@
                     <button class="btn" onclick="addToCart('TC5')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TC9" data-category="brows" data-sub="machine" data-name="德國無線四段變速紋繡機-金" data-price="4500">
+                    <img class="boss-product-photo" src="https://i.ibb.co/jZZN1Wmc/TC9.png" alt="TC9 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TC9</div>
                     <div class="product-name">德國無線四段變速紋繡機-金</div><div class="product-price">$4,500</div>
                     <div class="product-stock" id="stock-text-TC9">載入中...</div>
@@ -5103,6 +5133,7 @@
                     <button class="btn" onclick="addToCart('TC9')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TC12" data-category="brows" data-sub="machine" data-name="紋繡五段速智能腕表免麻儀" data-price="9900">
+                    <img class="boss-product-photo" src="https://i.ibb.co/C3FczmVS/TC12.png" alt="TC12 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TC12</div>
                     <div class="product-name">紋繡五段速智能腕表免麻儀</div><div class="product-price">$9,900</div>
                     <div class="product-stock" id="stock-text-TC12">載入中...</div>
@@ -6102,6 +6133,7 @@
                     <button class="btn" onclick="addToCart('TJ2')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TJ4" data-category="brows" data-sub="palette" data-name="手工筆水晶筆筒(粉色)" data-price="75">
+                    <img class="boss-product-photo" src="https://i.ibb.co/ZQ416B7/TJ4-5.png" alt="TJ4 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TJ4</div>
                     <div class="product-name">手工筆水晶筆筒(粉色)</div><div class="product-price">$75</div>
                     <div class="product-stock" id="stock-text-TJ4">載入中...</div>
@@ -6109,6 +6141,7 @@
                     <button class="btn" onclick="addToCart('TJ4')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TJ5" data-category="brows" data-sub="palette" data-name="手工筆水晶筆筒(透明)" data-price="75">
+                    <img class="boss-product-photo" src="https://i.ibb.co/ZQ416B7/TJ4-5.png" alt="TJ5 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TJ5</div>
                     <div class="product-name">手工筆水晶筆筒(透明)</div><div class="product-price">$75</div>
                     <div class="product-stock" id="stock-text-TJ5">載入中...</div>
@@ -6116,6 +6149,7 @@
                     <button class="btn" onclick="addToCart('TJ5')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TJ7" data-category="brows" data-sub="palette" data-name="弓形色料架" data-price="80">
+                    <img class="boss-product-photo" src="https://i.ibb.co/Jjc633z8/TJ7.png" alt="TJ7 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TJ7</div>
                     <div class="product-name">弓形色料架</div><div class="product-price">$80</div>
                     <div class="product-stock" id="stock-text-TJ7">載入中...</div>
@@ -6123,6 +6157,7 @@
                     <button class="btn" onclick="addToCart('TJ7')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TJ8" data-category="brows" data-sub="palette" data-name="圓型色料架" data-price="100">
+                    <img class="boss-product-photo" src="https://i.ibb.co/wZ9rkVbK/TJ8.png" alt="TJ8 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TJ8</div>
                     <div class="product-name">圓型色料架</div><div class="product-price">$100</div>
                     <div class="product-stock" id="stock-text-TJ8">載入中...</div>
@@ -6130,6 +6165,7 @@
                     <button class="btn" onclick="addToCart('TJ8')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TJ9" data-category="brows" data-sub="palette" data-name="圓型色料架-可旋轉" data-price="200">
+                    <img class="boss-product-photo" src="https://i.ibb.co/sdf3RDH3/TJ9.png" alt="TJ9 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TJ9</div>
                     <div class="product-name">圓型色料架-可旋轉</div><div class="product-price">$200</div>
                     <div class="product-stock" id="stock-text-TJ9">載入中...</div>
@@ -6159,6 +6195,7 @@
                 </div>
 
                 <div class="product-item" data-id="TK1" data-category="brows" data-sub="cup" data-name="戒指色料杯-大(無分隔)" data-price="150">
+                    <img class="boss-product-photo" src="https://i.ibb.co/rfLDKQZ3/TK1-TK3.png" alt="TK1 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TK1</div>
                     <div class="product-name">戒指色料杯-大(無分隔)</div><div class="product-price">$150</div>
                     <div class="product-stock" id="stock-text-TK1">載入中...</div>
@@ -6166,6 +6203,7 @@
                     <button class="btn" onclick="addToCart('TK1')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TK2" data-category="brows" data-sub="cup" data-name="戒指色料杯-大(有分隔)" data-price="150">
+                    <img class="boss-product-photo" src="https://i.ibb.co/rfLDKQZ3/TK1-TK3.png" alt="TK2 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TK2</div>
                     <div class="product-name">戒指色料杯-大(有分隔)</div><div class="product-price">$150</div>
                     <div class="product-stock" id="stock-text-TK2">載入中...</div>
@@ -6173,6 +6211,7 @@
                     <button class="btn" onclick="addToCart('TK2')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TK3" data-category="brows" data-sub="cup" data-name="戒指色料杯-中(無分隔)" data-price="150">
+                    <img class="boss-product-photo" src="https://i.ibb.co/rfLDKQZ3/TK1-TK3.png" alt="TK3 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TK3</div>
                     <div class="product-name">戒指色料杯-中(無分隔)</div><div class="product-price">$150</div>
                     <div class="product-stock" id="stock-text-TK3">載入中...</div>
@@ -6180,6 +6219,7 @@
                     <button class="btn" onclick="addToCart('TK3')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TK4" data-category="brows" data-sub="cup" data-name="矽膠色料杯(中)100入" data-price="100">
+                    <img class="boss-product-photo" src="https://i.ibb.co/3bQPdc8/TK4-5.png" alt="TK4 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TK4</div>
                     <div class="product-name">矽膠色料杯(中)100入</div><div class="product-price">$100</div>
                     <div class="product-stock" id="stock-text-TK4">載入中...</div>
@@ -6187,6 +6227,7 @@
                     <button class="btn" onclick="addToCart('TK4')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TK5" data-category="brows" data-sub="cup" data-name="矽膠色料杯(小)100入" data-price="100">
+                    <img class="boss-product-photo" src="https://i.ibb.co/3bQPdc8/TK4-5.png" alt="TK5 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TK5</div>
                     <div class="product-name">矽膠色料杯(小)100入</div><div class="product-price">$100</div>
                     <div class="product-stock" id="stock-text-TK5">載入中...</div>
@@ -6194,6 +6235,7 @@
                     <button class="btn" onclick="addToCart('TK5')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TK6" data-category="brows" data-sub="cup" data-name="紋繡色料杯(大)100入" data-price="100">
+                    <img class="boss-product-photo" src="https://i.ibb.co/fddwqgVX/TK6-TK8.png" alt="TK6 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TK6</div>
                     <div class="product-name">紋繡色料杯(大)100入</div><div class="product-price">$100</div>
                     <div class="product-stock" id="stock-text-TK6">載入中...</div>
@@ -6201,6 +6243,7 @@
                     <button class="btn" onclick="addToCart('TK6')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TK7" data-category="brows" data-sub="cup" data-name="紋繡色料杯(中)100入" data-price="100">
+                    <img class="boss-product-photo" src="https://i.ibb.co/fddwqgVX/TK6-TK8.png" alt="TK7 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TK7</div>
                     <div class="product-name">紋繡色料杯(中)100入</div><div class="product-price">$100</div>
                     <div class="product-stock" id="stock-text-TK7">載入中...</div>
@@ -6208,6 +6251,7 @@
                     <button class="btn" onclick="addToCart('TK7')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TK8" data-category="brows" data-sub="cup" data-name="紋繡色料杯(小)" data-price="100">
+                    <img class="boss-product-photo" src="https://i.ibb.co/fddwqgVX/TK6-TK8.png" alt="TK8 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TK8</div>
                     <div class="product-name">紋繡色料杯(小)</div><div class="product-price">$100</div>
                     <div class="product-stock" id="stock-text-TK8">載入中...</div>
@@ -6230,6 +6274,7 @@
                 </div>
 
                 <div class="product-item" data-id="TB1" data-category="brows" data-sub="repair" data-name="紋繡眉眼唇專用鎖色精華" data-price="390">
+                    <img class="boss-product-photo" src="https://i.ibb.co/zTTF6064/TB1.png" alt="TB1 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TB1</div>
                     <div class="product-name">紋繡眉眼唇專用鎖色精華</div><div class="product-price">$390</div>
                     <div class="product-stock" id="stock-text-TB1">載入中...</div>
@@ -6237,6 +6282,7 @@
                     <button class="btn" onclick="addToCart('TB1')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TB3" data-category="brows" data-sub="repair" data-name="紋繡唇部持久留色修復精華" data-price="600">
+                    <img class="boss-product-photo" src="https://i.ibb.co/4R7wqrjv/TB3.png" alt="TB3 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TB3</div>
                     <div class="product-name">紋繡唇部持久留色修復精華</div><div class="product-price">$600</div>
                     <div class="product-stock" id="stock-text-TB3">載入中...</div>
@@ -6244,6 +6290,7 @@
                     <button class="btn" onclick="addToCart('TB3')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TB4" data-category="brows" data-sub="repair" data-name="紋繡唇部護理去角質霜" data-price="390">
+                    <img class="boss-product-photo" src="https://i.ibb.co/C3P12Jzp/TB4.png" alt="TB4 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TB4</div>
                     <div class="product-name">紋繡唇部護理去角質霜</div><div class="product-price">$390</div>
                     <div class="product-stock" id="stock-text-TB4">載入中...</div>
@@ -6251,6 +6298,7 @@
                     <button class="btn" onclick="addToCart('TB4')">加入購物車</button>
                 </div>
 		<div class="product-item" data-id="TL6" data-category="brows" data-sub="location" data-name="纹繡拉線眉筆-黑" data-price="80">
+                    <img class="boss-product-photo" src="https://i.ibb.co/8gVtCkhj/TL6-9.png" alt="TL6 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL6</div>
                     <div class="product-name">纹繡拉線眉筆-黑</div><div class="product-price">$80</div>
                     <div class="product-stock" id="stock-text-TL6">載入中...</div>
@@ -6258,6 +6306,7 @@
                     <button class="btn" onclick="addToCart('TL6')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL7" data-category="brows" data-sub="location" data-name="纹繡拉線眉筆-深咖" data-price="80">
+                    <img class="boss-product-photo" src="https://i.ibb.co/8gVtCkhj/TL6-9.png" alt="TL7 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL7</div>
                     <div class="product-name">纹繡拉線眉筆-深咖</div><div class="product-price">$80</div>
                     <div class="product-stock" id="stock-text-TL7">載入中...</div>
@@ -6265,6 +6314,7 @@
                     <button class="btn" onclick="addToCart('TL7')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL8" data-category="brows" data-sub="location" data-name="纹繡拉線眉筆-淺咖" data-price="80">
+                    <img class="boss-product-photo" src="https://i.ibb.co/8gVtCkhj/TL6-9.png" alt="TL8 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL8</div>
                     <div class="product-name">纹繡拉線眉筆-淺咖</div><div class="product-price">$80</div>
                     <div class="product-stock" id="stock-text-TL8">載入中...</div>
@@ -6272,6 +6322,7 @@
                     <button class="btn" onclick="addToCart('TL8')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL9" data-category="brows" data-sub="location" data-name="纹繡拉線眉筆-灰" data-price="80">
+                    <img class="boss-product-photo" src="https://i.ibb.co/8gVtCkhj/TL6-9.png" alt="TL9 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL9</div>
                     <div class="product-name">纹繡拉線眉筆-灰</div><div class="product-price">$80</div>
                     <div class="product-stock" id="stock-text-TL9">載入中...</div>
@@ -6279,6 +6330,7 @@
                     <button class="btn" onclick="addToCart('TL9')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL10" data-category="brows" data-sub="location" data-name="紋繡定位筆/1.0mm" data-price="60">
+                    <img class="boss-product-photo" src="https://i.ibb.co/hFyzBrnn/TL10.png" alt="商品 TL10" loading="lazy" decoding="async">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL10</div>
                     <div class="product-name">紋繡定位筆/1.0mm</div><div class="product-price">$60</div>
                     <div class="product-stock" id="stock-text-TL10">載入中...</div>
@@ -6286,6 +6338,7 @@
                     <button class="btn" onclick="addToCart('TL10')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL11" data-category="brows" data-sub="location" data-name="紋繡雙頭定位筆" data-price="80">
+                    <img class="boss-product-photo" src="https://i.ibb.co/cKgFmQc0/TL11.png" alt="TL11 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL11</div>
                     <div class="product-name">紋繡雙頭定位筆</div><div class="product-price">$80</div>
                     <div class="product-stock" id="stock-text-TL11">載入中...</div>
@@ -6293,6 +6346,7 @@
                     <button class="btn" onclick="addToCart('TL11')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL12" data-category="brows" data-sub="location" data-name="紋繡專用測量眉尺" data-price="60">
+                    <img class="boss-product-photo" src="https://i.ibb.co/6JT0Nk8H/TL12.png" alt="TL12 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL12</div>
                     <div class="product-name">紋繡專用測量眉尺</div><div class="product-price">$60</div>
                     <div class="product-stock" id="stock-text-TL12">載入中...</div>
@@ -6300,6 +6354,7 @@
                     <button class="btn" onclick="addToCart('TL12')">加入購物車</button>
                 </div>
 				 <div class="product-item" data-id="TL13" data-category="brows" data-sub="location" data-name="紋繡專用新款測量眉(頭)尺" data-price="60">
+                    <img class="boss-product-photo" src="https://i.ibb.co/Xr5MBTz8/TL13.jpg" alt="TL13 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL13</div>
                     <div class="product-name">紋繡專用新款測量眉(頭)尺</div><div class="product-price">$60</div>
                     <div class="product-stock" id="stock-text-TL13">載入中...</div>
@@ -6307,6 +6362,7 @@
                     <button class="btn" onclick="addToCart('TL13')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL15" data-category="brows" data-sub="location" data-name="經典眉卡" data-price="100">
+                    <img class="boss-product-photo" src="https://i.ibb.co/N6VCf5xt/TL15.png" alt="TL15 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL15</div>
                     <div class="product-name">經典眉卡</div><div class="product-price">$100</div>
                     <div class="product-stock" id="stock-text-TL15">載入中...</div>
@@ -6321,6 +6377,7 @@
                     <button class="btn" onclick="addToCart('TL17')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL18" data-category="brows" data-sub="location" data-name="三點定位平衡尺" data-price="180">
+                    <img class="boss-product-photo" src="https://i.ibb.co/WvYLcb70/TL18.png" alt="TL18 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL18</div>
                     <div class="product-name">三點定位平衡尺</div><div class="product-price">$180</div>
                     <div class="product-stock" id="stock-text-TL18">載入中...</div>
@@ -6328,6 +6385,7 @@
                     <button class="btn" onclick="addToCart('TL18')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL19" data-category="brows" data-sub="location" data-name="黃金比例對稱測量尺" data-price="390">
+                    <img class="boss-product-photo" src="https://i.ibb.co/7hSjM5r/TL19.png" alt="TL19 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL19</div>
                     <div class="product-name">黃金比例對稱測量尺</div><div class="product-price">$390</div>
                     <div class="product-stock" id="stock-text-TL19">載入中...</div>
@@ -6335,6 +6393,7 @@
                     <button class="btn" onclick="addToCart('TL19')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL20" data-category="brows" data-sub="location" data-name="韓式標準眉刻度尺" data-price="60">
+                    <img class="boss-product-photo" src="https://i.ibb.co/Xk7HYHZx/TL20.png" alt="TL20 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL20</div>
                     <div class="product-name">韓式標準眉刻度尺</div><div class="product-price">$60</div>
                     <div class="product-stock" id="stock-text-TL20">載入中...</div>
@@ -6342,6 +6401,7 @@
                     <button class="btn" onclick="addToCart('TL20')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL21" data-category="brows" data-sub="location" data-name="紋繡定位魔力擦拭筆" data-price="100">
+                    <img class="boss-product-photo" src="https://i.ibb.co/Dg5WLcdH/TL21.png" alt="TL21 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL21</div>
                     <div class="product-name">紋繡定位魔力擦拭筆</div><div class="product-price">$100</div>
                     <div class="product-stock" id="stock-text-TL21">載入中...</div>
@@ -6349,6 +6409,7 @@
                     <button class="btn" onclick="addToCart('TL21')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL23" data-category="brows" data-sub="location" data-name="紋繡冰敷袋(不挑款)" data-price="40">
+                    <img class="boss-product-photo" src="https://i.ibb.co/p69j4GFC/TL23.png" alt="TL23 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL23</div>
                     <div class="product-name">紋繡冰敷袋(不挑款)</div><div class="product-price">$40</div>
                     <div class="product-stock" id="stock-text-TL23">載入中...</div>
@@ -6356,6 +6417,7 @@
                     <button class="btn" onclick="addToCart('TL23')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL28" data-category="brows" data-sub="location" data-name="拋棄式頭套50入" data-price="60">
+                    <img class="boss-product-photo" src="https://i.ibb.co/qLcggNMV/TL28-50.png" alt="商品 TL28" loading="lazy" decoding="async">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL28</div>
                     <div class="product-name">拋棄式頭套50入</div><div class="product-price">$60</div>
                     <div class="product-stock" id="stock-text-TL28">載入中...</div>
@@ -6363,6 +6425,7 @@
                     <button class="btn" onclick="addToCart('TL28')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL29" data-category="brows" data-sub="location" data-name="拋棄式頭套100入" data-price="100">
+                    <img class="boss-product-photo" src="https://i.ibb.co/prMqZFfC/TL29-100.png" alt="商品 TL29" loading="lazy" decoding="async">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL29</div>
                     <div class="product-name">拋棄式頭套100入</div><div class="product-price">$100</div>
                     <div class="product-stock" id="stock-text-TL29">載入中...</div>
@@ -6370,6 +6433,7 @@
                     <button class="btn" onclick="addToCart('TL29')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL30" data-category="brows" data-sub="location" data-name="8號不鏽鋼消毒罐" data-price="85">
+                    <img class="boss-product-photo" src="https://i.ibb.co/DHWvXmLV/TL30-8.png" alt="TL30 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL30</div>
                     <div class="product-name">8號不鏽鋼消毒罐</div><div class="product-price">$85</div>
                     <div class="product-stock" id="stock-text-TL30">載入中...</div>
@@ -6377,6 +6441,7 @@
                     <button class="btn" onclick="addToCart('TL30')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL31" data-category="brows" data-sub="location" data-name="小號不鏽鋼腰盤" data-price="85">
+                    <img class="boss-product-photo" src="https://i.ibb.co/9k3FcfSc/TL31.png" alt="TL31 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL31</div>
                     <div class="product-name">小號不鏽鋼腰盤</div><div class="product-price">$85</div>
                     <div class="product-stock" id="stock-text-TL31">載入中...</div>
@@ -6384,6 +6449,7 @@
                     <button class="btn" onclick="addToCart('TL31')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL32" data-category="brows" data-sub="location" data-name="紋繡保鮮膜-42*200mm" data-price="80">
+                    <img class="boss-product-photo" src="https://i.ibb.co/j98XVjk3/TL32.png" alt="TL32 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL32</div>
                     <div class="product-name">紋繡保鮮膜-42*200mm</div><div class="product-price">$80</div>
                     <div class="product-stock" id="stock-text-TL32">載入中...</div>
@@ -6391,6 +6457,7 @@
                     <button class="btn" onclick="addToCart('TL32')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL35" data-category="brows" data-sub="location" data-name="紋繡雙層加厚棉片500入" data-price="250">
+                    <img class="boss-product-photo" src="https://i.ibb.co/7NzWk5Fm/TL35.png" alt="TL35 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL35</div>
                     <div class="product-name">紋繡雙層加厚棉片500入</div><div class="product-price">$250</div>
                     <div class="product-stock" id="stock-text-TL35">載入中...</div>
@@ -6398,6 +6465,7 @@
                     <button class="btn" onclick="addToCart('TL35')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL36" data-category="brows" data-sub="location" data-name="木頭棉籤100入" data-price="25">
+                    <img class="boss-product-photo" src="https://i.ibb.co/WvzkKcKP/TL36.png" alt="TL36 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL36</div>
                     <div class="product-name">木頭棉籤100入</div><div class="product-price">$25</div>
                     <div class="product-stock" id="stock-text-TL36">載入中...</div>
@@ -6405,6 +6473,7 @@
                     <button class="btn" onclick="addToCart('TL36')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL40" data-category="brows" data-sub="location" data-name="手指套100入" data-price="80">
+                    <img class="boss-product-photo" src="https://i.ibb.co/MDqMB2v8/TL40-100.png" alt="TL40 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL40</div>
                     <div class="product-name">手指套100入</div><div class="product-price">$80</div>
                     <div class="product-stock" id="stock-text-TL40">載入中...</div>
@@ -6412,6 +6481,7 @@
                     <button class="btn" onclick="addToCart('TL40')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL41" data-category="brows" data-sub="location" data-name="色料攪拌器-白色" data-price="250">
+                    <img class="boss-product-photo" src="https://i.ibb.co/8gPLXR2v/TL41-42.png" alt="TL41 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL41</div>
                     <div class="product-name">色料攪拌器-白色</div><div class="product-price">$250</div>
                     <div class="product-stock" id="stock-text-TL41">載入中...</div>
@@ -6419,6 +6489,7 @@
                     <button class="btn" onclick="addToCart('TL41')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL42" data-category="brows" data-sub="location" data-name="色料攪拌器-黑色" data-price="250">
+                    <img class="boss-product-photo" src="https://i.ibb.co/8gPLXR2v/TL41-42.png" alt="TL42 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL42</div>
                     <div class="product-name">色料攪拌器-黑色</div><div class="product-price">$250</div>
                     <div class="product-stock" id="stock-text-TL42">載入中...</div>
@@ -6426,6 +6497,7 @@
                     <button class="btn" onclick="addToCart('TL42')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL47" data-category="brows" data-sub="location" data-name="替換攪拌棒(黑)10入" data-price="25">
+                    <img class="boss-product-photo" src="https://i.ibb.co/fV3VgmrX/TL47-10.png" alt="TL47 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL47</div>
                     <div class="product-name">替換攪拌棒(黑)10入</div><div class="product-price">$25</div>
                     <div class="product-stock" id="stock-text-TL47">載入中...</div>
@@ -6433,6 +6505,7 @@
                     <button class="btn" onclick="addToCart('TL47')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL48" data-category="brows" data-sub="location" data-name="計時器-藍色" data-price="110">
+                    <img class="boss-product-photo" src="https://i.ibb.co/JWLYPyLQ/TL48-TL50.png" alt="TL48 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL48</div>
                     <div class="product-name">計時器-藍色</div><div class="product-price">$110</div>
                     <div class="product-stock" id="stock-text-TL48">載入中...</div>
@@ -6440,6 +6513,7 @@
                     <button class="btn" onclick="addToCart('TL48')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL50" data-category="brows" data-sub="location" data-name="計時器-粉色" data-price="110">
+                    <img class="boss-product-photo" src="https://i.ibb.co/JWLYPyLQ/TL48-TL50.png" alt="TL50 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL50</div>
                     <div class="product-name">計時器-粉色</div><div class="product-price">$110</div>
                     <div class="product-stock" id="stock-text-TL50">載入中...</div>
@@ -6447,6 +6521,7 @@
                     <button class="btn" onclick="addToCart('TL50')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL57" data-category="brows" data-sub="location" data-name="紋繡保養小卡-眉眼" data-price="80">
+                    <img class="boss-product-photo" src="https://i.ibb.co/m5m5x9P2/TL57-59.jpg" alt="TL57 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL57</div>
                     <div class="product-name">紋繡保養小卡-眉眼</div><div class="product-price">$80</div>
                     <div class="product-stock" id="stock-text-TL57">載入中...</div>
@@ -6454,6 +6529,7 @@
                     <button class="btn" onclick="addToCart('TL57')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL58" data-category="brows" data-sub="location" data-name="紋繡保養小卡-唇" data-price="80">
+                    <img class="boss-product-photo" src="https://i.ibb.co/m5m5x9P2/TL57-59.jpg" alt="TL58 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL58</div>
                     <div class="product-name">紋繡保養小卡-唇</div><div class="product-price">$80</div>
                     <div class="product-stock" id="stock-text-TL58">載入中...</div>
@@ -6461,6 +6537,7 @@
                     <button class="btn" onclick="addToCart('TL58')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL59" data-category="brows" data-sub="location" data-name="紋繡保養小卡-乳暈髮線" data-price="80">
+                    <img class="boss-product-photo" src="https://i.ibb.co/m5m5x9P2/TL57-59.jpg" alt="TL59 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL59</div>
                     <div class="product-name">紋繡保養小卡-乳暈髮線</div><div class="product-price">$80</div>
                     <div class="product-stock" id="stock-text-TL59">載入中...</div>
@@ -6468,6 +6545,7 @@
                     <button class="btn" onclick="addToCart('TL59')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL60" data-category="brows" data-sub="location" data-name="紋繡客戶紀錄表(雙面款)" data-price="150">
+                    <img class="boss-product-photo" src="https://i.ibb.co/CKrdXrhh/TL60.png" alt="TL60 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL60</div>
                     <div class="product-name">紋繡客戶紀錄表(雙面款)</div><div class="product-price">$150</div>
                     <div class="product-stock" id="stock-text-TL60">載入中...</div>
@@ -6475,6 +6553,7 @@
                     <button class="btn" onclick="addToCart('TL60')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL61" data-category="brows" data-sub="location" data-name="紋繡客戶同意書/紀錄表" data-price="150">
+                    <img class="boss-product-photo" src="https://i.ibb.co/DfBfHqFx/TL61.png" alt="TL61 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL61</div>
                     <div class="product-name">紋繡客戶同意書/紀錄表</div><div class="product-price">$150</div>
                     <div class="product-stock" id="stock-text-TL61">載入中...</div>
@@ -6482,6 +6561,7 @@
                     <button class="btn" onclick="addToCart('TL61')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL62" data-category="brows" data-sub="location" data-name="修眉刀片-10入" data-price="60">
+                    <img class="boss-product-photo" src="https://i.ibb.co/HLLCrK0W/TL62-10.png" alt="TL62 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL62</div>
                     <div class="product-name">修眉刀片-10入</div><div class="product-price">$60</div>
                     <div class="product-stock" id="stock-text-TL62">載入中...</div>
@@ -6489,6 +6569,7 @@
                     <button class="btn" onclick="addToCart('TL62')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL63" data-category="brows" data-sub="location" data-name="紋繡眉型定位墨線" data-price="120">
+                    <img class="boss-product-photo" src="https://i.ibb.co/Kz9V8Dtd/TL63.png" alt="TL63 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL63</div>
                     <div class="product-name">紋繡眉型定位墨線</div><div class="product-price">$120</div>
                     <div class="product-stock" id="stock-text-TL63">載入中...</div>
@@ -6496,6 +6577,7 @@
                     <button class="btn" onclick="addToCart('TL63')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL64" data-category="brows" data-sub="location" data-name="紋繡定位筆-白色" data-price="60">
+                    <img class="boss-product-photo" src="https://i.ibb.co/JFKqkKrB/TL64.png" alt="TL64 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL64</div>
                     <div class="product-name">紋繡定位筆-白色</div><div class="product-price">$60</div>
                     <div class="product-stock" id="stock-text-TL64">載入中...</div>
@@ -6503,6 +6585,7 @@
                     <button class="btn" onclick="addToCart('TL64')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TL65" data-category="brows" data-sub="location" data-name="木質眉筆削筆器" data-price="55">
+                    <img class="boss-product-photo" src="https://i.ibb.co/1GCq0fTR/TL65.png" alt="TL65 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TL65</div>
                     <div class="product-name">木質眉筆削筆器</div><div class="product-price">$55</div>
                     <div class="product-stock" id="stock-text-TL65">載入中...</div>
@@ -6510,6 +6593,7 @@
                     <button class="btn" onclick="addToCart('TL65')">加入購物車</button>
                 </div>
                 <div class="product-item" data-id="TM4" data-category="brows" data-sub="location" data-name="棉片收納盒-透明" data-price="100">
+                    <img class="boss-product-photo" src="https://i.ibb.co/3QdTFPp/TM4.png" alt="TM4 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：TM4</div>
                     <div class="product-name">棉片收納盒-透明</div><div class="product-price">$100</div>
                     <div class="product-stock" id="stock-text-TM4">載入中...</div>
@@ -6517,168 +6601,192 @@
                     <button class="btn" onclick="addToCart('TM4')">加入購物車</button>
                 </div>
 		<!-- 🆕 臉部保養（超涵水角鯊烯保濕系列）上架開始 -->
-               <div class="product-item" data-id="DA1" data-category="skincare" data-name="淨妍雙效保濕卸妝水230ML" data-price="790">
+               <div class="product-item" data-id="DA1" data-category="skincare" data-name="淨妍雙效保濕卸妝水230ML" data-price="790" data-sub="skin-1">
+                    <img class="boss-product-photo" src="https://i.ibb.co/6R3PxrtC/DA1.png" alt="DA1 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DA1</div>
                     <div class="product-name">淨妍雙效保濕卸妝水230ML</div><div class="product-price">$790</div>
                     <div class="product-stock" id="stock-text-DA1">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DA1', -1)">-</button><input type="number" class="quantity-input" id="left-input-DA1" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DA1', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DA1')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DA3" data-category="skincare" data-name="極淨精萃雙效卸妝液230ML" data-price="790">
+				<div class="product-item" data-id="DA3" data-category="skincare" data-name="極淨精萃雙效卸妝液230ML" data-price="790" data-sub="skin-1">
+                    <img class="boss-product-photo" src="https://i.ibb.co/WvzGmqMy/DA3.png" alt="DA3 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DA3</div>
                     <div class="product-name">極淨精萃雙效卸妝液230ML</div><div class="product-price">$790</div>
                     <div class="product-stock" id="stock-text-DA3">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DA3', -1)">-</button><input type="number" class="quantity-input" id="left-input-DA3" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DA3', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DA3')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DB2" data-category="skincare" data-name="淨妍晶透雙效洗卸凝膠150ML" data-price="650">
+				<div class="product-item" data-id="DB2" data-category="skincare" data-name="淨妍晶透雙效洗卸凝膠150ML" data-price="650" data-sub="skin-1">
+                    <img class="boss-product-photo" src="https://i.ibb.co/KjQgfZxP/DB2.png" alt="DB2 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DB2</div>
                     <div class="product-name">淨妍晶透雙效洗卸凝膠150ML</div><div class="product-price">$650</div>
                     <div class="product-stock" id="stock-text-DB2">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DB2', -1)">-</button><input type="number" class="quantity-input" id="left-input-DB2" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DB2', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DB2')">加入購物車</button>
                 </div>
-				 <div class="product-item" data-id="DC1" data-category="skincare" data-name="EGF全效修護活化美肌露120ML" data-price="650">
+				 <div class="product-item" data-id="DC1" data-category="skincare" data-name="EGF全效修護活化美肌露120ML" data-price="650" data-sub="skin-2">
+                    <img class="boss-product-photo" src="https://i.ibb.co/vCkY66Jc/DC1-EGF.jpg" alt="DC1 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DC1</div>
                     <div class="product-name">EGF全效修護活化美肌露120ML</div><div class="product-price">$650</div>
                     <div class="product-stock" id="stock-text-DC1">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DC1', -1)">-</button><input type="number" class="quantity-input" id="left-input-DC1" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DC1', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DC1')">加入購物車</button>
                 </div>
-                <div class="product-item" data-id="DC2" data-category="skincare" data-name="超涵水角鯊烯保濕美肌露120ML" data-price="650">
+                <div class="product-item" data-id="DC2" data-category="skincare" data-name="超涵水角鯊烯保濕美肌露120ML" data-price="650" data-sub="skin-2">
+                    <img class="boss-product-photo" src="https://i.ibb.co/XxkMZcxg/DC2.jpg" alt="DC2 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DC2</div>
                     <div class="product-name">超涵水角鯊烯保濕美肌露120ML</div><div class="product-price">$650</div>
                     <div class="product-stock" id="stock-text-DC2">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DC2', -1)">-</button><input type="number" class="quantity-input" id="left-input-DC2" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DC2', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DC2')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DC3" data-category="skincare" data-name="藍銅精粹緊緻線條美肌露120ML" data-price="650">
+				<div class="product-item" data-id="DC3" data-category="skincare" data-name="藍銅精粹緊緻線條美肌露120ML" data-price="650" data-sub="skin-2">
+                    <img class="boss-product-photo" src="https://i.ibb.co/FLKxCH3J/DC3.jpg" alt="DC3 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DC3</div>
                     <div class="product-name">藍銅精粹緊緻線條美肌露120ML</div><div class="product-price">$650</div>
                     <div class="product-stock" id="stock-text-DC3">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DC3', -1)">-</button><input type="number" class="quantity-input" id="left-input-DC3" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DC3', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DC3')">加入購物車</button>
                 </div>
-				 <div class="product-item" data-id="DC5" data-category="skincare" data-name="菁透亮杏仁酸美肌露120ML" data-price="650">
+				 <div class="product-item" data-id="DC5" data-category="skincare" data-name="菁透亮杏仁酸美肌露120ML" data-price="650" data-sub="skin-2">
+                    <img class="boss-product-photo" src="https://i.ibb.co/bRgLzfj9/DC5.jpg" alt="DC5 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DC5</div>
                     <div class="product-name">菁透亮杏仁酸美肌露120ML</div><div class="product-price">$650</div>
                     <div class="product-stock" id="stock-text-DC5">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DC5', -1)">-</button><input type="number" class="quantity-input" id="left-input-DC5" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DC5', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DC5')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DD1" data-category="skincare" data-name="EGF全效修護活化雙效精粹100ML" data-price="1680">
+				<div class="product-item" data-id="DD1" data-category="skincare" data-name="EGF全效修護活化雙效精粹100ML" data-price="1680" data-sub="skin-3">
+                    <img class="boss-product-photo" src="https://i.ibb.co/bRK6dLRw/DD1-EGF.jpg" alt="DD1 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DD1</div>
                     <div class="product-name">EGF全效修護活化雙效精粹100ML</div><div class="product-price">$1,680</div>
                     <div class="product-stock" id="stock-text-DD1">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DD1', -1)">-</button><input type="number" class="quantity-input" id="left-input-DD1" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DD1', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DD1')">加入購物車</button>
                 </div>
-                <div class="product-item" data-id="DD2" data-category="skincare" data-name="超涵水角鯊烯保濕雙效精粹100ML" data-price="1680">
+                <div class="product-item" data-id="DD2" data-category="skincare" data-name="超涵水角鯊烯保濕雙效精粹100ML" data-price="1680" data-sub="skin-3">
+                    <img class="boss-product-photo" src="https://i.ibb.co/rRKXLFj2/DD2.jpg" alt="DD2 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DD2</div>
                     <div class="product-name">超涵水角鯊烯保濕雙效精粹100ML</div><div class="product-price">$1,680</div>
                     <div class="product-stock" id="stock-text-DD2">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DD2', -1)">-</button><input type="number" class="quantity-input" id="left-input-DD2" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DD2', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DD2')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DD3" data-category="skincare" data-name="超水嫩神經醯胺彈力雙效精粹100ML" data-price="1680">
+				<div class="product-item" data-id="DD3" data-category="skincare" data-name="超水嫩神經醯胺彈力雙效精粹100ML" data-price="1680" data-sub="skin-3">
+                    <img class="boss-product-photo" src="https://i.ibb.co/Z1gr7SPX/DD3.jpg" alt="DD3 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DD3</div>
                     <div class="product-name">超水嫩神經醯胺彈力雙效精粹100ML</div><div class="product-price">$1,680</div>
                     <div class="product-stock" id="stock-text-DD3">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DD3', -1)">-</button><input type="number" class="quantity-input" id="left-input-DD3" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DD3', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DD3')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DD4" data-category="skincare" data-name="藍銅精粹緊緻線條雙效精粹100ML" data-price="1680">
+				<div class="product-item" data-id="DD4" data-category="skincare" data-name="藍銅精粹緊緻線條雙效精粹100ML" data-price="1680" data-sub="skin-3">
+                    <img class="boss-product-photo" src="https://i.ibb.co/w34q04y/DD4.jpg" alt="DD4 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DD4</div>
                     <div class="product-name">藍銅精粹緊緻線條雙效精粹100ML</div><div class="product-price">$1,680</div>
                     <div class="product-stock" id="stock-text-DD4">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DD4', -1)">-</button><input type="number" class="quantity-input" id="left-input-DD4" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DD4', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DD4')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DD5" data-category="skincare" data-name="全效活化肌密龍血雙效精粹100ML" data-price="1680">
+				<div class="product-item" data-id="DD5" data-category="skincare" data-name="全效活化肌密龍血雙效精粹100ML" data-price="1680" data-sub="skin-3">
+                    <img class="boss-product-photo" src="https://i.ibb.co/d4RHH398/DD5.jpg" alt="DD5 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DD5</div>
                     <div class="product-name">全效活化肌密龍血雙效精粹100ML</div><div class="product-price">$1,680</div>
                     <div class="product-stock" id="stock-text-DD5">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DD5', -1)">-</button><input type="number" class="quantity-input" id="left-input-DD5" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DD5', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DD5')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DD7" data-category="skincare" data-name=" 菁透亮杏仁酸雙效精粹100ML" data-price="1680">
+				<div class="product-item" data-id="DD7" data-category="skincare" data-name=" 菁透亮杏仁酸雙效精粹100ML" data-price="1680" data-sub="skin-3">
+                    <img class="boss-product-photo" src="https://i.ibb.co/yGn0R73/DD7.jpg" alt="DD7 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DD7</div>
                     <div class="product-name"> 菁透亮杏仁酸雙效精粹100ML</div><div class="product-price">$1,680</div>
                     <div class="product-stock" id="stock-text-DD7">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DD7', -1)">-</button><input type="number" class="quantity-input" id="left-input-DD7" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DD7', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DD7')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DE1" data-category="skincare" data-name=" 超涵水角鯊烯保濕精華乳120ML" data-price="790">
+				<div class="product-item" data-id="DE1" data-category="skincare" data-name=" 超涵水角鯊烯保濕精華乳120ML" data-price="790" data-sub="skin-4">
+                    <img class="boss-product-photo" src="https://i.ibb.co/WNvqMz0k/DE1.png" alt="DE1 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DE1</div>
                     <div class="product-name"> 超涵水角鯊烯保濕精華乳120ML</div><div class="product-price">$790</div>
                     <div class="product-stock" id="stock-text-DE1">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DE1', -1)">-</button><input type="number" class="quantity-input" id="left-input-DE1" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DE1', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DE1')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DF1" data-category="skincare" data-name="EGF全效修護活化青春凝霜50ML" data-price="790">
+				<div class="product-item" data-id="DF1" data-category="skincare" data-name="EGF全效修護活化青春凝霜50ML" data-price="790" data-sub="skin-4">
+                    <img class="boss-product-photo" src="https://i.ibb.co/TMhYBvwc/DF1-EGF.png" alt="DF1 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DF1</div>
                     <div class="product-name">EGF全效修護活化青春凝霜50ML</div><div class="product-price">$790</div>
                     <div class="product-stock" id="stock-text-DF1">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DF1', -1)">-</button><input type="number" class="quantity-input" id="left-input-DF1" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DF1', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DF1')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DF2" data-category="skincare" data-name="奇肌胜肽逆齡緊顏露 100ML" data-price="1880">
+				<div class="product-item" data-id="DF2" data-category="skincare" data-name="奇肌胜肽逆齡緊顏露 100ML" data-price="1880" data-sub="skin-5">
+                    <img class="boss-product-photo" src="https://i.ibb.co/q3MzFvvM/DF2.png" alt="DF2 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DF2</div>
                     <div class="product-name">奇肌胜肽逆齡緊顏露 100ML</div><div class="product-price">$1880</div>
                     <div class="product-stock" id="stock-text-DF2">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DF2', -1)">-</button><input type="number" class="quantity-input" id="left-input-DF2" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DF2', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DF2')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DF3" data-category="skincare" data-name="奇肌胜肽逆齡貴婦霜 30ML 100ML" data-price="1880">
+				<div class="product-item" data-id="DF3" data-category="skincare" data-name="奇肌胜肽逆齡貴婦霜 30ML 100ML" data-price="1880" data-sub="skin-5">
+                    <img class="boss-product-photo" src="https://i.ibb.co/TMxZY5K2/DF3.png" alt="DF3 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DF3</div>
                     <div class="product-name">奇肌胜肽逆齡貴婦霜 30ML</div><div class="product-price">$1880</div>
                     <div class="product-stock" id="stock-text-DF3">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DF3', -1)">-</button><input type="number" class="quantity-input" id="left-input-DF3" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DF3', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DF3')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DF4" data-category="skincare" data-name="奇肌胜肽逆齡緊顏精華 30ML" data-price="1880">
+				<div class="product-item" data-id="DF4" data-category="skincare" data-name="奇肌胜肽逆齡緊顏精華 30ML" data-price="1880" data-sub="skin-5">
+                    <img class="boss-product-photo" src="https://i.ibb.co/tMBsmYfJ/DF4.png" alt="DF4 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DF4</div>
                     <div class="product-name">奇肌胜肽逆齡緊顏精華 30ML</div><div class="product-price">$1880</div>
                     <div class="product-stock" id="stock-text-DF4">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DF4', -1)">-</button><input type="number" class="quantity-input" id="left-input-DF4" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DF4', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DF4')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DF5" data-category="skincare" data-name="奇肌胜肽逆齡撫紋眼霜 15ML" data-price="1880">
+				<div class="product-item" data-id="DF5" data-category="skincare" data-name="奇肌胜肽逆齡撫紋眼霜 15ML" data-price="1880" data-sub="skin-5">
+                    <img class="boss-product-photo" src="https://i.ibb.co/nsypZ5Rg/DF5.png" alt="DF5 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DF5</div>
                     <div class="product-name">奇肌胜肽逆齡撫紋眼霜 15ML</div><div class="product-price">$1880</div>
                     <div class="product-stock" id="stock-text-DF5">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DF5', -1)">-</button><input type="number" class="quantity-input" id="left-input-DF5" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DF5', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DF5')">加入購物車</button>
                 </div>
-					<div class="product-item" data-id="DF6" data-category="skincare" data-name="奇肌胜肽逆齡黃金膠囊-50入" data-price="1880">
+					<div class="product-item" data-id="DF6" data-category="skincare" data-name="奇肌胜肽逆齡黃金膠囊-50入" data-price="1880" data-sub="skin-5">
+                    <img class="boss-product-photo" src="https://i.ibb.co/jkPSYqrS/DF6.png" alt="DF6 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DF6</div>
                     <div class="product-name">奇肌胜肽逆齡黃金膠囊-50入</div><div class="product-price">$1880</div>
                     <div class="product-stock" id="stock-text-DF6">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DF6', -1)">-</button><input type="number" class="quantity-input" id="left-input-DF6" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DF6', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DF6')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DF7" data-category="skincare" data-name="奇肌胜肽逆齡黃金膠囊-100入" data-price="3600">
+				<div class="product-item" data-id="DF7" data-category="skincare" data-name="奇肌胜肽逆齡黃金膠囊-100入" data-price="3600" data-sub="skin-5">
+                    <img class="boss-product-photo" src="https://i.ibb.co/Kj6LkL63/DF7-100.png" alt="DF7 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DF7</div>
                     <div class="product-name">奇肌胜肽逆齡黃金膠囊-100入</div><div class="product-price">$3600</div>
                     <div class="product-stock" id="stock-text-DF7">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DF7', -1)">-</button><input type="number" class="quantity-input" id="left-input-DF7" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DF7', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DF7')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DF8" data-category="skincare" data-name="亮白肌因活膚賦活露 100ML" data-price="1680">
+				<div class="product-item" data-id="DF8" data-category="skincare" data-name="亮白肌因活膚賦活露 100ML" data-price="1680" data-sub="skin-6">
+                    <img class="boss-product-photo" src="https://i.ibb.co/yn1B89rR/DF8.png" alt="DF8 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DF8</div>
                     <div class="product-name">亮白肌因活膚賦活露 100ML</div><div class="product-price">$1680</div>
                     <div class="product-stock" id="stock-text-DF8">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DF8', -1)">-</button><input type="number" class="quantity-input" id="left-input-DF8" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DF8', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DF8')">加入購物車</button>
                 </div>
-					<div class="product-item" data-id="DF9" data-category="skincare" data-name="亮白肌因活膚煥亮精華 30ML" data-price="1680">
+					<div class="product-item" data-id="DF9" data-category="skincare" data-name="亮白肌因活膚煥亮精華 30ML" data-price="1680" data-sub="skin-6">
+                    <img class="boss-product-photo" src="https://i.ibb.co/9kpP2jyg/DF9.png" alt="DF9 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DF9</div>
                     <div class="product-name">亮白肌因活膚煥亮精華 30ML</div><div class="product-price">$1680</div>
                     <div class="product-stock" id="stock-text-DF9">載入中...</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('DF9', -1)">-</button><input type="number" class="quantity-input" id="left-input-DF9" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('DF9', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('DF9')">加入購物車</button>
                 </div>
-				<div class="product-item" data-id="DF10" data-category="skincare" data-name="亮白肌因活膚熬夜霜 30ML" data-price="1680">
+				<div class="product-item" data-id="DF10" data-category="skincare" data-name="亮白肌因活膚熬夜霜 30ML" data-price="1680" data-sub="skin-6">
+                    <img class="boss-product-photo" src="https://i.ibb.co/9HZGxfPf/DF10.png" alt="DF10 商品圖片" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：DF10</div>
                     <div class="product-name">亮白肌因活膚熬夜霜 30ML</div><div class="product-price">$1680</div>
                     <div class="product-stock" id="stock-text-DF10">載入中...</div>
@@ -9735,11 +9843,11 @@
         "A275": { name: "A275 萬用尖夾保護套/20入", price: 60, max: 20 },
         "A308": { name: "A308 美容假人頭", price: 320, max: 20 },
         "A310": { name: "A310 推頭式洗眼瓶", price: 30, max: 20 },
-        "A311": { name: "A311 基礎入門套組", price: 4500, max: 20 },
-		"A312": { name: "A312 6D開花套組", price: 4500, max: 20 },
-        "A313": { name: "A313 開花高手套組", price: 7500, max: 20 },
-        "F247": { name: "F247 新手基礎套組", price: 4500, max: 20 },
-        "F248": { name: "F248 頂級全方位套組", price: 7500, max: 20 },
+        "A311": { name: "A311 美睫基礎入門套組", price: 4500, max: 20 },
+		"A312": { name: "A312 美睫6D開花套組", price: 4500, max: 20 },
+        "A313": { name: "A313 美睫開花高手套組", price: 7500, max: 20 },
+        "F247": { name: "F247 熱蠟新手基礎套組", price: 4500, max: 20 },
+        "F248": { name: "F248 熱蠟頂級全方位套組", price: 7500, max: 20 },
         "B71": { name: "B71 包裝OPP袋(2.5*11CM)/100入", price: 25, max: 20 },
         "B72": { name: "B72 包裝OPP袋(10*10CM)/A.粉紅雪花", price: 50, max: 20 },
         "B73": { name: "B73 包裝OPP袋(10*10CM)/B.粉紅蝴蝶結", price: 50, max: 20 },
@@ -10765,7 +10873,7 @@ async function bossSubmitCancelRequest(index) {
     if (phoneInput === null) return;
     const phone = phoneInput.replace(/\s/g, '');
     if (!/^09\d{8}$/.test(phone)) return alert('請輸入正確的10碼手機號碼。');
-    if (!confirm('確定申請取消訂單 ' + orderId + ' 嗎？\n客服確認後才會進行庫存及付款相關處理。')) return;
+    if (!confirm('確定申請取消訂單 ' + orderId + ' 嗎？\n符合自動取消條件的訂單將直接取消；其他訂單需等待客服確認。')) return;
     const url = "https://script.google.com/macros/s/AKfycbxz6vwBoJznRPoJy7-ldlbdpSPwL1736tGqxZGPEHcTo5W2mm3kqUTvWRCfKJm-N9Oz/exec"; // 已部署取消申請功能的訂單後台
     const body = JSON.stringify({action:'request_cancel',orderId,phone});
     // 使用原生 HTML 表單提交，避開跨網域 fetch POST 可能被瀏覽器攔截的情況。
@@ -10810,15 +10918,18 @@ async function bossSubmitCancelRequest(index) {
             const data = await response.json();
             if (data && Array.isArray(data.orders)) {
                 found = data.orders.find(item => String(item.id||'').trim() === orderId) || null;
-                if (found && String(found.status||'').replace(/\s/g,'') === '申請取消') break;
+                if (found && /^(申請取消|已取消)$/.test(String(found.status||'').replace(/\s/g,''))) break;
             }
         } catch (error) {queryFailed = true; console.warn('取消申請查詢失敗',error);}
     }
-    if (found && String(found.status||'').replace(/\s/g,'') === '申請取消') {
-        alert('取消申請已成功送出，訂單狀態已更新為「申請取消」，請等待客服確認。');
+    if (found && String(found.status||'').replace(/\s/g,'') === '已取消') {
+        alert('取消成功！您的訂單已取消，無須再次操作。');
+        if (typeof queryOrderFromServer === 'function') queryOrderFromServer();
+    } else if (found && String(found.status||'').replace(/\s/g,'') === '申請取消') {
+        alert('取消申請已成功送出，請等待客服確認。');
         if (typeof queryOrderFromServer === 'function') queryOrderFromServer();
     } else if (found) {
-        alert('後台目前顯示訂單狀態：「'+String(found.status||'未設定')+'」。取消申請尚未確認成功，請勿重複提交，請聯絡客服確認。');
+        alert('後台目前顯示訂單狀態：「'+String(found.status||'未設定')+'」。暫時無法確認取消結果，請稍後重新查詢或聯絡客服。');
     } else {
         alert(queryFailed ? '取消申請已傳送，但目前無法查詢確認結果。請勿重複提交，請聯絡客服確認。' : '無法確認取消申請結果，請勿重複提交，請聯絡客服確認。');
     }
@@ -11427,6 +11538,7 @@ function executeDeptDiscountCalculate() {
     const discountAmount = promoResult.amount;
     const appliedDiscountName = promoResult.details.map(x=>x.name).join('、');
     window.bossActivityDiscountResult = promoResult;
+    if(typeof window.bossFixedAmountGiftRefresh==='function')window.bossFixedAmountGiftRefresh();
 
     const shippingEl = document.getElementById("shipping-fee");
     const currentShippingText = shippingEl ? shippingEl.textContent : "0";
@@ -11954,7 +12066,7 @@ function addLashToCart(productId) {
     const isClearanceLash = /^W(?:[1-9]|1[0-9])_UP$/.test(productId);
     const clearanceLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5,
-        '柏金VIP': 0.3, '頂級VIP': 0.3,
+        '柏金VIP': 0.3, '頂極VIP': 0.3,
         '業務A': 0.3, '加盟A': 0.3, '儲值商A': 0.3,
         '加盟B': 0.3, '儲值商B': 0.3, '業務B': 0.3, '連鎖店B': 0.3
     };
@@ -12028,7 +12140,7 @@ function addLashToCart(productId) {
 
 
 // =============================================================
-// A313 開花高手套組－0.07 規格任選，各系列合計 10 盒
+// A313 美睫開花高手套組－0.07 規格任選，各系列合計 10 盒
 // =============================================================
 const A313_CHOICES = { mink: [], kelly: [] };
 
@@ -12184,11 +12296,11 @@ function addA313ToCart() {
 
     const baseKitStock = getBaseKitStock('A313');
     if (baseKitStock <= 0) {
-        alert('A313 開花高手套組目前無庫存，暫時無法加入購物車。');
+        alert('A313 美睫開花高手套組目前無庫存，暫時無法加入購物車。');
         return;
     }
     if (qtySelected > baseKitStock) {
-        alert(`A313 開花高手套組目前庫存 ${baseKitStock} 組，最多只能加入 ${baseKitStock} 組。`);
+        alert(`A313 美睫開花高手套組目前庫存 ${baseKitStock} 組，最多只能加入 ${baseKitStock} 組。`);
         return;
     }
 
@@ -12199,7 +12311,7 @@ function addA313ToCart() {
 
     if (!productConfig[cartKey]) {
         productConfig[cartKey] = {
-            name: `A313 開花高手套組【${specText}】`,
+            name: `A313 美睫開花高手套組【${specText}】`,
             price: 7500,
             max: baseKitStock,
             _isSpecialSku: true,
@@ -12605,7 +12717,7 @@ function updateCartSummary() {
     ]; 
     const customLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5, 
-        '柏金VIP': 0.3,  '頂級VIP': 0.3,
+        '柏金VIP': 0.3,  '頂極VIP': 0.3,
         '業務A': 0.3, '加盟A': 0.3, '儲值商A': 0.3, 
         '加盟B': 0.3, '儲值商B': 0.3, '業務B': 0.3, '連鎖店B': 0.3
     };
@@ -12616,7 +12728,7 @@ function updateCartSummary() {
         'D10', 'D60'
     ];
     const specialRates = {
-        '一般會員': 0.8, '凱莉VIP': 0.48, '柏金VIP': 0.43, '頂級VIP': 0.38,
+        '一般會員': 0.8, '凱莉VIP': 0.48, '柏金VIP': 0.43, '頂極VIP': 0.38,
         '業務A': 0.48, '加盟A': 0.43, '儲值商A': 0.43, '加盟B': 0.38, '儲值商B': 0.38, '業務B': 0.38, '連鎖店B': 0.38
     };
 
@@ -12719,6 +12831,12 @@ function updateCartSummary() {
     if(document.getElementById('grand-total')) document.getElementById('grand-total').innerText = `$${grandTotal.toLocaleString()}`;
     // Keep member + coupon total synchronized after cart/shipping changes.
     if(typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
+    // V80：每次購物車數量、商品增刪變動後立即重算買X送Y資格，
+    // 不必重新整理網頁；不重新讀取 API，保留已選取的有效贈品。
+    if(typeof window.bossPromoGiftRefresh==='function') {
+        try { window.bossPromoGiftRefresh(); }
+        catch (err) { console.error('活動贈品即時更新失敗', err); }
+    }
 };
 
 function toggleLashesMenu(show) {
@@ -13452,7 +13570,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
                 // A313：扣套組本身 + 實際選取的水貂/凱莉絲規格
                 if (pInfo._isA313Kit && pInfo.a313Components) {
                     const baseInfo = productConfig['A313'];
-                    const baseKey = baseInfo?.name || 'A313 開花高手套組';
+                    const baseKey = baseInfo?.name || 'A313 美睫開花高手套組';
                     cartBackup[baseKey] = (cartBackup[baseKey] || 0) + qty;
                     [...(pInfo.a313Components.mink || []), ...(pInfo.a313Components.kelly || [])].forEach(c => {
                         const deductQty = (Number(c.qty) || 0) * qty;
@@ -13584,7 +13702,11 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
         // 此欄沿用現有表單「備註」，由後台分離至「優惠活動紀錄」；不影響商品明細與金額。
         const promoGiftMarker=promoGiftResult.ok&&promoGiftResult.items.length?'\n【優惠活動贈品】'+JSON.stringify(promoGiftResult.items):'';
         const promoDiscountMarker=window.bossActivityDiscountResult?.amount>0?'\n【活動折扣紀錄】'+JSON.stringify(window.bossActivityDiscountResult):'';
-        formData.append("entry.394405044", orderNotes + couponMarker + promoGiftMarker + promoDiscountMarker);
+        const fixedAmountGiftItems = typeof bossFixedAmountGiftPayload === 'function' ? bossFixedAmountGiftPayload() : [];
+        const fixedAmountGiftMarker = Array.isArray(fixedAmountGiftItems) && fixedAmountGiftItems.length > 0
+            ? '\n【活動滿額固定贈品】' + JSON.stringify(fixedAmountGiftItems)
+            : '';
+        formData.append("entry.394405044", orderNotes + couponMarker + promoGiftMarker + promoDiscountMarker + fixedAmountGiftMarker);
         // 滿額贈直接送到 Google 表單獨立題目，不再寫入訂單備註。
         formData.append("entry.873435827", typeof bossGiftSubmissionValue === "function" ? bossGiftSubmissionValue() : "");
 
@@ -13720,7 +13842,7 @@ function updateHomepageProductPrices() {
         'D10', 'D60', 
     ];
     const specialRates = {
-        '一般會員': 0.8, '凱莉VIP': 0.48, '柏金VIP': 0.43,  '頂級VIP': 0.38,
+        '一般會員': 0.8, '凱莉VIP': 0.48, '柏金VIP': 0.43,  '頂極VIP': 0.38,
         '業務A': 0.48, '加盟A': 0.43, '儲值商A': 0.43, '加盟B': 0.38, '儲值商B': 0.38, '業務B': 0.38, '連鎖店B': 0.38
     };
 
@@ -13759,7 +13881,7 @@ function updateHomepageProductPrices() {
 
     const customLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5, 
-        '柏金VIP': 0.3, '頂級VIP': 0.3, '頂級VIP': 0.3,
+        '柏金VIP': 0.3, '頂極VIP': 0.3, 
         '業務A': 0.3, '加盟A': 0.3, '儲值商A': 0.3, 
         '加盟B': 0.3, '儲值商B': 0.3, '業務B': 0.3, '連鎖店B': 0.3
     };
@@ -14033,7 +14155,7 @@ async function copyTransferAccount(){try{await navigator.clipboard.writeText('72
 // Coupon UI is moved beside the order totals; admin issuing remains in Google Sheets.
 const eyelashCouponState={coupons:[],money:null,shipping:null};
 // 僅一般會員與三種 VIP 可查看及使用優惠券；其他會員不得套用折抵。
-const BOSS_COUPON_ALLOWED_LEVELS=new Set(['一般會員','凱莉VIP','柏金VIP','頂級VIP']);
+const BOSS_COUPON_ALLOWED_LEVELS=new Set(['一般會員','凱莉VIP','柏金VIP','頂極VIP']);
 function bossCouponIsEligible(){
  return typeof deptIsLoggedIn!=='undefined' && !!deptIsLoggedIn &&
         typeof deptMemberData!=='undefined' && !!deptMemberData &&
@@ -14117,7 +14239,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     <div id="boss-gift-summary" class="boss-gift-summary"></div>
     <div id="boss-gift-tiers"></div>
     <div id="boss-gift-status"></div>
-    <div class="boss-gift-actions"><button type="button" onclick="bossGiftClear()">清除選擇</button><button class="primary" type="button" onclick="bossGiftClose()">確認贈品</button></div>
+    <div class="boss-gift-actions"><button type="button" onclick="bossGiftClear()">清除選擇</button><button type="button" onclick="bossGiftDecline()">不需要滿額贈品</button><button class="primary" type="button" onclick="bossGiftClose()">確認贈品</button></div>
   </div>
 </div>
 
@@ -14173,7 +14295,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     const status=getEl('boss-gift-status');
     if(status)status.textContent=remaining<0?'已超出可用贈品額度，請減少選擇。':eligible<1000?'未達滿額贈門檻。':'每個滿額階段任選一件；可跨階段、多次選擇，總額度不可超過符合資格金額。';
     const checkout=getEl('boss-gift-checkout-text');
-    if(checkout){const count=Object.values(chosen).reduce((a,b)=>a+b,0);checkout.textContent='符合資格 '+money(eligible)+'｜已選 '+count+' 件｜已用 '+money(used)+'｜剩餘 '+money(remaining);}
+    if(checkout){const count=Object.values(chosen).reduce((a,b)=>a+b,0);checkout.textContent=giftDeclined?'不需要滿額贈品':'符合資格 '+money(eligible)+'｜已選 '+count+' 件｜已用 '+money(used)+'｜剩餘 '+money(remaining);}
     gifts.forEach(g=>{const inp=getEl('boss-gift-qty-'+gifts.indexOf(g));if(inp && document.activeElement!==inp)inp.value=chosen[g.id]||0;});
   }
   function build(){
@@ -14220,14 +14342,15 @@ window.addEventListener('DOMContentLoaded',()=>{
     if(spent()>available())throw new Error('滿額贈額度超出可用金額，請重新選擇贈品');
     const lines=gifts.filter(g=>chosen[g.id]).map(g=>(/^[A-Z]{1,3}\d+[A-Z0-9_-]*$/.test(g.id) ? g.id+'｜'+g.name : g.name)+' ×'+chosen[g.id]);
     if(lines.length)return lines.join('\n');
-    return ''; // 符合資格時必須選擇贈品，不允許放棄
+    if(giftDeclined)return '不需要滿額贈品';
+    return '';
   };
   // 相容其他舊呼叫；不再將贈品文字寫進備註。
   window.bossGiftOrderMarker=function(){return '';};
   window.bossGiftValidate=function(){
     if(!syncGiftEligibility())return true;
     if(spent()>available()){alert('滿額贈額度已超出資格金額，請重新選擇贈品。');bossGiftOpen(true);return false;}
-    if(available()>=1000 && spent()===0){alert('請先完成滿額贈品選擇，再送出訂單。');bossGiftOpen(true);return false;}
+    if(available()>=1000 && spent()===0 && !giftDeclined){alert('請先選擇滿額贈品，或點選「不需要滿額贈品」，再送出訂單。');bossGiftOpen(true);return false;}
     return true;
   };
   const originalScroll=window.scrollToOrderForm;
@@ -14303,43 +14426,103 @@ function bossCalculateActivityDiscount(subtotal){
  const empty={amount:0,details:[]};
  if(typeof deptIsLoggedIn==='undefined'||!deptIsLoggedIn||typeof deptMemberData==='undefined'||!deptMemberData)return empty;
  const level=String(deptMemberData.member_level||'').trim();
- if(!['一般會員','凱莉VIP','柏金VIP','頂級VIP'].includes(level))return empty;
+ if(!['一般會員','凱莉VIP','柏金VIP','頂極VIP','頂級VIP'].includes(level))return empty;
  const promos=Array.isArray(window.bossActivePromotions)?window.bossActivePromotions:[];
  if(!promos.length||typeof cart==='undefined')return empty;
  const blocked=new Set(BOSS_PROMO_BLOCKED_IDS);
+ const cards=new Map(Array.from(document.querySelectorAll('.product-item[data-id]')).map(el=>[String(el.dataset.id||'').toUpperCase(),el]));
+ const ids=[...cards.keys()].sort((a,b)=>b.length-a.length);
+ const categoryMap={
+  brows:'美睫/黑膠',eyelash:'美睫/睫毛款式',perimeter:'美睫/周邊商品',
+  wax:'熱蠟商品',makeup:'美妝商品',skincare:'臉部保養',
+  nail:'美甲商品',ear:'採耳商品',sale:'出清五折'
+ };
+ const splitValues=v=>Array.isArray(v)?v.flatMap(splitValues):String(v||'').split(/[,，、;；\n|]+/).map(x=>x.trim()).filter(Boolean);
+ const normalizeCategory=v=>String(v||'').trim().replace(/\s+/g,'').replace(/／/g,'/');
  const lines=[];
  for(const [sku,rawQty] of Object.entries(cart)){
   const qty=Number(rawQty)||0;if(qty<=0)continue;
-  const id=String(sku).split('_')[0].toUpperCase();
+  const upper=String(sku).toUpperCase();
+  const id=ids.find(k=>upper===k||upper.startsWith(k+'_'))||upper.split('_')[0];
+  if(/^W\d+_UP(?:_|$)/i.test(upper))continue;
   const product=typeof productConfig!=='undefined'?(productConfig[sku]||productConfig[id]):null;
-  const card=document.querySelector('.product-item[data-id="'+id+'"]');
-  const cat=String(card?.dataset.category||'').toLowerCase();
-  const sub=String(card?.dataset.sub||'').toLowerCase();
+  const card=cards.get(id);
+  const cat=String(card?.dataset.category||product?.category||'').toLowerCase();
+  const sub=String(card?.dataset.sub||product?.subCategory||'').toLowerCase();
   const name=String(product?.name||card?.dataset.name||'');
-  if(blocked.has(id)||/採耳|美甲|出清五折/.test(name)||/nail|ear-pick|clearance/.test(cat+' '+sub))continue;
+  if(blocked.has(id)||/採耳|美甲|出清五折/.test(name)||/nail|ear|sale|clearance/.test(cat))continue;
   const price=Number(window.bossCartActualPrices?.[sku]);
   if(!Number.isFinite(price)||price<=0)continue;
-  lines.push({id,qty,price});
+  let category=categoryMap[cat]||'';
+  if(cat==='brows'&&/professional-kit/.test(sub))category='美睫/專業套組';
+  if(cat==='perimeter'&&/professional-kit/.test(sub))category='美睫/專業套組';
+  if(cat==='brows'&&/lash|eyelash/.test(sub))category='美睫/睫毛款式';
+  if(cat==='eyelash'&&/professional-kit/.test(sub))category='美睫/專業套組';
+  // 實際分類由商品卡片決定，不能以商品編號字首猜測。
+  lines.push({id,sku,qty,price,category});
  }
  const details=[];let amount=0;
  for(const p of promos){
-  const type=String(p.activity_type||'');
-  if(type!=='全館商品折後再打折'&&type!=='指定商品再打折')continue;
+  const type=String(p.activity_type||p.type||'').trim();
+  const isAll=type==='全館商品折後再打折';
+  const isProduct=type==='指定商品再打折';
+  const isCategory=/指定類別|指定分類/.test(type)&&/折/.test(type);
+  const isQuantity=/滿件/.test(type)&&/折/.test(type);
+  if(!isAll&&!isProduct&&!isCategory&&!isQuantity)continue;
   const allowed=String(p.member_levels||'').trim();
-  if(allowed&&allowed!=='全部會員'&&!allowed.split(/[,，、;；\/\n]+/).map(x=>x.trim()).includes(level))continue;
-  const rate=Number(p.discount_rate);
+  if(allowed&&allowed!=='全部會員'&&!splitValues(allowed).includes(level))continue;
+  const rawRate=p.discount_rate??p.activity_discount_rate??p.discount??p.rate;
+  const rateText=String(rawRate??'').trim();
+  let rate=Number(rawRate);
+  if(/折/.test(rateText)){
+   const n=Number(rateText.replace(/[^0-9.]/g,''));
+   rate=n>=10?n/100:n/10; // 95折→0.95、9折→0.9
+  }else if(Number.isFinite(rate)&&rate>1){
+   rate=rate<=10?rate/10:rate/100;
+  }
   if(!Number.isFinite(rate)||rate<=0||rate>=1)continue;
-  const included=new Set((p.products||[]).map(x=>String(x.product_id||'').trim().toUpperCase()));
-  const eligibleLines=lines.filter(x=>type==='全館商品折後再打折'||included.has(x.id));
+  const included=new Set((p.products||[]).map(x=>String(x.product_id||x.id||x.product_code||'').trim().toUpperCase()).filter(Boolean));
+  // 指定類別以主分類為準；細分項目不影響優惠資格。
+  // 相容後台複選類別與前台分類代碼，並避免以商品 ID 猜測分類。
+  const categoryAliases={
+   'skincare':'臉部保養','skin':'臉部保養','臉部保養':'臉部保養',
+   'makeup':'美妝商品','美妝商品':'美妝商品',
+   'wax':'熱蠟商品','熱蠟商品':'熱蠟商品',
+   'permanent':'紋繡商品','紋繡商品':'紋繡商品',
+   'brows':'美睫/黑膠','美睫/黑膠':'美睫/黑膠',
+   'eyelash':'美睫/睫毛款式','美睫/睫毛款式':'美睫/睫毛款式',
+   'perimeter':'美睫/周邊商品','美睫/周邊商品':'美睫/周邊商品',
+   '美睫/專業套組':'美睫/專業套組'
+  };
+  const canonicalCategory=v=>{
+   const key=normalizeCategory(v);
+   return categoryAliases[key]||key;
+  };
+  const cats=splitValues(p.target_category??p.selected_categories??p.categories??p.category_list??p.category??p.specified_categories).map(canonicalCategory);
+  // 滿件折扣只讀取「優惠活動設定」的滿件門檻（K 欄）；
+  // 買X送Y的 buy_qty、商品設定內的買X數量都不是滿件折扣門檻。
+  // 特別注意：空白不可被 Number('') 轉成 0，也不可退回使用 buy_qty。
+  const thresholdRaw=[p.min_quantity,p.minimum_qty,p.min_qty,p.threshold_qty,p.required_qty,p.quantity_threshold,p.condition_qty,p.min_purchase_qty]
+    .find(v=>v!==undefined&&v!==null&&String(v).trim()!=='');
+  const threshold=thresholdRaw===undefined?NaN:Number(thresholdRaw);
+  // 指定類別必須有後台傳回的類別資料，不能因缺資料誤套用全館。
+  if(isCategory&&!cats.length)continue;
+  // 滿件活動必須有明確且有效的門檻，不能將空白誤當成滿 0 件。
+  if(isQuantity&&(!Number.isInteger(threshold)||threshold<1||!included.size))continue;
+  const eligibleLines=lines.filter(x=>{
+   if(isAll)return true;
+   if(isCategory)return cats.includes(canonicalCategory(x.category));
+   return included.has(x.id);
+  });
+  if(isQuantity&&eligibleLines.reduce((n,x)=>n+x.qty,0)<threshold)continue;
   const base=eligibleLines.reduce((sum,x)=>sum+x.price*x.qty,0);
   if(base<=0)continue;
-  // 以實際會員售價乘活動折數，四捨五入到元；折抵額為原金額減折後金額。
   const value=Math.min(base,Math.max(0,base-Math.round(base*rate)));
   if(value<=0)continue;
-  details.push({id:String(p.id||''),name:String(p.name||p.id||'活動'),type,rate,base,discount:value});
+  details.push({id:String(p.id||''),name:String(p.name||p.id||'活動'),type,rate,base,discount:value,
+   eligible_qty:eligibleLines.reduce((n,x)=>n+x.qty,0),minimum_qty:isQuantity?threshold:null});
   amount+=value;
-  // 其他活動不可併用時，依後台排序僅套用第一項折扣。
-  if(!p.combine_other)break;
+  if(![true,1,'1','是','YES','yes','true'].includes(p.combine_other))break;
  }
  return {amount:Math.min(Math.max(0,Number(subtotal)||0),amount),details};
 }
@@ -14360,7 +14543,7 @@ function priceFor(id){
 }
 function countFor(id){let q=0;if(typeof cart==='undefined')return q;for(const [k,n] of Object.entries(cart))if(k===id||k.startsWith(id+'_'))q+=Number(n)||0;return q;}
 function level(){return (typeof deptIsLoggedIn!=='undefined'&&deptIsLoggedIn&&typeof deptMemberData!=='undefined'&&deptMemberData)?String(deptMemberData.member_level||'').trim():'';}
-const allowedMemberLevels=new Set(['一般會員','凱莉VIP','柏金VIP','頂級VIP']);
+const allowedMemberLevels=new Set(['一般會員','凱莉VIP','柏金VIP','頂極VIP']);
 function eligible(p){const current=level();if(!allowedMemberLevels.has(current))return false;let levels=String(p.member_levels||'').trim();return !levels||levels==='全部會員'||levels==='全部'||levels==='一般會員'||levels.split(/[,，、;；\/\n]+/).map(s=>s.trim()).includes(current);}
 // 規格型睫毛的贈品選項使用實際購物車 SKU，避免把 E7_UP_C_0.07_MIX7-14 當成 E7_UP 的一般庫存。
 // 僅開放已加入購物車且庫存可核對的規格，避免顧客選到沒有庫存的規格。
@@ -14552,7 +14735,7 @@ async function loadGiftPromotions(){
   const d=await response.json();
   if(d.status!=='success'||!Array.isArray(d.promotions))throw Error(d.message||'活動 API 回傳格式不正確');
   if(requestId!==giftPromoRequestId)return;
-  promotions=d.promotions;window.bossActivePromotions=promotions;ready=true;loadError=false; if(typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
+  promotions=d.promotions;window.bossActivePromotions=promotions;ready=true;loadError=false;if(typeof window.bossFixedAmountGiftRefresh==='function')window.bossFixedAmountGiftRefresh(); if(typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
  }catch(e){
   if(requestId!==giftPromoRequestId)return;
   loadError=true;ready=false;window.bossActivePromotions=[]; if(typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
@@ -14659,5 +14842,67 @@ render();
   setTimeout(fixEmpty,2500);
 })();
 </script>
+
+<!-- V78｜滿額固定活動贈品：僅顯示活動文字，不佔購物車／原有滿額贈選項 -->
+<script id="boss-fixed-amount-gift-v78">
+(function(){
+ 'use strict';
+ const levels=new Set(['一般會員','凱莉VIP','柏金VIP','頂極VIP','頂級VIP']);
+ const safeText=v=>String(v==null?'':v).trim();
+ const splitLevels=v=>safeText(v).split(/[,，、;；\n]+/).map(s=>s.trim()).filter(Boolean);
+ function currentLevel(){return typeof deptIsLoggedIn!=='undefined'&&deptIsLoggedIn&&typeof deptMemberData!=='undefined'&&deptMemberData?safeText(deptMemberData.member_level):'';}
+ function available(){
+  const lv=currentLevel();if(!levels.has(lv))return [];
+  return (Array.isArray(window.bossActivePromotions)?window.bossActivePromotions:[]).filter(p=>{
+   if(safeText(p.activity_type||p.type)!=='滿額贈固定商品')return false;
+   const allowed=safeText(p.member_levels);
+   if(allowed&&allowed!=='全部會員'&&!splitLevels(allowed).includes(lv))return false;
+   return Number.isFinite(Number(p.amount_threshold))&&Number(p.amount_threshold)>0&&safeText(p.fixed_gift);
+  });
+ }
+ function amount(){
+  const text=document.getElementById('subtotal-price')?.textContent||'0';
+  const subtotal=Number(text.replace(/[^0-9]/g,''))||0;
+  const discount=Number(window.bossActivityDiscountResult?.amount)||0;
+  // 會員價與活動折扣後商品金額；不扣運費、購物金券及儲值金。
+  return Math.max(0,subtotal-discount);
+ }
+ function awarded(){return available().filter(p=>amount()>=Number(p.amount_threshold));}
+ window.bossFixedAmountGiftPayload=function(){return awarded().map(p=>({id:safeText(p.id),name:safeText(p.name),gift:safeText(p.fixed_gift),threshold:Number(p.amount_threshold)}));};
+ function refresh(){
+  const anchor=document.getElementById('boss-promo-eligibility');
+  if(!anchor)return;
+  const promos=available();
+  let host=document.getElementById('boss-fixed-amount-gift');
+  if(!promos.length){if(host)host.remove();return;}
+  // 與買X送Y共用同一個「活動贈品」區塊，不另產生獨立卡片。
+  if(!host){host=document.createElement('div');host.id='boss-fixed-amount-gift';}
+  host.style.cssText='margin-top:10px;padding-top:10px;border-top:1px solid #eee;font-size:13px;line-height:1.9';
+  const content=promos.map(p=>{
+   const threshold=Number(p.amount_threshold),met=amount()>=threshold;
+   return '🎁 滿額好禮｜'+(met?'已符合單筆訂單滿 $':'單筆訂單滿 $')+threshold.toLocaleString('zh-TW')+(met?' 活動，獲贈 ':'，即贈 ')+safeText(p.fixed_gift)+(met?'（贈品將隨貨附贈，無須選取）':'');
+  });
+  const signature=content.join('\n');
+  if(host.dataset.signature!==signature){
+   host.replaceChildren();
+   content.forEach(line=>{const div=document.createElement('div');div.textContent=line;host.append(div);});
+   host.dataset.signature=signature;
+  }
+  if(host.parentElement!==anchor)anchor.append(host);
+ }
+ // 買X送Y會重新繪製活動贈品容器，完成後自動將滿額活動內容補回同區塊。
+ let pending=false;
+ function queueRefresh(){if(pending)return;pending=true;Promise.resolve().then(()=>{pending=false;refresh();});}
+ function install(){
+  const anchor=document.getElementById('boss-promo-eligibility');
+  if(!anchor)return;
+  new MutationObserver(queueRefresh).observe(anchor,{childList:true});
+  refresh();
+ }
+ window.bossFixedAmountGiftRefresh=refresh;
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
+})();
+</script>
+
 </body>
 </html>
