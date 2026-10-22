@@ -14987,7 +14987,7 @@ render();
       const end=-track.scrollWidth;
       track.style.setProperty('--boss-start',start+'px');
       track.style.setProperty('--boss-end',end+'px');
-      track.style.setProperty('--boss-scroll-duration',Math.max(9,(start-end)/65)+'s');
+      track.style.setProperty('--boss-scroll-duration',Math.max(9,(start-end)/40)+'s');
       void track.offsetWidth; // 重新啟動下一則的動畫
       track.classList.add('boss-running');
     }
