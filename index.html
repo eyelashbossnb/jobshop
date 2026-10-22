@@ -1023,6 +1023,22 @@
   }
 }
 
+
+/* 網站公告：僅佔左側商品欄，不改動原有雙欄格線 */
+@media (min-width:769px){
+ .main-container > div:first-child,.main-container > div:nth-child(2){min-width:0;}
+}
+#boss-announcement-bar{display:none;align-items:center;gap:12px;width:100%;max-width:100%;min-width:0;box-sizing:border-box;overflow:hidden;margin:0 0 26px;padding:12px 18px;border:1px solid var(--border-color);border-radius:14px;background:#fff;font-size:13px;line-height:1.5}
+#boss-announcement-bar.is-visible{display:flex}
+#boss-announcement-label{white-space:nowrap;flex:none;color:var(--text-main);font-weight:600}
+#boss-announcement-viewport{min-width:0;flex:1;overflow:hidden}
+#boss-announcement-track{display:flex;align-items:center;gap:52px;width:max-content;max-width:none;animation:boss-announcement-scroll var(--boss-scroll-duration,28s) linear infinite;will-change:transform}
+#boss-announcement-bar:hover #boss-announcement-track{animation-play-state:paused}
+.boss-announcement-item{flex:none;white-space:nowrap;color:var(--text-muted);text-decoration:none}
+a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underline}
+@keyframes boss-announcement-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){#boss-announcement-track{animation:none;flex-wrap:wrap;width:auto}.boss-announcement-item{white-space:normal}}
+@media(max-width:768px){#boss-announcement-bar{padding:10px 12px;gap:8px;font-size:12px;margin-bottom:18px}}
 </style>
 </head>
 <body>
@@ -1140,6 +1156,12 @@
     </a>
 </div>
 <!-- 👆 置中的中間活動圖片區塊 👆 -->
+
+        <!-- 網站公告：與 Banner、限時優惠活動同屬左側欄位 -->
+        <div id="boss-announcement-bar" role="region" aria-label="最新公告">
+          <span id="boss-announcement-label">📢 最新公告</span>
+          <div id="boss-announcement-viewport"><div id="boss-announcement-track"></div></div>
+        </div>
 
         <section id="boss-promo-test" aria-label="限時優惠活動"><div class="boss-promo-box"><div class="boss-promo-heading">🎁 限時優惠活動</div><div id="boss-promo-test-result" class="boss-promo-muted">正在讀取活動資料…</div></div></section>
 
@@ -14904,5 +14926,63 @@ render();
 })();
 </script>
 
+
+<script>
+/* 讀取「網站公告」：A編號 B排序 C內容 D開始 E結束 F是/否 G連結 */
+(function(){
+  const api='https://script.google.com/macros/s/AKfycbxz6vwBoJznRPoJy7-ldlbdpSPwL1736tGqxZGPEHcTo5W2mm3kqUTvWRCfKJm-N9Oz/exec';
+  const bar=document.getElementById('boss-announcement-bar');
+  const track=document.getElementById('boss-announcement-track');
+  if(!bar||!track)return;
+  function rowsFrom(payload){
+    if(Array.isArray(payload))return payload;
+    if(!payload||typeof payload!=='object')return [];
+    for(const k of ['announcements','notices','items','rows','data','list']){
+      if(Array.isArray(payload[k]))return payload[k];
+      if(payload[k]&&typeof payload[k]==='object'){
+        const r=rowsFrom(payload[k]);if(r.length)return r;
+      }
+    }
+    return [];
+  }
+  function pick(row,keys,index){
+    if(Array.isArray(row))return row[index];
+    for(const k of keys)if(row[k]!==undefined)return row[k];
+    return '';
+  }
+  function day(value){
+    if(!value)return null;
+    const d=new Date(value);
+    if(!Number.isNaN(d.getTime()))return new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();
+    return null;
+  }
+  function render(payload){
+    const today=new Date();const now=new Date(today.getFullYear(),today.getMonth(),today.getDate()).getTime();
+    const rows=rowsFrom(payload).filter(r=>{
+      const enabled=String(pick(r,['enabled','active','status','啟用狀態'],5)).trim().toLowerCase();
+      const start=day(pick(r,['start','startDate','startTime','開始時間'],3));
+      const end=day(pick(r,['end','endDate','endTime','結束時間'],4));
+      return (enabled==='是'||enabled==='true'||enabled==='1')&&(start===null||start<=now)&&(end===null||end>=now);
+    }).sort((a,b)=>Number(pick(a,['sort','order','排序'],1)||9999)-Number(pick(b,['sort','order','排序'],1)||9999));
+    const items=[];
+    for(const r of rows){
+      const content=String(pick(r,['content','text','message','公告內容'],2)||'').trim();
+      if(!content)continue;
+      const url=String(pick(r,['url','link','公告連結'],6)||'').trim();
+      const el=document.createElement(/^https?:\/\//i.test(url)?'a':'span');
+      el.className='boss-announcement-item';el.textContent=content;
+      if(el.tagName==='A'){el.href=url;el.target='_blank';el.rel='noopener noreferrer';}
+      items.push(el);
+    }
+    track.replaceChildren();if(!items.length){bar.classList.remove('is-visible');return;}
+    for(let repeat=0;repeat<2;repeat++)for(const item of items)track.appendChild(item.cloneNode(true));
+    track.style.setProperty('--boss-scroll-duration',Math.max(18,items.reduce((n,el)=>n+el.textContent.length,0)*0.42)+'s');
+    bar.classList.add('is-visible');
+  }
+  fetch(api+'?action=announcements&_='+Date.now(),{cache:'no-store'})
+    .then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json();})
+    .then(render).catch(e=>{console.warn('網站公告讀取失敗：',e);bar.classList.remove('is-visible');});
+})();
+</script>
 </body>
 </html>
