@@ -13204,6 +13204,32 @@ function updateLashVariantStockDisplay(productId) {
             currentStock = clearanceMatch.stock;
             matchedKey = clearanceMatch.key;
         }
+    } else if (productId === 'E24_UP') {
+        // E24_UP 庫存表 A 欄範例：E24_UP一代 PLAY YY毛(D-0.07-MIX 8-13mm)
+        // 使用實際 A 欄完整鍵值，確保加入購物車與後續訂單均指向同一規格。
+        const normalizedCurl = String(curl || '').trim().toUpperCase();
+        const normalizedThickness = String(thickness || '').trim();
+        const normalizedLength = String(length || '').replace(/\\s+/g, '').toUpperCase();
+        const validLength = /^(?:8|9|10|11|12)MM$/.test(normalizedLength) ||
+                            normalizedLength === 'MIX8-13';
+        if (['C', 'D'].includes(normalizedCurl) &&
+            normalizedThickness === '0.07' && validLength) {
+            const wantedLength = normalizedLength === 'MIX8-13'
+                ? 'MIX8-13MM' : normalizedLength;
+            const normalizeE24 = value => String(value || '')
+                .replace(/[（]/g, '(').replace(/[）]/g, ')')
+                .replace(/[－–—]/g, '-')
+                .replace(/\\s+/g, '').toUpperCase();
+            const expected = normalizeE24(
+                `E24_UP一代PLAYYY毛(${normalizedCurl}-0.07-${wantedLength})`
+            );
+            const foundKey = Object.keys(globalInventoryData || {})
+                .find(key => normalizeE24(key) === expected);
+            if (foundKey) {
+                matchedKey = foundKey;
+                currentStock = Number(globalInventoryData[foundKey]) || 0;
+            }
+        }
     } else if (productId === 'E23_UP') {
         // 現有試算表 A 欄：奢華手工真貂毛 (J-單一粗度-MIX 8-14mm)
         // 依完整中文品名、捲度及長度精確比對，絕不誤抓其他睫毛。
