@@ -1678,7 +1678,51 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
     </div>
 </div>
 
-		<div class="product-item" data-id="E14_UP" data-name="PLAY YY毛" data-category="eyelash" data-sub="lash-tech" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+		<!-- 睫毛款式：一代PLAY YY毛 (E24_UP) -->
+                <div class="product-item" data-id="E24_UP" data-name="一代PLAY YY毛" data-category="eyelash" data-sub="lash-tech" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                    <div>
+                        <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E24_UP</div>
+                        <div class="product-name">一代PLAY YY毛</div>
+                        <div class="lash-variant-container">
+                            <div class="variant-group">
+                                <div class="variant-title">捲度：</div>
+                                <div class="btn-tabs-container">
+                                    <button class="spec-btn" data-type="curl" data-value="C" onclick="executeLashSpecSelect(this, 'E24_UP')">C75°</button>
+                                    <button class="spec-btn" data-type="curl" data-value="D" onclick="executeLashSpecSelect(this, 'E24_UP')">D90°</button>
+                                </div>
+                            </div>
+                            <div class="variant-group">
+                                <div class="variant-title">粗度：</div>
+                                <div class="btn-tabs-container">
+                                    <button class="spec-btn" data-type="thickness" data-value="0.07" onclick="executeLashSpecSelect(this, 'E24_UP')">0.07</button>
+                                </div>
+                            </div>
+                            <div class="variant-group">
+                                <div class="variant-title">長度：</div>
+                                <div class="btn-tabs-container">
+                                    <button class="spec-btn" data-type="length" data-value="MIX8-13" onclick="executeLashSpecSelect(this, 'E24_UP')">MIX 8-13</button>
+                                    <button class="spec-btn" data-type="length" data-value="8mm" onclick="executeLashSpecSelect(this, 'E24_UP')">8mm</button>
+                                    <button class="spec-btn" data-type="length" data-value="9mm" onclick="executeLashSpecSelect(this, 'E24_UP')">9mm</button>
+                                    <button class="spec-btn" data-type="length" data-value="10mm" onclick="executeLashSpecSelect(this, 'E24_UP')">10mm</button>
+                                    <button class="spec-btn" data-type="length" data-value="11mm" onclick="executeLashSpecSelect(this, 'E24_UP')">11mm</button>
+                                    <button class="spec-btn" data-type="length" data-value="12mm" onclick="executeLashSpecSelect(this, 'E24_UP')">12mm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="product-price" id="price-display-E24_UP">$410</div>
+                        <div class="product-stock" id="stock-text-E24_UP" style="color:var(--accent-color); font-weight:600;">請點選規格按鈕組合</div>
+                        <div class="quantity-selector">
+                            <button class="quantity-btn" onclick="changeLeftQty('E24_UP', -1)">-</button>
+                            <input type="number" class="quantity-input" id="left-input-E24_UP" value="0" min="0" >
+                            <button class="quantity-btn" onclick="changeLeftQty('E24_UP', 1)">+</button>
+                        </div>
+                        <button class="btn" onclick="addLashToCart('E24_UP')">加入購物車</button>
+                    </div>
+                </div>
+
+                <div class="product-item" data-id="E14_UP" data-name="PLAY YY毛" data-category="eyelash" data-sub="lash-tech" data-lash="true" data-base-price="410" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：E14_UP</div>
                         <div class="product-name">PLAY YY毛</div>
