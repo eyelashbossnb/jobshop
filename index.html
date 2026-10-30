@@ -12143,10 +12143,10 @@ function addLashToCart(productId) {
     
     const finalDisplayName = chosenColor ? `${productName}-${chosenColor}` : productName;
     const originalPrice = parseInt(card.getAttribute('data-base-price')) || 290;
-    const isClearanceLash = /^W(?:[1-9]|1[0-9]|2[01])_UP$/.test(productId);
+    const isClearanceLash = /^W(?:[1-9]|1[0-9]|2[014])_UP$/.test(productId);
     const clearanceLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5,
-        '柏金VIP': 0.3, '頂極VIP': 0.3,
+        '柏金VIP': 0.3, '頂極VIP': 0.3, '極VIP': 0.3, '頂級VIP': 0.3,
         '業務A': 0.3, '加盟A': 0.3, '儲值商A': 0.3,
         '加盟B': 0.3, '儲值商B': 0.3, '業務B': 0.3, '連鎖店B': 0.3
     };
@@ -12768,7 +12768,7 @@ function updateCartSummary() {
 
     const customDiscountIds = [
         'W1_UP', 'W2_UP', 'W3_UP', 'W4_UP', 'W5_UP', 'W6_UP', 'W7_UP', 'W8_UP', 'W9_UP',
-        'W10_UP', 'W11_UP', 'W12_UP', 'W13_UP', 'W14_UP', 'W15_UP', 'W16_UP', 'W17_UP', 'W18_UP', 'W19_UP', 'W20_UP', 'W21_UP',
+        'W10_UP', 'W11_UP', 'W12_UP', 'W13_UP', 'W14_UP', 'W15_UP', 'W16_UP', 'W17_UP', 'W18_UP', 'W19_UP', 'W20_UP', 'W21_UP', 'W24_UP',
         'TC1', 'TC2', 'TC9', 'TC12', 'TC13', 'TF35', 'TF36', 'TF38', 'TF48', 'TF49', 'TF50', 'TF40', 'TF41',
         'TF42', 'TF43', 'TF44', 'TF45', 'TF46', 'TF47', 'TD4', 'TD7', 'TD8', 'TD10', 'TD11', 'TD12', 'TD13',
         'TD14', 'TD15', 'TD16', 'TD17', 'TD23', 'TD24',
@@ -12797,7 +12797,7 @@ function updateCartSummary() {
     ]; 
     const customLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5, 
-        '柏金VIP': 0.3,  '頂極VIP': 0.3,
+        '柏金VIP': 0.3,  '頂極VIP': 0.3, '極VIP': 0.3, '頂級VIP': 0.3,
         '業務A': 0.3, '加盟A': 0.3, '儲值商A': 0.3, 
         '加盟B': 0.3, '儲值商B': 0.3, '業務B': 0.3, '連鎖店B': 0.3
     };
@@ -12824,7 +12824,16 @@ function updateCartSummary() {
         let itemRealPrice = 0;
 
         if (id.includes('_') && productConfig[id] && productConfig[id]._isSpecialSku) {
-            itemRealPrice = productConfig[id].price;
+            if (/^W24_UP_/.test(id)) {
+                const w24Rate = customLevelRates[activeLevel] ?? 0.5;
+                itemRealPrice = Math.round(410 * w24Rate);
+                productConfig[id].price = itemRealPrice;
+            } else if (/^W(?:22|23)_UP_/.test(id)) {
+                itemRealPrice = 99;
+                productConfig[id].price = 99;
+            } else {
+                itemRealPrice = productConfig[id].price;
+            }
         } else {
             const card = document.querySelector(`.product-item[data-id="${pureId}"]`);
             let itemOriginPrice = 0;
@@ -13075,6 +13084,19 @@ function findClearanceLashInventoryMatch(productId, baseName, color, curl, thick
         const keyToken = compact(realKey);
         // W22 / W23 的試算表實際名稱包含「-朵毛(黑/3根)」等文字，
         // 前台名稱則省略「朵毛」；必須依原始列名精確組合比對。
+        if (productId === 'W24_UP') {
+            const curlCode = String(curl || '').trim().toUpperCase().replace(/[^BCD]/g, '');
+            const thick = String(thickness || '').trim();
+            const size = String(length || '').trim().replace(/[–—－]/g, '-').replace(/\s+/g, '');
+            if (!/^[BCD]$/.test(curlCode) || !thick || !size) continue;
+            // Google Sheet A 欄：法式輕柔孔雀羽-朵毛(咖/3根)(B-0.07-8-10mm)
+            // 同時容許該列有額外的前置商品編號或「一代」字樣。
+            const exactSuffix = compact(`法式輕柔孔雀羽-朵毛(咖/3根)(${curlCode}-${thick}-${size})`);
+            const alternateSuffix = compact(`法式輕柔孔雀羽-(咖/3根)(${curlCode}-${thick}-${size})`);
+            if (!keyToken.endsWith(exactSuffix) && !keyToken.endsWith(alternateSuffix)) continue;
+            const rawStock = Number(globalInventoryData[realKey]);
+            return {key: realKey, stock: Number.isFinite(rawStock) ? rawStock : 0, score: 0};
+        }
         if (productId === 'W22_UP' || productId === 'W23_UP') {
             const shade = productId === 'W22_UP' ? '黑' : '咖';
             const roots = String(color || '').trim();
@@ -13961,7 +13983,7 @@ function updateHomepageProductPrices() {
 
     const customDiscountIds = [
         'W1_UP', 'W2_UP', 'W3_UP', 'W4_UP', 'W5_UP', 'W6_UP', 'W7_UP', 'W8_UP', 'W9_UP',
-        'W10_UP', 'W11_UP', 'W12_UP', 'W13_UP', 'W14_UP', 'W15_UP', 'W16_UP', 'W17_UP', 'W18_UP', 'W19_UP', 'W20_UP', 'W21_UP',
+        'W10_UP', 'W11_UP', 'W12_UP', 'W13_UP', 'W14_UP', 'W15_UP', 'W16_UP', 'W17_UP', 'W18_UP', 'W19_UP', 'W20_UP', 'W21_UP', 'W24_UP',
         'TC1', 'TC2', 'TC9', 'TC12', 'TC13', 'TF35', 'TF36', 'TF38', 'TF48', 'TF49', 'TF50', 'TF40', 'TF41',
         'TF42', 'TF43', 'TF44', 'TF45', 'TF46', 'TF47', 'TD4', 'TD7', 'TD8', 'TD10', 'TD11', 'TD12', 'TD13',
         'TD14', 'TD15', 'TD16', 'TD17', 'TD23', 'TD24',
@@ -13991,7 +14013,7 @@ function updateHomepageProductPrices() {
 
     const customLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5, 
-        '柏金VIP': 0.3, '頂極VIP': 0.3, 
+        '柏金VIP': 0.3, '頂極VIP': 0.3, '極VIP': 0.3, '頂級VIP': 0.3, 
         '業務A': 0.3, '加盟A': 0.3, '儲值商A': 0.3, 
         '加盟B': 0.3, '儲值商B': 0.3, '業務B': 0.3, '連鎖店B': 0.3
     };
