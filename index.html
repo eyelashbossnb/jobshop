@@ -3184,7 +3184,7 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                 <!-- 出清五折：W23_UP 科技毛 -->
                 <div class="product-item" data-id="W23_UP" data-name="一代法式輕柔孔雀羽(咖)" data-category="sale" data-sub="sale-tech" data-lash="true" data-origin-price="99" data-base-price="99" data-price="99" data-selected-color="" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">商品編號：W23_UP</div><div class="product-name">一代法式輕柔孔雀羽(咖)</div>
-                    <div class="lash-variant-container"><div class="variant-group"><div class="variant-title">根數：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="color" data-value="3根" onclick="executeLashSpecSelect(this, 'W23_UP')">3根</button><button class="spec-btn" data-type="color" data-value="5根" onclick="executeLashSpecSelect(this, 'W23_UP')">5根</button></div></div><div class="variant-group"><div class="variant-title">翹度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="curl" data-value="B" onclick="executeLashSpecSelect(this, 'W23_UP')">B40˚</button><button class="spec-btn" data-type="curl" data-value="C" onclick="executeLashSpecSelect(this, 'W23_UP')">C50˚</button><button class="spec-btn" data-type="curl" data-value="D" onclick="executeLashSpecSelect(this, 'W23_UP')">D60˚</button></div></div><div class="variant-group"><div class="variant-title">粗度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="thickness" data-value="0.07" onclick="executeLashSpecSelect(this, 'W23_UP')">0.07</button></div></div><div class="variant-group"><div class="variant-title">尺寸／長度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="length" data-value="8-10mm" onclick="executeLashSpecSelect(this, 'W23_UP')">8-10mm</button><button class="spec-btn" data-type="length" data-value="9-11mm" onclick="executeLashSpecSelect(this, 'W23_UP')">9-11mm</button><button class="spec-btn" data-type="length" data-value="10-12mm" onclick="executeLashSpecSelect(this, 'W23_UP')">10-12mm</button><button class="spec-btn" data-type="length" data-value="11-13mm" onclick="executeLashSpecSelect(this, 'W23_UP')">11-13mm</button><button class="spec-btn" data-type="length" data-value="12-14mm" onclick="executeLashSpecSelect(this, 'W23_UP')">12-14mm</button><button class="spec-btn" data-type="length" data-value="13-15mm" onclick="executeLashSpecSelect(this, 'W23_UP')">13-15mm</button></div></div></div></div>
+                    <div class="lash-variant-container"><div class="variant-group"><div class="variant-title">根數：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="color" data-value="3根" onclick="executeLashSpecSelect(this, 'W23_UP')">3根</button><button class="spec-btn" data-type="color" data-value="5根" onclick="executeLashSpecSelect(this, 'W23_UP')">5根</button></div></div><div class="variant-group"><div class="variant-title">翹度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="curl" data-value="B" onclick="executeLashSpecSelect(this, 'W23_UP')">B40˚</button><button class="spec-btn" data-type="curl" data-value="C" onclick="executeLashSpecSelect(this, 'W23_UP')">C50˚</button><button class="spec-btn" data-type="curl" data-value="D" onclick="executeLashSpecSelect(this, 'W23_UP')">D60˚</button></div></div><div class="variant-group"><div class="variant-title">粗度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="thickness" data-value="0.07" onclick="executeLashSpecSelect(this, 'W23_UP')">0.07</button></div></div><div class="variant-group"><div class="variant-title">尺寸／長度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="length" data-value="8-10mm" onclick="executeLashSpecSelect(this, 'W23_UP')">8-10mm</button><button class="spec-btn" data-type="length" data-value="9-11mm" onclick="executeLashSpecSelect(this, 'W23_UP')">9-11mm</button><button class="spec-btn" data-type="length" data-value="10-12mm" onclick="executeLashSpecSelect(this, 'W23_UP')">10-12mm</button><button class="spec-btn" data-type="length" data-value="11-13mm" onclick="executeLashSpecSelect(this, 'W23_UP')">11-13mm</button><button class="spec-btn" data-type="length" data-value="12-14mm" onclick="executeLashSpecSelect(this, 'W23_UP')">12-14mm</button></div></div></div></div>
                     <div><div class="product-price" id="price-display-W23_UP">$99</div>
                     <div class="product-stock" id="stock-text-W23_UP" style="color:var(--accent-color);font-weight:600;">請點選規格按鈕組合</div>
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('W23_UP', -1)">-</button><input type="number" class="quantity-input" id="left-input-W23_UP" value="0" min="0"><button class="quantity-btn" onclick="changeLeftQty('W23_UP', 1)">+</button></div>
@@ -11851,7 +11851,7 @@ function filterProducts() {
             } else if (currentSubCategory === 'sale-flat') {
                 matchesSubCategory = (productSub === 'sale-pillow-swallow' || productSub === 'sale-flat-new');
             } else if (currentSubCategory === 'sale-tech') {
-                matchesSubCategory = (productSub === 'sale-peacock');
+                matchesSubCategory = (productSub === 'sale-peacock' || productSub === 'sale-tech');
             } else {
                 matchesSubCategory = (productSub === currentSubCategory);
             }
@@ -12025,7 +12025,7 @@ function executeLashSpecSelect(btn, productId) {
     const requiresColor = colorRequiredIds.includes(productId);
     
     if (requiresColor && !chosenColor) {
-        stockTxt.innerText = "請選齊『色彩選擇、捲度、粗度、長度』四個按鈕";
+        stockTxt.innerText = ['W22_UP','W23_UP'].includes(productId) ? "請選齊『根數、捲度、粗度、長度』四個按鈕" : "請選齊『色彩選擇、捲度、粗度、長度』四個按鈕";
         stockTxt.style.color = "var(--accent-color)";
         return;
     }
@@ -13076,8 +13076,12 @@ function findClearanceLashInventoryMatch(productId, baseName, color, curl, thick
         if (['W22_UP','W23_UP','W24_UP'].includes(productId)) {
             const keyIdMatch = keyToken.match(/W(?:22|23|24)UP/);
             if (keyIdMatch && keyIdMatch[0] !== productId.replace('_','')) continue;
-            // W24 是固定3根款；W22/W23 的根數必須各自獨立。
-            if (productId === 'W24_UP' && !keyToken.includes('3根')) continue;
+            // 根數是不同的實體庫存，不能混用；W24 只有3根。
+            const expectedRoots = productId === 'W24_UP' ? '3根' : color;
+            if (!expectedRoots || !keyToken.includes(expectedRoots)) continue;
+            // W22 / W23 的黑咖品名不能互相混淆。
+            if (productId === 'W22_UP' && keyToken.includes('咖')) continue;
+            if (productId === 'W23_UP' && keyToken.includes('黑')) continue;
         }
         const matchedProductToken = productTokens.find(token => keyToken.includes(token));
         if (!matchedProductToken && !(['W22_UP','W23_UP','W24_UP'].includes(productId) && keyToken.includes(productId.replace('_','')))) continue;
