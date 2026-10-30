@@ -13073,6 +13073,21 @@ function findClearanceLashInventoryMatch(productId, baseName, color, curl, thick
     let bestMatch = null;
     for (const realKey in globalInventoryData) {
         const keyToken = compact(realKey);
+        // W22 / W23 的試算表實際名稱包含「-朵毛(黑/3根)」等文字，
+        // 前台名稱則省略「朵毛」；必須依原始列名精確組合比對。
+        if (productId === 'W22_UP' || productId === 'W23_UP') {
+            const shade = productId === 'W22_UP' ? '黑' : '咖';
+            const roots = String(color || '').trim();
+            const curlCode = String(curl || '').trim().toUpperCase().replace(/[^BCD]/g, '');
+            const thick = String(thickness || '').trim();
+            const size = String(length || '').trim().replace(/[–—－]/g, '-').replace(/\s+/g, '');
+            if (!['3根', '5根'].includes(roots) || !/^[BCD]$/.test(curlCode) || !thick || !size) continue;
+            const expectedName = compact(`一代法式輕柔孔雀羽-朵毛(${shade}/${roots})(${curlCode}-${thick}-${size})`);
+            // 不以 includes 比對長度，避免 8-10mm 與其他尺寸混淆。
+            if (keyToken !== expectedName) continue;
+            const stockValue = Number(globalInventoryData[realKey]);
+            return {key: realKey, stock: Number.isFinite(stockValue) ? stockValue : 0, score: 0};
+        }
         if (['W22_UP','W23_UP','W24_UP'].includes(productId)) {
             const keyIdMatch = keyToken.match(/W(?:22|23|24)UP/);
             if (keyIdMatch && keyIdMatch[0] !== productId.replace('_','')) continue;
