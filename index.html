@@ -13458,7 +13458,25 @@ async function bossVerifyCheckoutInventory_(currentCart) {
             const matches=byNormalized.get(normalize(candidate))||[];
             if(matches.length===1) {matched=matches[0];break;}
         }
-        if(!matched) {problems.push(name+'：庫存資料未對應'); issueRows.push({cartKey:id,name,requested:qty,available:null,adjustable:false});continue;}
+        if(!matched) {
+            // 固定品項改用商品頁相同的 data-name 組合比對，並取回實際庫存鍵。
+            const card=document.querySelector('.product-item[data-id="'+CSS.escape(baseId)+'"]');
+            const cardName=card && card.getAttribute('data-name');
+            if(cardName){
+                const lookups=[baseId+cardName,cardName];
+                for(const lookup of lookups){
+                    const results=byNormalized.get(normalize(lookup))||[];
+                    if(results.length===1){matched=results[0];break;}
+                }
+            }
+        }
+        if(!matched) {
+            // 記錄實際收到的鍵，協助定位「商品頁正常、結帳未對應」的根因。
+            console.warn('[結帳庫存診斷]', {id,baseId,name,inventoryKeyCount:Object.keys(inventory).length,
+                possibleKeys:Object.keys(inventory).filter(k=>normalize(k).includes(normalize(baseId))).slice(0,15)});
+            problems.push(name+'：庫存資料未對應');
+            issueRows.push({cartKey:id,name,requested:qty,available:null,adjustable:false});continue;
+        }
         if(!requested.has(matched.key)) requested.set(matched.key,{qty:0,items:[],name:matched.key});
         const group=requested.get(matched.key);
         group.qty+=qty;
