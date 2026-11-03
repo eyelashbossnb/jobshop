@@ -13390,7 +13390,11 @@ async function bossVerifyCheckoutInventory_(currentCart) {
         const id=String(item.id||item.product_id||'').trim();
         const qty=Number(item.qty ?? item.quantity ?? item.count ?? 0);
         if (!Number.isInteger(qty) || qty <= 0) { problems.push(id+'：購買數量異常'); continue; }
-        const config=(typeof productConfig!=='undefined' && productConfig) ? (productConfig[id]||{}) : {};
+        // 會員會籍屬非實體商品，不檢查庫存表。
+        const baseId=(typeof productConfig!=='undefined' && productConfig && !productConfig[id])
+            ? Object.keys(productConfig).filter(k=>id.startsWith(k+'_')).sort((a,b)=>b.length-a.length)[0] || id : id;
+        if (/^V[123]$/.test(baseId)) continue;
+        const config=(typeof productConfig!=='undefined' && productConfig) ? (productConfig[id]||productConfig[baseId]||{}) : {};
         const name=String(item.name||config.name||id).trim();
         const candidates=[];
         const add=k=>{if(k && !candidates.includes(String(k))) candidates.push(String(k));};
@@ -13425,6 +13429,29 @@ async function bossVerifyCheckoutInventory_(currentCart) {
                 return stripped === targetPlain && Number.isFinite(Number(v));
             });
             if(exactNameMatches.length===1) add(exactNameMatches[0][0]);
+        }
+        // 依商品編號找唯一庫存列：TA2 不可誤對應 TA20、TA21，且不能混用不同色號。
+        // 庫存表如「TA2 德國頂級植萃美顏色乳10ML-02 焦糖深棕」可直接對應。
+        if (baseId && !item.spec && !id.includes('_')) {
+            const codeMatches=Object.entries(inventory).filter(([k,v])=>{
+                const raw=String(k).trim().toUpperCase();
+                const code=baseId.toUpperCase();
+                return raw.startsWith(code) && (raw.length===code.length || !/[A-Z0-9_]/.test(raw.charAt(code.length))) && Number.isFinite(Number(v));
+            });
+            if(codeMatches.length===1) add(codeMatches[0][0]);
+        }
+        // 商品頁可正常顯示庫存：結帳也沿用相同的「編號＋品名」來源。
+        // TA2 等固定商品即使購物車帶有 spec 欄位，仍可依唯一商品編號核對。
+        // 僅允許庫存鍵在編號後接非英數字，防止 TA2 誤配 TA20、TA21。
+        if (/^[A-Z]{1,3}[0-9]+$/i.test(baseId) && !id.includes('_')) {
+            const safeCode=baseId.toUpperCase();
+            const matchesByCode=Object.entries(inventory).filter(([key,value])=>{
+                const k=String(key).trim().toUpperCase();
+                return k.startsWith(safeCode) &&
+                    (k.length===safeCode.length || !/[A-Z0-9_]/.test(k.charAt(safeCode.length))) &&
+                    Number.isFinite(Number(value));
+            });
+            if(matchesByCode.length===1) add(matchesByCode[0][0]);
         }
         let matched=null;
         for(const candidate of candidates) {
