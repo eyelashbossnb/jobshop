@@ -13399,6 +13399,20 @@ async function bossVerifyCheckoutInventory_(currentCart) {
             try { add(resolveBackendStockKeyForSpecialItem(id,{...config,...item,name})); } catch(e) {}
         }
         add(name); add(id+name); add(id); add(item.spec ? name+' '+item.spec : '');
+        // 一般商品可能在庫存 A 欄使用「商品編號＋品名」，
+        // 而前台品名本身已含商品編號，避免變成 TD30TD30...
+        const withoutId=(name.toUpperCase().startsWith(id.toUpperCase()) ? name.slice(id.length).replace(/^[\\s\\-－:：]+/,'') : name);
+        add(id+withoutId); add(id+' '+withoutId);
+        // 同一商品編號只在「唯一且沒有規格尾碼」時允許回退，
+        // 不對睫毛等帶有動態 SKU 的商品模糊匹配。
+        if(id && !id.includes('_') && !item.spec) {
+            const idMatches=Object.entries(inventory).filter(([k,v])=>{
+                const nk=normalize(k), ni=normalize(id);
+                return nk.startsWith(ni) && Number.isFinite(Number(v)) &&
+                    (nk.length===ni.length || !/[0-9A-Z_]/.test(nk.charAt(ni.length)));
+            });
+            if(idMatches.length===1) add(idMatches[0][0]);
+        }
         let matched=null;
         for(const candidate of candidates) {
             const matches=byNormalized.get(normalize(candidate))||[];
@@ -13528,7 +13542,7 @@ async function submitOrder(evt) {
     try {
         await bossVerifyCheckoutInventory_(currentCart);
     } catch (stockError) {
-        alert('⚠️ 訂單尚未送出\n\n' + (stockError.message || String(stockError)) + '\n\n請確認購物車後重新送出。');
+        bossShowStockDialog_(stockError.message || String(stockError));
         setSubmittingState(false);
         return;
     }
@@ -15183,6 +15197,44 @@ render();
     .then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json();})
     .then(render).catch(e=>{console.warn('網站公告讀取失敗：',e);bar.classList.remove('is-visible');});
 })();
+</script>
+
+<style id="boss-stock-modal-style">
+.boss-stock-overlay{position:fixed;inset:0;z-index:999999;background:rgba(58,45,41,.45);display:none;align-items:center;justify-content:center;padding:18px;box-sizing:border-box}
+.boss-stock-overlay.is-open{display:flex}
+.boss-stock-dialog{width:min(100%,440px);max-height:85vh;overflow:auto;background:#fff;border-radius:18px;padding:26px 24px;box-sizing:border-box;box-shadow:0 18px 60px rgba(64,45,40,.2);font-family:"Microsoft JhengHei",sans-serif;color:#4a3f35}
+.boss-stock-heading{display:flex;align-items:center;justify-content:center;gap:9px;font-size:19px;font-weight:700;margin:0 0 14px}
+.boss-stock-heading-symbol{color:#c77770;font-size:24px}
+.boss-stock-description{text-align:center;color:#7d7067;font-size:14px;line-height:1.8;margin:0 0 14px}
+.boss-stock-issues{background:#faf7f5;border-radius:12px;padding:14px 16px;margin:0 0 14px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.8;color:#ad5858}
+.boss-stock-footnote{text-align:center;color:#7d7067;font-size:13px;margin:0 0 18px;line-height:1.7}
+.boss-stock-confirm{width:100%;border:0;border-radius:25px;background:#dfa99e;color:#fff;padding:12px 20px;font-size:15px;font-weight:600;cursor:pointer}
+.boss-stock-confirm:hover{background:#ce9187}
+</style>
+
+<div class="boss-stock-overlay" id="boss-stock-overlay" role="presentation">
+  <div class="boss-stock-dialog" role="alertdialog" aria-modal="true" aria-labelledby="boss-stock-heading" aria-describedby="boss-stock-description">
+    <h2 class="boss-stock-heading" id="boss-stock-heading"><span class="boss-stock-heading-symbol">⚠</span>商品庫存異動通知</h2>
+    <p class="boss-stock-description" id="boss-stock-description">很抱歉，以下商品目前庫存不足或無法確認，訂單尚未送出。</p>
+    <div class="boss-stock-issues" id="boss-stock-issues"></div>
+    <p class="boss-stock-footnote">請確認購物車商品後，再重新送出訂單。</p>
+    <button type="button" class="boss-stock-confirm" id="boss-stock-confirm">我知道了</button>
+  </div>
+</div>
+<script>
+function bossShowStockDialog_(message){
+  const overlay=document.getElementById('boss-stock-overlay');
+  const issues=document.getElementById('boss-stock-issues');
+  if(!overlay || !issues){ alert('訂單尚未送出\n\n'+message); return; }
+  const clean=String(message||'無法確認最新庫存').replace(/^以下商品庫存不足或無法確認：\s*/,'').replace(/^•\s*/,'');
+  issues.textContent=clean;
+  overlay.classList.add('is-open');
+  const button=document.getElementById('boss-stock-confirm');
+  if(button){
+    button.focus();
+    button.onclick=()=>overlay.classList.remove('is-open');
+  }
+}
 </script>
 </body>
 </html>
