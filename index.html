@@ -13385,7 +13385,7 @@ async function bossVerifyCheckoutInventory_(currentCart) {
         if (!byNormalized.has(n)) byNormalized.set(n, []);
         byNormalized.get(n).push({key,qty:Number(value)});
     }
-    const requested = new Map(), problems=[];
+    const requested = new Map(), problems=[], issueRows=[];
     for (const item of rows) {
         const id=String(item.id||item.product_id||'').trim();
         const qty=Number(item.qty ?? item.quantity ?? item.count ?? 0);
@@ -13431,18 +13431,35 @@ async function bossVerifyCheckoutInventory_(currentCart) {
             const matches=byNormalized.get(normalize(candidate))||[];
             if(matches.length===1) {matched=matches[0];break;}
         }
-        if(!matched) {problems.push(name+'：庫存數量不足');continue;}
-        requested.set(matched.key,(requested.get(matched.key)||0)+qty);
+        if(!matched) {problems.push(name+'：庫存資料未對應'); issueRows.push({cartKey:id,name,requested:qty,available:null,adjustable:false});continue;}
+        if(!requested.has(matched.key)) requested.set(matched.key,{qty:0,items:[],name:matched.key});
+        const group=requested.get(matched.key);
+        group.qty+=qty;
+        group.items.push({cartKey:id,name,qty});
         if(!Number.isFinite(matched.qty) || matched.qty<0) {
-            problems.push(name+'：庫存數量不足');
+            problems.push(name+'：庫存資料異常'); issueRows.push({cartKey:id,name,requested:qty,available:null,adjustable:false});
         }
     }
-    for(const [key,qty] of requested) {
+    for(const [key,group] of requested) {
         const available=Number(inventory[key]);
-        if(Number.isFinite(available) && qty>available)
-            problems.push(key+'：庫存數量不足');
+        if(Number.isFinite(available) && available>=0 && group.qty>available) {
+            const remaining=Math.floor(available);
+            problems.push(key+'：購物車 '+group.qty+' 件，庫存 '+remaining+' 件');
+            // 同一庫存鍵可能有多筆購物車商品；依購物車順序分配剩餘庫存。
+            let left=remaining;
+            for(const entry of group.items) {
+                const allowed=Math.min(entry.qty,left);
+                left-=allowed;
+                issueRows.push({cartKey:entry.cartKey,name:entry.name,requested:entry.qty,
+                    available:remaining,target:allowed,adjustable:true});
+            }
+        }
     }
-    if(problems.length) throw new Error('以下商品庫存狀態異動：\n• '+problems.join('\n• '));
+    if(problems.length) {
+        const err=new Error('以下商品庫存狀態異動：\\n• '+problems.join('\\n• '));
+        err.bossStockIssues=issueRows;
+        throw err;
+    }
     return true;
 }
 
@@ -13555,7 +13572,7 @@ async function submitOrder(evt) {
     try {
         await bossVerifyCheckoutInventory_(currentCart);
     } catch (stockError) {
-        bossShowStockDialog_(stockError.message || String(stockError));
+        bossShowStockDialog_(stockError.message || String(stockError), stockError.bossStockIssues || []);
         setSubmittingState(false);
         return;
     }
@@ -15230,24 +15247,61 @@ render();
     <h2 class="boss-stock-heading" id="boss-stock-heading"><span class="boss-stock-heading-symbol">⚠</span>商品庫存異動通知</h2>
     <p class="boss-stock-description" id="boss-stock-description">很抱歉，以下商品庫存狀態有異動，訂單尚未送出。</p>
     <div class="boss-stock-issues" id="boss-stock-issues"></div>
+    <button type="button" class="boss-stock-confirm" id="boss-stock-adjust" style="display:none;margin-bottom:10px">一鍵調整為剩餘庫存</button>
     <p class="boss-stock-footnote">請確認購物車商品後，再重新送出訂單。</p>
     <button type="button" class="boss-stock-confirm" id="boss-stock-confirm">我知道了</button>
   </div>
 </div>
 <script>
-function bossShowStockDialog_(message){
+function bossShowStockDialog_(message, issueRows){
   const overlay=document.getElementById('boss-stock-overlay');
   const issues=document.getElementById('boss-stock-issues');
-  if(!overlay || !issues){ alert('訂單尚未送出\n\n'+message); return; }
-  const clean=String(message||'無法確認最新庫存').replace(/^以下商品庫存狀態異動：\s*/,'').replace(/^•\s*/,'');
-  issues.textContent=clean;
+  const adjust=document.getElementById('boss-stock-adjust');
+  if(!overlay || !issues){alert('訂單尚未送出\n\n'+message);return;}
+  const rows=Array.isArray(issueRows)?issueRows:[];
+  issues.replaceChildren();
+  if(rows.length){
+    rows.forEach(entry=>{
+      const line=document.createElement('div');
+      line.style.marginBottom='10px';
+      const title=document.createElement('div');
+      title.style.fontWeight='600';
+      title.textContent=entry.name;
+      line.appendChild(title);
+      const details=document.createElement('div');
+      details.textContent=entry.adjustable
+        ? '購物車：'+entry.requested+' 件｜目前庫存：'+entry.available+' 件｜建議調整：'+entry.target+' 件'
+        : '庫存資料未對應，請聯絡客服確認';
+      line.appendChild(details);
+      issues.appendChild(line);
+    });
+  } else {
+    const clean=String(message||'無法確認最新庫存').replace(/^以下商品庫存狀態異動：\s*/,'').replace(/^•\s*/,'');
+    issues.textContent=clean;
+  }
+  const actionable=rows.filter(x=>x.adjustable);
+  if(adjust){
+    adjust.style.display=actionable.length && actionable.length===rows.length?'block':'none';
+    adjust.onclick=()=>{
+      if(actionable.some(x=>Number(cart[x.cartKey])!==Number(x.requested))){
+        alert('購物車數量已有變動，請重新送出訂單以取得最新庫存。');
+        overlay.classList.remove('is-open');return;
+      }
+      actionable.forEach(x=>{
+        if(x.target<=0) delete cart[x.cartKey];
+        else cart[x.cartKey]=x.target;
+      });
+      saveCartToStorage();
+      renderCart();
+      if(typeof updateCartSummary==='function') updateCartSummary();
+      overlay.classList.remove('is-open');
+    };
+  }
   overlay.classList.add('is-open');
   const button=document.getElementById('boss-stock-confirm');
-  if(button){
-    button.focus();
-    button.onclick=()=>overlay.classList.remove('is-open');
-  }
+  if(button){button.focus();button.onclick=()=>overlay.classList.remove('is-open');}
 }
+
 </script>
 </body>
 </html>
