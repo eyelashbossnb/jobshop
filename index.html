@@ -13357,7 +13357,69 @@ async function requestStoredValueDeduction(payload) {
     throw lastError || new Error("無法確認扣款結果");
 }
 
-function submitOrder(evt) {
+// 結帳即時庫存驗證：每次按下送出都重新讀取，不能使用加入購物車時的舊快取。
+async function bossVerifyCheckoutInventory_(currentCart) {
+    const endpoint = GOOGLE_SHEET_API_URL + (GOOGLE_SHEET_API_URL.includes('?') ? '&' : '?') + '_checkout=' + Date.now();
+    let response;
+    try {
+        response = await fetch(endpoint, {method:'GET', cache:'no-store'});
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+    } catch (e) {
+        throw new Error('目前無法連線取得最新庫存，為避免超賣，已暫停下單。');
+    }
+    let inventory;
+    try { inventory = await response.json(); }
+    catch(e) { throw new Error('最新庫存資料讀取異常，請稍後重試。'); }
+    if (!inventory || typeof inventory !== 'object' || Array.isArray(inventory) ||
+        !Object.keys(inventory).length || inventory.status === 'error') {
+        throw new Error('庫存表目前沒有可核對的資料，請稍後重試。');
+    }
+    // 更新既有全站庫存快取，但本次比對只採用剛剛讀到的資料。
+    globalInventoryData = inventory;
+    const rows = Array.isArray(currentCart) ? currentCart.map(x=>({...x})) :
+        Object.entries(currentCart || {}).map(([id,v]) => typeof v === 'number' ? {id,qty:v} : {id,...v});
+    const normalize = x => String(x == null ? '' : x).replace(/[\s\u3000]/g,'').toUpperCase();
+    const byNormalized = new Map();
+    for (const [key, value] of Object.entries(inventory)) {
+        const n = normalize(key);
+        if (!byNormalized.has(n)) byNormalized.set(n, []);
+        byNormalized.get(n).push({key,qty:Number(value)});
+    }
+    const requested = new Map(), problems=[];
+    for (const item of rows) {
+        const id=String(item.id||item.product_id||'').trim();
+        const qty=Number(item.qty ?? item.quantity ?? item.count ?? 0);
+        if (!Number.isInteger(qty) || qty <= 0) { problems.push(id+'：購買數量異常'); continue; }
+        const config=(typeof productConfig!=='undefined' && productConfig) ? (productConfig[id]||{}) : {};
+        const name=String(item.name||config.name||id).trim();
+        const candidates=[];
+        const add=k=>{if(k && !candidates.includes(String(k))) candidates.push(String(k));};
+        add(item.backend_stock_key); add(item.backendStockKey); add(config.backendStockKey);
+        if (typeof resolveBackendStockKeyForSpecialItem === 'function') {
+            try { add(resolveBackendStockKeyForSpecialItem(id,{...config,...item,name})); } catch(e) {}
+        }
+        add(name); add(id+name); add(id); add(item.spec ? name+' '+item.spec : '');
+        let matched=null;
+        for(const candidate of candidates) {
+            const matches=byNormalized.get(normalize(candidate))||[];
+            if(matches.length===1) {matched=matches[0];break;}
+        }
+        if(!matched) {problems.push(name+'：找不到唯一對應的庫存規格，請聯絡客服');continue;}
+        requested.set(matched.key,(requested.get(matched.key)||0)+qty);
+        if(!Number.isFinite(matched.qty) || matched.qty<0) {
+            problems.push(name+'：庫存資料異常');
+        }
+    }
+    for(const [key,qty] of requested) {
+        const available=Number(inventory[key]);
+        if(Number.isFinite(available) && qty>available)
+            problems.push(key+'：欲購買 '+qty+' 件，目前僅剩 '+Math.max(0,available)+' 件');
+    }
+    if(problems.length) throw new Error('以下商品庫存不足或無法確認：\n• '+problems.join('\n• '));
+    return true;
+}
+
+async function submitOrder(evt) {
     // 僅指定且已登入的會員等級，可略過付款與配送選擇。
     const skipSelectionLevels = new Set(['業務A','業務B','連鎖店B','加盟A','加盟B','儲值商A','儲值商B']);
     const memberLevel = (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn &&
@@ -13461,7 +13523,15 @@ function submitOrder(evt) {
         return;
     }
 
+    // 結帳前重新向庫存後台讀取最新資料；確認前不允許扣儲值金或送出 Google 表單。
     setSubmittingState(true);
+    try {
+        await bossVerifyCheckoutInventory_(currentCart);
+    } catch (stockError) {
+        alert('⚠️ 訂單尚未送出\n\n' + (stockError.message || String(stockError)) + '\n\n請確認購物車後重新送出。');
+        setSubmittingState(false);
+        return;
+    }
 
     const grandTotalText = document.getElementById("grand-total") ? document.getElementById("grand-total").textContent : "0";
     const finalTotalAmount = parseInt(grandTotalText.replace(/[^0-9]/g, ""), 10) || 0;
@@ -13804,11 +13874,13 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             sendDataToGoogleForm();
         })
         .catch(err => {
-            console.error("❌ 庫存扣除通訊失敗，但仍嘗試寫入表單:", err);
-            sendDataToGoogleForm();
+            console.error("❌ 庫存請求通訊失敗，停止寫入表單:", err);
+            alert("庫存處理連線失敗，訂單尚未送出。請稍後重試。");
+            if (typeof setSubmittingState === "function") setSubmittingState(false);
         });
     } else {
-        sendDataToGoogleForm();
+        alert("無法取得本次訂單的庫存核對資料，已暫停送出。請聯絡客服。");
+        if (typeof setSubmittingState === "function") setSubmittingState(false);
     }
 
     function sendDataToGoogleForm() {
