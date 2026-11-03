@@ -13413,21 +13413,34 @@ async function bossVerifyCheckoutInventory_(currentCart) {
             });
             if(idMatches.length===1) add(idMatches[0][0]);
         }
+        // 針對一般無規格商品：庫存表可能只有中文品名、沒有商品編號。
+        // 必須整個品名完全相同且唯一，避免誤配其他顏色或規格。
+        if (id && !item.spec && !id.includes('_')) {
+            const plainName = withoutId;
+            const normalizePlain = x => normalize(x).replace(/[\-－–—_：:()（）\[\]]/g,'');
+            const targetPlain = normalizePlain(plainName);
+            const exactNameMatches = Object.entries(inventory).filter(([k,v]) => {
+                const nk=normalizePlain(k);
+                const stripped=nk.startsWith(normalize(id)) ? nk.slice(normalize(id).length) : nk;
+                return stripped === targetPlain && Number.isFinite(Number(v));
+            });
+            if(exactNameMatches.length===1) add(exactNameMatches[0][0]);
+        }
         let matched=null;
         for(const candidate of candidates) {
             const matches=byNormalized.get(normalize(candidate))||[];
             if(matches.length===1) {matched=matches[0];break;}
         }
-        if(!matched) {problems.push(name+'：庫存數量：—（庫存表無對應資料）');continue;}
+        if(!matched) {problems.push(name+'：庫存數量不足');continue;}
         requested.set(matched.key,(requested.get(matched.key)||0)+qty);
         if(!Number.isFinite(matched.qty) || matched.qty<0) {
-            problems.push(name+'：庫存數量：—（庫存資料異常）');
+            problems.push(name+'：庫存數量不足');
         }
     }
     for(const [key,qty] of requested) {
         const available=Number(inventory[key]);
         if(Number.isFinite(available) && qty>available)
-            problems.push(key+'：庫存數量：'+Math.max(0,Math.floor(available))+' 件（購買數量：'+qty+' 件）');
+            problems.push(key+'：庫存數量不足');
     }
     if(problems.length) throw new Error('以下商品庫存狀態異動：\n• '+problems.join('\n• '));
     return true;
