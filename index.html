@@ -13454,9 +13454,23 @@ async function bossVerifyCheckoutInventory_(currentCart) {
             if(matchesByCode.length===1) add(matchesByCode[0][0]);
         }
         let matched=null;
+        // 庫存資料可能同時有「TA2 品名」與「TA2品名」兩種鍵。
+        // 正規化後相同時，原版要求 matches.length===1，造成明明有庫存卻被誤判未對應。
+        // 先取完全相同的原始鍵；否則只在所有重複鍵的庫存數量一致時採用。
+        function bossChooseInventoryMatch_(candidate) {
+            if (!candidate) return null;
+            const raw=String(candidate);
+            if(Object.prototype.hasOwnProperty.call(inventory,raw))
+                return {key:raw,qty:Number(inventory[raw])};
+            const matches=byNormalized.get(normalize(raw))||[];
+            if(matches.length===1) return matches[0];
+            if(matches.length>1 && matches.every(m=>Number.isFinite(m.qty) && m.qty===matches[0].qty))
+                return matches[0];
+            return null;
+        }
         for(const candidate of candidates) {
-            const matches=byNormalized.get(normalize(candidate))||[];
-            if(matches.length===1) {matched=matches[0];break;}
+            matched=bossChooseInventoryMatch_(candidate);
+            if(matched) break;
         }
         if(!matched) {
             // 固定品項改用商品頁相同的 data-name 組合比對，並取回實際庫存鍵。
@@ -13465,8 +13479,8 @@ async function bossVerifyCheckoutInventory_(currentCart) {
             if(cardName){
                 const lookups=[baseId+cardName,cardName];
                 for(const lookup of lookups){
-                    const results=byNormalized.get(normalize(lookup))||[];
-                    if(results.length===1){matched=results[0];break;}
+                    matched=bossChooseInventoryMatch_(lookup);
+                    if(matched) break;
                 }
             }
         }
