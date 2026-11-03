@@ -13418,18 +13418,18 @@ async function bossVerifyCheckoutInventory_(currentCart) {
             const matches=byNormalized.get(normalize(candidate))||[];
             if(matches.length===1) {matched=matches[0];break;}
         }
-        if(!matched) {problems.push(name+'：找不到唯一對應的庫存規格，請聯絡客服');continue;}
+        if(!matched) {problems.push(name+'：庫存數量：—（庫存表無對應資料）');continue;}
         requested.set(matched.key,(requested.get(matched.key)||0)+qty);
         if(!Number.isFinite(matched.qty) || matched.qty<0) {
-            problems.push(name+'：庫存資料異常');
+            problems.push(name+'：庫存數量：—（庫存資料異常）');
         }
     }
     for(const [key,qty] of requested) {
         const available=Number(inventory[key]);
         if(Number.isFinite(available) && qty>available)
-            problems.push(key+'：欲購買 '+qty+' 件，目前僅剩 '+Math.max(0,available)+' 件');
+            problems.push(key+'：庫存數量：'+Math.max(0,Math.floor(available))+' 件（購買數量：'+qty+' 件）');
     }
-    if(problems.length) throw new Error('以下商品庫存不足或無法確認：\n• '+problems.join('\n• '));
+    if(problems.length) throw new Error('以下商品庫存狀態異動：\n• '+problems.join('\n• '));
     return true;
 }
 
@@ -15215,7 +15215,7 @@ render();
 <div class="boss-stock-overlay" id="boss-stock-overlay" role="presentation">
   <div class="boss-stock-dialog" role="alertdialog" aria-modal="true" aria-labelledby="boss-stock-heading" aria-describedby="boss-stock-description">
     <h2 class="boss-stock-heading" id="boss-stock-heading"><span class="boss-stock-heading-symbol">⚠</span>商品庫存異動通知</h2>
-    <p class="boss-stock-description" id="boss-stock-description">很抱歉，以下商品目前庫存不足或無法確認，訂單尚未送出。</p>
+    <p class="boss-stock-description" id="boss-stock-description">很抱歉，以下商品庫存狀態有異動，訂單尚未送出。</p>
     <div class="boss-stock-issues" id="boss-stock-issues"></div>
     <p class="boss-stock-footnote">請確認購物車商品後，再重新送出訂單。</p>
     <button type="button" class="boss-stock-confirm" id="boss-stock-confirm">我知道了</button>
@@ -15226,7 +15226,7 @@ function bossShowStockDialog_(message){
   const overlay=document.getElementById('boss-stock-overlay');
   const issues=document.getElementById('boss-stock-issues');
   if(!overlay || !issues){ alert('訂單尚未送出\n\n'+message); return; }
-  const clean=String(message||'無法確認最新庫存').replace(/^以下商品庫存不足或無法確認：\s*/,'').replace(/^•\s*/,'');
+  const clean=String(message||'無法確認最新庫存').replace(/^以下商品庫存狀態異動：\s*/,'').replace(/^•\s*/,'');
   issues.textContent=clean;
   overlay.classList.add('is-open');
   const button=document.getElementById('boss-stock-confirm');
