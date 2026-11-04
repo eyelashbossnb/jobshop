@@ -1183,6 +1183,7 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                 <button class="category-tab" onclick="selectCategory('nail', this); toggleSaleMenu(false);">美甲商品</button>
                 <button class="category-tab" onclick="selectCategory('sale', this); toggleSaleMenu(true);">出清五折</button>
                 <button class="category-tab" onclick="selectCategory('membership', this); toggleSaleMenu(false);">購買會籍</button>
+                <button class="category-tab" onclick="selectCategory('store-adjustment', this); toggleSaleMenu(false);">門市購買</button>
             </div>
 
             <div id="sub-category-eyelash" class="sub-category-menu" style="display: none; flex-wrap: wrap;">
@@ -9584,6 +9585,14 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('Q62', -1)">-</button><input type="number" class="quantity-input" id="left-input-Q62" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('Q62', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('Q62')">加入購物車</button>
                 </div>
+                <!-- 門市補金額：每 1 件代表 NT$1，可與其他商品混合結帳 -->
+                <div class="product-item" data-id="STORE_ADJUST" data-category="store-adjustment" data-sub="all" data-name="門市購買" data-price="1" data-origin-price="1">
+                    <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">商品編號：STORE_ADJUST</div>
+                    <div class="product-name">門市購買</div><div class="product-price">$1</div>
+                    <div class="product-stock" style="color:#8da48f;">補金額專用・不計會員折扣・不限庫存</div>
+                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('STORE_ADJUST',-1)">-</button><input type="number" class="quantity-input" id="left-input-STORE_ADJUST" value="0" min="0" max="99999999" step="1" inputmode="numeric"><button class="quantity-btn" onclick="changeLeftQty('STORE_ADJUST',1)">+</button></div>
+                    <button class="btn" onclick="addToCart('STORE_ADJUST')">加入購物車</button>
+                </div>
 		<div class="product-item" data-id="V1" data-category="membership" data-sub="all" data-name="凱莉VIP+ 會籍" data-price="6000">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：V1</div>
                     <div class="product-name">凱莉VIP+ 會籍</div><div class="product-price">$6,000</div>
@@ -9834,6 +9843,7 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 
     // 常規耗材品項設定資料庫（已在此名冊中追加 FE6 ~ FA50 美容周邊商品完整資料庫）
     const productConfig = {
+        "STORE_ADJUST": {name:"門市購買",price:1,_originalPrice:1,max:99999999},
         "A2": { name: "A2 嫁接睫毛專用黑膠-Mild初學黑膠/5G", price: 450, max: 20 },
         "A3": { name: "A3 嫁接睫毛專用黑膠-韓國PRO專業開花黑膠/5G", price: 450, max: 20 },
         "A4": { name: "A4 嫁接睫毛專用黑膠-韓國HighSpeed極速黑膠/5G", price: 450, max: 20 },
@@ -12644,13 +12654,13 @@ function addToCart(productId) {
     let currentInCart = cart[productId] || 0;
     let newQty = currentInCart + qtySelected;
     
-    let max = 999;
+    let max = productId === "STORE_ADJUST" ? 99999999 : 999;
     let productName = "";
     if (productItem) {
         productName = productItem.getAttribute('data-name') || productConfig[productId]?.name || "";
     }
     
-    if (productName) {
+    if (productName && productId !== "STORE_ADJUST") {
         let currentStock = getStockFromDatabase(productId + productName);
         if (currentStock === null) currentStock = getStockFromDatabase(productName);
         if (currentStock !== null) max = currentStock;
@@ -12676,7 +12686,7 @@ function changeCartItemQty(cartKey, change) {
     if (currentQty <= 0) {
         delete cart[cartKey];
     } else {
-        const maxStock = productConfig[cartKey]?.max || 999;
+        const maxStock = cartKey === "STORE_ADJUST" ? 99999999 : (productConfig[cartKey]?.max || 999);
         if (currentQty > maxStock) {
             alert(`抱歉，該商品此規格現貨庫存上限為 ${maxStock} 件唷！`);
             currentQty = maxStock;
@@ -12766,7 +12776,7 @@ function updateCartSummary() {
     let subtotal = 0;
     const bossCartActualPrices = {}; // 每次重算均重建，活動優惠依購物車實際售價計算
 
-    const absoluteOriginalPriceIds = ['V1', 'V2', 'V3', 'W22_UP', 'W23_UP'];
+    const absoluteOriginalPriceIds = ['V1', 'V2', 'V3', 'STORE_ADJUST', 'W22_UP', 'W23_UP'];
     const fixedHalfDiscountIds = ['A116', 'A129', 'A275'];
 
     const customDiscountIds = [
@@ -12823,7 +12833,7 @@ function updateCartSummary() {
         if (qty <= 0) return;
         totalQty += qty;
 
-        const pureId = id.split('_')[0];
+        const pureId = id === 'STORE_ADJUST' ? 'STORE_ADJUST' : id.split('_')[0];
         let itemRealPrice = 0;
 
         if (id.includes('_') && productConfig[id] && productConfig[id]._isSpecialSku) {
@@ -13160,6 +13170,7 @@ function updateAllLoadedStocks() {
             if (labelNode) productName = labelNode.innerText.trim();
         }
 
+        if (productId === "STORE_ADJUST") return; // 門市補金額不查庫存
         if (stockTextElement && productName) {
             if (!isLash) {
                 let stock = null;
@@ -13839,7 +13850,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
 
             const isLashOrVariant = itemId.includes('_') || (typeof productConfig !== 'undefined' && productConfig[itemId] && productConfig[itemId]._isSpecialSku) || itemName.includes("睫毛");
 
-            if (!isLashOrVariant) {
+            if (!isLashOrVariant && itemId !== "STORE_ADJUST") {
                 let currentStock = null;
                 if (typeof getStockFromDatabase === 'function') {
                     currentStock = getStockFromDatabase(itemName);
@@ -13859,7 +13870,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             itemsSummary.push(`${itemName} x${itemQty}`);
             validItemIndex++;
 
-            if (typeof productConfig !== 'undefined' && productConfig[itemId]) {
+            if (itemId !== "STORE_ADJUST" && typeof productConfig !== 'undefined' && productConfig[itemId]) {
                 if (productConfig[itemId].isSharedStock) {
                     if (typeof lashRealTimeStocks !== 'undefined' && lashRealTimeStocks.hasOwnProperty(eyeMaskSharedKey)) {
                         lashRealTimeStocks[eyeMaskSharedKey] -= itemQty;
@@ -14162,7 +14173,7 @@ function updateHomepageProductPrices() {
         '業務A': 0.48, '加盟A': 0.43, '儲值商A': 0.43, '加盟B': 0.38, '儲值商B': 0.38, '業務B': 0.38, '連鎖店B': 0.38
     };
 
-    const absoluteOriginalPriceIds = ['V1', 'V2', 'V3', 'W22_UP', 'W23_UP'];
+    const absoluteOriginalPriceIds = ['V1', 'V2', 'V3', 'STORE_ADJUST', 'W22_UP', 'W23_UP'];
     const fixedHalfDiscountIds = ['A116', 'A129', 'A275'];
 
     const customDiscountIds = [
