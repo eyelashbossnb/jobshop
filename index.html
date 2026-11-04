@@ -13407,7 +13407,7 @@ async function bossVerifyCheckoutInventory_(currentCart) {
         // 會員會籍屬非實體商品，不檢查庫存表。
         const baseId=(typeof productConfig!=='undefined' && productConfig && !productConfig[id])
             ? Object.keys(productConfig).filter(k=>id.startsWith(k+'_')).sort((a,b)=>b.length-a.length)[0] || id : id;
-        if (/^V[123]$/.test(baseId)) continue;
+        if (/^V[123]$/.test(baseId) || baseId === 'STORE_ADJUST') continue; // 會籍與門市補金額不檢查庫存
         const config=(typeof productConfig!=='undefined' && productConfig) ? (productConfig[id]||productConfig[baseId]||{}) : {};
         const name=String(item.name||config.name||id).trim();
         const candidates=[];
