@@ -11389,13 +11389,12 @@ const AUTO_DEFAULT_DELIVERY_LEVELS = new Set([
 function applyMemberPaymentDeliveryDefaults() {
     const level = (deptIsLoggedIn && deptMemberData)
         ? String(deptMemberData.member_level || '').trim() : '';
-    if (!AUTO_DEFAULT_DELIVERY_LEVELS.has(level)) return;
     const payment = document.getElementById('payment');
     const shipping = document.getElementById('shipping');
-    // 只填入空白欄位；會員已自行選擇時，絕不覆蓋。
+    // 所有會員登入／登出時都立即更新付款選項；僅指定特殊會員自動設定配送。
     let changed = false;
     if (payment && typeof bossSyncPaymentOptions === 'function') bossSyncPaymentOptions();
-    if (shipping && !shipping.value) { shipping.value = 'normal'; changed = true; }
+    if (AUTO_DEFAULT_DELIVERY_LEVELS.has(level) && shipping && !shipping.value) { shipping.value = 'normal'; changed = true; }
     if (changed && typeof updateCartSummary === 'function') updateCartSummary();
 }
 
