@@ -14473,7 +14473,7 @@ const BOSS_CARD_LEVELS = new Set(['一般會員','凱莉VIP','柏金VIP','頂極
 function bossSyncPaymentOptions(){
  const select=document.getElementById('payment');if(!select)return;
  const level=(typeof deptIsLoggedIn!=='undefined'&&deptIsLoggedIn&&typeof deptMemberData!=='undefined'&&deptMemberData)?String(deptMemberData.member_level||'').trim():'';
- const monthly=BOSS_MONTHLY_LEVELS.has(level),card=BOSS_CARD_LEVELS.has(level);
+ const monthly=BOSS_MONTHLY_LEVELS.has(level),card=(!level || BOSS_CARD_LEVELS.has(level));
  const m=select.querySelector('option[value="monthly"]'),c=select.querySelector('option[value="card"]');
  if(m){m.hidden=!monthly;m.disabled=!monthly;}
  if(c){c.hidden=!card;c.disabled=!card;}
