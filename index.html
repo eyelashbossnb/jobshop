@@ -1040,6 +1040,19 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 @keyframes boss-announcement-single{from{transform:translateX(var(--boss-start,0px))}to{transform:translateX(var(--boss-end,-500px))}}
 @media(prefers-reduced-motion:reduce){#boss-announcement-track{animation:none;flex-wrap:wrap;width:auto}.boss-announcement-item{white-space:normal}}
 @media(max-width:768px){#boss-announcement-bar{padding:10px 12px;gap:8px;font-size:12px;margin-bottom:18px}}
+
+/* 購物車可輸入數量與單筆刪除：電腦、手機共用 */
+.cart-editable-qty { width: 42px; min-width: 0; padding: 0 2px; box-sizing: border-box; cursor: text; }
+.cart-editable-qty:focus { background: #fff; box-shadow: inset 0 0 0 1px var(--accent-color); border-radius: 4px; }
+.cart-remove-btn { flex: none; border: 0; background: transparent; color: #c97a7a; cursor: pointer; font-size: 19px; line-height: 1; padding: 5px; border-radius: 6px; }
+.cart-remove-btn:hover { background: #fff0ed; color: #a85555; }
+@media (max-width: 768px) {
+ .cart-item { flex-wrap: wrap; }
+ .cart-item-info { flex: 1 1 110px; }
+ .cart-item-actions { flex: 0 1 auto; gap: 5px; }
+ .cart-item-price { min-width: 34px; font-size: 12px; }
+ .cart-editable-qty { width: 39px; }
+}
 </style>
 </head>
 <body>
@@ -12696,6 +12709,36 @@ function changeCartItemQty(cartKey, change) {
     renderCart();
 }
 
+// 購物車：直接輸入數量（保留原本的會員價格、優惠及訂單重算流程）
+function setCartItemQty(cartKey, input) {
+    if (!Object.prototype.hasOwnProperty.call(cart, cartKey)) return;
+    const raw = String(input.value).trim();
+    const requested = Number(raw);
+    if (!raw || !Number.isSafeInteger(requested) || requested < 1) {
+        alert('請輸入大於 0 的整數；如需移除商品，請點選垃圾桶。');
+        renderCart();
+        return;
+    }
+    const maxStock = cartKey === 'STORE_ADJUST' ? 99999999 : (productConfig[cartKey]?.max || 999);
+    if (requested > maxStock) {
+        alert(`抱歉，該商品此規格現貨庫存上限為 ${maxStock} 件唷！`);
+        renderCart();
+        return;
+    }
+    cart[cartKey] = requested;
+    saveCartToStorage();
+    renderCart();
+}
+
+function removeCartItem(cartKey) {
+    if (!Object.prototype.hasOwnProperty.call(cart, cartKey)) return;
+    const name = productConfig[cartKey]?.name || cartKey;
+    if (!confirm(`確定要從購物車移除「${name}」嗎？`)) return;
+    delete cart[cartKey];
+    saveCartToStorage();
+    renderCart();
+}
+
 // =============================================================
 // 9. 購物車渲染與小計更新
 // =============================================================
@@ -12749,10 +12792,11 @@ function renderCart() {
                     <div class="cart-item-actions">
                         <div class="quantity-selector">
                             <button type="button" class="quantity-btn" onclick="changeCartItemQty('${safeId}', -1)">-</button>
-                            <input type="number" class="quantity-input" value="${qty}" readonly>
+                            <input type="number" class="quantity-input cart-editable-qty" value="${qty}" min="1" step="1" inputmode="numeric" aria-label="${pInfo.name} 數量" onchange="setCartItemQty('${safeId}', this)" onkeydown="if(event.key==='Enter'){this.blur();}">
                             <button type="button" class="quantity-btn" onclick="changeCartItemQty('${safeId}', 1)">+</button>
                         </div>
                         <div class="cart-item-price">$${(pInfo.price * qty).toLocaleString()}</div>
+                        <button type="button" class="cart-remove-btn" aria-label="刪除商品" title="刪除商品" onclick="removeCartItem('${safeId}')">&#128465;</button>
                     </div>
                 </div>
             `;
