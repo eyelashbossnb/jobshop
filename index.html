@@ -10979,7 +10979,7 @@ async function bossSubmitCancelRequest(index) {
     if (phoneInput === null) return;
     const phone = phoneInput.replace(/\s/g, '');
     if (!/^09\d{8}$/.test(phone)) return alert('請輸入正確的10碼手機號碼。');
-    if (!confirm('確定申請取消訂單 ' + orderId + ' 嗎？\n符合自動取消條件的訂單將直接取消；其他訂單需等待客服確認。')) return;
+    if (!(await bossConfirm('確定申請取消訂單 ' + orderId + ' 嗎？\n符合自動取消條件的訂單將直接取消；其他訂單需等待客服確認。', '確認取消訂單', '！'))) return;
     const url = "https://script.google.com/macros/s/AKfycbxz6vwBoJznRPoJy7-ldlbdpSPwL1736tGqxZGPEHcTo5W2mm3kqUTvWRCfKJm-N9Oz/exec"; // 已部署取消申請功能的訂單後台
     const body = JSON.stringify({action:'request_cancel',orderId,phone});
     // 使用原生 HTML 表單提交，避開跨網域 fetch POST 可能被瀏覽器攔截的情況。
@@ -11512,8 +11512,8 @@ function openBalanceHistory() {
     }).catch(()=>{ if(body) body.innerHTML=`<div class="balance-history-empty">連線失敗，請稍後再試。</div>`; });
 }
 
-function executeLogout() {
-    if (confirm("確認要登出會員帳號嗎？")) {
+async function executeLogout() {
+    if (await bossConfirm('確認要登出會員帳號嗎？', '確認登出', '↪')) {
         deptIsLoggedIn = false;
         deptMemberData = null;
         localStorage.removeItem("deptMemberData");
@@ -12730,10 +12730,10 @@ function setCartItemQty(cartKey, input) {
     renderCart();
 }
 
-function removeCartItem(cartKey) {
+async function removeCartItem(cartKey) {
     if (!Object.prototype.hasOwnProperty.call(cart, cartKey)) return;
     const name = productConfig[cartKey]?.name || cartKey;
-    if (!confirm(`確定要從購物車移除「${name}」嗎？`)) return;
+    if (!(await bossConfirm(`確定要從購物車移除「${name}」嗎？`, '確認移除商品', '🗑'))) return;
     delete cart[cartKey];
     saveCartToStorage();
     renderCart();
@@ -14753,8 +14753,8 @@ window.addEventListener('DOMContentLoaded',()=>{
   };
   window.bossGiftClose=function(){getEl('boss-gift-overlay')?.classList.remove('open');document.body.style.overflow='';update();};
   window.bossGiftClear=function(){Object.keys(chosen).forEach(k=>delete chosen[k]);giftDeclined=false;build();};
-  window.bossGiftDecline=function(){
-    if(!window.confirm('確定本次訂單不需要滿額贈品嗎？'))return;
+  window.bossGiftDecline=async function(){
+    if(!(await bossConfirm('確定本次訂單不需要滿額贈品嗎？', '確認放棄贈品', '？')))return;
     Object.keys(chosen).forEach(k=>delete chosen[k]);
     giftDeclined=true;
     bossGiftClose();
@@ -15477,6 +15477,42 @@ function bossShowStockDialog_(message, issueRows){
   if(button){button.focus();button.onclick=()=>overlay.classList.remove('is-open');}
 }
 
+</script>
+<style id="boss-unified-confirm-style">
+.boss-confirm-overlay{position:fixed;inset:0;z-index:99999;background:rgba(54,43,39,.48);display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box;backdrop-filter:blur(3px)}
+.boss-confirm-dialog{width:min(390px,100%);background:#fffdfb;border-radius:18px;padding:27px 24px 24px;box-sizing:border-box;box-shadow:0 20px 60px rgba(54,43,39,.2);text-align:center;color:#4a3f35}
+.boss-confirm-icon{width:54px;height:54px;margin:0 auto 15px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff0ed;color:#c47c70;font-size:25px}
+.boss-confirm-title{font-size:19px;font-weight:700;margin:0 0 12px}
+.boss-confirm-message{font-size:14px;line-height:1.8;color:#806e66;white-space:pre-line;overflow-wrap:anywhere;margin:0 0 24px}
+.boss-confirm-actions{display:flex;gap:12px}
+.boss-confirm-actions button{flex:1;border-radius:24px;padding:11px 8px;font-size:14px;cursor:pointer;border:1px solid #e8a598}
+.boss-confirm-cancel{background:#fff;color:#a57d74}
+.boss-confirm-ok{background:#e8a598;color:#fff;font-weight:600}
+.boss-confirm-actions button:focus-visible{outline:2px solid #a86b60;outline-offset:3px}
+</style>
+<script>
+// 官網統一確認視窗：Promise<boolean>；不更動原本購物車或訂單運算。
+function bossConfirm(message, title='確認操作', icon='？'){
+  return new Promise(resolve=>{
+    const overlay=document.createElement('div');overlay.className='boss-confirm-overlay';
+    overlay.setAttribute('role','presentation');
+    const dialog=document.createElement('div');dialog.className='boss-confirm-dialog';
+    dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');
+    const ico=document.createElement('div');ico.className='boss-confirm-icon';ico.textContent=icon;
+    const heading=document.createElement('h2');heading.className='boss-confirm-title';heading.textContent=title;
+    const body=document.createElement('p');body.className='boss-confirm-message';body.textContent=String(message);
+    const actions=document.createElement('div');actions.className='boss-confirm-actions';
+    const cancel=document.createElement('button');cancel.type='button';cancel.className='boss-confirm-cancel';cancel.textContent='取消';
+    const ok=document.createElement('button');ok.type='button';ok.className='boss-confirm-ok';ok.textContent='確認';
+    actions.append(cancel,ok);dialog.append(ico,heading,body,actions);overlay.append(dialog);
+    const previous=document.activeElement;
+    const keydown=e=>{if(e.key==='Escape'){e.preventDefault();finish(false)}if(e.key==='Tab'){const target=e.shiftKey?ok:cancel;if(document.activeElement===(e.shiftKey?cancel:ok)){e.preventDefault();target.focus()}}};
+    function finish(result){document.removeEventListener('keydown',keydown);overlay.remove();if(previous&&previous.isConnected&&previous.focus)previous.focus();resolve(result)}
+    cancel.addEventListener('click',()=>finish(false));ok.addEventListener('click',()=>finish(true));
+    overlay.addEventListener('click',e=>{if(e.target===overlay)finish(false)});
+    document.body.append(overlay);document.addEventListener('keydown',keydown);cancel.focus();
+  });
+}
 </script>
 </body>
 </html>
