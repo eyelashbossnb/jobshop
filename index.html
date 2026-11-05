@@ -14110,7 +14110,7 @@ if (typeof mockOrderDatabase !== 'undefined') {
             const isTransferPayment = document.getElementById('payment')?.value === 'transfer';
             const isCardPayment = document.getElementById('payment')?.value === 'card';
             if (!isTransferPayment && !isCardPayment) {
-                alert(`🎉 訂單已送出！\n您的專屬訂單編號為：${orderSerialNumber}\n非常感謝您的購買！`);
+                showBossOrderSuccessModal(orderSerialNumber);
             }
             
             if (typeof clearCart === "function") {
@@ -14150,7 +14150,8 @@ if (typeof mockOrderDatabase !== 'undefined') {
                 else showCardPayment(orderSerialNumber, grandTotalText);
                 if (typeof setSubmittingState === 'function') setSubmittingState(false);
             } else {
-                setTimeout(() => { location.reload(); }, 1500);
+                // 改由成功通知視窗的「完成」按鈕重新整理，避免視窗被自動關閉。
+                if (typeof setSubmittingState === 'function') setSubmittingState(false);
             }
         })
         .catch(error => {
@@ -15516,5 +15517,47 @@ function bossConfirm(message, title='確認操作', icon='？'){
   });
 }
 </script>
+
+<!-- 統一風格：訂單送出成功通知（僅非轉帳、非刷卡付款使用） -->
+<div id="boss-order-success-overlay" role="dialog" aria-modal="true" aria-labelledby="boss-order-success-title" style="display:none;position:fixed;inset:0;z-index:25000;background:rgba(52,43,40,.48);align-items:center;justify-content:center;padding:18px;box-sizing:border-box;">
+  <div style="width:min(420px,100%);background:#fff;border-radius:20px;padding:32px 24px;box-sizing:border-box;box-shadow:0 20px 55px rgba(0,0,0,.17);text-align:center;color:#4a3f35;">
+    <div style="font-size:42px;color:#83a995;line-height:1.2;" aria-hidden="true">✓</div>
+    <h2 id="boss-order-success-title" style="font-size:23px;margin:10px 0 12px;">訂單送出成功！</h2>
+    <p style="font-size:14px;color:#8a7e72;line-height:1.8;margin:0 0 20px;">感謝您的購買，我們已收到您的訂單。</p>
+    <div style="background:#faf7f5;border-radius:12px;padding:18px 12px;">
+      <div style="font-size:12px;color:#8a7e72;margin-bottom:8px;">您的專屬訂單編號</div>
+      <div id="boss-order-success-number" style="font-size:15px;font-weight:700;overflow-wrap:anywhere;user-select:all;"></div>
+      <button type="button" onclick="bossCopySuccessOrderNo()" style="margin-top:14px;padding:8px 16px;border:1px solid #e8a598;border-radius:20px;background:white;color:#b57a70;cursor:pointer;">複製訂單編號</button>
+      <div id="boss-order-success-copy-status" role="status" style="font-size:12px;color:#678a75;margin-top:6px;min-height:16px;"></div>
+    </div>
+    <button type="button" onclick="bossCloseOrderSuccessModal()" style="width:100%;margin-top:24px;padding:14px;border:0;border-radius:30px;background:#e8a598;color:#fff;font-size:16px;font-weight:700;cursor:pointer;">完成</button>
+  </div>
+</div>
+<script>
+let bossSuccessOrderNo = '';
+function showBossOrderSuccessModal(orderNo) {
+  bossSuccessOrderNo = String(orderNo || '');
+  const overlay = document.getElementById('boss-order-success-overlay');
+  document.getElementById('boss-order-success-number').textContent = bossSuccessOrderNo;
+  document.getElementById('boss-order-success-copy-status').textContent = '';
+  overlay.style.display = 'flex';
+  overlay.querySelector('button[onclick="bossCloseOrderSuccessModal()"]')?.focus();
+}
+async function bossCopySuccessOrderNo() {
+  const status = document.getElementById('boss-order-success-copy-status');
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('clipboard unavailable');
+    await navigator.clipboard.writeText(bossSuccessOrderNo);
+    status.textContent = '訂單編號已複製';
+  } catch (err) {
+    status.textContent = '請長按或選取上方訂單編號複製';
+  }
+}
+function bossCloseOrderSuccessModal() {
+  document.getElementById('boss-order-success-overlay').style.display = 'none';
+  location.reload();
+}
+</script>
+
 </body>
 </html>
