@@ -13617,6 +13617,11 @@ async function submitOrder(evt) {
     if (typeof bossSyncPaymentOptions === 'function') bossSyncPaymentOptions();
     const requiredPayment = document.getElementById('payment');
     const requiredShipping = document.getElementById('shipping');
+    if (bossIsHongKongFranchise() && requiredPayment && !['monthly','card'].includes(requiredPayment.value)) {
+        alert('香港加盟會員僅可選擇月結或線上刷卡。');
+        requiredPayment.value='monthly';
+        return;
+    }
     if ((!requiredPayment || !requiredPayment.value) || (memberLevel && ['加盟A','加盟B','業務A','業務B','連鎖店B'].includes(memberLevel) && requiredPayment.value !== 'monthly' && !(bossIsHongKongFranchise() && requiredPayment.value === 'card'))) {
         alert('請先選擇付款方式，再送出訂單。');
         if (requiredPayment) { requiredPayment.scrollIntoView({behavior:'smooth',block:'center'}); requiredPayment.focus(); }
@@ -14553,6 +14558,13 @@ function bossSyncPaymentOptions(){
  const hk=bossIsHongKongFranchise();
  const monthly=BOSS_MONTHLY_LEVELS.has(level),card=(hk || !level || BOSS_CARD_LEVELS.has(level));
  const m=select.querySelector('option[value="monthly"]'),c=select.querySelector('option[value="card"]');
+ // 香港指定加盟商只能使用月結或線上刷卡；其他會員恢復原有一般付款選項。
+ Array.from(select.options).forEach(function(opt){
+   if(['cod','transfer','stored'].includes(opt.value)){
+     opt.hidden=hk;
+     opt.disabled=hk;
+   }
+ });
  if(m){m.hidden=!monthly;m.disabled=!monthly;}
  if(c){c.hidden=!card;c.disabled=!card;}
  if(monthly){
