@@ -13594,7 +13594,7 @@ async function submitOrder(evt) {
         if (requiredPayment) { requiredPayment.scrollIntoView({behavior:'smooth',block:'center'}); requiredPayment.focus(); }
         return;
     }
-    if (requiredPayment && ((requiredPayment.value === 'card' && !['一般會員','凱莉VIP','柏金VIP','頂極VIP','極VIP'].includes(memberLevel)) || (requiredPayment.value === 'monthly' && !['加盟A','加盟B','業務A','業務B','連鎖店B'].includes(memberLevel)))) {
+    if (requiredPayment && ((requiredPayment.value === 'card' && memberLevel !== '' && !['一般會員','凱莉VIP','柏金VIP','頂極VIP','極VIP'].includes(memberLevel)) || (requiredPayment.value === 'monthly' && !['加盟A','加盟B','業務A','業務B','連鎖店B'].includes(memberLevel)))) {
         alert('此會員等級不適用所選付款方式。'); return;
     }
     if (!canSkipSelection && (!requiredShipping || !requiredShipping.value)) {
