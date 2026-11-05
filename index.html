@@ -9694,6 +9694,7 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                         <option value="blackcat">指定黑貓</option>
                         <option value="blackcat-cold">黑貓低溫</option>
                         <option value="store-pickup">門市自取</option>
+                        <option value="sf-hk" hidden disabled>順豐速運(運費到付)</option>
                     </select>
                 </div>
 <div class="form-group">
@@ -11395,6 +11396,29 @@ function checkMemberRenewalReminder(forceCheck) {
     toggleRenewalReminder(true);
 }
 
+// 香港加盟商專屬付款及配送設定（僅比對登入會員帳號，不使用收件電話）
+const BOSS_HK_FRANCHISE_ACCOUNTS = new Set(['85263414123', '85261922607']);
+function bossIsHongKongFranchise(){
+    if (typeof deptIsLoggedIn === 'undefined' || !deptIsLoggedIn ||
+        typeof deptMemberData === 'undefined' || !deptMemberData) return false;
+    const phone = String(deptMemberData.phone || '').replace(/\D/g, '');
+    const level = String(deptMemberData.member_level || '').trim();
+    return BOSS_HK_FRANCHISE_ACCOUNTS.has(phone) && (level === '加盟A' || level === '加盟B');
+}
+function bossSyncHongKongShipping(){
+    const select = document.getElementById('shipping'); if(!select) return;
+    const hk = bossIsHongKongFranchise();
+    const sf = select.querySelector('option[value="sf-hk"]');
+    if(sf){sf.hidden = !hk; sf.disabled = !hk;}
+    Array.from(select.options).forEach(function(opt){
+        if(opt.value && opt.value !== 'sf-hk'){
+            opt.hidden = hk; opt.disabled = hk;
+        }
+    });
+    if(hk){select.value = 'sf-hk';}
+    else if(select.value === 'sf-hk'){select.value = '';}
+    if(typeof updateCartSummary === 'function') updateCartSummary();
+}
 // 指定會員配送方式維持原設定；付款方式另依會員等級管理。
 const AUTO_DEFAULT_DELIVERY_LEVELS = new Set([
     '業務A', '業務B', '連鎖店B', '加盟A', '加盟B', '儲值商A', '儲值商B'
@@ -11407,7 +11431,8 @@ function applyMemberPaymentDeliveryDefaults() {
     // 所有會員登入／登出時都立即更新付款選項；僅指定特殊會員自動設定配送。
     let changed = false;
     if (payment && typeof bossSyncPaymentOptions === 'function') bossSyncPaymentOptions();
-    if (AUTO_DEFAULT_DELIVERY_LEVELS.has(level) && shipping && !shipping.value) { shipping.value = 'normal'; changed = true; }
+    bossSyncHongKongShipping();
+    if (!bossIsHongKongFranchise() && AUTO_DEFAULT_DELIVERY_LEVELS.has(level) && shipping && !shipping.value) { shipping.value = 'normal'; changed = true; }
     if (changed && typeof updateCartSummary === 'function') updateCartSummary();
 }
 
@@ -12938,7 +12963,8 @@ function updateCartSummary() {
 
     let shippingFee = 0; let shippingText = "$0";
     if (subtotal > 0 && shippingMethod) {
-        if (subtotal >= 3000) {
+        if (shippingMethod === 'sf-hk') { shippingFee = 0; shippingText = '$0'; }
+        else if (subtotal >= 3000) {
             if (shippingMethod === 'blackcat') { shippingFee = 60; shippingText = "$60 (滿額優惠)"; }
             else if (shippingMethod === 'blackcat-cold') { shippingFee = 160; shippingText = "$160"; }
             else { shippingFee = 0; shippingText = "免運 (滿額)"; }
@@ -13591,18 +13617,22 @@ async function submitOrder(evt) {
     if (typeof bossSyncPaymentOptions === 'function') bossSyncPaymentOptions();
     const requiredPayment = document.getElementById('payment');
     const requiredShipping = document.getElementById('shipping');
-    if ((!requiredPayment || !requiredPayment.value) || (memberLevel && ['加盟A','加盟B','業務A','業務B','連鎖店B'].includes(memberLevel) && requiredPayment.value !== 'monthly')) {
+    if ((!requiredPayment || !requiredPayment.value) || (memberLevel && ['加盟A','加盟B','業務A','業務B','連鎖店B'].includes(memberLevel) && requiredPayment.value !== 'monthly' && !(bossIsHongKongFranchise() && requiredPayment.value === 'card'))) {
         alert('請先選擇付款方式，再送出訂單。');
         if (requiredPayment) { requiredPayment.scrollIntoView({behavior:'smooth',block:'center'}); requiredPayment.focus(); }
         return;
     }
-    if (requiredPayment && ((requiredPayment.value === 'card' && memberLevel !== '' && !['一般會員','凱莉VIP','柏金VIP','頂極VIP','極VIP'].includes(memberLevel)) || (requiredPayment.value === 'monthly' && !['加盟A','加盟B','業務A','業務B','連鎖店B'].includes(memberLevel)))) {
+    if (requiredPayment && ((requiredPayment.value === 'card' && memberLevel !== '' && !bossIsHongKongFranchise() && !['一般會員','凱莉VIP','柏金VIP','頂極VIP','極VIP'].includes(memberLevel)) || (requiredPayment.value === 'monthly' && !['加盟A','加盟B','業務A','業務B','連鎖店B'].includes(memberLevel)))) {
         alert('此會員等級不適用所選付款方式。'); return;
     }
     if (!canSkipSelection && (!requiredShipping || !requiredShipping.value)) {
         alert('請先選擇配送方式，再送出訂單。');
         if (requiredShipping) { requiredShipping.scrollIntoView({behavior:'smooth',block:'center'}); requiredShipping.focus(); }
         return;
+    }
+    // 送出前再次核對香港專屬配送，避免使用舊選項。
+    if (bossIsHongKongFranchise() ? (!requiredShipping || requiredShipping.value !== 'sf-hk') : (requiredShipping && requiredShipping.value === 'sf-hk')) {
+        alert('配送方式不適用，請重新確認。'); bossSyncHongKongShipping(); return;
     }
     saveMemberContact();
 
@@ -14520,11 +14550,16 @@ const BOSS_CARD_LEVELS = new Set(['一般會員','凱莉VIP','柏金VIP','頂極
 function bossSyncPaymentOptions(){
  const select=document.getElementById('payment');if(!select)return;
  const level=(typeof deptIsLoggedIn!=='undefined'&&deptIsLoggedIn&&typeof deptMemberData!=='undefined'&&deptMemberData)?String(deptMemberData.member_level||'').trim():'';
- const monthly=BOSS_MONTHLY_LEVELS.has(level),card=(!level || BOSS_CARD_LEVELS.has(level));
+ const hk=bossIsHongKongFranchise();
+ const monthly=BOSS_MONTHLY_LEVELS.has(level),card=(hk || !level || BOSS_CARD_LEVELS.has(level));
  const m=select.querySelector('option[value="monthly"]'),c=select.querySelector('option[value="card"]');
  if(m){m.hidden=!monthly;m.disabled=!monthly;}
  if(c){c.hidden=!card;c.disabled=!card;}
- if(monthly){select.value='monthly';select.disabled=true;select.dataset.bossMonthly='1';}
+ if(monthly){
+   if(!hk || (select.value!=='monthly' && select.value!=='card'))select.value='monthly';
+   select.disabled=!hk;
+   if(hk)delete select.dataset.bossMonthly;else select.dataset.bossMonthly='1';
+ }
  else {select.disabled=false;delete select.dataset.bossMonthly;
    if(select.value==='monthly'||(select.value==='card'&&!card))select.value='';
  }
