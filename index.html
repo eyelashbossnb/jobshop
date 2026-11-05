@@ -13434,7 +13434,7 @@ async function bossVerifyCheckoutInventory_(currentCart) {
     // 更新既有全站庫存快取，但本次比對只採用剛剛讀到的資料。
     globalInventoryData = inventory;
     const rows = Array.isArray(currentCart) ? currentCart.map(x=>({...x})) :
-        Object.entries(currentCart || {}).map(([id,v]) => typeof v === 'number' ? {id,qty:v} : {id,...v});
+        Object.entries(currentCart || {}).map(([id,v]) => (typeof v === 'number' || typeof v === 'string') ? {id,qty:v} : {id,...(v || {})});
     const normalize = x => String(x == null ? '' : x).replace(/[\s\u3000]/g,'').toUpperCase();
     const byNormalized = new Map();
     for (const [key, value] of Object.entries(inventory)) {
@@ -13446,7 +13446,9 @@ async function bossVerifyCheckoutInventory_(currentCart) {
     for (const item of rows) {
         const id=String(item.id||item.product_id||'').trim();
         const qty=Number(item.qty ?? item.quantity ?? item.count ?? 0);
-        if (!Number.isInteger(qty) || qty <= 0) { problems.push(id+'：購買數量異常'); continue; }
+        // 與購物車畫面一致：數量 0 是未選購／已移除的商品，不應參與結帳庫存驗證。
+        if (qty === 0) continue;
+        if (!Number.isInteger(qty) || qty < 0) { problems.push(id+'：購買數量異常'); continue; }
         // 會員會籍屬非實體商品，不檢查庫存表。
         const baseId=(typeof productConfig!=='undefined' && productConfig && !productConfig[id])
             ? Object.keys(productConfig).filter(k=>id.startsWith(k+'_')).sort((a,b)=>b.length-a.length)[0] || id : id;
@@ -13572,7 +13574,7 @@ async function bossVerifyCheckoutInventory_(currentCart) {
         }
     }
     if(problems.length) {
-        const err=new Error('以下商品庫存狀態異動：\\n• '+problems.join('\\n• '));
+        const err=new Error('以下商品庫存狀態異動：\n• '+problems.join('\n• '));
         err.bossStockIssues=issueRows;
         throw err;
     }
@@ -15451,7 +15453,7 @@ function bossShowStockDialog_(message, issueRows){
       issues.appendChild(line);
     });
   } else {
-    const clean=String(message||'無法確認最新庫存').replace(/^以下商品庫存狀態異動：\s*/,'').replace(/^•\s*/,'');
+    const clean=String(message||'無法確認最新庫存').replace(/\\n/g,'\n').replace(/^以下商品庫存狀態異動：\s*/,'').replace(/^•\s*/,'');
     issues.textContent=clean;
   }
   const actionable=rows.filter(x=>x.adjustable);
