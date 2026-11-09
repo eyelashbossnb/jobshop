@@ -1053,6 +1053,16 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
  .cart-item-price { min-width: 34px; font-size: 12px; }
  .cart-editable-qty { width: 39px; }
 }
+
+/* 優惠券使用教學問號及圖片視窗 */
+.boss-coupon-help{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;width:23px;height:23px;margin-left:5px;border:1px solid #dca399;border-radius:50%;background:#fff8f7;color:#b76c64;font-size:14px;font-weight:700;cursor:pointer;padding:0;line-height:1}
+.boss-coupon-help:hover,.boss-coupon-help:focus-visible{background:#fcece9;outline:2px solid #edc5bd;outline-offset:2px}
+#boss-coupon-help-overlay{position:fixed;inset:0;z-index:6000;background:rgba(35,25,25,.72);display:none;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
+#boss-coupon-help-overlay.open{display:flex}
+.boss-coupon-help-dialog{position:relative;max-width:min(760px,100%);max-height:94dvh;overflow:auto;border-radius:14px;background:#fff;padding:12px;box-sizing:border-box;box-shadow:0 20px 55px #0005}
+.boss-coupon-help-dialog img{display:block;width:100%;height:auto;max-height:calc(94dvh - 24px);object-fit:contain}
+.boss-coupon-help-close{position:sticky;top:0;float:right;z-index:1;margin-bottom:-42px;width:36px;height:36px;border:0;border-radius:50%;background:#fff;color:#5a4540;font-size:26px;cursor:pointer;box-shadow:0 2px 8px #0003}
+@media(max-width:768px){.boss-coupon-help-dialog{padding:7px}.boss-coupon-help-dialog img{max-height:none}}
 </style>
 </head>
 <body>
@@ -14618,7 +14628,7 @@ async function copyTransferAccount(){try{await navigator.clipboard.writeText('72
 </script>
 
 <section id="eyelash-coupon-panel" class="boss-coupon-panel" aria-label="我的優惠券" style="display:none">
-  <div class="boss-coupon-head"><div><div class="boss-coupon-heading">🎟 我的優惠券</div><div class="boss-coupon-sub">會員專屬優惠｜購物金折抵券、免運券可各使用一張</div></div><button type="button" class="boss-coupon-query" onclick="eyelashLoadCoupons()">查詢可用優惠券 →</button></div>
+  <div class="boss-coupon-head"><div><div class="boss-coupon-heading">🎟 我的優惠券 <button type="button" class="boss-coupon-help" onclick="bossCouponHelpOpen()" aria-label="查看優惠券使用教學" title="優惠券使用教學">?</button></div><div class="boss-coupon-sub">會員專屬優惠｜購物金折抵券、免運券可各使用一張</div></div><button type="button" class="boss-coupon-query" onclick="eyelashLoadCoupons()">查詢可用優惠券 →</button></div>
   <div class="boss-coupon-grid">
     <div class="boss-coupon-tile money"><div class="boss-coupon-label">🏷 購物金折抵券 <span id="boss-money-count" class="boss-coupon-count">尚未查詢</span></div><select id="eyelash-money-coupon" class="boss-coupon-select" onchange="eyelashCouponChanged()"><option value="">不使用優惠券</option></select><div id="boss-money-expiry" class="boss-coupon-expiry">使用期限：選取優惠券後顯示</div><div class="boss-coupon-notes">購物金需一次使用完畢，未使用餘額不保留。<br>購物金折抵金額不列入滿額贈計算。</div></div>
     <div class="boss-coupon-tile shipping"><div class="boss-coupon-label">🚚 免運券 <span id="boss-shipping-count" class="boss-coupon-count">尚未查詢</span></div><select id="eyelash-shipping-coupon" class="boss-coupon-select" onchange="eyelashCouponChanged()"><option value="">不使用優惠券</option></select><div id="boss-shipping-expiry" class="boss-coupon-expiry">使用期限：選取優惠券後顯示</div><div class="boss-coupon-notes">以常溫宅配運費 $100 為折抵上限。<br>指定黑貓宅配及黑貓低溫仍需補差價。</div></div>
@@ -15606,5 +15616,18 @@ function bossCloseOrderSuccessModal() {
 }
 </script>
 
+
+<!-- 優惠券使用教學：點擊問號開啟，不影響結帳 -->
+<div id="boss-coupon-help-overlay" role="dialog" aria-modal="true" aria-label="優惠券使用教學" onclick="if(event.target===this)bossCouponHelpClose()">
+  <div class="boss-coupon-help-dialog">
+    <button type="button" class="boss-coupon-help-close" aria-label="關閉教學" onclick="bossCouponHelpClose()">×</button>
+    <img src="https://i.ibb.co/20HR7DM5/image.png" alt="優惠券使用教學：查詢可用優惠券、選擇優惠券、確認折抵送出訂單" loading="lazy">
+  </div>
+</div>
+<script>
+function bossCouponHelpOpen(){var el=document.getElementById('boss-coupon-help-overlay');if(el){el.classList.add('open');document.addEventListener('keydown',bossCouponHelpEscape);}}
+function bossCouponHelpClose(){var el=document.getElementById('boss-coupon-help-overlay');if(el)el.classList.remove('open');document.removeEventListener('keydown',bossCouponHelpEscape);}
+function bossCouponHelpEscape(e){if(e.key==='Escape')bossCouponHelpClose();}
+</script>
 </body>
 </html>
