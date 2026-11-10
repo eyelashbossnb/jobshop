@@ -14061,9 +14061,8 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
 
             if (itemId !== "STORE_ADJUST" && typeof productConfig !== 'undefined' && productConfig[itemId]) {
                 if (productConfig[itemId]._isWelfare) {
-                    cartBackup[itemId] = (cartBackup[itemId] || 0) + qty;
-                } else
-                if (productConfig[itemId].isSharedStock) {
+                    // 福利品獨立庫存：在下方統一建立扣庫存請求，避免提前使用尚未宣告的 qty。
+                } else if (productConfig[itemId].isSharedStock) {
                     if (typeof lashRealTimeStocks !== 'undefined' && lashRealTimeStocks.hasOwnProperty(eyeMaskSharedKey)) {
                         lashRealTimeStocks[eyeMaskSharedKey] -= itemQty;
                         if (lashRealTimeStocks[eyeMaskSharedKey] < 0) lashRealTimeStocks[eyeMaskSharedKey] = 0;
@@ -14082,8 +14081,10 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             if (typeof productConfig !== 'undefined' && productConfig[itemId]) {
                 const pInfo = productConfig[itemId];
 
-                // A313：扣套組本身 + 實際選取的水貂/凱莉絲規格
-                if (pInfo._isA313Kit && pInfo.a313Components) {
+                // 福利品以獨立 WF 編號扣除 G 欄庫存，不影響原商品庫存。
+                if (pInfo._isWelfare) {
+                    cartBackup[itemId] = (cartBackup[itemId] || 0) + qty;
+                } else if (pInfo._isA313Kit && pInfo.a313Components) {
                     const baseInfo = productConfig['A313'];
                     const baseKey = baseInfo?.name || 'A313 美睫開花高手套組';
                     cartBackup[baseKey] = (cartBackup[baseKey] || 0) + qty;
