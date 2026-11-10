@@ -11002,7 +11002,7 @@ async function bossSubmitCancelRequest(index) {
     const order = bossReorderSearchOrders[index];
     if (!order || !bossCanRequestCancel(order)) return alert('此訂單目前不開放取消申請，請重新查詢。');
     const orderId = String(order.id || '').trim();
-    const phoneInput = prompt('請輸入此訂單下單時的完整10碼手機號碼，以確認取消申請：');
+    const phoneInput = await bossPrompt('請輸入此訂單下單時的完整10碼手機號碼，以確認取消申請：', '', '確認手機號碼');
     if (phoneInput === null) return;
     const phone = phoneInput.replace(/\s/g, '');
     if (!/^09\d{8}$/.test(phone)) return alert('請輸入正確的10碼手機號碼。');
@@ -11400,14 +11400,14 @@ function checkMemberRenewalReminder(forceCheck) {
     if (today <= expiry) {
         content.innerHTML = `
             您的會員資格將於 <strong>${expiryText}</strong> 到期，目前已進入續約期間。<br><br>
-            會員續約於<strong>到期日前兩個月開放辦理</strong>，請於會員效期內完成續約；<strong>逾期後將視為新加入會員辦理</strong>。<br><br>
+            會員續約於<strong>到期日前兩個月開放辦理</strong>，請於會員效期內完成續約。<br><br>會籍到期後將<strong>自動降為一般會員</strong>；日後再次加入 VIP 將視為<strong>新加入會員</strong>，無法享有<strong>續約購物金優惠</strong>。<br><br>
             如需辦理續約，請洽
             <a class="renewal-line-link" href="${MEMBER_SERVICE_LINE_URL}" target="_blank" rel="noopener noreferrer">客服</a>。
         `;
     } else {
         content.innerHTML = `
             您的會員資格已於 <strong>${expiryText}</strong> 到期。<br><br>
-            依會員規則，<strong>逾期後將視為新加入會員辦理</strong>。<br><br>
+            依會員規則，<strong>會籍到期後將自動降為一般會員</strong>。<br><br>日後再次加入 VIP 將視為<strong>新加入會員</strong>，無法享有<strong>續約購物金優惠</strong>。<br><br>
             如需重新加入會員，請洽
             <a class="renewal-line-link" href="${MEMBER_SERVICE_LINE_URL}" target="_blank" rel="noopener noreferrer">客服</a>。
         `;
@@ -14701,7 +14701,7 @@ async function bossCopyCardAmount(){
  const amount=String(display).replace(/[^0-9]/g,'');
  if(!amount){alert('無法取得應付金額，請聯絡客服。');return;}
  try{await navigator.clipboard.writeText(amount);alert('已複製金額：'+amount+' 元');}
- catch(e){prompt('請複製應付金額：',amount);}
+ catch(e){await bossPrompt('請複製應付金額：',amount,'複製應付金額',true);}
 }
 function bossCloseCardPayment(){document.getElementById('boss-card-overlay').classList.remove('active');document.body.style.overflow='';location.reload();}
 document.addEventListener('DOMContentLoaded',bossSyncPaymentOptions);
@@ -14727,7 +14727,7 @@ function showTransferPayment(orderId,amount){
  document.body.style.overflow='hidden';
 }
 function closeTransferPayment(){document.getElementById('transfer-payment-overlay').classList.remove('active');document.body.style.overflow='';location.reload();}
-async function copyTransferAccount(){try{await navigator.clipboard.writeText('727540124855');alert('已複製匯款帳號');}catch(e){prompt('請複製匯款帳號：','727540124855');}}
+async function copyTransferAccount(){try{await navigator.clipboard.writeText('727540124855');alert('已複製匯款帳號');}catch(e){await bossPrompt('請複製匯款帳號：','727540124855','複製匯款帳號',true);}}
 </script>
 
 <section id="eyelash-coupon-panel" class="boss-coupon-panel" aria-label="我的優惠券" style="display:none">
@@ -15676,6 +15676,87 @@ function bossConfirm(message, title='確認操作', icon='？'){
     document.body.append(overlay);document.addEventListener('keydown',keydown);cancel.focus();
   });
 }
+</script>
+
+
+<style id="boss-unified-message-style">
+.boss-message-overlay{position:fixed;inset:0;z-index:110000;background:rgba(54,43,39,.48);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box}
+.boss-message-dialog{width:min(420px,100%);max-height:calc(100dvh - 36px);overflow:auto;background:#fffdfb;border-radius:18px;padding:27px 24px 24px;box-sizing:border-box;box-shadow:0 20px 60px rgba(54,43,39,.2);text-align:center;color:#4a3f35}
+.boss-message-icon{width:54px;height:54px;margin:0 auto 15px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff0ed;color:#c47c70;font-size:25px}
+.boss-message-title{font-size:19px;font-weight:700;margin:0 0 12px}
+.boss-message-body{font-size:14px;line-height:1.8;color:#806e66;white-space:pre-line;overflow-wrap:anywhere;margin:0 0 24px}
+.boss-message-actions{display:flex;gap:12px}
+.boss-message-actions button{flex:1;border-radius:24px;padding:11px 8px;font-size:14px;cursor:pointer;border:1px solid #e8a598}
+.boss-message-cancel{background:#fff;color:#a57d74}
+.boss-message-ok{background:#e8a598;color:#fff;font-weight:600}
+.boss-message-input{display:block;width:100%;box-sizing:border-box;border:1px solid #e8d8d1;border-radius:10px;padding:12px;margin:-8px 0 22px;color:#4a3f35;font-size:15px;background:#fff}
+.boss-message-input:focus-visible,.boss-message-actions button:focus-visible{outline:2px solid #a86b60;outline-offset:2px}
+@media(max-width:576px){.boss-message-dialog{padding:23px 18px}}
+</style>
+<script>
+/* 統一原生 alert 與需要輸入的 prompt；保留既有 bossConfirm 的確認/取消行為。 */
+(function(){
+  const nativeAlert=window.alert.bind(window);
+  const queue=[];
+  let busy=false;
+  function dialog(message,title,mode,initial,readonly){
+    return new Promise(resolve=>{
+      const overlay=document.createElement('div');overlay.className='boss-message-overlay';
+      const panel=document.createElement('div');panel.className='boss-message-dialog';
+      panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');
+      const ico=document.createElement('div');ico.className='boss-message-icon';ico.textContent=mode==='prompt'?'✎':'!';
+      const heading=document.createElement('h2');heading.className='boss-message-title';heading.textContent=title;
+      const body=document.createElement('p');body.className='boss-message-body';body.textContent=String(message??'');
+      panel.append(ico,heading,body);
+      let input=null;
+      if(mode==='prompt'){
+        input=document.createElement('input');input.type='text';input.className='boss-message-input';
+        input.value=String(initial??'');input.readOnly=!!readonly;
+        input.setAttribute('aria-label',String(title));panel.append(input);
+      }
+      const actions=document.createElement('div');actions.className='boss-message-actions';
+      if(mode==='prompt'&&!readonly){
+        const cancel=document.createElement('button');cancel.type='button';cancel.className='boss-message-cancel';cancel.textContent='取消';
+        cancel.onclick=()=>finish(null);actions.append(cancel);
+      }
+      const ok=document.createElement('button');ok.type='button';ok.className='boss-message-ok';ok.textContent=mode==='prompt'?'確認':'我知道了';
+      ok.onclick=()=>finish(mode==='prompt'?input.value:true);actions.append(ok);panel.append(actions);overlay.append(panel);
+      const previous=document.activeElement;
+      const keydown=e=>{
+        if(e.key==='Escape'){e.preventDefault();finish(mode==='prompt'?null:true);}
+        if(e.key==='Enter'&&mode==='prompt'){e.preventDefault();finish(input.value);}
+        if(e.key==='Tab'){
+          const focusables=Array.from(panel.querySelectorAll('button,input'));
+          const first=focusables[0],last=focusables[focusables.length-1];
+          if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+          else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+        }
+      };
+      let closed=false;
+      function finish(value){
+        if(closed)return;closed=true;
+        document.removeEventListener('keydown',keydown,true);overlay.remove();
+        if(previous&&previous.isConnected&&typeof previous.focus==='function')previous.focus();
+        resolve(value);
+      }
+      overlay.addEventListener('click',e=>{if(e.target===overlay)finish(mode==='prompt'?null:true)});
+      document.body.append(overlay);document.addEventListener('keydown',keydown,true);
+      if(input){input.focus();input.select();}else ok.focus();
+    });
+  }
+  function drain(){
+    if(busy||!queue.length)return;
+    busy=true;const next=queue.shift();
+    dialog(next.message,next.title,'alert').then(()=>{busy=false;drain();});
+  }
+  window.alert=function(message){
+    if(!document.body)return nativeAlert(message);
+    queue.push({message,title:'系統提示'});drain();
+  };
+  window.bossPrompt=function(message,initial='',title='請輸入資料',readonly=false){
+    return dialog(message,title,'prompt',initial,readonly);
+  };
+})();
 </script>
 
 <!-- 統一風格：訂單送出成功通知（僅非轉帳、非刷卡付款使用） -->
