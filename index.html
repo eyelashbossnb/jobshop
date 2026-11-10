@@ -14055,7 +14055,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             }
 
             const specText = item.spec ? ` (${item.spec})` : '';
-            orderDetails += `${validItemIndex}. [${getOrderDisplayProductId(itemId)}] ${productConfig[itemId]?._isWelfare ? '【福利品】' : ''}${itemName}${specText} ($${itemPrice}) x ${itemQty}\n`;
+            orderDetails += `${validItemIndex}. [${getOrderDisplayProductId(itemId)}] ${itemName}${specText} ($${itemPrice}) x ${itemQty}\n`;
             itemsSummary.push(`${itemName} x${itemQty}`);
             validItemIndex++;
 
