@@ -7673,7 +7673,7 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('A37', -1)">-</button><input type="number" class="quantity-input" id="left-input-A37" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('A37', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('A37')">加入購物車</button>
                 </div>
-                <div class="product-item" data-id="AA81" data-category="makeup" data-sub="lashes-zr" data-name=">自然711 (單副)" data-price="20">
+                <div class="product-item" data-id="AA81" data-category="makeup" data-sub="lashes-zr" data-name="自然711 (單副)" data-price="20">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：AA81</div>
                     <div class="product-name">自然711 (單副)</div><div class="product-price">$20</div>
                     <div class="product-stock" id="stock-text-AA81">載入中...</div>
@@ -13222,6 +13222,16 @@ function cleanString(str) {
 
 function getStockFromDatabase(targetName) {
     if (!targetName) return null;
+    // 假睫毛 AA 系列：用完整商品編號核對，不依賴品名的空格及括號格式。
+    const aaMatch = String(targetName).trim().match(/^(AA\d+)(?!\d)/i);
+    if (aaMatch && globalInventoryData) {
+        const wantedId = aaMatch[1].toUpperCase();
+        const aaKeys = Object.keys(globalInventoryData).filter(key => {
+            const m = String(key).trim().match(/^(AA\d+)(?!\d)/i);
+            return m && m[1].toUpperCase() === wantedId;
+        });
+        if (aaKeys.length === 1) return globalInventoryData[aaKeys[0]];
+    }
     const cleanedTarget = cleanString(targetName);
     
     for (let key in globalInventoryData) {
