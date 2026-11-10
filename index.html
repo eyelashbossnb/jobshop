@@ -11390,28 +11390,24 @@ function checkMemberRenewalReminder(forceCheck) {
     const renewalOpen = new Date(expiry);
     renewalOpen.setMonth(renewalOpen.getMonth() - 2);
 
-    // 尚未進入續約期，不提醒
-    if (today < renewalOpen) return;
+    // 只在到期日前兩個月（含到期當天）顯示提醒；到期隔日起不再彈出。
+    // 此處只控制提醒視窗，不變更會員實際等級或後台降級規則。
+    if (today < renewalOpen || today > expiry) {
+        toggleRenewalReminder(false);
+        return;
+    }
 
     const expiryText = formatMemberExpiryDate(expiry);
     const content = document.getElementById("renewal-reminder-content");
     if (!content) return;
 
-    if (today <= expiry) {
-        content.innerHTML = `
-            您的會員資格將於 <strong>${expiryText}</strong> 到期，目前已進入續約期間。<br><br>
-            會員續約於<strong>到期日前兩個月開放辦理</strong>，請於會員效期內完成續約。<br><br>會籍到期後將<strong>自動降為一般會員</strong>；日後再次加入 VIP 將視為<strong>新加入會員</strong>，無法享有<strong>續約購物金優惠</strong>。<br><br>
-            如需辦理續約，請洽
-            <a class="renewal-line-link" href="${MEMBER_SERVICE_LINE_URL}" target="_blank" rel="noopener noreferrer">客服</a>。
-        `;
-    } else {
-        content.innerHTML = `
-            您的會員資格已於 <strong>${expiryText}</strong> 到期。<br><br>
-            依會員規則，<strong>會籍到期後將自動降為一般會員</strong>。<br><br>日後再次加入 VIP 將視為<strong>新加入會員</strong>，無法享有<strong>續約購物金優惠</strong>。<br><br>
-            如需重新加入會員，請洽
-            <a class="renewal-line-link" href="${MEMBER_SERVICE_LINE_URL}" target="_blank" rel="noopener noreferrer">客服</a>。
-        `;
-    }
+    content.innerHTML = `
+        您的會員資格將於 <strong>${expiryText}</strong> 到期，目前已進入續約期間。<br><br>
+        會員續約於<strong>到期日前兩個月開放辦理</strong>，請於會員效期內完成續約。<br><br>
+        會籍到期後將<strong>自動降為一般會員</strong>；日後再次加入 VIP 將視為<strong>新加入會員</strong>，無法享有<strong>續約購物金優惠</strong>。<br><br>
+        如需辦理續約，請洽
+        <a class="renewal-line-link" href="${MEMBER_SERVICE_LINE_URL}" target="_blank" rel="noopener noreferrer">客服</a>。
+    `;
 
     // 同一個瀏覽器工作階段、同一到期日只自動跳一次；
     // 重新登入或重新開啟瀏覽器工作階段可再次提醒。
