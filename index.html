@@ -1205,8 +1205,20 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                 <button class="category-tab" onclick="selectCategory('ear', this); toggleSaleMenu(false);">採耳商品</button>
                 <button class="category-tab" onclick="selectCategory('nail', this); toggleSaleMenu(false);">美甲商品</button>
                 <button class="category-tab" onclick="selectCategory('sale', this); toggleSaleMenu(true);">出清五折</button>
+                <button class="category-tab" onclick="selectCategory('welfare', this); toggleSaleMenu(false);">福利品專區</button>
                 <button class="category-tab" onclick="selectCategory('membership', this); toggleSaleMenu(false);">購買會籍</button>
                 <button class="category-tab" onclick="selectCategory('store-adjustment', this); toggleSaleMenu(false);">門市購買</button>
+            </div>
+
+            <div id="sub-category-welfare" class="sub-category-menu" style="display:none;flex-wrap:wrap">
+                <span style="font-size:13px;font-weight:600;margin-right:5px">細分項目 ｜</span>
+                <button class="sub-tab active" onclick="filterSubCategory('all',this)">顯示全部</button>
+                <button class="sub-tab" onclick="filterSubCategory('美睫',this)">美睫</button>
+                <button class="sub-tab" onclick="filterSubCategory('熱蠟',this)">熱蠟</button>
+                <button class="sub-tab" onclick="filterSubCategory('紋繡',this)">紋繡</button>
+            </div>
+            <div id="boss-welfare-notice" style="display:none;background:#fff8f5;border:1px solid #f0d9d2;border-radius:12px;padding:16px;margin:0 0 20px;font-size:13px;line-height:1.9">
+              <strong>福利品購買須知</strong><div>福利品僅有外盒壓傷、裂開等包裝瑕疵，不影響正常使用；數量有限，售完為止。除依法應受理的退換貨或商品瑕疵情形外，恕不接受退換貨。每件商品瑕疵情況以商品說明為準。</div>
             </div>
 
             <div id="sub-category-eyelash" class="sub-category-menu" style="display: none; flex-wrap: wrap;">
@@ -11833,6 +11845,8 @@ function selectCategory(category, btnElement) {
         resetSubTabs(firstSubTab);
     }
 
+    const welfareNotice = document.getElementById('boss-welfare-notice');
+    if (welfareNotice) welfareNotice.style.display = category === 'welfare' ? 'block' : 'none';
     filterProducts();
 }
 
@@ -12707,7 +12721,8 @@ function addToCart(productId) {
         productName = productItem.getAttribute('data-name') || productConfig[productId]?.name || "";
     }
     
-    if (productName && productId !== "STORE_ADJUST") {
+    if (productConfig[productId]?._isWelfare) max = Number(productConfig[productId].max) || 0;
+    else if (productName && productId !== "STORE_ADJUST") {
         let currentStock = getStockFromDatabase(productId + productName);
         if (currentStock === null) currentStock = getStockFromDatabase(productName);
         if (currentStock !== null) max = currentStock;
@@ -12905,6 +12920,7 @@ function updateCartSummary() {
 
     const isLoggedIn = (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn && deptMemberData);
     let activeLevel = isLoggedIn ? (deptMemberData.member_level || "一般會員") : "未登入";
+    document.querySelectorAll('.boss-welfare-item').forEach(card => { const id=card.dataset.id, info=productConfig[id]; if(!info)return; const rate=isLoggedIn ? (DEPT_MEMBER_LEVEL_SETTINGS?.[activeLevel]?.discountRate ?? DEPT_MEMBER_LEVEL_SETTINGS?.[activeLevel==='極VIP'?'頂極VIP':activeLevel]?.discountRate ?? 1) : 1; info.price=Math.max(0,Math.round(info._originalPrice*rate)-20); const el=card.querySelector('.product-price');if(el)el.textContent='福利價 $'+info.price.toLocaleString(); });
 
     Object.keys(cart).forEach(id => {
         const qty = cart[id];
@@ -12914,7 +12930,15 @@ function updateCartSummary() {
         const pureId = id === 'STORE_ADJUST' ? 'STORE_ADJUST' : id.split('_')[0];
         let itemRealPrice = 0;
 
-        if (id.includes('_') && productConfig[id] && productConfig[id]._isSpecialSku) {
+        if (productConfig[id] && productConfig[id]._isWelfare) {
+            let rate = 1;
+            if (isLoggedIn && typeof DEPT_MEMBER_LEVEL_SETTINGS !== 'undefined') {
+                const levelSetting = DEPT_MEMBER_LEVEL_SETTINGS[activeLevel] || DEPT_MEMBER_LEVEL_SETTINGS[activeLevel === '極VIP' ? '頂極VIP' : activeLevel];
+                if (levelSetting) rate = Number(levelSetting.discountRate) || 1;
+            }
+            itemRealPrice = Math.max(0, Math.round(productConfig[id]._originalPrice * rate) - 20);
+            productConfig[id].price = itemRealPrice;
+        } else if (id.includes('_') && productConfig[id] && productConfig[id]._isSpecialSku) {
             if (/^W24_UP_/.test(id)) {
                 const w24Rate = customLevelRates[activeLevel] ?? 0.5;
                 itemRealPrice = Math.round(410 * w24Rate);
@@ -13061,11 +13085,65 @@ function sendDeductStockRequestToBackend(cartData) {
     });
 }
 
+function bossWelfareEscape(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function bossRenderWelfareProducts(items) {
+    const grid = document.getElementById('main-product-grid');
+    if (!grid) return;
+    grid.querySelectorAll('.boss-welfare-item').forEach(el => el.remove());
+    const available = new Set();
+    items.forEach(item => {
+        const id = String(item.id || '').trim().toUpperCase();
+        if (!/^WF-[A-Z0-9_-]+$/.test(id)) return;
+        const qty = Math.max(0, Math.floor(Number(item.stock) || 0));
+        const price = Math.max(20, Number(item.price) || 0);
+        if (!item.active || !['美睫','熱蠟','紋繡'].includes(item.category)) return;
+        available.add(id);
+        productConfig[id] = {name: String(item.name || ''), price:price - 20, _originalPrice:price,
+            _isWelfare:true, backendStockKey:id, max:qty};
+        const card = document.createElement('div');
+        card.className = 'product-item boss-welfare-item';
+        card.dataset.id=id; card.dataset.name=String(item.name || '');
+        card.dataset.category='welfare'; card.dataset.sub=item.category;
+        card.dataset.originPrice=String(price);
+        card.innerHTML = `<div><div class="product-name">【福利品】${bossWelfareEscape(id)} ${bossWelfareEscape(item.name)}</div>
+          <div style="font-size:12px;color:#8a7e72;margin:6px 0">${bossWelfareEscape(item.spec || '')}</div>
+          <div style="font-size:12px;color:#b56c62;margin:6px 0">瑕疵說明：${bossWelfareEscape(item.note || '包裝瑕疵')}</div>
+          <div style="font-size:12px;text-decoration:line-through;color:#999">原價 $${price.toLocaleString()}</div>
+          <div class="product-price" id="boss-welfare-price-${id}">福利價計算中</div>
+          <div class="product-stock">剩餘庫存：${qty}</div></div>
+          <div><div class="quantity-selector"><button type="button" class="quantity-btn" data-wf-step="-1">−</button>
+          <input id="left-input-${id}" type="number" class="quantity-input" min="0" max="${qty}" value="0" inputmode="numeric">
+          <button type="button" class="quantity-btn" data-wf-step="1">＋</button></div>
+          <button type="button" class="btn" data-wf-add="1" ${qty===0?'disabled':''}>${qty===0?'已售完':'加入購物車'}</button></div>`;
+        card.querySelectorAll('[data-wf-step]').forEach(btn => btn.addEventListener('click', () => {
+            const input = card.querySelector('.quantity-input');
+            input.value = Math.max(0,Math.min(qty,(parseInt(input.value,10)||0)+Number(btn.dataset.wfStep)));
+        }));
+        card.querySelector('[data-wf-add]').addEventListener('click', () => addToCart(id));
+        grid.appendChild(card);
+    });
+    Object.keys(productConfig).forEach(id => {
+        if (productConfig[id]?._isWelfare && !available.has(id)) {
+            if (!cart[id]) delete productConfig[id];
+            else productConfig[id].max=0;
+        }
+    });
+    updateCartSummary();
+    grid.querySelectorAll('.boss-welfare-item').forEach(card => {
+        const id=card.dataset.id, el=card.querySelector('.product-price');
+        if (el) el.textContent='會員／福利價 $'+(productConfig[id]?.price || 0).toLocaleString();
+    });
+    filterProducts();
+}
+
 function fetchInventoryFromSheet() {
     fetch(GOOGLE_SHEET_API_URL)
         .then(response => response.json())
         .then(data => {
             globalInventoryData = data;
+            bossRenderWelfareProducts(data.__welfare || []);
             console.log("=== 遠端 10 個工作表雲端總庫存同步成功 ===");
             updateAllLoadedStocks();
             if (typeof window.bossPromoGiftRefresh === 'function') window.bossPromoGiftRefresh();
@@ -13940,7 +14018,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
 
             const isLashOrVariant = itemId.includes('_') || (typeof productConfig !== 'undefined' && productConfig[itemId] && productConfig[itemId]._isSpecialSku) || itemName.includes("睫毛");
 
-            if (!isLashOrVariant && itemId !== "STORE_ADJUST") {
+            if (!isLashOrVariant && itemId !== "STORE_ADJUST" && !productConfig[itemId]?._isWelfare) {
                 let currentStock = null;
                 if (typeof getStockFromDatabase === 'function') {
                     currentStock = getStockFromDatabase(itemName);
@@ -13956,11 +14034,14 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             }
 
             const specText = item.spec ? ` (${item.spec})` : '';
-            orderDetails += `${validItemIndex}. [${getOrderDisplayProductId(itemId)}] ${itemName}${specText} ($${itemPrice}) x ${itemQty}\n`;
+            orderDetails += `${validItemIndex}. [${getOrderDisplayProductId(itemId)}] ${productConfig[itemId]?._isWelfare ? '【福利品】' : ''}${itemName}${specText} ($${itemPrice}) x ${itemQty}\n`;
             itemsSummary.push(`${itemName} x${itemQty}`);
             validItemIndex++;
 
             if (itemId !== "STORE_ADJUST" && typeof productConfig !== 'undefined' && productConfig[itemId]) {
+                if (productConfig[itemId]._isWelfare) {
+                    cartBackup[itemId] = (cartBackup[itemId] || 0) + qty;
+                } else
                 if (productConfig[itemId].isSharedStock) {
                     if (typeof lashRealTimeStocks !== 'undefined' && lashRealTimeStocks.hasOwnProperty(eyeMaskSharedKey)) {
                         lashRealTimeStocks[eyeMaskSharedKey] -= itemQty;
