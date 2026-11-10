@@ -1317,12 +1317,22 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 
                 <div id="lashes-series-menu" style="display: none; width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); gap: 6px; flex-wrap: wrap;">
                     <span style="font-size: 12px; color: var(--text-muted); align-self: center; margin-right: 5px;">假睫毛系列 ｜</span>
+                    <button class="sub-tab active" onclick="filterSubCategory('lashes', this)">顯示全部</button>
                     <button class="sub-tab" onclick="filterSubCategory('lashes-jw', this)">尖尾系列</button>
                     <button class="sub-tab" onclick="filterSubCategory('lashes-gz', this)">公主系列</button>
                     <button class="sub-tab" onclick="filterSubCategory('lashes-zr', this)">自然系列</button>
                     <button class="sub-tab" onclick="filterSubCategory('lashes-wt', this)">舞台系列</button>
                     <button class="sub-tab" onclick="filterSubCategory('lashes-tm', this)">透明梗系列</button>
                 </div>
+            </div>
+
+            <!-- 假睫毛出清購買須知：僅美妝商品／假睫毛分類顯示 -->
+            <div id="boss-lashes-notice" style="display:none;background:#fff8f5;border:1px solid #f0d9d2;border-radius:12px;padding:16px;margin:0 0 20px;font-size:13px;line-height:1.9">
+              <div class="boss-notice-heading"><span class="boss-notice-heading-icon" aria-hidden="true">👁️</span><strong>假睫毛出清購買須知</strong></div>
+              <div>📢 <strong>假睫毛商品全數出清，售完不補！</strong></div>
+              <div style="margin-top:8px">所有款式及數量均以現貨庫存為主，數量有限，售完即止。下單前請確認欲購買的款式及數量。</div>
+              <div style="margin-top:8px">📸 各款假睫毛實際商品圖片，歡迎點選 <a href="https://drive.google.com/drive/folders/1phXxQ7kHEgdXsnDperZxjPVD5Sbg_wJ1" target="_blank" rel="noopener noreferrer" style="color:#b76c64;text-decoration:underline;font-weight:700">查看</a>。</div>
+              <div style="margin-top:8px">📩 如需協助確認商品款式或庫存，歡迎聯繫 <a href="https://line.me/ti/p/4RwpD-atgZ" target="_blank" rel="noopener noreferrer" style="color:#b76c64;text-decoration:underline;font-weight:700">客服</a>。</div>
             </div>
 
             <div id="sub-category-ear" class="sub-category-menu" style="display: none;">
@@ -11863,6 +11873,8 @@ function selectCategory(category, btnElement) {
     if (welfareNotice) welfareNotice.style.display = category === 'welfare' ? 'block' : 'none';
     const vipNotice = document.getElementById('boss-vip-notice');
     if (vipNotice) vipNotice.style.display = category === 'membership' ? 'block' : 'none';
+    const lashesNotice = document.getElementById('boss-lashes-notice');
+    if (lashesNotice) lashesNotice.style.display = 'none';
     filterProducts();
 }
 
@@ -13078,7 +13090,16 @@ function updateCartSummary() {
 
 function toggleLashesMenu(show) {
     const lashesMenu = document.getElementById('lashes-series-menu');
-    if (lashesMenu) lashesMenu.style.display = show ? 'flex' : 'none';
+    const lashesNotice = document.getElementById('boss-lashes-notice');
+    if (lashesNotice) lashesNotice.style.display = (show && currentCategory === 'makeup') ? 'block' : 'none';
+    if (lashesMenu) {
+        lashesMenu.style.display = show ? 'flex' : 'none';
+        if (show) {
+            lashesMenu.querySelectorAll('.sub-tab').forEach((tab, index) => {
+                tab.classList.toggle('active', index === 0);
+            });
+        }
+    }
 }
 
 function toggleNailBrushMenu(show) {
