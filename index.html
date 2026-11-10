@@ -1225,6 +1225,15 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
               <div style="margin-top:8px">📩 欲了解商品詳細狀況，歡迎聯繫 <a href="https://line.me/ti/p/4RwpD-atgZ" target="_blank" rel="noopener noreferrer" style="color:#b76c64;text-decoration:underline;font-weight:700">客服</a>，並提供商品名稱及規格，以便協助查詢。</div>
             </div>
 
+            <!-- VIP 會籍購買須知：與福利品購買須知採相同版型 -->
+            <div id="boss-vip-notice" style="display:none;background:#fff8f5;border:1px solid #f0d9d2;border-radius:12px;padding:16px;margin:0 0 20px;font-size:13px;line-height:1.9">
+              <strong>加入VIP 會員須知</strong>
+              <div style="margin-top:8px"><strong>VIP 會員採一年一約制</strong>，會員有效期限為一年，可於有效期間內享有對應等級的專屬優惠及會員權益。</div>
+              <div style="margin-top:8px"><strong>續約規則：</strong>會籍到期日前兩個月開放續約，請於到期日前完成續約，以保留續約資格及相關優惠。</div>
+              <div style="margin-top:8px"><strong>逾期規則：</strong>會籍到期後將自動降為一般會員。日後再次加入 VIP 將視為新加入會員，無法享有續約購物金優惠。</div>
+              <div style="margin-top:8px">📩 如需了解會籍方案、會員權益或續約方式，歡迎聯繫 <a href="https://line.me/ti/p/4RwpD-atgZ" target="_blank" rel="noopener noreferrer" style="color:#b76c64;text-decoration:underline;font-weight:700">客服</a>。</div>
+            </div>
+
             <div id="sub-category-eyelash" class="sub-category-menu" style="display: none; flex-wrap: wrap;">
                 <span style="font-size: 13px; color: var(--text-main); align-self: center; font-weight: 600; letter-spacing: 0.05em; margin-right: 5px;">細分項目 ｜</span>
                 <button class="sub-tab active" onclick="filterSubCategory('all', this); toggleEyelashMenu('', false);">顯示全部</button>
@@ -11847,6 +11856,8 @@ function selectCategory(category, btnElement) {
 
     const welfareNotice = document.getElementById('boss-welfare-notice');
     if (welfareNotice) welfareNotice.style.display = category === 'welfare' ? 'block' : 'none';
+    const vipNotice = document.getElementById('boss-vip-notice');
+    if (vipNotice) vipNotice.style.display = category === 'membership' ? 'block' : 'none';
     filterProducts();
 }
 
