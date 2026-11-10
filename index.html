@@ -13154,7 +13154,7 @@ function bossRenderWelfareProducts(items) {
     updateCartSummary();
     grid.querySelectorAll('.boss-welfare-item').forEach(card => {
         const id=card.dataset.id, el=card.querySelector('.product-price');
-        if (el) el.textContent='會員／福利價 $'+(productConfig[id]?.price || 0).toLocaleString();
+        if (el) el.textContent='福利價 $'+(productConfig[id]?.price || 0).toLocaleString();
     });
     filterProducts();
 }
