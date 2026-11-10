@@ -11942,6 +11942,9 @@ function filterProducts() {
             } else if (currentSubCategory === 'dash-bloom') {
                 matchesSubCategory = (productSub === 'lash-bloom' ||
                     productSub === 'lash-yy' || productSub === 'lash-clover3' || productSub === 'lash-clover5' || productSub === 'lash-w');
+            } else if (currentSubCategory === 'lashes') {
+                // 假睫毛「顯示全部」需涵蓋所有系列，而非尋找不存在的 data-sub=lashes。
+                matchesSubCategory = ['lashes-jw', 'lashes-gz', 'lashes-zr', 'lashes-wt', 'lashes-tm'].includes(productSub);
             } else if (currentSubCategory === 'sale-straight') {
                 matchesSubCategory = (productSub === 'sale-fan' || productSub === 'sale-mink' ||
                     productSub === 'sale-real-mink' || productSub === 'sale-l-plus');
