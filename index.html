@@ -12920,7 +12920,28 @@ function updateCartSummary() {
 
     const isLoggedIn = (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn && deptMemberData);
     let activeLevel = isLoggedIn ? (deptMemberData.member_level || "一般會員") : "未登入";
-    document.querySelectorAll('.boss-welfare-item').forEach(card => { const id=card.dataset.id, info=productConfig[id]; if(!info)return; const rate=isLoggedIn ? (DEPT_MEMBER_LEVEL_SETTINGS?.[activeLevel]?.discountRate ?? DEPT_MEMBER_LEVEL_SETTINGS?.[activeLevel==='極VIP'?'頂極VIP':activeLevel]?.discountRate ?? 1) : 1; info.price=Math.max(0,Math.round(info._originalPrice*rate)-20); const el=card.querySelector('.product-price');if(el)el.textContent='福利價 $'+info.price.toLocaleString(); });
+    // 福利品價格沿用原商品在本函式中的會籍規則，最後再減20元。
+    const bossWelfarePriceForLevel = (info) => {
+        const origin = String(info._sourceProductId || '').trim().toUpperCase();
+        const originalPrice = Number(info._originalPrice) || 0;
+        let rate = 1;
+        if (absoluteOriginalPriceIds.includes(origin)) rate = 1;
+        else if (fixedHalfDiscountIds.includes(origin)) rate = 0.5;
+        else if (customDiscountIds.includes(origin)) rate = customLevelRates[activeLevel] || 1;
+        else if (specialDiscountIds.includes(origin)) rate = specialRates[activeLevel] || 1;
+        else if (isLoggedIn) {
+            const setting = DEPT_MEMBER_LEVEL_SETTINGS[activeLevel] || DEPT_MEMBER_LEVEL_SETTINGS[activeLevel === '極VIP' ? '頂極VIP' : activeLevel];
+            rate = setting ? Number(setting.discountRate) || 1 : 1;
+        }
+        return Math.max(0, Math.round(originalPrice * rate) - 20);
+    };
+    document.querySelectorAll('.boss-welfare-item').forEach(card => {
+        const info = productConfig[card.dataset.id];
+        if (!info) return;
+        info.price = bossWelfarePriceForLevel(info);
+        const el = card.querySelector('.product-price');
+        if (el) el.textContent = '福利價 $' + info.price.toLocaleString();
+    });
 
     Object.keys(cart).forEach(id => {
         const qty = cart[id];
@@ -12931,12 +12952,7 @@ function updateCartSummary() {
         let itemRealPrice = 0;
 
         if (productConfig[id] && productConfig[id]._isWelfare) {
-            let rate = 1;
-            if (isLoggedIn && typeof DEPT_MEMBER_LEVEL_SETTINGS !== 'undefined') {
-                const levelSetting = DEPT_MEMBER_LEVEL_SETTINGS[activeLevel] || DEPT_MEMBER_LEVEL_SETTINGS[activeLevel === '極VIP' ? '頂極VIP' : activeLevel];
-                if (levelSetting) rate = Number(levelSetting.discountRate) || 1;
-            }
-            itemRealPrice = Math.max(0, Math.round(productConfig[id]._originalPrice * rate) - 20);
+            itemRealPrice = bossWelfarePriceForLevel(productConfig[id]);
             productConfig[id].price = itemRealPrice;
         } else if (id.includes('_') && productConfig[id] && productConfig[id]._isSpecialSku) {
             if (/^W24_UP_/.test(id)) {
@@ -13100,7 +13116,8 @@ function bossRenderWelfareProducts(items) {
         const price = Math.max(20, Number(item.price) || 0);
         if (!item.active || !['美睫','熱蠟','紋繡'].includes(item.category)) return;
         available.add(id);
-        productConfig[id] = {name: String(item.name || ''), price:price - 20, _originalPrice:price,
+        productConfig[id] = {name: '【福利品】' + id + ' ' + String(item.name || '') + (item.spec ? ' ' + String(item.spec) : ''),
+            price:price - 20, _originalPrice:price, _sourceProductId:String(item.originalId || '').trim().toUpperCase(),
             _isWelfare:true, backendStockKey:id, max:qty};
         const card = document.createElement('div');
         card.className = 'product-item boss-welfare-item';
