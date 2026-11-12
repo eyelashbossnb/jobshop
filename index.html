@@ -1068,6 +1068,16 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 #boss-welfare-notice .boss-notice-heading,#boss-vip-notice .boss-notice-heading{display:flex;align-items:center;gap:9px;font-size:18px;font-weight:700;line-height:1.5;color:var(--text-main);margin-bottom:12px;letter-spacing:.04em}
 .boss-notice-heading-icon{display:inline-flex;align-items:center;justify-content:center;font-size:21px;line-height:1;flex:none}
 @media(max-width:768px){#boss-welfare-notice .boss-notice-heading,#boss-vip-notice .boss-notice-heading{font-size:17px}.boss-notice-heading-icon{font-size:20px}}
+
+/* 藍新金流消費者權益政策專區 */
+.boss-legal-footer{max-width:1200px;margin:24px auto 35px;padding:24px 20px;border-top:1px solid var(--border-color);text-align:center;box-sizing:border-box;color:var(--text-main)}
+.boss-legal-footer h2{font-size:17px;margin:0 0 14px}.boss-legal-links{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 22px}
+.boss-legal-links button{border:0;background:none;color:#8a655d;font:inherit;font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:5px}
+.boss-legal-links button:hover{color:var(--accent-color)}.boss-legal-footer p{font-size:12px;color:var(--text-muted);margin:14px 0 0}
+#boss-legal-overlay{position:fixed;inset:0;background:rgba(40,32,30,.62);z-index:9000;display:none;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
+#boss-legal-overlay.open{display:flex}.boss-legal-panel{position:relative;width:min(720px,100%);max-height:90dvh;overflow:auto;background:#fffdfb;border-radius:16px;padding:26px 30px;box-sizing:border-box;box-shadow:0 16px 50px #0003;text-align:left}
+.boss-legal-panel h2{font-size:21px;margin:0 42px 18px 0}.boss-legal-panel h3{font-size:15px;margin:22px 0 7px;color:#6b4c43}.boss-legal-panel p{font-size:13px;line-height:1.95;margin:0 0 10px;white-space:normal}.boss-legal-close{position:absolute;right:15px;top:12px;border:0;background:transparent;color:#806b60;font-size:28px;cursor:pointer}
+@media(max-width:768px){.boss-legal-footer{margin-bottom:100px;padding:22px 15px}.boss-legal-panel{padding:23px 19px}.boss-legal-links{gap:8px 12px}}
 </style>
 </head>
 <body>
@@ -15929,6 +15939,24 @@ function bossValidateShippingAddress(type, raw) {
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bossShippingChanged);
 else bossShippingChanged();
+</script>
+
+<footer class="boss-legal-footer" aria-label="顧客服務與消費者權益"><h2>顧客服務｜消費者權益</h2><div class="boss-legal-links"><button type="button" onclick="bossOpenLegal(0)">購物須知</button><button type="button" onclick="bossOpenLegal(1)">服務條款</button><button type="button" onclick="bossOpenLegal(2)">隱私權政策</button><button type="button" onclick="bossOpenLegal(3)">退款／退換貨政策</button><button type="button" onclick="bossOpenLegal(4)">消費糾紛處理方式</button></div><p>睫老闆美妝百貨有限公司｜客服電話 03-3588-280｜週一至週五 08:30–17:30</p></footer>
+<div id="boss-legal-overlay" role="dialog" aria-modal="true" aria-labelledby="boss-legal-title" onclick="if(event.target===this)bossCloseLegal()"><div class="boss-legal-panel"><button type="button" class="boss-legal-close" aria-label="關閉政策視窗" onclick="bossCloseLegal()">×</button><h2 id="boss-legal-title"></h2><div id="boss-legal-content"></div></div></div>
+<script>
+/* 顧客服務政策閱讀視窗，與原有結帳功能獨立 */
+const bossLegalTitles = ["購物須知", "服務條款", "隱私權政策", "退款／退換貨政策", "消費糾紛處理方式"];
+const bossLegalHtml = ["<section><h3>訂購方式</h3><p>請於官網選擇商品及規格、確認購物車內容，填寫收件資料、配送與付款方式後送出訂單。訂單是否成立及出貨狀態，以本公司實際確認結果為準。</p></section><section><h3>商品價格與優惠</h3><p>商品售價、會員折扣、優惠券及滿額贈活動，以結帳頁面顯示及活動規則為準；實際結帳前請確認金額。</p></section><section><h3>付款與配送</h3><p>本網站依會員資格及配送地區提供可選擇的付款與配送方式，包含網站實際開放之付款選項。運費及適用條件以結帳頁面揭露資訊為準。</p></section><section><h3>發票</h3><p>請依結帳頁面選擇發票方式，需開立統一編號或三聯式發票者，請正確填寫相關資料。</p></section><section><h3>商品與訂單疑問</h3><p>如需修改訂單、確認庫存或配送情形，請儘速於客服時間聯繫本公司。</p></section><section><h3>客服及聯絡資訊</h3><p>睫老闆美妝百貨有限公司<br>客服電話：03-3588-280<br>客服專線：0909-998-988<br>官方 LINE：@ebnb<br>服務時間：週一至週五 08:30～17:30<br>退換貨聯繫地址：330 桃園市桃園區經國路859號9樓之1</p><p>相關事項請先聯繫客服確認。本頁內容如與強制或禁止規定牴觸，依相關法令辦理。</p></section>", "<section><h3>適用範圍</h3><p>使用睫老闆美妝百貨有限公司網站購物、註冊會員或使用相關服務，即適用本服務條款；消費者依法享有之權利不受本條款限制。</p></section><section><h3>會員資料</h3><p>註冊及訂購時請提供真實、完整資料，並妥善保管登入資訊。如發現帳號異常，請聯繫客服。</p></section><section><h3>商品及訂單</h3><p>商品資訊、售價、庫存及優惠以網站實際揭露為準。遇缺貨、資料錯誤或其他無法履約情形，本公司將主動聯繫並依法協商處理。</p></section><section><h3>會員與優惠</h3><p>會員等級、有效期間、折扣、優惠券及活動贈品依網站公告及各活動條件辦理。會員資格終止或到期後之權益依購買時約定及相關法律處理。</p></section><section><h3>儲值金與付費會籍</h3><p>儲值金可使用範圍、餘額及使用紀錄以會員帳戶顯示及實際交易紀錄為準。儲值金及付費會籍之取消、終止與退款，依交易時約定及相關法令個案處理，不以本條款排除法定權利。</p></section><section><h3>網站使用</h3><p>請勿以不法方式干擾網站、冒用他人資料或侵害他人權益。網站內容及商品圖文之權利依相關法令保護。</p></section><section><h3>條款變更</h3><p>如有條款更新，將於網站公告；已成立交易之權益不因單方修改而受到不當影響。</p></section><section><h3>客服及聯絡資訊</h3><p>睫老闆美妝百貨有限公司<br>客服電話：03-3588-280<br>客服專線：0909-998-988<br>官方 LINE：@ebnb<br>服務時間：週一至週五 08:30～17:30<br>退換貨聯繫地址：330 桃園市桃園區經國路859號9樓之1</p><p>相關事項請先聯繫客服確認。本頁內容如與強制或禁止規定牴觸，依相關法令辦理。</p></section>", "<section><h3>蒐集資料及目的</h3><p>為辦理會員註冊、訂單、付款、配送、客服、退換貨及依法應辦事項，本公司可能蒐集姓名、電話、電子郵件、配送地址、發票資料、訂單與交易紀錄及會員使用紀錄。</p></section><section><h3>使用與提供對象</h3><p>個人資料僅於上述目的及必要範圍內使用；為完成交易，可能提供必要資料予金流服務商、物流業者及協助網站維運之服務提供者，並依法律要求提供予主管機關。</p></section><section><h3>付款資料</h3><p>線上付款由合作金流服務商依其交易流程處理；請勿透過一般客服訊息傳送完整信用卡號或安全碼。</p></section><section><h3>資料保護及保存</h3><p>本公司採取合理之資料安全管理措施，並依業務需求、契約及法定保存期限保存資料；保存目的消失或期限屆滿時依法處理。</p></section><section><h3>當事人權利</h3><p>您可依個人資料保護法，就個人資料請求查詢、閱覽、製給複製本、補充、更正、停止蒐集處理利用或刪除；法律另有規定者從其規定。請透過下方客服管道提出申請。</p></section><section><h3>外部服務</h3><p>本網站可能連結第三方付款或其他服務；其資料處理方式請參閱該服務提供者之政策。</p></section><section><h3>政策更新</h3><p>本政策如有修訂，將公布於本網站。</p></section><section><h3>客服及聯絡資訊</h3><p>睫老闆美妝百貨有限公司<br>客服電話：03-3588-280<br>客服專線：0909-998-988<br>官方 LINE：@ebnb<br>服務時間：週一至週五 08:30～17:30<br>退換貨聯繫地址：330 桃園市桃園區經國路859號9樓之1</p><p>相關事項請先聯繫客服確認。本頁內容如與強制或禁止規定牴觸，依相關法令辦理。</p></section>", "<section><h3>七日解除權</h3><p>消費者於本網站進行適用消費者保護法之通訊交易，除法律規定之例外情形外，得於收受商品後七日內依法解除契約，無須說明理由，亦無須負擔依法解除契約之退回運費。七日鑑賞期並非試用期。</p></section><section><h3>退貨商品及例外</h3><p>請儘量妥善保存商品、配件與包裝，以利確認。必要檢查所為之拆封，不當然喪失法定解除權；若有超出必要檢查之使用或損壞，依法律規定處理。依法屬於例外之商品，須符合規定並於購買前明確告知，始得排除七日解除權。出清、特價或福利品不因其名稱而當然排除法定退貨權利。</p></section><section><h3>非瑕疵商品換貨</h3><p>因買錯款式、捲度、粗度、長度或其他個人因素申請換貨，請於收到商品後七天內聯繫客服。換貨商品應保持全新未使用及完整商品、配件與包裝。請自行將商品寄回並支付寄回運費，包裹內另附新臺幣100元，作為本公司重新寄出換貨商品之運費；此為自願性換貨服務規則，不適用依法行使七日解除權之退貨。</p></section><section><h3>瑕疵、短缺或寄錯商品</h3><p>若收到瑕疵、規格錯誤、數量短缺或寄錯商品，請聯繫客服並提供訂單資料及必要照片，以利確認；經確認屬本公司責任者，必要退換貨運費由本公司負擔，並依法處理。</p></section><section><h3>申請方式</h3><p>請先透過官方 LINE 或客服電話聯繫，提供訂單編號、商品名稱與申請需求；客服將說明寄回方式及後續流程。</p></section><section><h3>作業與退款</h3><p>一般退換貨處理時間預計約七至十個工作天，惟依法解除契約之退款及取回商品仍依相關法定期限辦理。刷卡退款原則上透過原交易管道處理，實際入帳依金流及發卡銀行作業時間而定。</p></section><section><h3>儲值金及付費會籍</h3><p>儲值金與付費會籍涉及不同交易性質，其取消、退款及剩餘權益，請先聯繫客服確認購買時條件，並依適用法律辦理。</p></section><section><h3>客服及聯絡資訊</h3><p>睫老闆美妝百貨有限公司<br>客服電話：03-3588-280<br>客服專線：0909-998-988<br>官方 LINE：@ebnb<br>服務時間：週一至週五 08:30～17:30<br>退換貨聯繫地址：330 桃園市桃園區經國路859號9樓之1</p><p>相關事項請先聯繫客服確認。本頁內容如與強制或禁止規定牴觸，依相關法令辦理。</p></section>", "<section><h3>客服申訴</h3><p>如對商品、付款、配送、退款、會員或其他交易事項有疑問或爭議，請先聯繫客服，並提供訂單編號、交易日期、問題說明及必要資料。</p></section><section><h3>處理程序</h3><p>本公司收到申訴後將確認相關訂單與事實，於客服時間內儘速回覆，必要時與物流、金流或其他相關單位查核，並提出處理方式。</p></section><section><h3>消費者救濟</h3><p>消費者得依消費者保護法向企業經營者提出申訴；未獲妥適處理時，可向所在地消費者服務中心、消費者保護官或消費爭議調解委員會尋求協助。亦可撥打1950消費者服務專線諮詢。</p></section><section><h3>權利保障</h3><p>本公司將依中華民國相關法律及個案交易資料處理爭議；本政策不限制消費者依法享有的權利。</p></section><section><h3>客服及聯絡資訊</h3><p>睫老闆美妝百貨有限公司<br>客服電話：03-3588-280<br>客服專線：0909-998-988<br>官方 LINE：@ebnb<br>服務時間：週一至週五 08:30～17:30<br>退換貨聯繫地址：330 桃園市桃園區經國路859號9樓之1</p><p>相關事項請先聯繫客服確認。本頁內容如與強制或禁止規定牴觸，依相關法令辦理。</p></section>"];
+function bossOpenLegal(index){
+ if(!Number.isInteger(index)||index<0||index>=bossLegalTitles.length)return;
+ document.getElementById('boss-legal-title').textContent=bossLegalTitles[index];
+ document.getElementById('boss-legal-content').innerHTML=bossLegalHtml[index];
+ const overlay=document.getElementById('boss-legal-overlay');overlay.classList.add('open');
+ overlay.querySelector('.boss-legal-panel').scrollTop=0;
+ overlay.querySelector('.boss-legal-close').focus();
+}
+function bossCloseLegal(){document.getElementById('boss-legal-overlay').classList.remove('open');}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLegal();});
 </script>
 </body>
 </html>
