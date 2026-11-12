@@ -1078,6 +1078,13 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 #boss-legal-overlay.open{display:flex}.boss-legal-panel{position:relative;width:min(720px,100%);max-height:90dvh;overflow:auto;background:#fffdfb;border-radius:16px;padding:26px 30px;box-sizing:border-box;box-shadow:0 16px 50px #0003;text-align:left}
 .boss-legal-panel h2{font-size:21px;margin:0 42px 18px 0}.boss-legal-panel h3{font-size:15px;margin:22px 0 7px;color:#6b4c43}.boss-legal-panel p{font-size:13px;line-height:1.95;margin:0 0 10px;white-space:normal}.boss-legal-close{position:absolute;right:15px;top:12px;border:0;background:transparent;color:#806b60;font-size:28px;cursor:pointer}
 @media(max-width:768px){.boss-legal-footer{margin-bottom:100px;padding:22px 15px}.boss-legal-panel{padding:23px 19px}.boss-legal-links{gap:8px 12px}}
+/* 門市聯絡資訊：電腦版雙欄，手機版單欄 */
+.boss-store-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px auto 0;max-width:820px;text-align:left}
+.boss-store-item{padding:16px 20px;border:1px solid var(--border-color);border-radius:12px;background:#fff;font-size:12px;line-height:2;color:var(--text-muted)}
+.boss-store-item strong{display:block;font-size:14px;color:var(--text-main);margin-bottom:5px}
+.boss-store-item a{color:#8a655d;text-decoration:none}
+.boss-store-item a:hover{text-decoration:underline}
+@media(max-width:600px){.boss-store-list{grid-template-columns:1fr;gap:10px}.boss-store-item{padding:13px 15px}}
 </style>
 </head>
 <body>
@@ -15941,7 +15948,11 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 else bossShippingChanged();
 </script>
 
-<footer class="boss-legal-footer" aria-label="顧客服務與消費者權益"><h2>顧客服務｜消費者權益</h2><div class="boss-legal-links"><button type="button" onclick="bossOpenLegal(0)">購物須知</button><button type="button" onclick="bossOpenLegal(1)">服務條款</button><button type="button" onclick="bossOpenLegal(2)">隱私權政策</button><button type="button" onclick="bossOpenLegal(3)">退款／退換貨政策</button><button type="button" onclick="bossOpenLegal(4)">消費糾紛處理方式</button></div><p>睫老闆美妝百貨有限公司｜客服電話 03-3588-280｜週一至週五 08:30–17:30</p></footer>
+<footer class="boss-legal-footer" aria-label="顧客服務與消費者權益"><h2>顧客服務｜消費者權益</h2><div class="boss-legal-links"><button type="button" onclick="bossOpenLegal(0)">購物須知</button><button type="button" onclick="bossOpenLegal(1)">服務條款</button><button type="button" onclick="bossOpenLegal(2)">隱私權政策</button><button type="button" onclick="bossOpenLegal(3)">退款／退換貨政策</button><button type="button" onclick="bossOpenLegal(4)">消費糾紛處理方式</button></div><p>睫老闆美妝百貨有限公司</p>
+<div class="boss-store-list">
+  <div class="boss-store-item"><strong>桃園經國門市</strong><div>地址：桃園市桃園區經國路859號9樓之1</div><div>服務電話：<a href="tel:033588280">03-3588-280</a></div><div>服務時間：週一至週五 08:30–17:30</div></div>
+  <div class="boss-store-item"><strong>台中一中門市</strong><div>地址：台中市北區一中街160-12號2樓</div><div>服務電話：<a href="tel:0919047333">0919-047-333</a></div><div>營業時間：週二至週日 13:00–21:00（週一公休）</div></div>
+</div></footer>
 <div id="boss-legal-overlay" role="dialog" aria-modal="true" aria-labelledby="boss-legal-title" onclick="if(event.target===this)bossCloseLegal()"><div class="boss-legal-panel"><button type="button" class="boss-legal-close" aria-label="關閉政策視窗" onclick="bossCloseLegal()">×</button><h2 id="boss-legal-title"></h2><div id="boss-legal-content"></div></div></div>
 <script>
 /* 顧客服務政策閱讀視窗，與原有結帳功能獨立 */
