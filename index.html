@@ -1085,6 +1085,38 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 .boss-store-item a{color:#8a655d;text-decoration:none}
 .boss-store-item a:hover{text-decoration:underline}
 @media(max-width:600px){.boss-store-list{grid-template-columns:1fr;gap:10px}.boss-store-item{padding:13px 15px}}
+
+/* 手機底部操作列：購物車與快速導覽獨立雙按鈕 */
+.boss-mobile-nav-actions{display:none}
+@media(max-width:768px){
+  #mobile-quick-nav{width:calc(100% - 24px);right:12px;max-width:none}
+  .boss-mobile-nav-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+  #mobile-quick-nav #boss-mobile-cart-jump,
+  #mobile-quick-nav #mobile-floating-checkout{
+    position:static;display:flex;align-items:center;justify-content:center;
+    width:100%;min-width:0;min-height:48px;box-sizing:border-box;
+    border:0;border-radius:28px;background:var(--accent-color);color:#fff;
+    font-size:14px;font-weight:600;gap:7px;cursor:pointer;
+    box-shadow:0 4px 18px rgba(74,63,53,.23);padding:8px 7px;
+  }
+  #mobile-quick-nav #mobile-cart-count{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:23px;height:23px;padding:0 5px;box-sizing:border-box;
+    background:#fff;color:#c77c70;border-radius:999px;font-size:12px;font-weight:700;
+  }
+  #mobile-quick-menu{margin-bottom:9px}
+}
+</style>
+<style id="boss-mobile-cart-popup-style">
+#boss-mobile-cart-popup[hidden]{display:none!important}
+#boss-mobile-cart-popup{background:#fff;border:1px solid #e8dcd6;border-radius:14px;box-shadow:0 7px 24px #0002;margin-bottom:10px;overflow:hidden;color:#4a3f35;text-align:left}
+.boss-mobile-cart-popup-head{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid #f1eae4;font-size:14px}
+.boss-mobile-cart-popup-head button{border:0;background:#faf2ef;border-radius:7px;width:32px;height:29px;font-size:22px;color:#9d6c62;cursor:pointer;line-height:1}
+.boss-mobile-cart-popup-items{max-height:min(42vh,320px);overflow-y:auto;padding:8px 12px;font-size:12px}
+.boss-mobile-cart-popup-items .cart-item{flex-wrap:wrap;gap:8px}.boss-mobile-cart-popup-items .cart-item-info{max-width:100%;flex:1 1 100%;font-size:12px}.boss-mobile-cart-popup-items .cart-item-actions{width:100%;justify-content:flex-end}
+.boss-mobile-cart-popup-items .empty-cart-text{text-align:center;padding:25px 8px;color:#8a7e72}
+.boss-mobile-cart-checkout{width:calc(100% - 24px);margin:8px 12px 12px;padding:11px;border:0;border-radius:22px;background:#e8a598;color:white;font-weight:600;cursor:pointer}
+@media(min-width:769px){#boss-mobile-cart-popup{display:none!important}}
 </style>
 </head>
 <body>
@@ -1106,17 +1138,26 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 </header>
 
 <nav id="mobile-quick-nav" aria-label="手機快速導覽">
+    <section id="boss-mobile-cart-popup" hidden aria-label="購物車預覽">
+      <div class="boss-mobile-cart-popup-head"><strong>🛒 購物車</strong><button type="button" onclick="toggleBossMobileCart(false)" aria-label="收合購物車" title="收合購物車">－</button></div>
+      <div id="boss-mobile-cart-popup-items" class="boss-mobile-cart-popup-items">購物車沒有加入任何商品</div>
+      <button type="button" class="boss-mobile-cart-checkout" onclick="toggleBossMobileCart(false);mobileQuickGo('form')">前往結帳</button>
+    </section>
     <div id="mobile-quick-menu" hidden>
         <button type="button" onclick="mobileQuickGo('search')">🔍 搜尋商品</button>
         <button type="button" onclick="mobileQuickGo('categories')">📦 商品分類</button>
-        <button type="button" onclick="mobileQuickGo('cart')">🛒 商品明細</button>
         <button type="button" onclick="mobileQuickGo('form')">📝 填寫收件資料</button>
         <button type="button" onclick="mobileQuickGo('balance')">💰 儲值金使用紀錄</button>
         <button type="button" onclick="mobileQuickGo('top')">⬆️ 返回頁首</button>
     </div>
-    <button id="mobile-floating-checkout" type="button" onclick="toggleMobileQuickNav()" aria-expanded="false" aria-controls="mobile-quick-menu">
-        <span>☰</span><span>快速導覽</span><span id="mobile-cart-count">0</span>
-    </button>
+    <div class="boss-mobile-nav-actions">
+        <button id="boss-mobile-cart-jump" type="button" onclick="toggleBossMobileCart()" aria-label="展開購物車" aria-expanded="false" aria-controls="boss-mobile-cart-popup">
+            <span>🛒</span><span>購物車</span><span id="mobile-cart-count">0</span>
+        </button>
+        <button id="mobile-floating-checkout" type="button" onclick="toggleMobileQuickNav()" aria-expanded="false" aria-controls="mobile-quick-menu">
+            <span>☰</span><span>快速導覽</span>
+        </button>
+    </div>
 </nav>
 
 <style id="boss-promo-v5-layout">
@@ -14634,11 +14675,36 @@ function goToMobileCart() {
 </script>
 
 <script>
+function syncBossMobileCartPopup(){
+    const source=document.getElementById('cart-items-container');
+    const target=document.getElementById('boss-mobile-cart-popup-items');
+    if(!source||!target)return;
+    target.innerHTML=source.innerHTML||'<div class="empty-cart-text">購物車沒有加入任何商品</div>';
+    const checkout=document.querySelector('.boss-mobile-cart-checkout');
+    if(checkout)checkout.hidden=!Object.values(window.cart||cart||{}).some(q=>Number(q)>0);
+}
+function toggleBossMobileCart(force){
+    const popup=document.getElementById('boss-mobile-cart-popup');
+    const trigger=document.getElementById('boss-mobile-cart-jump');
+    if(!popup||!trigger)return;
+    const show=typeof force==='boolean'?force:popup.hidden;
+    if(show){toggleMobileQuickNav(false);syncBossMobileCartPopup();}
+    popup.hidden=!show;
+    trigger.setAttribute('aria-expanded',String(show));
+}
+document.addEventListener('DOMContentLoaded',()=>{
+    const source=document.getElementById('cart-items-container');
+    if(source){new MutationObserver(()=>{
+        const popup=document.getElementById('boss-mobile-cart-popup');
+        if(popup&&!popup.hidden)syncBossMobileCartPopup();
+    }).observe(source,{childList:true,subtree:true,characterData:true,attributes:true});}
+});
 function toggleMobileQuickNav(force) {
     const menu=document.getElementById('mobile-quick-menu');
     const trigger=document.getElementById('mobile-floating-checkout');
     if (!menu || !trigger) return;
     const show=(typeof force==='boolean')?force:menu.hidden;
+    if(show)toggleBossMobileCart(false);
     menu.hidden=!show;
     trigger.setAttribute('aria-expanded',String(show));
 }
