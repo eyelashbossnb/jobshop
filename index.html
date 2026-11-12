@@ -1086,23 +1086,39 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 .boss-store-item a:hover{text-decoration:underline}
 @media(max-width:600px){.boss-store-list{grid-template-columns:1fr;gap:10px}.boss-store-item{padding:13px 15px}}
 
-/* 手機底部操作列：購物車與快速導覽獨立雙按鈕 */
+/* 手機底部操作列：維持原始快速導覽尺寸，單一膠囊內 2:1 分區 */
 .boss-mobile-nav-actions{display:none}
 @media(max-width:768px){
-  #mobile-quick-nav{width:calc(100% - 24px);right:12px;max-width:none}
-  .boss-mobile-nav-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+  /* 沿用原始 230px 寬度、右側 12px、底部定位 */
+  #mobile-quick-nav{width:min(230px,calc(100vw - 24px));right:12px;max-width:none}
+  .boss-mobile-nav-actions{
+    display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);
+    gap:0;width:100%;min-height:48px;overflow:hidden;
+    border-radius:999px;background:rgba(232,165,152,.85);
+    box-shadow:0 4px 18px rgba(74,63,53,.23);
+  }
   #mobile-quick-nav #boss-mobile-cart-jump,
   #mobile-quick-nav #mobile-floating-checkout{
     position:static;display:flex;align-items:center;justify-content:center;
     width:100%;min-width:0;min-height:48px;box-sizing:border-box;
-    border:0;border-radius:28px;background:var(--accent-color);color:#fff;
-    font-size:14px;font-weight:600;gap:7px;cursor:pointer;
-    box-shadow:0 4px 18px rgba(74,63,53,.23);padding:8px 7px;
+    border:0;border-radius:0;background:transparent;color:#fff;
+    font-size:13px;font-weight:600;gap:5px;cursor:pointer;
+    box-shadow:none;padding:8px 4px;
   }
+  /* 白色分隔線：清楚區分兩個點擊區域，且不改變外框尺寸 */
+  #mobile-quick-nav #mobile-floating-checkout{position:relative}
+  #mobile-quick-nav #mobile-floating-checkout::before{
+    content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+    width:2px;height:26px;background:#fff;border-radius:2px;
+  }
+  #mobile-quick-nav #boss-mobile-cart-jump .boss-mobile-cart-amount{
+    font-size:12px;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums;
+  }
+  #mobile-quick-nav #mobile-floating-checkout .boss-nav-icon{font-size:24px;line-height:1}
   #mobile-quick-nav #mobile-cart-count{
     display:inline-flex;align-items:center;justify-content:center;
-    min-width:23px;height:23px;padding:0 5px;box-sizing:border-box;
-    background:#fff;color:#c77c70;border-radius:999px;font-size:12px;font-weight:700;
+    min-width:21px;height:21px;padding:0 4px;box-sizing:border-box;
+    background:#fff;color:#c77c70;border-radius:999px;font-size:11px;font-weight:700;
   }
   #mobile-quick-menu{margin-bottom:9px}
 }
@@ -1151,11 +1167,11 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
         <button type="button" onclick="mobileQuickGo('top')">⬆️ 返回頁首</button>
     </div>
     <div class="boss-mobile-nav-actions">
-        <button id="boss-mobile-cart-jump" type="button" onclick="toggleBossMobileCart()" aria-label="展開購物車" aria-expanded="false" aria-controls="boss-mobile-cart-popup">
-            <span>🛒</span><span>購物車</span><span id="mobile-cart-count">0</span>
+        <button id="boss-mobile-cart-jump" type="button" onclick="toggleBossMobileCart()" aria-label="展開購物車明細" aria-expanded="false" aria-controls="boss-mobile-cart-popup">
+            <span aria-hidden="true">🛒</span><span id="mobile-cart-count">0</span><span id="boss-mobile-cart-amount" class="boss-mobile-cart-amount">NT$ 0</span>
         </button>
-        <button id="mobile-floating-checkout" type="button" onclick="toggleMobileQuickNav()" aria-expanded="false" aria-controls="mobile-quick-menu">
-            <span>☰</span><span>快速導覽</span>
+        <button id="mobile-floating-checkout" type="button" onclick="toggleMobileQuickNav()" aria-label="快速導覽" title="快速導覽" aria-expanded="false" aria-controls="mobile-quick-menu">
+            <span class="boss-nav-icon" aria-hidden="true">☰</span>
         </button>
     </div>
 </nav>
@@ -13135,6 +13151,8 @@ function updateCartSummary() {
 
     if(document.getElementById('total-qty')) document.getElementById('total-qty').innerText = `${totalQty} 件`;
     if(document.getElementById('subtotal-price')) document.getElementById('subtotal-price').innerText = `$${subtotal.toLocaleString()}`;
+    const bossMobileAmount = document.getElementById('boss-mobile-cart-amount');
+    if (bossMobileAmount) bossMobileAmount.textContent = `NT$ ${subtotal.toLocaleString()}`;
     if(document.getElementById('shipping-fee')) {
         document.getElementById('shipping-fee').innerText = shippingText;
         document.getElementById('shipping-fee').style.color = shippingText.includes("免運") ? "var(--accent-color)" : "var(--text-main)";
