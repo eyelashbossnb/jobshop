@@ -9737,7 +9737,7 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 
                 <div class="form-group">
                     <label for="shipping">配送方式</label>
-                    <select id="shipping" class="form-control" onchange="updateCartSummary()">
+                    <select id="shipping" class="form-control" onchange="bossShippingChanged(); updateCartSummary()">
                         <option value="" selected disabled>請選擇配送方式</option>
                         <option value="normal">常溫宅配</option>
                         <option value="cvs">7-11店到店</option>
@@ -9747,10 +9747,10 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                         <option value="sf-hk" hidden disabled>順豐速運(運費到付)</option>
                     </select>
                 </div>
-<div class="form-group">
-    <label for="address">配送地址 / 7-11取貨門市</label>
-    <input type="text" id="address" class="form-control"
-           placeholder="請輸入完整外送收件地址（若選7-11店到店請填店號/門市名稱）">
+<div class="form-group" id="boss-address-group">
+    <label for="address" id="boss-address-label">請先選擇配送方式</label>
+    <input type="text" id="address" class="form-control" autocomplete="off" placeholder="請先選擇配送方式" disabled>
+    <div id="boss-address-hint" style="font-size:12px;color:var(--text-muted);margin-top:7px;line-height:1.6">選擇配送方式後，才會顯示對應的填寫說明。</div>
 </div>
 
                 <div class="form-group">
@@ -13849,7 +13849,7 @@ async function submitOrder(evt) {
     const customerName = document.getElementById('name')?.value?.trim() || "";
     const customerPhone = document.getElementById('phone')?.value?.trim() || "";
     const customerLine = document.getElementById('lineid')?.value?.trim() || "無";
-    const customerAddress = document.getElementById('address')?.value?.trim() || "";
+    const customerAddress = document.getElementById('shipping')?.value === 'store-pickup' ? '門市自取' : (document.getElementById('address')?.value?.trim() || '');
     const companyTitle = document.getElementById('company-title')?.value?.trim() || "無";
     const taxId = document.getElementById('tax-id')?.value?.trim() || "無";
     const orderNotes = document.getElementById('notes')?.value?.trim() || "無備註";
@@ -13860,8 +13860,14 @@ async function submitOrder(evt) {
     const shippingElement = document.getElementById('shipping');
     const shippingMethod = shippingElement && shippingElement.value ? shippingElement.options[shippingElement.selectedIndex].text : "未指定";
 
-    if (!customerName || !customerPhone || !customerAddress) {
-        alert("❌ 送出失敗：請完整填寫收件人「姓名」、「電話」與「配送地址 / 取貨門市」！");
+    if (!customerName || !customerPhone) {
+        alert('請完整填寫收件人姓名與電話。');
+        return;
+    }
+    const shippingValidation = bossValidateShippingAddress(shippingElement?.value || '', customerAddress);
+    if (!shippingValidation.ok) {
+        alert(shippingValidation.message);
+        document.getElementById('address')?.focus();
         return;
     }
 
@@ -15858,6 +15864,68 @@ function bossCloseOrderSuccessModal() {
 function bossCouponHelpOpen(){var el=document.getElementById('boss-coupon-help-overlay');if(el){el.classList.add('open');document.addEventListener('keydown',bossCouponHelpEscape);}}
 function bossCouponHelpClose(){var el=document.getElementById('boss-coupon-help-overlay');if(el)el.classList.remove('open');document.removeEventListener('keydown',bossCouponHelpEscape);}
 function bossCouponHelpEscape(e){if(e.key==='Escape')bossCouponHelpClose();}
+
+/* 配送方式連動：保留既有 #shipping / #address 與後台寫入格式 */
+let bossPreviousShippingType = '';
+const bossShippingDrafts = Object.create(null);
+function bossShippingChanged() {
+  const select = document.getElementById('shipping');
+  const field = document.getElementById('address');
+  const group = document.getElementById('boss-address-group');
+  const label = document.getElementById('boss-address-label');
+  const hint = document.getElementById('boss-address-hint');
+  if (!select || !field || !group || !label || !hint) return;
+  const type = select.value;
+  if (bossPreviousShippingType && bossPreviousShippingType !== type) {
+    bossShippingDrafts[bossPreviousShippingType] = field.value;
+  }
+  if (bossPreviousShippingType !== type) {
+    field.value = bossShippingDrafts[type] || '';
+  }
+  bossPreviousShippingType = type;
+  group.style.display = type === 'store-pickup' ? 'none' : '';
+  field.disabled = !type || type === 'store-pickup';
+  field.required = !!type && type !== 'store-pickup';
+  if (type === 'cvs') {
+    label.textContent = '7-11 取貨門市名稱或店號（必填）';
+    field.placeholder = '例如：○○門市 或 6位數門市店號';
+    hint.textContent = '只需填寫 7-11 門市名稱或店號，請勿填寫住家地址。';
+    field.autocomplete = 'off';
+  } else if (type === 'normal' || type === 'blackcat' || type === 'blackcat-cold') {
+    label.textContent = '完整宅配收件地址（必填）';
+    field.placeholder = '例如：桃園市桃園區中正路100號3樓';
+    hint.textContent = '請填寫縣市、鄉鎮市區、路街及門牌號碼，公寓請加註樓層。';
+    field.autocomplete = 'street-address';
+  } else if (type === 'sf-hk') {
+    label.textContent = '配送地址（必填）';
+    field.placeholder = '請輸入完整配送地址';
+    hint.textContent = '請填寫完整收件地址。';
+    field.autocomplete = 'street-address';
+  } else {
+    label.textContent = '配送地址 / 7-11取貨門市';
+    field.placeholder = '請先選擇配送方式';
+    hint.textContent = '選擇配送方式後，才會顯示對應的填寫說明。';
+  }
+}
+function bossValidateShippingAddress(type, raw) {
+  const value = String(raw || '').trim();
+  if (type === 'store-pickup') return {ok:true};
+  if (!type) return {ok:false,message:'請先選擇配送方式。'};
+  if (type === 'cvs') {
+    if (!value) return {ok:false,message:'請填寫 7-11 取貨門市名稱或店號。'};
+    if (/^\d+$/.test(value)) return /^\d{6}$/.test(value) ? {ok:true} : {ok:false,message:'7-11 門市店號請輸入6位數；或填寫門市名稱。'};
+    if (value.length < 2 || /(?:路|街|巷|弄).{0,15}\d+號|(?:縣|市).*(?:區|鄉|鎮).*(?:路|街)/.test(value)) return {ok:false,message:'請填寫 7-11 門市名稱或6位數店號，不要填寫住家地址。'};
+    return {ok:true};
+  }
+  if (!value) return {ok:false,message:'請填寫完整宅配收件地址。'};
+  if (type === 'sf-hk') return {ok:true}; // 保留原本專屬配送，不套用台灣地址格式檢查
+  if (value.length < 9 || !/[縣市]/.test(value) || !/[區鄉鎮市]/.test(value) || !/(?:路|街|道|村|里)/.test(value) || !/\d/.test(value)) {
+    return {ok:false,message:'宅配地址不完整，請填寫縣市、鄉鎮市區、路街及門牌號碼。'};
+  }
+  return {ok:true};
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bossShippingChanged);
+else bossShippingChanged();
 </script>
 </body>
 </html>
