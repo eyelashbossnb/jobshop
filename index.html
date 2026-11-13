@@ -16135,7 +16135,10 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
   const target=document.getElementById('boss-dealer-list');
   let loaded=false, loading=false;
   const api=GAS_API_URL+(GAS_API_URL.includes('?')?'&':'?')+'action=dealer_list';
-  const cities=new Intl.Collator('zh-TW');
+  // 台灣縣市依地理位置由北至南（含離島），並統一「台／臺」字形
+  const cityOrder=['基隆市','臺北市','新北市','桃園市','新竹市','新竹縣','苗栗縣','臺中市','彰化縣','南投縣','雲林縣','嘉義市','嘉義縣','臺南市','高雄市','屏東縣','宜蘭縣','花蓮縣','臺東縣','澎湖縣','金門縣','連江縣'];
+  const normalizeCity=city=>String(city||'其他地區').trim().replace(/^台/,'臺')||'其他地區';
+  const cityRank=city=>{const i=cityOrder.indexOf(city);return i<0?999:i;};
   function addLine(parent,value,prefix){
     if(!value)return;
     const div=document.createElement('div');
@@ -16154,11 +16157,11 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
         if(!data.dealers.length){target.textContent='目前尚無公開的授權合作經銷商。';loaded=true;return;}
         const groups=new Map();
         data.dealers.forEach(d=>{
-          const city=String(d.city||'其他地區').trim()||'其他地區';
+          const city=normalizeCity(d.city);
           if(!groups.has(city))groups.set(city,[]);
           groups.get(city).push(d);
         });
-        [...groups.keys()].sort(cities.compare).forEach(city=>{
+        [...groups.keys()].sort((a,b)=>cityRank(a)-cityRank(b)||a.localeCompare(b,'zh-TW')).forEach(city=>{
           const heading=document.createElement('h3');heading.className='boss-dealer-city';heading.textContent=city;target.appendChild(heading);
           groups.get(city).forEach(d=>{
             const item=document.createElement('div');item.className='boss-dealer-entry';
