@@ -1155,6 +1155,21 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 .boss-store-title{display:flex!important;align-items:center;gap:8px}
 .boss-store-arrow{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex:none;border:1px solid #d7b6aa;border-radius:50%;font-size:15px!important;line-height:1!important;text-decoration:none!important;color:#aa756e!important;background:#fff9f6;transition:background .2s,color .2s}
 .boss-store-arrow:hover,.boss-store-arrow:focus-visible{background:#e8a598;color:#fff!important;outline-offset:2px}
+
+/* 授權合作經銷商：頁尾入口與獨立彈出視窗 */
+.boss-footer-col .boss-dealer-open{display:inline-flex;align-items:center;gap:5px;color:#8a655d;text-decoration:underline;text-underline-offset:3px;font-size:13px;line-height:1.8}
+#boss-dealer-overlay{position:fixed;inset:0;z-index:9100;display:none;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;background:rgba(40,32,30,.62)}
+#boss-dealer-overlay.open{display:flex}
+.boss-dealer-panel{position:relative;width:min(780px,100%);max-height:90dvh;overflow-y:auto;background:#fffdfb;border-radius:16px;padding:28px 30px;box-sizing:border-box;box-shadow:0 16px 50px #0003}
+.boss-dealer-panel h2{font-size:21px;margin:0 40px 8px 0;color:var(--text-main)}
+.boss-dealer-intro{font-size:12px;color:var(--text-muted);line-height:1.8;margin:0 0 20px}
+.boss-dealer-close{position:absolute;right:16px;top:12px;border:0;background:transparent;font-size:27px;color:var(--text-muted);cursor:pointer}
+.boss-dealer-city{font-size:15px;font-weight:700;margin:22px 0 9px;padding-bottom:8px;border-bottom:1px solid var(--border-color);color:var(--text-main)}
+#boss-dealer-list .boss-dealer-entry{margin:0 0 9px;padding:13px 14px;border:1px solid var(--border-color);border-radius:10px;background:white}
+#boss-dealer-list .boss-dealer-entry strong{font-size:14px}
+#boss-dealer-list .boss-dealer-entry div{font-size:12px;line-height:1.9;color:var(--text-muted)}
+#boss-dealer-list .boss-map-link{display:inline-block;margin-top:6px;font-size:12px;color:#a46c60}
+@media(max-width:650px){.boss-dealer-panel{padding:22px 17px;max-height:88dvh}.boss-dealer-panel h2{font-size:19px}}
 </style>
 <style id="boss-mobile-cart-popup-style">
 #boss-mobile-cart-popup[hidden]{display:none!important}
@@ -16079,7 +16094,7 @@ else bossShippingChanged();
       <button type="button" onclick="bossOpenLegal(4)">消費糾紛處理方式</button>
     </section>
     <section class="boss-footer-col"><h3>授權合作經銷商</h3>
-      <div id="boss-dealer-list" aria-live="polite"><p class="boss-dealer-status">經銷商資料載入中…</p></div>
+      <button type="button" class="boss-dealer-open" onclick="bossOpenDealers()">查看授權合作經銷商名單 ↗</button>
     </section>
     <section class="boss-footer-col"><h3>直營門市</h3>
       <div class="boss-footer-store"><strong class="boss-store-title">桃園經國門市<a class="boss-store-arrow" href="https://share.google/oMJJxIOimQRAc5kvm" target="_blank" rel="noopener noreferrer" title="開啟 Google 地圖導航" aria-label="桃園經國門市 Google 地圖導航">↗</a></strong><p>桃園市桃園區經國路859號9樓之1</p><p><a href="tel:033588280">03-3588-280</a></p><p>週一至週五 08:30–17:30</p></div>
@@ -16088,6 +16103,14 @@ else bossShippingChanged();
   </div>
   <div class="boss-footer-bottom">© 睫老闆美妝百貨有限公司</div>
 </footer>
+<div id="boss-dealer-overlay" role="dialog" aria-modal="true" aria-labelledby="boss-dealer-modal-title" aria-hidden="true">
+  <div class="boss-dealer-panel">
+    <button type="button" class="boss-dealer-close" onclick="bossCloseDealers()" aria-label="關閉經銷商名單">×</button>
+    <h2 id="boss-dealer-modal-title">授權合作經銷商名單</h2>
+    <p class="boss-dealer-intro">以下為睫老闆授權合作經銷商，資料以最新公告為準。</p>
+    <div id="boss-dealer-list" aria-live="polite"><p class="boss-dealer-status">開啟後載入經銷商資料…</p></div>
+  </div>
+</div>
 <div id="boss-legal-overlay" role="dialog" aria-modal="true" aria-labelledby="boss-legal-title" onclick="if(event.target===this)bossCloseLegal()"><div class="boss-legal-panel"><button type="button" class="boss-legal-close" aria-label="關閉政策視窗" onclick="bossCloseLegal()">×</button><h2 id="boss-legal-title"></h2><div id="boss-legal-content"></div></div></div>
 <script>
 /* 顧客服務政策閱讀視窗，與原有結帳功能獨立 */
@@ -16106,46 +16129,74 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
 </script>
 
 <script>
-/* 經銷商清單：僅使用後台公開的 A～E 欄，使用 textContent 避免資料注入。 */
+/* 授權經銷商：按需載入、縣市分組、獨立視窗 */
 (function(){
+  const overlay=document.getElementById('boss-dealer-overlay');
   const target=document.getElementById('boss-dealer-list');
-  if(!target)return;
-  const api=GAS_API_URL + (GAS_API_URL.includes('?')?'&':'?') + 'action=dealer_list';
+  let loaded=false, loading=false;
+  const api=GAS_API_URL+(GAS_API_URL.includes('?')?'&':'?')+'action=dealer_list';
+  const cities=new Intl.Collator('zh-TW');
   function addLine(parent,value,prefix){
     if(!value)return;
     const div=document.createElement('div');
     div.textContent=(prefix||'')+String(value);
     parent.appendChild(div);
   }
-  fetch(api,{method:'GET',redirect:'follow'})
-    .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
-    .then(data=>{
-      if(!data||data.success!==true||!Array.isArray(data.dealers))throw new Error('invalid dealer response');
-      target.replaceChildren();
-      if(!data.dealers.length){target.textContent='目前尚無公開的授權合作經銷商。';return;}
-      data.dealers.forEach(d=>{
-        const item=document.createElement('div');item.className='boss-dealer-entry';
-        const title=document.createElement('strong');title.textContent=String(d.name||'');item.appendChild(title);
-        addLine(item,d.city,'地區：');
-        addLine(item,d.address,'地址：');
-        addLine(item,d.phone,'電話：');
-        addLine(item,d.hours,'營業時間：');
-        if(d.address){
-          const mapLink=document.createElement('a');
-          mapLink.className='boss-map-link';
-          mapLink.href='https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(String(d.address));
-          mapLink.target='_blank';
-          mapLink.rel='noopener noreferrer';
-          mapLink.textContent='📍 Google 地圖導航';
-          item.appendChild(mapLink);
-        }
-        target.appendChild(item);
-      });
-    })
-    .catch(err=>{
-      console.warn('授權合作經銷商載入失敗',err);
-      target.textContent='經銷商名單暫時無法載入，請稍後再試。';
-    });
+  function loadDealers(){
+    if(loaded||loading)return;
+    loading=true;
+    target.textContent='經銷商資料載入中…';
+    fetch(api,{method:'GET',redirect:'follow'})
+      .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+      .then(data=>{
+        if(!data||data.success!==true||!Array.isArray(data.dealers))throw new Error('invalid dealer response');
+        target.replaceChildren();
+        if(!data.dealers.length){target.textContent='目前尚無公開的授權合作經銷商。';loaded=true;return;}
+        const groups=new Map();
+        data.dealers.forEach(d=>{
+          const city=String(d.city||'其他地區').trim()||'其他地區';
+          if(!groups.has(city))groups.set(city,[]);
+          groups.get(city).push(d);
+        });
+        [...groups.keys()].sort(cities.compare).forEach(city=>{
+          const heading=document.createElement('h3');heading.className='boss-dealer-city';heading.textContent=city;target.appendChild(heading);
+          groups.get(city).forEach(d=>{
+            const item=document.createElement('div');item.className='boss-dealer-entry';
+            const title=document.createElement('strong');title.textContent=String(d.name||'');item.appendChild(title);
+            addLine(item,d.address,'地址：');
+            addLine(item,d.phone,'電話：');
+            addLine(item,d.hours,'營業時間：');
+            if(d.address){
+              const link=document.createElement('a');
+              link.className='boss-map-link';
+              link.href='https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(String(d.address));
+              link.target='_blank';link.rel='noopener noreferrer';
+              link.textContent='↗ Google 地圖導航';
+              item.appendChild(link);
+            }
+            target.appendChild(item);
+          });
+        });
+        loaded=true;
+      })
+      .catch(err=>{
+        console.warn('授權合作經銷商載入失敗',err);
+        target.textContent='經銷商名單暫時無法載入，請關閉後重新開啟。';
+      })
+      .finally(()=>{loading=false;});
+  }
+  window.bossOpenDealers=function(){
+    overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');
+    document.body.dataset.bossDealerPreviousOverflow=document.body.style.overflow;
+    document.body.style.overflow='hidden';
+    loadDealers();
+  };
+  window.bossCloseDealers=function(){
+    overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');
+    document.body.style.overflow=document.body.dataset.bossDealerPreviousOverflow||'';
+  };
+  overlay.addEventListener('click',e=>{if(e.target===overlay)window.bossCloseDealers();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))window.bossCloseDealers();});
 })();
 </script>
 </body>
