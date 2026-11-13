@@ -764,7 +764,7 @@
             .header-container { padding:14px 16px 16px; gap:12px; }
             .logo-img { max-width: min(88vw, 340px); height:auto; max-height:72px; }
             .nav-tools {
-                display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+                display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
                 gap:9px; width:100%; align-items:stretch;
             }
             .nav-tools .search-bar {
@@ -1123,9 +1123,9 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
   #mobile-quick-menu{margin-bottom:9px}
 }
 
-/* 2026-11-13 五欄式頁尾與授權合作經銷商 */
+/* 2026-11-13 四欄式頁尾與授權合作經銷商 */
 .boss-footer-five{max-width:1200px;margin:26px auto 0;padding:34px 20px 25px;border-top:1px solid var(--border-color);box-sizing:border-box}
-.boss-footer-grid{display:grid;grid-template-columns:1.15fr 1fr 1.1fr 1.35fr 1.4fr;gap:22px;text-align:left}
+.boss-footer-grid{display:grid;grid-template-columns:1fr 1fr 1.15fr 1.5fr;gap:22px;text-align:left}
 .boss-footer-col{min-width:0}
 .boss-footer-col h3{font-size:14px;color:var(--text-main);margin:0 0 14px;font-weight:700}
 .boss-footer-col p,.boss-footer-col a,.boss-footer-col button,.boss-footer-col .boss-dealer-entry{font-size:12px;line-height:1.9;color:var(--text-muted)}
@@ -1139,10 +1139,11 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 .boss-dealer-entry{margin-bottom:13px;padding-bottom:12px;border-bottom:1px solid var(--border-color);overflow-wrap:anywhere}
 .boss-dealer-entry div{margin-top:2px}
 .boss-footer-bottom{margin-top:23px;padding-top:16px;border-top:1px solid var(--border-color);text-align:center;font-size:12px;color:var(--text-muted)}
+.boss-map-link{display:inline-block;margin-top:5px;color:#a56e60!important;text-decoration:underline!important;text-underline-offset:3px}
 .boss-dealer-status{font-size:12px;color:var(--text-muted);line-height:1.8}
-@media(max-width:1000px){.boss-footer-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}}
-@media(max-width:650px){.boss-footer-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 15px}.boss-footer-col:last-child{grid-column:1/-1}.boss-footer-five{padding:27px 16px 100px}}
-@media(max-width:380px){.boss-footer-grid{grid-template-columns:1fr}.boss-footer-col:last-child{grid-column:auto}}
+@media(max-width:1000px){.boss-footer-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}}
+@media(max-width:650px){.boss-footer-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 15px}.boss-footer-five{padding:27px 16px 100px}}
+@media(max-width:380px){.boss-footer-grid{grid-template-columns:1fr}}
 
 </style>
 <style id="boss-mobile-cart-popup-style">
@@ -16055,9 +16056,6 @@ else bossShippingChanged();
 
 <footer class="boss-footer-five" aria-label="睫老闆網站資訊">
   <div class="boss-footer-grid">
-    <section class="boss-footer-col"><h3>關於睫老闆</h3>
-      <p>睫老闆美妝百貨有限公司</p><p>專業美睫、美妝及美容耗材供應</p>
-    </section>
     <section class="boss-footer-col"><h3>聯絡我們</h3>
       <p>客服電話：<a href="tel:033588280">03-3588-280</a></p>
       <p>客服專線：<a href="tel:0909998988">0909-998-988</a></p>
@@ -16070,12 +16068,12 @@ else bossShippingChanged();
       <button type="button" onclick="bossOpenLegal(3)">退款／退換貨政策</button>
       <button type="button" onclick="bossOpenLegal(4)">消費糾紛處理方式</button>
     </section>
-    <section class="boss-footer-col"><h3>直營門市</h3>
-      <div class="boss-footer-store"><strong>桃園經國門市</strong><p>桃園市桃園區經國路859號9樓之1</p><p><a href="tel:033588280">03-3588-280</a></p><p>週一至週五 08:30–17:30</p></div>
-      <div class="boss-footer-store"><strong>台中一中門市</strong><p>台中市北區一中街160-12號2樓</p><p><a href="tel:0919047333">0919-047-333</a></p><p>週二至週日 13:00–21:00（週一公休）</p></div>
-    </section>
     <section class="boss-footer-col"><h3>授權合作經銷商</h3>
       <div id="boss-dealer-list" aria-live="polite"><p class="boss-dealer-status">經銷商資料載入中…</p></div>
+    </section>
+    <section class="boss-footer-col"><h3>直營門市</h3>
+      <div class="boss-footer-store"><strong>桃園經國門市</strong><p>桃園市桃園區經國路859號9樓之1</p><p><a href="tel:033588280">03-3588-280</a></p><p>週一至週五 08:30–17:30</p><a class="boss-map-link" href="https://www.google.com/maps/dir/?api=1&amp;destination=%E6%A1%83%E5%9C%92%E5%B8%82%E6%A1%83%E5%9C%92%E5%8D%80%E7%B6%93%E5%9C%8B%E8%B7%AF859%E8%99%9F9%E6%A8%93%E4%B9%8B1" target="_blank" rel="noopener noreferrer">📍 Google 地圖導航</a></div>
+      <div class="boss-footer-store"><strong>台中一中門市</strong><p>台中市北區一中街160-12號2樓</p><p><a href="tel:0919047333">0919-047-333</a></p><p>週二至週日 13:00–21:00（週一公休）</p><a class="boss-map-link" href="https://www.google.com/maps/dir/?api=1&amp;destination=%E5%8F%B0%E4%B8%AD%E5%B8%82%E5%8C%97%E5%8D%80%E4%B8%80%E4%B8%AD%E8%A1%97160-12%E8%99%9F2%E6%A8%93" target="_blank" rel="noopener noreferrer">📍 Google 地圖導航</a></div>
     </section>
   </div>
   <div class="boss-footer-bottom">© 睫老闆美妝百貨有限公司</div>
@@ -16122,6 +16120,15 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
         addLine(item,d.address,'地址：');
         addLine(item,d.phone,'電話：');
         addLine(item,d.hours,'營業時間：');
+        if(d.address){
+          const mapLink=document.createElement('a');
+          mapLink.className='boss-map-link';
+          mapLink.href='https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(String(d.address));
+          mapLink.target='_blank';
+          mapLink.rel='noopener noreferrer';
+          mapLink.textContent='📍 Google 地圖導航';
+          item.appendChild(mapLink);
+        }
         target.appendChild(item);
       });
     })
