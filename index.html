@@ -1145,6 +1145,16 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 @media(max-width:650px){.boss-footer-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 15px}.boss-footer-five{padding:27px 16px 100px}}
 @media(max-width:380px){.boss-footer-grid{grid-template-columns:1fr}}
 
+
+/* 直營門市標題右側導航箭頭 */
+.boss-store-title{display:flex!important;align-items:center;gap:8px}
+.boss-store-arrow{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex:none;border:1px solid #d7b6aa;border-radius:50%;font-size:15px!important;line-height:1!important;text-decoration:none!important;color:#aa756e!important;background:#fff9f6;transition:background .2s,color .2s}
+.boss-store-arrow:hover,.boss-store-arrow:focus-visible{background:#e8a598;color:#fff!important;outline-offset:2px}
+
+/* 直營門市標題右側導航箭頭 */
+.boss-store-title{display:flex!important;align-items:center;gap:8px}
+.boss-store-arrow{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex:none;border:1px solid #d7b6aa;border-radius:50%;font-size:15px!important;line-height:1!important;text-decoration:none!important;color:#aa756e!important;background:#fff9f6;transition:background .2s,color .2s}
+.boss-store-arrow:hover,.boss-store-arrow:focus-visible{background:#e8a598;color:#fff!important;outline-offset:2px}
 </style>
 <style id="boss-mobile-cart-popup-style">
 #boss-mobile-cart-popup[hidden]{display:none!important}
@@ -16072,8 +16082,8 @@ else bossShippingChanged();
       <div id="boss-dealer-list" aria-live="polite"><p class="boss-dealer-status">經銷商資料載入中…</p></div>
     </section>
     <section class="boss-footer-col"><h3>直營門市</h3>
-      <div class="boss-footer-store"><strong>桃園經國門市</strong><p>桃園市桃園區經國路859號9樓之1</p><p><a href="tel:033588280">03-3588-280</a></p><p>週一至週五 08:30–17:30</p><a class="boss-map-link" href="https://share.google/oMJJxIOimQRAc5kvm" target="_blank" rel="noopener noreferrer">📍 Google 地圖導航</a></div>
-      <div class="boss-footer-store"><strong>台中一中門市</strong><p>台中市北區一中街160-12號2樓</p><p><a href="tel:0919047333">0919-047-333</a></p><p>週二至週日 13:00–21:00（週一公休）</p><a class="boss-map-link" href="https://share.google/42mqefQQMWCDpUt12" target="_blank" rel="noopener noreferrer">📍 Google 地圖導航</a></div>
+      <div class="boss-footer-store"><strong class="boss-store-title">桃園經國門市<a class="boss-store-arrow" href="https://share.google/oMJJxIOimQRAc5kvm" target="_blank" rel="noopener noreferrer" title="開啟 Google 地圖導航" aria-label="桃園經國門市 Google 地圖導航">↗</a></strong><p>桃園市桃園區經國路859號9樓之1</p><p><a href="tel:033588280">03-3588-280</a></p><p>週一至週五 08:30–17:30</p></div>
+      <div class="boss-footer-store"><strong class="boss-store-title">台中一中門市<a class="boss-store-arrow" href="https://share.google/42mqefQQMWCDpUt12" target="_blank" rel="noopener noreferrer" title="開啟 Google 地圖導航" aria-label="台中一中門市 Google 地圖導航">↗</a></strong><p>台中市北區一中街160-12號2樓</p><p><a href="tel:0919047333">0919-047-333</a></p><p>週二至週日 13:00–21:00（週一公休）</p></div>
     </section>
   </div>
   <div class="boss-footer-bottom">© 睫老闆美妝百貨有限公司</div>
