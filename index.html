@@ -11339,17 +11339,22 @@ async function bossDownloadOrderPdf(index) {
     let wrapper;
     try {
         wrapper = bossMakePdfContent(order);
-        // html2pdf 在畫面外渲染；避免把訂單查詢視窗的捲軸截進 PDF。
-        wrapper.style.position = 'fixed';
-        wrapper.style.left = '-10000px';
+        // 不要把來源放到 -10000px：html2canvas 可能因此產生空白影像。
+        // 使用正常頁面座標，放在查詢視窗後方，仍可完整擷取整張訂單。
+        wrapper.setAttribute('data-boss-pdf-source', '1');
+        wrapper.style.position = 'absolute';
+        wrapper.style.left = '0';
         wrapper.style.top = '0';
+        wrapper.style.zIndex = '-1';
+        wrapper.style.opacity = '1';
+        wrapper.style.pointerEvents = 'none';
         document.body.appendChild(wrapper);
         await bossLoadPdfLibrary();
         await window.html2pdf().set({
             margin: [10,10,10,10],
             filename: '睫老闆_訂單明細_' + bossPdfSafeName(order.id) + '.pdf',
             image: { type:'jpeg', quality:0.98 },
-            html2canvas: { scale:2, useCORS:true, backgroundColor:'#ffffff', scrollY:0 },
+            html2canvas: { scale:2, useCORS:true, backgroundColor:'#ffffff', scrollX:0, scrollY:0, windowWidth:Math.max(document.documentElement.clientWidth, 760), onclone: (clonedDoc) => { const el = clonedDoc.querySelector('[data-boss-pdf-source]'); if (el) { el.style.position='absolute'; el.style.left='0'; el.style.top='0'; el.style.zIndex='99999'; } } },
             jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
             pagebreak: { mode:['css','legacy'], avoid:['tr','.customer-order-totals'] }
         }).from(wrapper).save();
