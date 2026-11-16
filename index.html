@@ -11331,39 +11331,64 @@ function bossMakePdfContent(order) {
     wrapper.prepend(style);
     return wrapper;
 }
-async function bossDownloadOrderPdf(index) {
+// 使用瀏覽器原生列印引擎產生 PDF，避免 html2canvas 截圖空白。
+// 使用者在列印視窗選擇「另存為 PDF」即可儲存完整 A4 訂單明細。
+function bossDownloadOrderPdf(index) {
     const order = bossReorderSearchOrders[index];
     if (!order) { alert('找不到訂單資料，請重新查詢。'); return; }
-    const button = document.querySelectorAll('.boss-order-pdf-btn')[index];
-    if (button) { button.disabled = true; button.textContent = 'PDF 製作中，請稍候…'; }
     let wrapper;
     try {
         wrapper = bossMakePdfContent(order);
-        // 不要把來源放到 -10000px：html2canvas 可能因此產生空白影像。
-        // 使用正常頁面座標，放在查詢視窗後方，仍可完整擷取整張訂單。
-        wrapper.setAttribute('data-boss-pdf-source', '1');
-        wrapper.style.position = 'absolute';
-        wrapper.style.left = '0';
-        wrapper.style.top = '0';
-        wrapper.style.zIndex = '-1';
-        wrapper.style.opacity = '1';
-        wrapper.style.pointerEvents = 'none';
-        document.body.appendChild(wrapper);
-        await bossLoadPdfLibrary();
-        await window.html2pdf().set({
-            margin: [10,10,10,10],
-            filename: '睫老闆_訂單明細_' + bossPdfSafeName(order.id) + '.pdf',
-            image: { type:'jpeg', quality:0.98 },
-            html2canvas: { scale:2, useCORS:true, backgroundColor:'#ffffff', scrollX:0, scrollY:0, windowWidth:Math.max(document.documentElement.clientWidth, 760), onclone: (clonedDoc) => { const el = clonedDoc.querySelector('[data-boss-pdf-source]'); if (el) { el.style.position='absolute'; el.style.left='0'; el.style.top='0'; el.style.zIndex='99999'; } } },
-            jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
-            pagebreak: { mode:['css','legacy'], avoid:['tr','.customer-order-totals'] }
-        }).from(wrapper).save();
+        const popup = window.open('', '_blank');
+        if (!popup) {
+            alert('瀏覽器封鎖了列印視窗，請允許此網站開啟彈出視窗後重試。');
+            return;
+        }
+        const styles = `
+          @page { size: A4 portrait; margin: 12mm; }
+          html,body { margin:0; padding:0; background:#fff; color:#352d29; }
+          body { font-family: "Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif; }
+          .boss-pdf-page { width:100% !important; max-width:100% !important; padding:0 !important; box-sizing:border-box; }
+          .customer-order-slip { padding:0 !important; }
+          .customer-order-slip-head { text-align:center; border-bottom:2px solid #55483d; padding-bottom:12px; margin-bottom:15px; }
+          .customer-order-slip-title { font-size:20px; font-weight:bold; }
+          .customer-order-meta { display:grid; grid-template-columns:1fr 1fr; gap:8px 16px; margin-bottom:18px; font-size:12px; overflow-wrap:anywhere; }
+          .customer-order-table { width:100%; border-collapse:collapse; font-size:12px; table-layout:fixed; }
+          .customer-order-table th,.customer-order-table td { padding:9px 6px; border-bottom:1px solid #ddd; vertical-align:top; overflow-wrap:anywhere; }
+          .customer-order-table th { background:#f8f3ef; text-align:left; }
+          .customer-order-table th:first-child { width:52%; }
+          .customer-order-table .num { text-align:right; white-space:nowrap; }
+          .customer-order-table tr { break-inside:avoid; page-break-inside:avoid; }
+          .customer-order-totals { width:250px; max-width:100%; margin:16px 0 12px auto; font-size:12px; break-inside:avoid; }
+          .customer-order-total-row { display:flex; justify-content:space-between; padding:5px 0; }
+          .customer-order-total-row.grand { border-top:1px solid #55483d; font-size:15px; font-weight:bold; padding-top:9px; }
+          @media print { button {display:none !important;} }
+        `;
+        // 從已建立的訂單明細節點複製內容，避免把來源畫面滾動容器帶入。
+        const slip = wrapper.querySelector('.customer-order-slip');
+        const content = slip ? slip.outerHTML : wrapper.innerHTML;
+        popup.document.open();
+        popup.document.write('<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>' +
+          '睫老闆_訂單明細_' + bossPdfSafeName(order.id) +
+          '</title><style>' + styles + '</style></head><body><main class="boss-pdf-page">' +
+          content + '</main></body></html>');
+        popup.document.close();
+        popup.focus();
+        // 讓列印頁完成排版與中文字型載入後再開啟列印視窗。
+        popup.onload = async () => {
+            try { if (popup.document.fonts && popup.document.fonts.ready) await popup.document.fonts.ready; } catch (_) {}
+            popup.focus();
+            popup.print();
+        };
+        // document.write 的 load 可能已觸發，另設一次性保底呼叫。
+        if (popup.document.readyState === 'complete') {
+            popup.onload = null;
+            popup.focus();
+            popup.print();
+        }
     } catch (err) {
-        console.error('PDF 下載失敗',err);
-        alert('PDF 下載元件未能正常執行，請檢查網路連線後重試。');
-    } finally {
-        if (wrapper) wrapper.remove();
-        if (button) { button.disabled = false; button.textContent = '📄 下載 PDF 訂單明細'; }
+        console.error('訂單 PDF 列印失敗', err);
+        alert('無法開啟訂單明細列印視窗，請稍後再試。');
     }
 }
 
@@ -11415,7 +11440,7 @@ function queryOrderFromServer() {
                         </div>
                         ${buildDeliveryTrackingHtml(matchedOrder)}
                         ${buildCustomerOrderDetailHtml(matchedOrder)}
-                        <button type="button" class="boss-order-pdf-btn" onclick="bossDownloadOrderPdf(${orderIndex})">📄 下載 PDF 訂單明細</button>
+                        <button type="button" class="boss-order-pdf-btn" onclick="bossDownloadOrderPdf(${orderIndex})">📄 儲存 PDF 訂單明細</button>
                         ${bossCancelButton(matchedOrder, orderIndex)}
                         ${bossReorderButton(matchedOrder, orderIndex)}
                     </div>
@@ -11458,7 +11483,7 @@ function queryOrderFromServer() {
                         </div>
                         ${buildDeliveryTrackingHtml(matchedOrder)}
                         ${buildCustomerOrderDetailHtml(matchedOrder)}
-                        <button type="button" class="boss-order-pdf-btn" onclick="bossDownloadOrderPdf(${orderIndex})">📄 下載 PDF 訂單明細</button>
+                        <button type="button" class="boss-order-pdf-btn" onclick="bossDownloadOrderPdf(${orderIndex})">📄 儲存 PDF 訂單明細</button>
                         ${bossCancelButton(matchedOrder, orderIndex)}
                         ${bossReorderButton(matchedOrder, orderIndex)}
                     </div>
