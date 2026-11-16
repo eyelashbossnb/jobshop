@@ -1188,6 +1188,33 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 #boss-dealer-list .boss-dealer-entry div{font-size:12px;line-height:1.9;color:var(--text-muted)}
 #boss-dealer-list .boss-map-link{display:inline-block;margin-top:6px;font-size:12px;color:#a46c60}
 @media(max-width:650px){.boss-dealer-panel{padding:22px 17px;max-height:88dvh}.boss-dealer-panel h2{font-size:19px}}
+
+/* 2026-11-16｜僅放大快速查詢訂單視窗，其他彈窗維持原樣 */
+#order-modal-overlay { padding: 16px; box-sizing: border-box; }
+#order-modal-overlay > .custom-modal {
+    width: min(760px, 100%);
+    max-width: 760px;
+    max-height: 92dvh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 34px 38px;
+}
+#order-modal-overlay .search-result-box {
+    max-height: min(55dvh, 560px);
+    overflow-y: auto;
+}
+@media (max-width: 600px) {
+    #order-modal-overlay { padding: 12px; }
+    #order-modal-overlay > .custom-modal {
+        width: 100%; max-width: none;
+        padding: 26px 18px;
+        max-height: 94dvh;
+    }
+    #order-modal-overlay .search-result-box {
+        padding: 12px;
+        max-height: 55dvh;
+    }
+}
 </style>
 <style id="boss-mobile-cart-popup-style">
 #boss-mobile-cart-popup[hidden]{display:none!important}
