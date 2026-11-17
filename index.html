@@ -1188,6 +1188,14 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 #boss-dealer-list .boss-dealer-entry div{font-size:12px;line-height:1.9;color:var(--text-muted)}
 #boss-dealer-list .boss-map-link{display:inline-block;margin-top:6px;font-size:12px;color:#a46c60}
 @media(max-width:650px){.boss-dealer-panel{padding:22px 17px;max-height:88dvh}.boss-dealer-panel h2{font-size:19px}}
+/* 授權經銷商縣市篩選 */
+.boss-dealer-filter{display:flex;align-items:center;gap:12px;margin:18px 0 12px;flex-wrap:wrap}
+.boss-dealer-filter label{font-size:13px;font-weight:600;color:var(--text-main)}
+#boss-dealer-city-filter{flex:1;min-width:160px;max-width:320px;padding:10px 13px;border:1px solid #e7d9d2;border-radius:9px;background:#fff;color:var(--text-main);font-size:13px;cursor:pointer}
+#boss-dealer-city-filter:focus{outline:2px solid var(--accent-color);outline-offset:1px}
+#boss-dealer-city-filter:disabled{opacity:.55;cursor:wait}
+@media(max-width:650px){.boss-dealer-filter{align-items:stretch;flex-direction:column;gap:7px}#boss-dealer-city-filter{max-width:none;width:100%}}
+
 
 /* 2026-11-16｜僅放大快速查詢訂單視窗，其他彈窗維持原樣 */
 #order-modal-overlay { padding: 16px; box-sizing: border-box; }
@@ -16273,6 +16281,12 @@ else bossShippingChanged();
     <button type="button" class="boss-dealer-close" onclick="bossCloseDealers()" aria-label="關閉經銷商名單">×</button>
     <h2 id="boss-dealer-modal-title">授權經銷商名單</h2>
     <p class="boss-dealer-intro">以下為睫老闆授權經銷商，資料以最新公告為準。</p>
+    <div class="boss-dealer-filter">
+      <label for="boss-dealer-city-filter">篩選縣市</label>
+      <select id="boss-dealer-city-filter" aria-label="篩選授權經銷商縣市" disabled>
+        <option value="">全部縣市</option>
+      </select>
+    </div>
     <div id="boss-dealer-list" aria-live="polite"><p class="boss-dealer-status">開啟後載入經銷商資料…</p></div>
   </div>
 </div>
@@ -16298,6 +16312,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
 (function(){
   const overlay=document.getElementById('boss-dealer-overlay');
   const target=document.getElementById('boss-dealer-list');
+  const cityFilter=document.getElementById('boss-dealer-city-filter');
   let loaded=false, loading=false;
   const api=GAS_API_URL+(GAS_API_URL.includes('?')?'&':'?')+'action=dealer_list';
   // 台灣縣市依地理位置由北至南（含離島），並統一「台／臺」字形
@@ -16319,17 +16334,22 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       .then(data=>{
         if(!data||data.success!==true||!Array.isArray(data.dealers))throw new Error('invalid dealer response');
         target.replaceChildren();
-        if(!data.dealers.length){target.textContent='目前尚無公開的授權合作經銷商。';loaded=true;return;}
+        if(!data.dealers.length){target.textContent='目前尚無公開的授權經銷商。';cityFilter.disabled=true;loaded=true;return;}
         const groups=new Map();
         data.dealers.forEach(d=>{
           const city=normalizeCity(d.city);
           if(!groups.has(city))groups.set(city,[]);
           groups.get(city).push(d);
         });
-        [...groups.keys()].sort((a,b)=>cityRank(a)-cityRank(b)||a.localeCompare(b,'zh-TW')).forEach(city=>{
-          const heading=document.createElement('h3');heading.className='boss-dealer-city';heading.textContent=city;target.appendChild(heading);
+        const cities=[...groups.keys()].sort((a,b)=>cityRank(a)-cityRank(b)||a.localeCompare(b,'zh-TW'));
+        cityFilter.replaceChildren(new Option('全部縣市',''));
+        cities.forEach(city=>cityFilter.add(new Option(city,city)));
+        cityFilter.disabled=false;
+        cityFilter.value='';
+        cities.forEach(city=>{
+          const heading=document.createElement('h3');heading.className='boss-dealer-city';heading.textContent=city;heading.dataset.city=city;target.appendChild(heading);
           groups.get(city).forEach(d=>{
-            const item=document.createElement('div');item.className='boss-dealer-entry';
+            const item=document.createElement('div');item.className='boss-dealer-entry';item.dataset.city=city;
             const title=document.createElement('strong');title.textContent=String(d.name||'');item.appendChild(title);
             addLine(item,d.address,'地址：');
             addLine(item,d.phone,'電話：');
@@ -16353,6 +16373,15 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       })
       .finally(()=>{loading=false;});
   }
+  cityFilter.addEventListener('change',()=>{
+    const selected=cityFilter.value;
+    target.querySelectorAll('.boss-dealer-city,.boss-dealer-entry').forEach(el=>{
+      el.hidden=!!selected&&el.dataset.city!==selected;
+      // 避免網站其他 CSS 覆蓋 hidden 屬性
+      el.style.display=el.hidden?'none':'';
+    });
+    overlay.querySelector('.boss-dealer-panel').scrollTop=0;
+  });
   window.bossOpenDealers=function(){
     overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');
     document.body.dataset.bossDealerPreviousOverflow=document.body.style.overflow;
