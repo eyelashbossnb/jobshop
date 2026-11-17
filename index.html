@@ -1188,7 +1188,13 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 #boss-dealer-list .boss-dealer-entry div{font-size:12px;line-height:1.9;color:var(--text-muted)}
 #boss-dealer-list .boss-map-link{display:inline-block;margin-top:6px;font-size:12px;color:#a46c60}
 @media(max-width:650px){.boss-dealer-panel{padding:22px 17px;max-height:88dvh}.boss-dealer-panel h2{font-size:19px}}
-/* 授權經銷商縣市篩選 */
+/* 台灣／香港切換與縣市篩選 */
+.boss-dealer-region{display:flex;gap:8px;margin:18px 0 4px}
+.boss-dealer-region-btn{flex:1;padding:11px 14px;border:1px solid #e7d9d2;border-radius:10px;background:#fff;color:#66554c;font-size:14px;font-weight:700;cursor:pointer}
+.boss-dealer-region-btn.active{background:var(--accent-color);border-color:var(--accent-color);color:#fff}
+.boss-dealer-region-btn:focus-visible{outline:2px solid #a56e5d;outline-offset:2px}
+.boss-dealer-filter[hidden]{display:none!important}
+
 .boss-dealer-filter{display:flex;align-items:center;gap:12px;margin:18px 0 12px;flex-wrap:wrap}
 .boss-dealer-filter label{font-size:13px;font-weight:600;color:var(--text-main)}
 #boss-dealer-city-filter{flex:1;min-width:160px;max-width:320px;padding:10px 13px;border:1px solid #e7d9d2;border-radius:9px;background:#fff;color:var(--text-main);font-size:13px;cursor:pointer}
@@ -16281,7 +16287,11 @@ else bossShippingChanged();
     <button type="button" class="boss-dealer-close" onclick="bossCloseDealers()" aria-label="關閉經銷商名單">×</button>
     <h2 id="boss-dealer-modal-title">授權經銷商名單</h2>
     <p class="boss-dealer-intro">以下為睫老闆授權經銷商，資料以最新公告為準。</p>
-    <div class="boss-dealer-filter">
+    <div class="boss-dealer-region" role="group" aria-label="經銷商地區">
+      <button type="button" class="boss-dealer-region-btn active" data-region="tw" aria-pressed="true">台灣</button>
+      <button type="button" class="boss-dealer-region-btn" data-region="hk" aria-pressed="false">香港</button>
+    </div>
+    <div class="boss-dealer-filter" id="boss-dealer-city-wrap">
       <label for="boss-dealer-city-filter">篩選縣市</label>
       <select id="boss-dealer-city-filter" aria-label="篩選授權經銷商縣市" disabled>
         <option value="">全部縣市</option>
@@ -16308,22 +16318,74 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
 </script>
 
 <script>
-/* 授權經銷商：按需載入、縣市分組、獨立視窗 */
+/* 授權經銷商：台灣／香港切換、縣市篩選；沿用原有 dealer_list API */
 (function(){
   const overlay=document.getElementById('boss-dealer-overlay');
   const target=document.getElementById('boss-dealer-list');
   const cityFilter=document.getElementById('boss-dealer-city-filter');
-  let loaded=false, loading=false;
+  const cityWrap=document.getElementById('boss-dealer-city-wrap');
+  const regionButtons=Array.from(overlay.querySelectorAll('.boss-dealer-region-btn'));
+  let loaded=false, loading=false, region='tw', dealerData=[];
   const api=GAS_API_URL+(GAS_API_URL.includes('?')?'&':'?')+'action=dealer_list';
-  // 台灣縣市依地理位置由北至南（含離島），並統一「台／臺」字形
   const cityOrder=['基隆市','臺北市','新北市','桃園市','新竹市','新竹縣','苗栗縣','臺中市','彰化縣','南投縣','雲林縣','嘉義市','嘉義縣','臺南市','高雄市','屏東縣','宜蘭縣','花蓮縣','臺東縣','澎湖縣','金門縣','連江縣'];
-  const normalizeCity=city=>String(city||'其他地區').trim().replace(/^台/,'臺')||'其他地區';
+  const normalizeCity=value=>String(value||'').trim().replace(/^台/,'臺');
   const cityRank=city=>{const i=cityOrder.indexOf(city);return i<0?999:i;};
+  const isHongKong=d=>/香港|hong\s*kong/i.test(String(d.city||'').trim());
   function addLine(parent,value,prefix){
     if(!value)return;
     const div=document.createElement('div');
     div.textContent=(prefix||'')+String(value);
     parent.appendChild(div);
+  }
+  function render(){
+    target.replaceChildren();
+    cityWrap.hidden=region==='hk';
+    regionButtons.forEach(btn=>{
+      const active=btn.dataset.region===region;
+      btn.classList.toggle('active',active);
+      btn.setAttribute('aria-pressed',String(active));
+    });
+    const dealers=dealerData.filter(d=>region==='hk'?isHongKong(d):!isHongKong(d));
+    const groups=new Map();
+    dealers.forEach(d=>{
+      const city=region==='hk'?'香港':(normalizeCity(d.city)||'其他地區');
+      if(!groups.has(city))groups.set(city,[]);
+      groups.get(city).push(d);
+    });
+    const cities=[...groups.keys()].sort((a,b)=>cityRank(a)-cityRank(b)||a.localeCompare(b,'zh-TW'));
+    if(region==='tw'){
+      cityFilter.replaceChildren(new Option('全部縣市',''));
+      cities.forEach(city=>cityFilter.add(new Option(city,city)));
+      cityFilter.disabled=!cities.length;
+    }
+    if(!dealers.length){
+      const empty=document.createElement('p');
+      empty.className='boss-dealer-status';
+      empty.textContent=region==='hk'?'目前尚無公開的香港授權經銷商。':'目前尚無公開的台灣授權經銷商。';
+      target.appendChild(empty);
+      return;
+    }
+    cities.forEach(city=>{
+      const heading=document.createElement('h3');
+      heading.className='boss-dealer-city';heading.textContent=city;heading.dataset.city=city;
+      target.appendChild(heading);
+      groups.get(city).forEach(d=>{
+        const item=document.createElement('div');item.className='boss-dealer-entry';item.dataset.city=city;
+        const title=document.createElement('strong');title.textContent=String(d.name||'');item.appendChild(title);
+        addLine(item,d.address,'地址：');
+        addLine(item,d.phone,'電話：');
+        addLine(item,d.hours,'營業時間：');
+        if(d.address){
+          const link=document.createElement('a');
+          link.className='boss-map-link';
+          link.href='https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(String(d.address));
+          link.target='_blank';link.rel='noopener noreferrer';
+          link.textContent='↗ Google 地圖導航';
+          item.appendChild(link);
+        }
+        target.appendChild(item);
+      });
+    });
   }
   function loadDealers(){
     if(loaded||loading)return;
@@ -16333,51 +16395,33 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
       .then(data=>{
         if(!data||data.success!==true||!Array.isArray(data.dealers))throw new Error('invalid dealer response');
-        target.replaceChildren();
-        if(!data.dealers.length){target.textContent='目前尚無公開的授權經銷商。';cityFilter.disabled=true;loaded=true;return;}
-        const groups=new Map();
-        data.dealers.forEach(d=>{
-          const city=normalizeCity(d.city);
-          if(!groups.has(city))groups.set(city,[]);
-          groups.get(city).push(d);
-        });
-        const cities=[...groups.keys()].sort((a,b)=>cityRank(a)-cityRank(b)||a.localeCompare(b,'zh-TW'));
-        cityFilter.replaceChildren(new Option('全部縣市',''));
-        cities.forEach(city=>cityFilter.add(new Option(city,city)));
-        cityFilter.disabled=false;
-        cityFilter.value='';
-        cities.forEach(city=>{
-          const heading=document.createElement('h3');heading.className='boss-dealer-city';heading.textContent=city;heading.dataset.city=city;target.appendChild(heading);
-          groups.get(city).forEach(d=>{
-            const item=document.createElement('div');item.className='boss-dealer-entry';item.dataset.city=city;
-            const title=document.createElement('strong');title.textContent=String(d.name||'');item.appendChild(title);
-            addLine(item,d.address,'地址：');
-            addLine(item,d.phone,'電話：');
-            addLine(item,d.hours,'營業時間：');
-            if(d.address){
-              const link=document.createElement('a');
-              link.className='boss-map-link';
-              link.href='https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(String(d.address));
-              link.target='_blank';link.rel='noopener noreferrer';
-              link.textContent='↗ Google 地圖導航';
-              item.appendChild(link);
-            }
-            target.appendChild(item);
-          });
-        });
+        dealerData=data.dealers;
         loaded=true;
+        render();
       })
       .catch(err=>{
-        console.warn('授權合作經銷商載入失敗',err);
+        console.warn('授權經銷商載入失敗',err);
         target.textContent='經銷商名單暫時無法載入，請關閉後重新開啟。';
       })
       .finally(()=>{loading=false;});
   }
+  regionButtons.forEach(btn=>btn.addEventListener('click',()=>{
+    region=btn.dataset.region;
+    if(loaded)render();
+    else {
+      cityWrap.hidden=region==='hk';
+      regionButtons.forEach(b=>{
+        const active=b.dataset.region===region;
+        b.classList.toggle('active',active);
+        b.setAttribute('aria-pressed',String(active));
+      });
+    }
+    overlay.querySelector('.boss-dealer-panel').scrollTop=0;
+  }));
   cityFilter.addEventListener('change',()=>{
     const selected=cityFilter.value;
     target.querySelectorAll('.boss-dealer-city,.boss-dealer-entry').forEach(el=>{
       el.hidden=!!selected&&el.dataset.city!==selected;
-      // 避免網站其他 CSS 覆蓋 hidden 屬性
       el.style.display=el.hidden?'none':'';
     });
     overlay.querySelector('.boss-dealer-panel').scrollTop=0;
