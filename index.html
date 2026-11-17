@@ -1271,6 +1271,12 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 .boss-mobile-cart-checkout{width:calc(100% - 24px);margin:8px 12px 12px;padding:11px;border:0;border-radius:22px;background:#e8a598;color:white;font-weight:600;cursor:pointer}
 @media(min-width:769px){#boss-mobile-cart-popup{display:none!important}}
 </style>
+<style id="boss-language-style">
+.boss-language-wrap{display:flex;align-items:center;gap:6px;min-width:0}
+.boss-language-wrap label{font-size:16px;white-space:nowrap}
+#boss-language-select{border:1px solid var(--border-color);background:#fff;color:var(--text-main);border-radius:20px;padding:8px 9px;font-size:12px;max-width:145px;cursor:pointer}
+@media(max-width:768px){.nav-tools>.boss-language-wrap{grid-column:1/-1;justify-content:flex-end}#boss-language-select{max-width:180px}}
+</style>
 </head>
 <body>
 <header>
@@ -1280,6 +1286,7 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
             <img src="https://i.ibb.co/BH9z3D5D/image.png" alt="睫老闆美妝百貨" class="logo-img">
         </a>
         <div class="nav-tools">
+            <div class="boss-language-wrap" translate="no"><label for="boss-language-select" aria-label="Language">🌐</label><select id="boss-language-select" aria-label="Select language"><option value="zh-TW">繁體中文</option><option value="zh-CN">简体中文</option><option value="en">English</option><option value="vi">Tiếng Việt</option></select></div>
             <input type="text" class="search-bar" id="product-search-input" placeholder="搜尋全站商品..." oninput="filterProducts()">
             <button class="nav-btn secondary" onclick="toggleOrderModal(true)">查詢訂單</button>
             <div id="member-status-area">
@@ -11442,7 +11449,70 @@ function bossDownloadOrderPdf(index) {
         popup.document.write('<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>' +
           '睫老闆_訂單明細_' + bossPdfSafeName(order.id) +
           '</title><style>' + styles + '</style></head><body><main class="boss-pdf-page">' +
-          content + '</main></body></html>');
+          content + '</main><script id="boss-language-switch-v1">
+/* Language UI layer: translations are display-only; no cart, price or order data changes. */
+(function(){
+'use strict';
+const DICT={"查詢訂單":{"zh-CN":"查询订单","en":"Order Lookup","vi":"Tra cứu đơn hàng"},"會員登入":{"zh-CN":"会员登录","en":"Member Login","vi":"Đăng nhập"},"免費註冊":{"zh-CN":"免费注册","en":"Register Free","vi":"Đăng ký miễn phí"},"搜尋全站商品...":{"zh-CN":"搜索全站商品...","en":"Search products...","vi":"Tìm kiếm sản phẩm..."},"購物車":{"zh-CN":"购物车","en":"Shopping Cart","vi":"Giỏ hàng"},"購物車沒有加入任何商品":{"zh-CN":"购物车中没有商品","en":"Your cart is empty","vi":"Giỏ hàng đang trống"},"前往結帳":{"zh-CN":"前往结账","en":"Checkout","vi":"Thanh toán"},"搜尋商品":{"zh-CN":"搜索商品","en":"Search Products","vi":"Tìm sản phẩm"},"商品分類":{"zh-CN":"商品分类","en":"Categories","vi":"Danh mục sản phẩm"},"儲值金使用紀錄":{"zh-CN":"储值金使用记录","en":"Store Credit History","vi":"Lịch sử số dư"},"返回頂部":{"zh-CN":"返回顶部","en":"Back to Top","vi":"Về đầu trang"},"快速導覽":{"zh-CN":"快速导航","en":"Quick Navigation","vi":"Điều hướng nhanh"},"精選商品":{"zh-CN":"精选商品","en":"Featured Products","vi":"Sản phẩm nổi bật"},"最新公告":{"zh-CN":"最新公告","en":"Announcements","vi":"Thông báo mới"},"限時優惠活動":{"zh-CN":"限时优惠活动","en":"Limited-Time Offers","vi":"Ưu đãi có thời hạn"},"正在讀取活動資料…":{"zh-CN":"正在读取活动资料…","en":"Loading promotions…","vi":"Đang tải ưu đãi…"},"睫老闆商品型錄":{"zh-CN":"睫老板商品目录","en":"JOB BOSS Catalog","vi":"Danh mục JOB BOSS"},"VIP會員｜訂購指南":{"zh-CN":"VIP会员｜订购指南","en":"VIP Ordering Guide","vi":"Hướng dẫn đặt hàng VIP"},"點擊開啟電子型錄":{"zh-CN":"点击打开电子目录","en":"Open digital catalog","vi":"Mở danh mục điện tử"},"翻閱 ↗":{"zh-CN":"翻阅 ↗","en":"Browse ↗","vi":"Xem ↗"},"全部商品":{"zh-CN":"全部商品","en":"All Products","vi":"Tất cả sản phẩm"},"顯示全部":{"zh-CN":"显示全部","en":"Show All","vi":"Hiển thị tất cả"},"美睫周邊":{"zh-CN":"美睫周边","en":"Lash Supplies","vi":"Dụng cụ nối mi"},"睫毛款式專區":{"zh-CN":"睫毛款式专区","en":"Eyelash Extensions","vi":"Mi nối"},"頂級熱蠟":{"zh-CN":"顶级热蜡","en":"Premium Wax","vi":"Sáp tẩy lông cao cấp"},"紋繡商品":{"zh-CN":"纹绣商品","en":"PMU Supplies","vi":"Dụng cụ phun xăm"},"臉部保養":{"zh-CN":"脸部保养","en":"Skincare","vi":"Chăm sóc da"},"美妝商品":{"zh-CN":"美妆商品","en":"Beauty Products","vi":"Mỹ phẩm"},"採耳商品":{"zh-CN":"采耳商品","en":"Ear Care","vi":"Chăm sóc tai"},"美甲商品":{"zh-CN":"美甲商品","en":"Nail Products","vi":"Sản phẩm làm móng"},"出清五折":{"zh-CN":"清仓五折","en":"50% Clearance","vi":"Xả kho giảm 50%"},"福利品專區":{"zh-CN":"福利品专区","en":"Outlet Items","vi":"Hàng ưu đãi"},"加入購物車":{"zh-CN":"加入购物车","en":"Add to Cart","vi":"Thêm vào giỏ"},"商品明細":{"zh-CN":"商品明细","en":"Cart Details","vi":"Chi tiết giỏ hàng"},"收件資料":{"zh-CN":"收件资料","en":"Shipping Details","vi":"Thông tin nhận hàng"},"填寫收件資料":{"zh-CN":"填写收件资料","en":"Shipping Information","vi":"Thông tin giao hàng"},"付款方式":{"zh-CN":"付款方式","en":"Payment Method","vi":"Phương thức thanh toán"},"配送方式":{"zh-CN":"配送方式","en":"Shipping Method","vi":"Phương thức vận chuyển"},"訂單備註":{"zh-CN":"订单备注","en":"Order Notes","vi":"Ghi chú đơn hàng"},"送出訂單":{"zh-CN":"提交订单","en":"Place Order","vi":"Đặt hàng"},"訂單查詢":{"zh-CN":"订单查询","en":"Order Lookup","vi":"Tra cứu đơn hàng"},"訂單編號":{"zh-CN":"订单编号","en":"Order Number","vi":"Mã đơn hàng"},"商品名稱":{"zh-CN":"商品名称","en":"Product Name","vi":"Tên sản phẩm"},"數量":{"zh-CN":"数量","en":"Quantity","vi":"Số lượng"},"單價":{"zh-CN":"单价","en":"Unit Price","vi":"Đơn giá"},"小計":{"zh-CN":"小计","en":"Subtotal","vi":"Tạm tính"},"合計":{"zh-CN":"合计","en":"Total","vi":"Tổng cộng"},"總計":{"zh-CN":"总计","en":"Total","vi":"Tổng cộng"},"運費":{"zh-CN":"运费","en":"Shipping Fee","vi":"Phí vận chuyển"},"折扣":{"zh-CN":"折扣","en":"Discount","vi":"Giảm giá"},"確認":{"zh-CN":"确认","en":"Confirm","vi":"Xác nhận"},"取消":{"zh-CN":"取消","en":"Cancel","vi":"Hủy"},"關閉":{"zh-CN":"关闭","en":"Close","vi":"Đóng"},"確定":{"zh-CN":"确定","en":"OK","vi":"Đồng ý"},"查詢":{"zh-CN":"查询","en":"Search","vi":"Tra cứu"},"登入":{"zh-CN":"登录","en":"Log In","vi":"Đăng nhập"},"登出":{"zh-CN":"退出登录","en":"Log Out","vi":"Đăng xuất"},"會員中心":{"zh-CN":"会员中心","en":"My Account","vi":"Tài khoản"},"優惠券":{"zh-CN":"优惠券","en":"Coupons","vi":"Mã giảm giá"},"購物金":{"zh-CN":"购物金","en":"Shopping Credit","vi":"Tín dụng mua hàng"},"免運券":{"zh-CN":"免运券","en":"Free Shipping Coupon","vi":"Mã miễn phí vận chuyển"},"儲值金":{"zh-CN":"储值金","en":"Store Credit","vi":"Số dư tài khoản"},"購物須知":{"zh-CN":"购物须知","en":"Shopping Guide","vi":"Hướng dẫn mua hàng"},"服務條款":{"zh-CN":"服务条款","en":"Terms of Service","vi":"Điều khoản dịch vụ"},"隱私權政策":{"zh-CN":"隐私权政策","en":"Privacy Policy","vi":"Chính sách bảo mật"},"退換貨政策":{"zh-CN":"退换货政策","en":"Returns Policy","vi":"Chính sách đổi trả"},"聯絡我們":{"zh-CN":"联系我们","en":"Contact Us","vi":"Liên hệ"},"顧客服務":{"zh-CN":"顾客服务","en":"Customer Service","vi":"Dịch vụ khách hàng"},"授權經銷商":{"zh-CN":"授权经销商","en":"Authorized Dealers","vi":"Đại lý ủy quyền"},"查看授權經銷商名單":{"zh-CN":"查看授权经销商名单","en":"View Authorized Dealers","vi":"Xem danh sách đại lý"},"直營門市":{"zh-CN":"直营门店","en":"Our Stores","vi":"Cửa hàng trực tiếp"},"庫存不足":{"zh-CN":"库存不足","en":"Insufficient Stock","vi":"Không đủ hàng"},"商品庫存異動通知":{"zh-CN":"商品库存变动通知","en":"Stock Update Notice","vi":"Thông báo thay đổi tồn kho"},"不需要滿額贈品":{"zh-CN":"不需要满额赠品","en":"No Free Gift","vi":"Không nhận quà tặng"},"下載PDF":{"zh-CN":"下载PDF","en":"Download PDF","vi":"Tải PDF"},"選擇縣市":{"zh-CN":"选择县市","en":"Select City/County","vi":"Chọn tỉnh/thành"},"選擇地區":{"zh-CN":"选择地区","en":"Select Region","vi":"Chọn khu vực"}};
+const LANGS=['zh-TW','zh-CN','en','vi'];
+const selector=document.getElementById('boss-language-select');
+if(!selector)return;
+let lang='zh-TW';
+try{const saved=localStorage.getItem('boss-site-language');if(LANGS.includes(saved))lang=saved;}catch(e){}
+const originalText=new WeakMap(),originalAttr=new WeakMap();
+const blocked='script,style,noscript,textarea,code,pre,option,[translate="no"],[contenteditable="true"]';
+const ATTRS=['placeholder','title','aria-label'];
+function translate(s){
+ const match=/^(\s*)([\s\S]*?)(\s*)$/.exec(s);
+ if(!match)return s;
+ const word=match[2];
+ return match[1]+(lang==='zh-TW'?word:(DICT[word]&&DICT[word][lang])||word)+match[3];
+}
+function eligible(el){return el&&el.nodeType===1&&!el.closest(blocked);}
+function walk(root){
+ if(root.nodeType===3){
+  const parent=root.parentElement;
+  if(!eligible(parent))return;
+  const current=root.nodeValue;
+  let orig=originalText.get(root);
+  if(orig===undefined || (current!==orig && current!==translateFrom(orig)&&!isKnownTranslation(current,orig))){orig=current;originalText.set(root,orig);}
+  const next=translate(orig);
+  if(current!==next)root.nodeValue=next;
+  return;
+ }
+ if(root.nodeType!==1||!eligible(root))return;
+ let attrMap=originalAttr.get(root);
+ if(!attrMap){attrMap={};originalAttr.set(root,attrMap);}
+ for(const a of ATTRS){
+  if(!root.hasAttribute(a))continue;
+  const current=root.getAttribute(a);
+  let orig=attrMap[a];
+  if(orig===undefined||(current!==orig&&current!==translateFrom(orig)&&!isKnownTranslation(current,orig))){orig=current;attrMap[a]=orig;}
+  const next=translate(orig);
+  if(current!==next)root.setAttribute(a,next);
+ }
+ for(const child of root.childNodes)walk(child);
+}
+function translateFrom(orig){return translate(orig);}
+function isKnownTranslation(current,orig){
+ const m=/^(\s*)([\s\S]*?)(\s*)$/.exec(orig);
+ if(!m||!DICT[m[2]])return false;
+ return Object.values(DICT[m[2]]).some(v=>current===m[1]+v+m[3]);
+}
+let scheduled=false;
+function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;walk(document.body);});}
+function setLanguage(next){if(!LANGS.includes(next))return;lang=next;document.documentElement.lang=next;selector.value=next;try{localStorage.setItem('boss-site-language',next);}catch(e){}schedule();}
+selector.addEventListener('change',()=>setLanguage(selector.value));
+new MutationObserver(records=>{
+ for(const record of records){
+  if(record.type==='characterData'||record.type==='childList'||record.type==='attributes'){schedule();break;}
+ }
+}).observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS});
+setLanguage(lang);
+window.bossSetLanguage=setLanguage;
+})();
+</script>
+</body></html>');
         popup.document.close();
         popup.focus();
         // 讓列印頁完成排版與中文字型載入後再開啟列印視窗。
