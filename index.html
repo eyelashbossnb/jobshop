@@ -1280,7 +1280,7 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
             <img src="https://i.ibb.co/BH9z3D5D/image.png" alt="睫老闆美妝百貨" class="logo-img">
         </a>
         <div class="nav-tools">
-            <input type="text" class="search-bar" id="product-search-input" placeholder="搜尋精選商品..." oninput="filterProducts()">
+            <input type="text" class="search-bar" id="product-search-input" placeholder="搜尋全站商品..." oninput="filterProducts()">
             <button class="nav-btn secondary" onclick="toggleOrderModal(true)">查詢訂單</button>
             <div id="member-status-area">
                 <button class="nav-btn" onclick="toggleLoginModal(true)">會員登入</button>
@@ -12247,7 +12247,7 @@ function filterProducts() {
 
     let visibleCount = 0;
     items.forEach(item => {
-        const productId = item.getAttribute('data-id').toLowerCase();
+        const productId = (item.getAttribute('data-id') || '').toLowerCase();
         
         let productName = item.getAttribute('data-name');
         if(!productName && productConfig[item.getAttribute('data-id')]) productName = productConfig[item.getAttribute('data-id')].name;
@@ -12257,10 +12257,11 @@ function filterProducts() {
         const productSub = item.getAttribute('data-sub') || 'none';
         
         const matchesQuery = productId.includes(query) || productName.includes(query);
-        const matchesCategory = (currentCategory === 'all' || productCat === currentCategory);
+        // 輸入關鍵字時全站搜尋；清空後恢復原本分類篩選。
+        const matchesCategory = query.length > 0 || currentCategory === 'all' || productCat === currentCategory;
         
         let matchesSubCategory = true;
-        if (currentCategory !== 'all' && currentSubCategory !== 'all') {
+        if (!query && currentCategory !== 'all' && currentSubCategory !== 'all') {
             if (currentSubCategory === 'dash-layered') {
                 matchesSubCategory = (productSub === 'lash-layered' || productSub === 'lash-kellis' || productSub === 'lash-camellia');
             } else if (currentSubCategory === 'dash-bloom') {
@@ -12295,7 +12296,11 @@ function filterProducts() {
     });
 
     if (visibleCount === 0) {
-        grid.insertAdjacentHTML('beforeend', `<div id="no-search-notice" class="no-search-results">✨ 該分類下找不到符合「${query}」的美學商品唷！</div>`);
+        const notice = document.createElement('div');
+        notice.id = 'no-search-notice';
+        notice.className = 'no-search-results';
+        notice.textContent = query ? `找不到符合「${searchInput.value.trim()}」的商品，請嘗試其他關鍵字。` : '此分類目前沒有商品。';
+        grid.appendChild(notice);
     }
 }
 
