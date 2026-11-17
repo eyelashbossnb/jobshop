@@ -12044,7 +12044,7 @@ function getDefaultMemberContact() {
     return {
         name: String(deptMemberData.name || "").trim(),
         phone: String(deptMemberData.phone || "").trim(),
-        address: String(deptMemberData.address || "").trim(),
+        address: String(deptMemberData.address || deptMemberData.shipping_address || deptMemberData.shippingAddress || deptMemberData.member_address || deptMemberData.地址 || "").trim(),
         company_title: String(deptMemberData.company_title || "").trim(),
         tax_id: String(deptMemberData.tax_id || "").trim()
     };
@@ -16187,7 +16187,17 @@ function bossShippingChanged() {
     bossShippingDrafts[bossPreviousShippingType] = field.value;
   }
   if (bossPreviousShippingType !== type) {
-    field.value = bossShippingDrafts[type] || '';
+    const isHomeDelivery = ['normal', 'blackcat', 'blackcat-cold', 'sf-hk'].includes(type);
+    const memberAddress = (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn && deptMemberData)
+      ? getDefaultMemberContact().address : '';
+    const existingAddress = field.value.trim();
+    // 初次初始化保留會員自動帶入地址；7-11 門市欄位不可套用宅配地址。
+    if (!bossPreviousShippingType && isHomeDelivery && existingAddress) {
+      bossShippingDrafts[type] = existingAddress;
+    }
+    field.value = Object.prototype.hasOwnProperty.call(bossShippingDrafts, type)
+      ? bossShippingDrafts[type]
+      : (isHomeDelivery ? (memberAddress || '') : '');
   }
   bossPreviousShippingType = type;
   group.style.display = type === 'store-pickup' ? 'none' : '';
