@@ -1277,65 +1277,106 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 #boss-language-select{border:1px solid var(--border-color);background:#fff;color:var(--text-main);border-radius:20px;padding:8px 9px;font-size:12px;max-width:145px;cursor:pointer}
 @media(max-width:768px){.nav-tools>.boss-language-wrap{grid-column:1/-1;justify-content:flex-end}#boss-language-select{max-width:180px}}
 </style>
-
-<style id="boss-fixed-header-layout-20261117">
-/* Desktop: keep header geometry stable across all languages and member levels. */
-@media (min-width: 769px) {
-  .header-container {max-width: none; width:100%; box-sizing:border-box; gap:18px; padding-left:clamp(16px,3vw,50px); padding-right:clamp(16px,3vw,50px);}
-  .header-container > .logo {flex:0 1 340px; min-width:150px; overflow:hidden;}
-  .header-container .logo-img {max-width:100%; height:auto; max-height:85px;}
-  .header-container .nav-tools {flex:0 0 auto; display:flex; align-items:center; gap:12px; min-width:0;}
-  .nav-tools > .search-bar {width:180px !important; min-width:180px; max-width:180px; box-sizing:border-box; flex:none;}
-  .nav-tools > .search-bar:focus {width:180px !important;}
-  .nav-tools > .nav-btn {width:100px; min-width:100px; height:38px; box-sizing:border-box; padding:6px 8px; flex:none; line-height:1.2; white-space:normal;}
-  #member-status-area {display:flex; align-items:center; justify-content:center; flex:none; width:530px; min-width:530px; height:42px; box-sizing:border-box; overflow:hidden;}
-  #member-status-area > .nav-btn {flex:0 0 112px; width:112px; min-width:112px; height:38px; box-sizing:border-box; padding:5px 6px; margin:0 4px !important; font-size:12px; line-height:1.2; white-space:normal;}
-  #member-status-area > .user-info {display:flex; width:100%; height:42px; box-sizing:border-box; min-width:0; padding:5px 9px; gap:7px; flex-wrap:nowrap; overflow:hidden; white-space:nowrap; font-size:11px;}
-  #member-status-area > .user-info > span:first-child {flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  #member-status-area > .user-info > .badge {flex:0 0 auto; max-width:72px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  #member-status-area > .user-info > .balance {flex:0 0 auto; white-space:nowrap; font-size:11px;}
-  #member-status-area > .user-info > .member-expiry {display:inline-flex; flex:0 0 auto; white-space:nowrap; font-size:11px;}
-  #member-status-area > .user-info > .logout-link {flex:0 0 auto; white-space:nowrap; padding-left:7px;}
-  .nav-tools > .boss-language-wrap {flex:none; width:143px; min-width:143px; height:38px; box-sizing:border-box; gap:5px;}
-  .nav-tools > .boss-language-wrap label {flex:none;}
-  .nav-tools > .boss-language-wrap #boss-language-select {flex:1; width:0; min-width:0; max-width:none; height:38px; box-sizing:border-box; padding:5px 4px; font-size:11px;}
-}
-/* Smaller laptop widths: preserve stable control sizes and allow horizontal scroll rather than wrapping. */
-@media (min-width:769px) and (max-width:1250px) {
-  .header-container > .logo {flex-basis:240px;}
-  .header-container .nav-tools {gap:8px;}
-  .nav-tools > .search-bar,.nav-tools > .search-bar:focus {width:145px !important; min-width:145px; max-width:145px;}
-  #member-status-area {width:345px; min-width:345px;}
-  .nav-tools > .boss-language-wrap {width:133px; min-width:133px;}
-}
-/* Mobile retains the existing two-column controls layout. */
-@media (max-width:768px) {
-  .nav-tools > .search-bar,.nav-tools > .search-bar:focus {box-sizing:border-box;}
-  #member-status-area .user-info {min-width:0; max-width:100%; overflow:hidden;}
-  #member-status-area .user-info > span:first-child {min-width:0; overflow:hidden; text-overflow:ellipsis;}
-  .nav-tools > .boss-language-wrap {height:40px;}
-}
-</style>
-<style id="boss-mobile-three-equal-buttons-20261117">
-/* Only mobile. Desktop rules and DOM remain untouched. */
-@media (max-width:768px) {
- .header-container {position:relative !important; padding:14px 14px 15px !important; gap:12px !important;}
- .header-container > .logo {align-self:flex-start !important; width:calc(100% - 148px) !important; min-width:0 !important; min-height:60px; display:flex; align-items:center;}
- .header-container > .logo .logo-img {max-width:100% !important; width:auto !important; max-height:64px !important; height:auto !important;}
- .header-container > .nav-tools {display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:9px 7px !important; width:100% !important; align-items:stretch !important;}
- .nav-tools > .search-bar,.nav-tools > .search-bar:focus {grid-column:1/-1 !important; grid-row:1 !important; width:100% !important; min-width:0 !important; max-width:none !important; height:42px !important;}
- .nav-tools > .nav-btn {grid-column:1 !important;grid-row:2 !important; width:100% !important; min-width:0 !important; height:44px !important; margin:0 !important; padding:6px 3px !important; white-space:normal !important; font-size:clamp(10px,2.8vw,12px) !important; line-height:1.15 !important;}
- #member-status-area {display:contents !important; width:auto !important; min-width:0 !important; height:auto !important; overflow:visible !important;}
- #member-status-area > .nav-btn {height:44px !important; width:100% !important; min-width:0 !important; margin:0 !important; padding:6px 3px !important; white-space:normal !important; font-size:clamp(10px,2.8vw,12px) !important; line-height:1.15 !important;}
- #member-status-area > .nav-btn:first-child {grid-column:2 !important;grid-row:2 !important;}
- #member-status-area > .nav-btn:nth-child(2) {grid-column:3 !important;grid-row:2 !important;}
- .nav-tools > .boss-language-wrap {position:absolute !important;top:20px !important;right:14px !important;grid-column:auto !important;grid-row:auto !important;display:flex !important;align-items:center !important;justify-content:flex-end !important;width:138px !important;max-width:138px !important;height:42px !important;gap:4px !important;z-index:2;}
- .boss-language-wrap label {font-size:11px !important; flex:none !important;}
- .nav-tools > .boss-language-wrap #boss-language-select {width:105px !important;max-width:105px !important;min-width:0 !important;height:38px !important;padding:5px 4px !important;font-size:11px !important;}
- /* When signed in, order lookup stays in its row and membership information is full width below it. */
- #member-status-area > .user-info {grid-column:1/-1 !important;grid-row:3 !important;width:100% !important;max-width:none !important;min-width:0 !important;height:auto !important;min-height:44px !important;box-sizing:border-box !important;padding:9px !important;flex-wrap:wrap !important;overflow:visible !important;white-space:normal !important;justify-content:center !important;gap:7px !important;}
- .nav-tools:has(#member-status-area > .user-info) > .nav-btn {grid-column:1/-1 !important;grid-row:2 !important;}
- .nav-tools:has(#member-status-area > .user-info) > .boss-language-wrap {grid-column:auto !important;grid-row:auto !important;}
+<style id="boss-mobile-header-three-columns-only">
+/* 只影響手機版；電腦版沿用上傳原檔全部樣式 */
+@media screen and (max-width:768px) {
+  header .header-container {
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    column-gap:10px !important;
+    row-gap:12px !important;
+    align-items:center !important;
+    padding:14px 16px 16px !important;
+  }
+  header .header-container > .logo {
+    grid-column:1 !important;
+    grid-row:1 !important;
+    min-width:0 !important;
+    justify-self:start !important;
+  }
+  header .logo-img {
+    width:auto !important;
+    height:auto !important;
+    max-width:100% !important;
+    max-height:68px !important;
+  }
+  header .nav-tools { display:contents !important; }
+  header .nav-tools > .boss-language-wrap {
+    grid-column:2 !important;
+    grid-row:1 !important;
+    justify-self:end !important;
+    display:flex !important;
+    width:auto !important;
+    margin:0 !important;
+    gap:0 !important;
+  }
+  header .boss-language-wrap label { display:none !important; }
+  header #boss-language-select {
+    width:124px !important;
+    max-width:124px !important;
+    min-width:0 !important;
+    height:38px !important;
+    padding:6px 8px !important;
+    box-sizing:border-box !important;
+    font-size:12px !important;
+  }
+  header .nav-tools > .search-bar {
+    grid-column:1 / -1 !important;
+    grid-row:2 !important;
+    width:100% !important;
+    min-width:0 !important;
+    height:43px !important;
+    box-sizing:border-box !important;
+    margin:0 !important;
+  }
+  header .nav-tools > .search-bar:focus {width:100% !important;}
+  header .nav-tools > .nav-btn {
+    grid-column:1 !important;
+    grid-row:3 !important;
+  }
+  header #member-status-area { display:contents !important; }
+  header #member-status-area > .nav-btn:first-child {
+    grid-column:2 !important;
+    grid-row:3 !important;
+  }
+  header #member-status-area > .nav-btn:nth-child(2) {
+    grid-column:3 !important;
+    grid-row:3 !important;
+    margin-left:0 !important;
+  }
+  /* 第三列三個按鈕共用等寬三欄，避免英越文撐開 */
+  header .header-container { grid-template-columns:repeat(3,minmax(0,1fr)) !important; }
+  header .header-container > .logo { grid-column:1 / 3 !important; }
+  header .nav-tools > .boss-language-wrap { grid-column:3 !important; }
+  header .nav-tools > .nav-btn,
+  header #member-status-area > .nav-btn {
+    width:100% !important;
+    min-width:0 !important;
+    height:42px !important;
+    margin:0 !important;
+    padding:5px 3px !important;
+    box-sizing:border-box !important;
+    font-size:clamp(10px,2.7vw,12px) !important;
+    line-height:1.2 !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+    text-align:center !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+  }
+  /* 已登入會員資訊完整保留，獨立顯示，避免擠壓搜尋與語言欄 */
+  header #member-status-area > .user-info {
+    grid-column:1 / -1 !important;
+    grid-row:3 !important;
+    width:100% !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+    justify-content:center !important;
+    flex-wrap:wrap !important;
+    gap:6px 10px !important;
+    padding:9px !important;
+  }
 }
 </style>
 </head>
