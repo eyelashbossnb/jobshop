@@ -1273,7 +1273,7 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 </style>
 <style id="boss-language-style">
 .boss-language-wrap{display:flex;align-items:center;gap:6px;min-width:0}
-.boss-language-wrap label{font-size:16px;white-space:nowrap}
+.boss-language-wrap label{font-size:12px;font-weight:700;letter-spacing:0;white-space:nowrap;color:var(--primary-color)}
 #boss-language-select{border:1px solid var(--border-color);background:#fff;color:var(--text-main);border-radius:20px;padding:8px 9px;font-size:12px;max-width:145px;cursor:pointer}
 @media(max-width:768px){.nav-tools>.boss-language-wrap{grid-column:1/-1;justify-content:flex-end}#boss-language-select{max-width:180px}}
 </style>
@@ -1286,13 +1286,13 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
             <img src="https://i.ibb.co/BH9z3D5D/image.png" alt="睫老闆美妝百貨" class="logo-img">
         </a>
         <div class="nav-tools">
-            <div class="boss-language-wrap" translate="no"><label for="boss-language-select" aria-label="Language">🌐</label><select id="boss-language-select" aria-label="Select language"><option value="zh-TW">繁體中文</option><option value="zh-CN">简体中文</option><option value="en">English</option><option value="vi">Tiếng Việt</option></select></div>
             <input type="text" class="search-bar" id="product-search-input" placeholder="搜尋全站商品..." oninput="filterProducts()">
             <button class="nav-btn secondary" onclick="toggleOrderModal(true)">查詢訂單</button>
             <div id="member-status-area">
                 <button class="nav-btn" onclick="toggleLoginModal(true)">會員登入</button>
                 <button class="nav-btn secondary" onclick="toggleRegisterModal(true)" style="margin-left: 6px;">免費註冊</button>
             </div>
+            <div class="boss-language-wrap" translate="no"><label for="boss-language-select" aria-label="Language">文/A</label><select id="boss-language-select" aria-label="Select language"><option value="zh-TW">繁體中文</option><option value="zh-CN">简体中文</option><option value="en">English</option><option value="vi">Tiếng Việt</option></select></div>
         </div>
     </div>
 </header>
