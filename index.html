@@ -1207,6 +1207,27 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 #boss-dealer-city-filter:disabled{opacity:.55;cursor:wait}
 @media(max-width:650px){.boss-dealer-filter{align-items:stretch;flex-direction:column;gap:7px}#boss-dealer-city-filter{max-width:none;width:100%}}
 
+/* 修正：篩選欄與台灣／香港按鈕同寬，覆蓋舊的 max-width:320px */
+#boss-dealer-overlay #boss-dealer-city-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  flex-wrap:nowrap;
+  gap:8px;
+  width:100%;
+  max-width:none;
+  box-sizing:border-box;
+}
+#boss-dealer-overlay #boss-dealer-city-wrap #boss-dealer-city-filter{
+  display:block;
+  flex:0 0 auto;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+
+
 
 /* 2026-11-16｜僅放大快速查詢訂單視窗，其他彈窗維持原樣 */
 #order-modal-overlay { padding: 16px; box-sizing: border-box; }
