@@ -1397,7 +1397,7 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
     <section id="boss-mobile-cart-popup" hidden aria-label="購物車預覽">
       <div class="boss-mobile-cart-popup-head"><strong>🛒 購物車</strong><button type="button" onclick="toggleBossMobileCart(false)" aria-label="收合購物車" title="收合購物車">－</button></div>
       <div id="boss-mobile-cart-popup-items" class="boss-mobile-cart-popup-items">購物車沒有加入任何商品</div>
-      <button type="button" class="boss-mobile-cart-checkout" onclick="toggleBossMobileCart(false);mobileQuickGo('cart')">前往結帳</button>
+      <button type="button" class="boss-mobile-cart-checkout" onclick="bossMobileCartCheckoutJump()">前往結帳</button>
     </section>
     <div id="mobile-quick-menu" hidden>
         <button type="button" onclick="mobileQuickGo('search')">🔍 搜尋商品</button>
@@ -15081,6 +15081,20 @@ function toggleMobileQuickNav(force) {
     menu.hidden=!show;
     trigger.setAttribute('aria-expanded',String(show));
 }
+// 手機購物車：一次點擊收合並準確定位商品明細（避免長頁面平滑捲動中斷）。
+function bossMobileCartCheckoutJump() {
+    toggleBossMobileCart(false);
+    toggleMobileQuickNav(false);
+    const cartCard = document.querySelector('.mobile-cart-card');
+    if (!cartCard) return;
+    const title = cartCard.querySelector('.cart-title-row') || cartCard;
+    const position = () => {
+        const y = window.scrollY + title.getBoundingClientRect().top - 12;
+        window.scrollTo({top: Math.max(0, y), behavior: 'instant'});
+    };
+    // 等收合引起的畫面重新排版完成，再執行一次定位。
+    requestAnimationFrame(() => requestAnimationFrame(position));
+}
 function mobileQuickGo(where) {
     toggleMobileQuickNav(false);
     if (where==='top') {
@@ -15902,6 +15916,12 @@ render();
       if(anchor && submit.parentElement!==cart)anchor.insertAdjacentElement('beforebegin',submit);
       if(summary.nextElementSibling!==submit)submit.insertAdjacentElement('beforebegin',summary);
     }
+    // 優惠券／活動贈品必須跟著金額統計移動，避免手機版留在商品明細區而看不到。
+    const benefits=document.getElementById('boss-checkout-benefits');
+    if(benefits && benefits.nextElementSibling!==summary){
+      summary.insertAdjacentElement('beforebegin',benefits);
+    }
+    if(typeof bossCouponSyncVisibility==='function')bossCouponSyncVisibility();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(positionFinalSummary,30));
   else setTimeout(positionFinalSummary,30);
@@ -15940,6 +15960,7 @@ render();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(arrange,0));
   else setTimeout(arrange,0);
+  window.addEventListener('resize',()=>setTimeout(arrange,0));
 })();
 </script>
 <style id="boss-promo-empty-fix">
