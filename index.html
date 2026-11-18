@@ -15918,8 +15918,14 @@ render();
     }
     // 優惠券／活動贈品必須跟著金額統計移動，避免手機版留在商品明細區而看不到。
     const benefits=document.getElementById('boss-checkout-benefits');
-    if(benefits && benefits.nextElementSibling!==summary){
-      summary.insertAdjacentElement('beforebegin',benefits);
+    if(benefits){
+      if(mobile){
+        // 手機版：三種優惠直接接在商品明細清單下方，點擊前往結帳即可看到。
+        const items=document.getElementById('cart-items-container');
+        if(items && items.nextElementSibling!==benefits)items.insertAdjacentElement('afterend',benefits);
+      }else if(benefits.nextElementSibling!==summary){
+        summary.insertAdjacentElement('beforebegin',benefits);
+      }
     }
     if(typeof bossCouponSyncVisibility==='function')bossCouponSyncVisibility();
   }
@@ -15950,16 +15956,21 @@ render();
     if(!summary||!coupon||!promo||!gift)return;
     let wrap=document.getElementById('boss-checkout-benefits');
     if(!wrap){wrap=document.createElement('section');wrap.id='boss-checkout-benefits';wrap.setAttribute('aria-label','結帳優惠專區');summary.insertAdjacentElement('beforebegin',wrap);}
-    if (wrap.nextElementSibling !== summary) summary.insertAdjacentElement('beforebegin',wrap);
+    const mobile=window.matchMedia('(max-width: 768px)').matches;
+    if(mobile){
+      const items=document.getElementById('cart-items-container');
+      if(items && items.nextElementSibling!==wrap)items.insertAdjacentElement('afterend',wrap);
+    }else if(wrap.nextElementSibling!==summary){
+      summary.insertAdjacentElement('beforebegin',wrap);
+    }
     wrap.append(coupon,promo,gift);
-    const shipping=document.querySelector('.mobile-cart-card .shipping-policy-box');
-    if(shipping && shipping.previousElementSibling !== wrap) wrap.insertAdjacentElement('afterend',shipping);
+    // 運費規範維持商品明細原位置，避免把優惠區移回表單底部。
     if(typeof bossCouponSyncVisibility==='function')bossCouponSyncVisibility();
     if(typeof bossGiftSyncEligibility==='function')bossGiftSyncEligibility();
     if(typeof bossPromoGiftRefresh==='function')bossPromoGiftRefresh();
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(arrange,0));
-  else setTimeout(arrange,0);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(arrange,100));
+  else setTimeout(arrange,100);
   window.addEventListener('resize',()=>setTimeout(arrange,0));
 })();
 </script>
