@@ -1022,12 +1022,17 @@
 .boss-gift-tier[open] summary::after{content:'－'}
 .boss-gift-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-top:1px solid #f0e8e3;font-size:13px}
 .boss-gift-item span{flex:1;min-width:0;line-height:1.6}
-.boss-gift-item input{width:62px;max-width:28%;padding:8px;border:1px solid #dfd0c7;border-radius:8px;text-align:center;font-size:14px}
+/* 滿額贈數量：減號／可輸入數字／加號 */
+.boss-gift-qty-control{display:flex;align-items:center;flex:0 0 auto;border:1px solid #eaded8;border-radius:999px;overflow:hidden;background:#fff;min-width:116px;height:36px;box-sizing:border-box}
+.boss-gift-qty-control button{border:0;background:#faf7f5;color:#745b50;width:33px;height:100%;cursor:pointer;font-size:16px;flex:none}
+.boss-gift-qty-control button:hover{background:#f1e6df}
+.boss-gift-qty-control input{width:48px;min-width:0;max-width:none;border:0;border-radius:0;padding:5px 0;text-align:center;font-size:13px;background:#fff;outline:none;-moz-appearance:textfield}
+.boss-gift-qty-control input::-webkit-inner-spin-button,.boss-gift-qty-control input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .boss-gift-actions{position:sticky;bottom:-22px;background:#fffdfb;padding:13px 0 2px;display:flex;gap:10px}
 .boss-gift-actions button,.boss-gift-open{padding:11px 15px;border:1px solid #d5aaa1;background:#fff;border-radius:25px;cursor:pointer;color:#77564f;font-size:13px}
 .boss-gift-actions button.primary{flex:1;background:#e8a598;color:#fff;border-color:#e8a598;font-weight:700}
 #boss-gift-status{font-size:12px;color:#9b665f;margin-top:8px}
-@media(max-width:768px){.boss-gift-dialog{padding:16px}.boss-gift-item{padding:9px}.boss-gift-item input{width:48px}.boss-gift-actions{bottom:-16px}}
+@media(max-width:768px){.boss-gift-dialog{padding:16px}.boss-gift-item{padding:9px}.boss-gift-qty-control{min-width:108px}.boss-gift-qty-control input{width:42px}.boss-gift-actions{bottom:-16px}}
 
 
 /* V5.6｜電腦版商品明細整張卡片獨立滾動，手機版維持原本排列 */
@@ -15453,15 +15458,23 @@ window.addEventListener('DOMContentLoaded',()=>{
         const row=document.createElement('div');row.className='boss-gift-item';
         const name=document.createElement('span');name.textContent=/^[A-Z]{1,3}\d+[A-Z0-9_-]*$/.test(g.id) ? g.id+'｜'+g.name : g.name;
         const input=document.createElement('input');input.type='number';input.min='0';input.step='1';input.inputMode='numeric';input.setAttribute('aria-label',g.name+'數量');input.id='boss-gift-qty-'+gifts.indexOf(g);input.value=chosen[g.id]||0;
-        input.addEventListener('change',()=>{
-          const next=Math.max(0,Math.floor(Number(input.value)||0));
+        function setGiftQuantity(value){
+          const next=Math.max(0,Math.floor(Number(value)||0));
           const prev=chosen[g.id]||0;
           if(spent()+(next-prev)*tier>available()){
             alert('贈品額度不足，請調整數量。');input.value=prev;return;
           }
-          if(next){chosen[g.id]=next;giftDeclined=false;}else delete chosen[g.id];update();
-        });
-        row.append(name,input);section.appendChild(row);
+          if(next){chosen[g.id]=next;giftDeclined=false;}else delete chosen[g.id];
+          input.value=next;update();
+        }
+        input.addEventListener('change',()=>setGiftQuantity(input.value));
+        const control=document.createElement('div');control.className='boss-gift-qty-control';
+        const minus=document.createElement('button');minus.type='button';minus.textContent='−';minus.setAttribute('aria-label',g.name+'減少一件');
+        const plus=document.createElement('button');plus.type='button';plus.textContent='+';plus.setAttribute('aria-label',g.name+'增加一件');
+        minus.addEventListener('click',()=>setGiftQuantity((chosen[g.id]||0)-1));
+        plus.addEventListener('click',()=>setGiftQuantity((chosen[g.id]||0)+1));
+        control.append(minus,input,plus);
+        row.append(name,control);section.appendChild(row);
       });container.appendChild(section);
     });update();
   }
