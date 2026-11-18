@@ -955,6 +955,22 @@
 @media(max-width:1050px){.boss-coupon-grid{grid-template-columns:1fr}}
 @media(max-width:768px){.boss-coupon-panel{padding:15px 12px}.boss-coupon-heading{font-size:17px}.boss-coupon-query{width:100%}.boss-coupon-tile{padding:14px}.boss-coupon-grid{grid-template-columns:1fr}}
 
+
+/* 2026/11/18 優惠券卡片式選取：沿用原始 select 與折抵流程 */
+.boss-coupon-select{display:none!important}
+.boss-coupon-choices{display:grid;gap:8px;margin-top:9px}
+.boss-coupon-choice{width:100%;box-sizing:border-box;display:block;text-align:left;border:1px solid #eadbd4;background:#fff;border-radius:12px;padding:11px 12px;color:#4a3f35;cursor:pointer;font:inherit;transition:border-color .2s,background .2s,box-shadow .2s;overflow-wrap:anywhere}
+.boss-coupon-choice:hover{border-color:#e8a598}
+.boss-coupon-choice.is-selected{border-color:#d9a08f;background:#fffaf8;box-shadow:0 0 0 2px rgba(232,165,152,.12)}
+.boss-coupon-choice-title{font-size:12px;font-weight:700;line-height:1.6;display:flex;justify-content:space-between;gap:6px}
+.boss-coupon-choice-detail{font-size:12px;color:#ad7166;margin-top:4px}
+.boss-coupon-choice-date{font-size:11px;color:#897e79;margin-top:6px;line-height:1.6;overflow-wrap:anywhere}
+.boss-coupon-choice-check{color:#b87366;flex:none}
+.boss-coupon-tile{padding:15px 13px}
+.boss-coupon-grid{grid-template-columns:1fr}
+.boss-coupon-expiry{margin-top:10px}
+@media(max-width:768px){.boss-coupon-choice{padding:12px}.boss-coupon-choice-date{font-size:11px}}
+
         /* 商品明細：電腦與手機皆可在固定高度內獨立上下滾動 */
         #cart-items-container {
             max-height: 390px;
@@ -15206,8 +15222,8 @@ async function copyTransferAccount(){try{await navigator.clipboard.writeText('72
 <section id="eyelash-coupon-panel" class="boss-coupon-panel" aria-label="我的優惠券" style="display:none">
   <div class="boss-coupon-head"><div><div class="boss-coupon-heading">🎟 我的優惠券 <button type="button" class="boss-coupon-help" onclick="bossCouponHelpOpen()" aria-label="查看優惠券使用教學" title="優惠券使用教學">?</button></div><div class="boss-coupon-sub">會員專屬優惠｜購物金折抵券、免運券可各使用一張</div></div><button type="button" class="boss-coupon-query" onclick="eyelashLoadCoupons()">查詢可用優惠券 →</button></div>
   <div class="boss-coupon-grid">
-    <div class="boss-coupon-tile money"><div class="boss-coupon-label">🏷 購物金折抵券 <span id="boss-money-count" class="boss-coupon-count">尚未查詢</span></div><select id="eyelash-money-coupon" class="boss-coupon-select" onchange="eyelashCouponChanged()"><option value="">不使用優惠券</option></select><div id="boss-money-expiry" class="boss-coupon-expiry">使用期限：選取優惠券後顯示</div><div class="boss-coupon-notes">購物金需一次使用完畢，未使用餘額不保留。<br>購物金折抵金額不列入滿額贈計算。</div></div>
-    <div class="boss-coupon-tile shipping"><div class="boss-coupon-label">🚚 免運券 <span id="boss-shipping-count" class="boss-coupon-count">尚未查詢</span></div><select id="eyelash-shipping-coupon" class="boss-coupon-select" onchange="eyelashCouponChanged()"><option value="">不使用優惠券</option></select><div id="boss-shipping-expiry" class="boss-coupon-expiry">使用期限：選取優惠券後顯示</div><div class="boss-coupon-notes">以常溫宅配運費 $100 為折抵上限。<br>指定黑貓宅配及黑貓低溫仍需補差價。</div></div>
+    <div class="boss-coupon-tile money"><div class="boss-coupon-label">🏷 購物金折抵券 <span id="boss-money-count" class="boss-coupon-count">尚未查詢</span></div><select id="eyelash-money-coupon" class="boss-coupon-select" onchange="eyelashCouponChanged()"><option value="">不使用優惠券</option></select><div id="boss-money-choices" class="boss-coupon-choices" aria-label="選擇購物金優惠券"></div><div id="boss-money-expiry" class="boss-coupon-expiry">使用期限：選取優惠券後顯示</div><div class="boss-coupon-notes">購物金需一次使用完畢，未使用餘額不保留。<br>購物金折抵金額不列入滿額贈計算。</div></div>
+    <div class="boss-coupon-tile shipping"><div class="boss-coupon-label">🚚 免運券 <span id="boss-shipping-count" class="boss-coupon-count">尚未查詢</span></div><select id="eyelash-shipping-coupon" class="boss-coupon-select" onchange="eyelashCouponChanged()"><option value="">不使用優惠券</option></select><div id="boss-shipping-choices" class="boss-coupon-choices" aria-label="選擇免運券"></div><div id="boss-shipping-expiry" class="boss-coupon-expiry">使用期限：選取優惠券後顯示</div><div class="boss-coupon-notes">以常溫宅配運費 $100 為折抵上限。<br>指定黑貓宅配及黑貓低溫仍需補差價。</div></div>
   </div><div id="eyelash-coupon-status" class="boss-coupon-status" role="status" aria-live="polite">請先登入會員，再查詢可用優惠券</div>
 </section>
 <script>
@@ -15231,6 +15247,7 @@ function bossCouponSyncVisibility(){
    const sel=document.getElementById(id);
    if(sel){sel.replaceChildren(new Option('不使用優惠券',''));sel.value='';}
   }
+  bossCouponRenderChoices();
   if(changed && typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
  }
 }
@@ -15256,22 +15273,55 @@ async function eyelashLoadCoupons(){
    eyelashCouponState.coupons.filter(c=>type==='money'?/購物金|折抵/.test(c.type):/免運/.test(c.type)).forEach(c=>sel.add(new Option(c.name+'（'+(type==='money'?'折抵 $'+c.amount:'免運')+'）'+(bossCouponExpiryText(c)?'｜'+bossCouponExpiryText(c):''),c.id)));
    if([...sel.options].some(o=>o.value===prev))sel.value=prev;
   }
-  bossCouponUpdateCounts();status.textContent='已更新可用優惠券';eyelashCouponChanged();
+  bossCouponRenderChoices();bossCouponUpdateCounts();status.textContent='已更新可用優惠券';eyelashCouponChanged();
  }catch(e){status.textContent='查詢失敗：'+e.message;}
 }
 function eyelashCouponChanged(){
  if(!bossCouponIsEligible()){bossCouponSyncVisibility();return;}
  const get=id=>eyelashCouponState.coupons.find(c=>c.id===document.getElementById(id)?.value)||null;
  eyelashCouponState.money=get('eyelash-money-coupon');eyelashCouponState.shipping=get('eyelash-shipping-coupon');
- bossCouponUpdateExpiry();
+ bossCouponUpdateExpiry();bossCouponRenderChoices();
  if(typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
+}
+function bossCouponFormatDate(value){
+ if(!value)return '';
+ const raw=String(value).trim();
+ const match=raw.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+ if(match)return match[1]+'/'+match[2].padStart(2,'0')+'/'+match[3].padStart(2,'0');
+ const date=new Date(value);
+ if(!Number.isNaN(date.getTime()))return date.getFullYear()+'/'+String(date.getMonth()+1).padStart(2,'0')+'/'+String(date.getDate()).padStart(2,'0');
+ return raw;
 }
 function bossCouponExpiryText(c){
  if(!c)return '';
  const start=c.start||c.startDate||c.start_date||c.validFrom||'';
  const end=c.end||c.endDate||c.end_date||c.expiry||c.expiresAt||c.expiration||'';
- const format=v=>{if(!v)return '';const d=new Date(v);if(!Number.isNaN(d.getTime()))return d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0');return String(v).replace(/\s.*$/,'');};
- return end?(start?format(start)+' ～ ':'')+format(end):'未設定到期日';
+ if(start&&end)return bossCouponFormatDate(start)+' - '+bossCouponFormatDate(end);
+ if(end)return '至 '+bossCouponFormatDate(end);
+ if(start)return '自 '+bossCouponFormatDate(start);
+ return '未設定有效期限';
+}
+function bossCouponRenderChoices(){
+ for(const [type,selectId,containerId] of [['money','eyelash-money-coupon','boss-money-choices'],['shipping','eyelash-shipping-coupon','boss-shipping-choices']]){
+  const select=document.getElementById(selectId),container=document.getElementById(containerId);
+  if(!select||!container)continue;
+  container.replaceChildren();
+  const options=[{id:'',name:'不使用優惠券'}].concat(eyelashCouponState.coupons.filter(c=>type==='money'?/購物金|折抵/.test(c.type):/免運/.test(c.type)));
+  options.forEach(c=>{
+   const btn=document.createElement('button');btn.type='button';btn.className='boss-coupon-choice'+(String(select.value)===String(c.id)?' is-selected':'');
+   btn.setAttribute('aria-pressed',String(select.value)===String(c.id)?'true':'false');
+   const title=document.createElement('div');title.className='boss-coupon-choice-title';
+   const name=document.createElement('span');name.textContent=c.name;
+   const check=document.createElement('span');check.className='boss-coupon-choice-check';check.textContent=String(select.value)===String(c.id)?'✓ 已選取':'○';
+   title.append(name,check);btn.append(title);
+   if(c.id){
+    const detail=document.createElement('div');detail.className='boss-coupon-choice-detail';detail.textContent=type==='money'?'折抵 $'+Number(c.amount||0).toLocaleString('en-US'):'免運優惠';btn.append(detail);
+    const date=document.createElement('div');date.className='boss-coupon-choice-date';date.textContent='有效期限：'+bossCouponExpiryText(c);btn.append(date);
+   }
+   btn.addEventListener('click',()=>{select.value=String(c.id);eyelashCouponChanged();});
+   container.append(btn);
+  });
+ }
 }
 function bossCouponUpdateCounts(){
  for(const [type,id] of [['money','boss-money-count'],['shipping','boss-shipping-count']]){
@@ -15289,7 +15339,7 @@ function eyelashCouponPayload(){return {phone:bossCouponIsEligible()?eyelashCoup
 window.addEventListener('DOMContentLoaded',()=>{
  const panel=document.getElementById('eyelash-coupon-panel'),target=document.getElementById('grand-total');
  if(panel&&target){const container=target.closest('div');(container?.parentElement||target.parentElement).before(panel);}
- bossCouponSyncVisibility();
+ bossCouponSyncVisibility();bossCouponRenderChoices();
 });
 </script>
 <div id="boss-gift-overlay" role="dialog" aria-modal="true" aria-label="滿額贈品選擇">
