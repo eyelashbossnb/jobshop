@@ -1285,6 +1285,28 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 .boss-mobile-cart-popup-items .cart-item{flex-wrap:wrap;gap:8px}.boss-mobile-cart-popup-items .cart-item-info{max-width:100%;flex:1 1 100%;font-size:12px}.boss-mobile-cart-popup-items .cart-item-actions{width:100%;justify-content:flex-end}
 .boss-mobile-cart-popup-items .empty-cart-text{text-align:center;padding:25px 8px;color:#8a7e72}
 .boss-mobile-cart-checkout{width:calc(100% - 24px);margin:8px 12px 12px;padding:11px;border:0;border-radius:22px;background:#e8a598;color:white;font-weight:600;cursor:pointer}
+/* 2026-11-18：手機購物車展開為螢幕 100% 寬、90% 高，清單獨立滾動 */
+@media(max-width:768px){
+  #mobile-quick-nav #boss-mobile-cart-popup{
+    position:fixed;left:0;right:0;top:5vh;top:5dvh;
+    width:100vw;width:100dvw;height:90vh;height:90dvh;
+    max-width:none;box-sizing:border-box;margin:0;
+    display:flex;flex-direction:column;min-height:0;
+    border-radius:16px;z-index:510;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  #mobile-quick-nav #boss-mobile-cart-popup[hidden]{display:none!important}
+  #boss-mobile-cart-popup .boss-mobile-cart-popup-head{flex:0 0 auto}
+  #boss-mobile-cart-popup .boss-mobile-cart-popup-items{
+    flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto;
+    overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  }
+  #boss-mobile-cart-popup .boss-mobile-cart-checkout{
+    flex:0 0 auto;margin:10px 12px 12px;
+  }
+  #boss-mobile-cart-popup .boss-mobile-cart-checkout[hidden]{display:none!important}
+}
 @media(min-width:769px){#boss-mobile-cart-popup{display:none!important}}
 </style>
 
@@ -1375,7 +1397,7 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
     <section id="boss-mobile-cart-popup" hidden aria-label="購物車預覽">
       <div class="boss-mobile-cart-popup-head"><strong>🛒 購物車</strong><button type="button" onclick="toggleBossMobileCart(false)" aria-label="收合購物車" title="收合購物車">－</button></div>
       <div id="boss-mobile-cart-popup-items" class="boss-mobile-cart-popup-items">購物車沒有加入任何商品</div>
-      <button type="button" class="boss-mobile-cart-checkout" onclick="toggleBossMobileCart(false);mobileQuickGo('form')">前往結帳</button>
+      <button type="button" class="boss-mobile-cart-checkout" onclick="toggleBossMobileCart(false);mobileQuickGo('cart')">前往結帳</button>
     </section>
     <div id="mobile-quick-menu" hidden>
         <button type="button" onclick="mobileQuickGo('search')">🔍 搜尋商品</button>
@@ -15090,7 +15112,7 @@ function mobileQuickGo(where) {
         const offset = 12;
         const jump = () => {
             const y = window.pageYOffset + destination.getBoundingClientRect().top - offset;
-            window.scrollTo({top: Math.max(0, y), behavior: 'instant'});
+            window.scrollTo({top: Math.max(0, y), behavior: where === 'cart' ? 'smooth' : 'instant'});
         };
         requestAnimationFrame(() => requestAnimationFrame(jump));
         if (where==='search') setTimeout(()=>target.focus({preventScroll:true}),100);
