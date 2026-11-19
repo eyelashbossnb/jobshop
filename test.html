@@ -11601,6 +11601,14 @@ function bossDownloadOrderPdf(index) {
  body.boss-products-view #boss-product-page-nav strong{font-size:18px!important}
 }
 </style>
+
+<style id="boss-mobile-hide-duplicate-home-and-category-fix">
+@media(max-width:768px){
+  /* 手機底部已提供返回首頁，不再重複顯示分類頁的按鈕 */
+  #boss-product-return-home{display:none!important}
+  body.boss-products-view #boss-desktop-products-card{display:block!important;visibility:visible!important}
+}
+</style>
 </body></html>');
         popup.document.close();
         popup.focus();
@@ -16814,12 +16822,21 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       // 分類與關鍵字搜尋互斥：切換分類時先清除搜尋，避免 query 使分類條件失效。
       const input=document.getElementById('product-search-input');
       if(input) input.value='';
-      const match=(original.getAttribute('onclick')||'').match(/selectCategory\(['"]([^'"]+)['"]/);
-      if(match && typeof window.selectCategory==='function') window.selectCategory(match[1],original);
-      else original.click();
-      if(typeof window.filterProducts==='function') window.filterProducts();
+      const match=(original.getAttribute('onclick')||'').match(/selectCategory\(\s*['"]([^'"]+)['"]/);
+      const code=match?match[1]:null;
+      // 先切換頁面，再執行原本分類篩選；避免舊版手機抽屜狀態覆蓋商品頁。
       closeDrawer();
-      if(typeof window.bossShowProducts==='function')window.bossShowProducts(original.textContent.trim());
+      if(typeof window.bossShowProducts==='function') window.bossShowProducts(original.textContent.trim());
+      document.body.classList.remove('boss-mobile-category-view','boss-checkout-view');
+      document.body.classList.add('boss-products-view');
+      if(code){
+        try{
+          if(typeof window.selectCategory==='function') window.selectCategory(code,original);
+          else if(typeof selectCategory==='function') selectCategory(code,original);
+          if(typeof window.toggleSaleMenu==='function') window.toggleSaleMenu(code==='sale');
+          if(typeof window.filterProducts==='function') window.filterProducts();
+        }catch(err){console.error('手機分類切換失敗',err);}
+      }
     };content.append(btn);});
 
   }drawer.classList.add('is-open');backdrop.classList.add('is-open');}
