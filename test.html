@@ -3,7 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>睫老闆美妝百貨</title>
+    <title>睫老闆官方網站｜專業美睫材料・熱蠟・紋繡用品</title>
+    <!-- SEO：搜尋引擎與社群分享資訊 -->
+    <meta name="description" content="睫老闆美妝百貨提供專業美睫黑膠、嫁接睫毛、美睫耗材、熱蠟除毛、紋繡材料及美容保養用品，滿足美睫師、美容師與美業店家的採購需求。">
+   <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://eyelashbossnb.github.io/jobshop/">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:site_name" content="睫老闆官方網站">
+    <meta property="og:title" content="睫老闆官方網站｜專業美睫材料・熱蠟・紋繡用品">
+    <meta property="og:description" content="睫老闆美妝百貨提供專業美睫黑膠、嫁接睫毛、美睫耗材、熱蠟除毛、紋繡材料及美容保養用品，滿足美睫師、美容師與美業店家的採購需求。">
+    <meta property="og:url" content="https://eyelashbossnb.github.io/jobshop/">
+    <meta name="twitter:card" content="summary">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"睫老闆美妝百貨有限公司","url":"https://eyelashbossnb.github.io/jobshop/"}</script>
     <style>
         :root {
             --primary-color: #d4a373; /* 優雅霧金 */
@@ -614,6 +626,12 @@
         @media (max-width: 768px) { .wax-kit-choice-row { grid-template-columns: 1fr; gap: 5px; } }
 
     
+
+/* 訂單 PDF 下載按鈕 */
+.boss-order-pdf-btn{display:block;width:100%;margin:10px 0 12px;padding:11px 14px;border:1px solid #d4a373;border-radius:10px;background:#fffaf5;color:#876044;font-size:13px;font-weight:700;cursor:pointer}
+.boss-order-pdf-btn:hover{background:#f8ebdf}
+.boss-order-pdf-btn:disabled{opacity:.6;cursor:wait}
+
         /* 客戶版訂單明細 */
         .customer-order-detail { margin-top: 12px; border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; background:#fff; }
         .customer-order-detail summary { cursor:pointer; padding:11px 14px; font-size:13px; font-weight:600; color:var(--text-main); background:#faf7f5; list-style:none; }
@@ -764,7 +782,7 @@
             .header-container { padding:14px 16px 16px; gap:12px; }
             .logo-img { max-width: min(88vw, 340px); height:auto; max-height:72px; }
             .nav-tools {
-                display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+                display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
                 gap:9px; width:100%; align-items:stretch;
             }
             .nav-tools .search-bar {
@@ -937,6 +955,22 @@
 @media(max-width:1050px){.boss-coupon-grid{grid-template-columns:1fr}}
 @media(max-width:768px){.boss-coupon-panel{padding:15px 12px}.boss-coupon-heading{font-size:17px}.boss-coupon-query{width:100%}.boss-coupon-tile{padding:14px}.boss-coupon-grid{grid-template-columns:1fr}}
 
+
+/* 2026/11/18 優惠券卡片式選取：沿用原始 select 與折抵流程 */
+.boss-coupon-select{display:none!important}
+.boss-coupon-choices{display:grid;gap:8px;margin-top:9px}
+.boss-coupon-choice{width:100%;box-sizing:border-box;display:block;text-align:left;border:1px solid #eadbd4;background:#fff;border-radius:12px;padding:11px 12px;color:#4a3f35;cursor:pointer;font:inherit;transition:border-color .2s,background .2s,box-shadow .2s;overflow-wrap:anywhere}
+.boss-coupon-choice:hover{border-color:#e8a598}
+.boss-coupon-choice.is-selected{border-color:#d9a08f;background:#fffaf8;box-shadow:0 0 0 2px rgba(232,165,152,.12)}
+.boss-coupon-choice-title{font-size:12px;font-weight:700;line-height:1.6;display:flex;justify-content:space-between;gap:6px}
+.boss-coupon-choice-detail{font-size:12px;color:#ad7166;margin-top:4px}
+.boss-coupon-choice-date{font-size:11px;color:#897e79;margin-top:6px;line-height:1.6;overflow-wrap:anywhere}
+.boss-coupon-choice-check{color:#b87366;flex:none}
+.boss-coupon-tile{padding:15px 13px}
+.boss-coupon-grid{grid-template-columns:1fr}
+.boss-coupon-expiry{margin-top:10px}
+@media(max-width:768px){.boss-coupon-choice{padding:12px}.boss-coupon-choice-date{font-size:11px}}
+
         /* 商品明細：電腦與手機皆可在固定高度內獨立上下滾動 */
         #cart-items-container {
             max-height: 390px;
@@ -988,12 +1022,17 @@
 .boss-gift-tier[open] summary::after{content:'－'}
 .boss-gift-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-top:1px solid #f0e8e3;font-size:13px}
 .boss-gift-item span{flex:1;min-width:0;line-height:1.6}
-.boss-gift-item input{width:62px;max-width:28%;padding:8px;border:1px solid #dfd0c7;border-radius:8px;text-align:center;font-size:14px}
+/* 滿額贈數量：減號／可輸入數字／加號 */
+.boss-gift-qty-control{display:flex;align-items:center;flex:0 0 auto;border:1px solid #eaded8;border-radius:999px;overflow:hidden;background:#fff;min-width:116px;height:36px;box-sizing:border-box}
+.boss-gift-qty-control button{border:0;background:#faf7f5;color:#745b50;width:33px;height:100%;cursor:pointer;font-size:16px;flex:none}
+.boss-gift-qty-control button:hover{background:#f1e6df}
+.boss-gift-qty-control input{width:48px;min-width:0;max-width:none;border:0;border-radius:0;padding:5px 0;text-align:center;font-size:13px;background:#fff;outline:none;-moz-appearance:textfield}
+.boss-gift-qty-control input::-webkit-inner-spin-button,.boss-gift-qty-control input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .boss-gift-actions{position:sticky;bottom:-22px;background:#fffdfb;padding:13px 0 2px;display:flex;gap:10px}
 .boss-gift-actions button,.boss-gift-open{padding:11px 15px;border:1px solid #d5aaa1;background:#fff;border-radius:25px;cursor:pointer;color:#77564f;font-size:13px}
 .boss-gift-actions button.primary{flex:1;background:#e8a598;color:#fff;border-color:#e8a598;font-weight:700}
 #boss-gift-status{font-size:12px;color:#9b665f;margin-top:8px}
-@media(max-width:768px){.boss-gift-dialog{padding:16px}.boss-gift-item{padding:9px}.boss-gift-item input{width:48px}.boss-gift-actions{bottom:-16px}}
+@media(max-width:768px){.boss-gift-dialog{padding:16px}.boss-gift-item{padding:9px}.boss-gift-qty-control{min-width:108px}.boss-gift-qty-control input{width:42px}.boss-gift-actions{bottom:-16px}}
 
 
 /* V5.6｜電腦版商品明細整張卡片獨立滾動，手機版維持原本排列 */
@@ -1032,13 +1071,313 @@
 #boss-announcement-bar.is-visible{display:flex}
 #boss-announcement-label{white-space:nowrap;flex:none;color:var(--text-main);font-weight:600}
 #boss-announcement-viewport{min-width:0;flex:1;overflow:hidden}
-#boss-announcement-track{display:flex;align-items:center;gap:52px;width:max-content;max-width:none;animation:boss-announcement-scroll var(--boss-scroll-duration,28s) linear infinite;will-change:transform}
+#boss-announcement-track{display:flex;align-items:center;width:max-content;max-width:none;will-change:transform}
+#boss-announcement-track.boss-running{animation:boss-announcement-single var(--boss-scroll-duration,12s) linear 1 both}
 #boss-announcement-bar:hover #boss-announcement-track{animation-play-state:paused}
 .boss-announcement-item{flex:none;white-space:nowrap;color:var(--text-muted);text-decoration:none}
 a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underline}
-@keyframes boss-announcement-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes boss-announcement-single{from{transform:translateX(var(--boss-start,0px))}to{transform:translateX(var(--boss-end,-500px))}}
 @media(prefers-reduced-motion:reduce){#boss-announcement-track{animation:none;flex-wrap:wrap;width:auto}.boss-announcement-item{white-space:normal}}
 @media(max-width:768px){#boss-announcement-bar{padding:10px 12px;gap:8px;font-size:12px;margin-bottom:18px}}
+
+/* 購物車可輸入數量與單筆刪除：電腦、手機共用 */
+.cart-editable-qty { width: 42px; min-width: 0; padding: 0 2px; box-sizing: border-box; cursor: text; }
+.cart-editable-qty:focus { background: #fff; box-shadow: inset 0 0 0 1px var(--accent-color); border-radius: 4px; }
+.cart-remove-btn { flex: none; border: 0; background: transparent; color: #c97a7a; cursor: pointer; font-size: 19px; line-height: 1; padding: 5px; border-radius: 6px; }
+.cart-remove-btn:hover { background: #fff0ed; color: #a85555; }
+@media (max-width: 768px) {
+ .cart-item { flex-wrap: wrap; }
+ .cart-item-info { flex: 1 1 110px; }
+ .cart-item-actions { flex: 0 1 auto; gap: 5px; }
+ .cart-item-price { min-width: 34px; font-size: 12px; }
+ .cart-editable-qty { width: 39px; }
+}
+
+/* 優惠券使用教學問號及圖片視窗 */
+.boss-coupon-help{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;width:23px;height:23px;margin-left:5px;border:1px solid #dca399;border-radius:50%;background:#fff8f7;color:#b76c64;font-size:14px;font-weight:700;cursor:pointer;padding:0;line-height:1}
+.boss-coupon-help:hover,.boss-coupon-help:focus-visible{background:#fcece9;outline:2px solid #edc5bd;outline-offset:2px}
+#boss-coupon-help-overlay{position:fixed;inset:0;z-index:6000;background:rgba(35,25,25,.72);display:none;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
+#boss-coupon-help-overlay.open{display:flex}
+.boss-coupon-help-dialog{position:relative;max-width:min(760px,100%);max-height:94dvh;overflow:auto;border-radius:14px;background:#fff;padding:12px;box-sizing:border-box;box-shadow:0 20px 55px #0005}
+.boss-coupon-help-dialog img{display:block;width:100%;height:auto;max-height:calc(94dvh - 24px);object-fit:contain}
+.boss-coupon-help-close{position:sticky;top:0;float:right;z-index:1;margin-bottom:-42px;width:36px;height:36px;border:0;border-radius:50%;background:#fff;color:#5a4540;font-size:26px;cursor:pointer;box-shadow:0 2px 8px #0003}
+@media(max-width:768px){.boss-coupon-help-dialog{padding:7px}.boss-coupon-help-dialog img{max-height:none}}
+
+/* 福利品與 VIP 會員須知：統一加大標題與圖示 */
+#boss-welfare-notice .boss-notice-heading,#boss-vip-notice .boss-notice-heading{display:flex;align-items:center;gap:9px;font-size:18px;font-weight:700;line-height:1.5;color:var(--text-main);margin-bottom:12px;letter-spacing:.04em}
+.boss-notice-heading-icon{display:inline-flex;align-items:center;justify-content:center;font-size:21px;line-height:1;flex:none}
+@media(max-width:768px){#boss-welfare-notice .boss-notice-heading,#boss-vip-notice .boss-notice-heading{font-size:17px}.boss-notice-heading-icon{font-size:20px}}
+
+/* 藍新金流消費者權益政策專區 */
+.boss-legal-footer{max-width:1200px;margin:24px auto 35px;padding:24px 20px;border-top:1px solid var(--border-color);text-align:center;box-sizing:border-box;color:var(--text-main)}
+.boss-legal-footer h2{font-size:17px;margin:0 0 14px}.boss-legal-links{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 22px}
+.boss-legal-links button{border:0;background:none;color:#8a655d;font:inherit;font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:5px}
+.boss-legal-links button:hover{color:var(--accent-color)}.boss-legal-footer p{font-size:12px;color:var(--text-muted);margin:14px 0 0}
+#boss-legal-overlay{position:fixed;inset:0;background:rgba(40,32,30,.62);z-index:9000;display:none;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
+#boss-legal-overlay.open{display:flex}.boss-legal-panel{position:relative;width:min(720px,100%);max-height:90dvh;overflow:auto;background:#fffdfb;border-radius:16px;padding:26px 30px;box-sizing:border-box;box-shadow:0 16px 50px #0003;text-align:left}
+.boss-legal-panel h2{font-size:21px;margin:0 42px 18px 0}.boss-legal-panel h3{font-size:15px;margin:22px 0 7px;color:#6b4c43}.boss-legal-panel p{font-size:13px;line-height:1.95;margin:0 0 10px;white-space:normal}.boss-legal-close{position:absolute;right:15px;top:12px;border:0;background:transparent;color:#806b60;font-size:28px;cursor:pointer}
+@media(max-width:768px){.boss-legal-footer{margin-bottom:100px;padding:22px 15px}.boss-legal-panel{padding:23px 19px}.boss-legal-links{gap:8px 12px}}
+/* 門市聯絡資訊：電腦版雙欄，手機版單欄 */
+.boss-store-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px auto 0;max-width:820px;text-align:left}
+.boss-store-item{padding:16px 20px;border:1px solid var(--border-color);border-radius:12px;background:#fff;font-size:12px;line-height:2;color:var(--text-muted)}
+.boss-store-item strong{display:block;font-size:14px;color:var(--text-main);margin-bottom:5px}
+.boss-store-item a{color:#8a655d;text-decoration:none}
+.boss-store-item a:hover{text-decoration:underline}
+@media(max-width:600px){.boss-store-list{grid-template-columns:1fr;gap:10px}.boss-store-item{padding:13px 15px}}
+
+/* 手機底部操作列：維持原始快速導覽尺寸，單一膠囊內 2:1 分區 */
+.boss-mobile-nav-actions{display:none}
+@media(max-width:768px){
+  /* 沿用原始 230px 寬度、右側 12px、底部定位 */
+  #mobile-quick-nav{width:min(230px,calc(100vw - 24px));right:12px;max-width:none}
+  .boss-mobile-nav-actions{
+    display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);
+    gap:0;width:100%;min-height:48px;overflow:hidden;
+    border-radius:999px;background:rgba(232,165,152,.85);
+    box-shadow:0 4px 18px rgba(74,63,53,.23);
+  }
+  #mobile-quick-nav #boss-mobile-cart-jump,
+  #mobile-quick-nav #mobile-floating-checkout{
+    position:static;display:flex;align-items:center;justify-content:center;
+    width:100%;min-width:0;min-height:48px;box-sizing:border-box;
+    border:0;border-radius:0;background:transparent;color:#fff;
+    font-size:13px;font-weight:600;gap:5px;cursor:pointer;
+    box-shadow:none;padding:8px 4px;
+  }
+  /* 白色分隔線：清楚區分兩個點擊區域，且不改變外框尺寸 */
+  #mobile-quick-nav #mobile-floating-checkout{position:relative}
+  #mobile-quick-nav #mobile-floating-checkout::before{
+    content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+    width:2px;height:26px;background:#fff;border-radius:2px;
+  }
+  #mobile-quick-nav #boss-mobile-cart-jump .boss-mobile-cart-amount{
+    font-size:12px;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums;
+  }
+  #mobile-quick-nav #mobile-floating-checkout .boss-nav-icon{font-size:24px;line-height:1}
+  #mobile-quick-nav #mobile-cart-count{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:21px;height:21px;padding:0 4px;box-sizing:border-box;
+    background:#fff;color:#c77c70;border-radius:999px;font-size:11px;font-weight:700;
+  }
+  #mobile-quick-menu{margin-bottom:9px}
+}
+
+/* 2026-11-17 五欄式頁尾與授權經銷商 */
+.boss-footer-five{max-width:1200px;margin:26px auto 0;padding:34px 20px 25px;border-top:1px solid var(--border-color);box-sizing:border-box}
+.boss-footer-grid{display:grid;grid-template-columns:1.05fr 1fr 1.15fr 1.15fr 1.65fr;gap:18px;text-align:left}
+.boss-footer-col{min-width:0}
+.boss-footer-col h3{font-size:14px;color:var(--text-main);margin:0 0 14px;font-weight:700}
+.boss-footer-col p,.boss-footer-col a,.boss-footer-col button,.boss-footer-col .boss-dealer-entry{font-size:12px;line-height:1.9;color:var(--text-muted)}
+.boss-footer-col p{margin:0 0 7px}
+.boss-footer-col a{color:#8a655d;text-decoration:none;overflow-wrap:anywhere}
+.boss-footer-col a:hover{text-decoration:underline}
+.boss-footer-col button{display:block;border:0;padding:0;margin:0 0 6px;background:transparent;text-align:left;cursor:pointer;font-family:inherit}
+.boss-footer-col button:hover{color:var(--accent-color)}
+.boss-footer-store{margin-bottom:13px;padding-bottom:12px;border-bottom:1px solid var(--border-color)}
+.boss-footer-store strong,.boss-dealer-entry strong{display:block;font-size:12px;color:var(--text-main)}
+.boss-dealer-entry{margin-bottom:13px;padding-bottom:12px;border-bottom:1px solid var(--border-color);overflow-wrap:anywhere}
+.boss-dealer-entry div{margin-top:2px}
+.boss-footer-bottom{margin-top:23px;padding-top:16px;border-top:1px solid var(--border-color);text-align:center;font-size:12px;color:var(--text-muted)}
+.boss-map-link{display:inline-block;margin-top:5px;color:#a56e60!important;text-decoration:underline!important;text-underline-offset:3px}
+.boss-dealer-status{font-size:12px;color:var(--text-muted);line-height:1.8}
+@media(max-width:1100px){.boss-footer-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}}
+@media(max-width:650px){.boss-footer-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 15px}.boss-footer-five{padding:27px 16px 100px}}
+@media(max-width:380px){.boss-footer-grid{grid-template-columns:1fr}}
+
+
+/* 直營門市標題右側導航箭頭 */
+.boss-store-title{display:flex!important;align-items:center;gap:8px}
+.boss-store-arrow{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex:none;border:1px solid #d7b6aa;border-radius:50%;font-size:15px!important;line-height:1!important;text-decoration:none!important;color:#aa756e!important;background:#fff9f6;transition:background .2s,color .2s}
+.boss-store-arrow:hover,.boss-store-arrow:focus-visible{background:#e8a598;color:#fff!important;outline-offset:2px}
+
+/* 直營門市標題右側導航箭頭 */
+.boss-store-title{display:flex!important;align-items:center;gap:8px}
+.boss-store-arrow{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex:none;border:1px solid #d7b6aa;border-radius:50%;font-size:15px!important;line-height:1!important;text-decoration:none!important;color:#aa756e!important;background:#fff9f6;transition:background .2s,color .2s}
+.boss-store-arrow:hover,.boss-store-arrow:focus-visible{background:#e8a598;color:#fff!important;outline-offset:2px}
+
+/* 授權合作經銷商：頁尾入口與獨立彈出視窗 */
+.boss-footer-col .boss-dealer-open{display:inline-flex;align-items:center;gap:5px;color:#8a655d;text-decoration:underline;text-underline-offset:3px;font-size:13px;line-height:1.8}
+#boss-dealer-overlay{position:fixed;inset:0;z-index:9100;display:none;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;background:rgba(40,32,30,.62)}
+#boss-dealer-overlay.open{display:flex}
+.boss-dealer-panel{position:relative;width:min(780px,100%);max-height:90dvh;overflow-y:auto;background:#fffdfb;border-radius:16px;padding:28px 30px;box-sizing:border-box;box-shadow:0 16px 50px #0003}
+.boss-dealer-panel h2{font-size:21px;margin:0 40px 8px 0;color:var(--text-main)}
+.boss-dealer-intro{font-size:12px;color:var(--text-muted);line-height:1.8;margin:0 0 20px}
+.boss-dealer-close{position:absolute;right:16px;top:12px;border:0;background:transparent;font-size:27px;color:var(--text-muted);cursor:pointer}
+.boss-dealer-city{font-size:15px;font-weight:700;margin:22px 0 9px;padding-bottom:8px;border-bottom:1px solid var(--border-color);color:var(--text-main)}
+#boss-dealer-list .boss-dealer-entry{margin:0 0 9px;padding:13px 14px;border:1px solid var(--border-color);border-radius:10px;background:white}
+#boss-dealer-list .boss-dealer-entry strong{font-size:14px}
+#boss-dealer-list .boss-dealer-entry div{font-size:12px;line-height:1.9;color:var(--text-muted)}
+#boss-dealer-list .boss-map-link{display:inline-block;margin-top:6px;font-size:12px;color:#a46c60}
+@media(max-width:650px){.boss-dealer-panel{padding:22px 17px;max-height:88dvh}.boss-dealer-panel h2{font-size:19px}}
+/* 台灣／香港切換與縣市篩選 */
+.boss-dealer-region{display:flex;gap:8px;margin:18px 0 4px}
+.boss-dealer-region-btn{flex:1;padding:11px 14px;border:1px solid #e7d9d2;border-radius:10px;background:#fff;color:#66554c;font-size:14px;font-weight:700;cursor:pointer}
+.boss-dealer-region-btn.active{background:var(--accent-color);border-color:var(--accent-color);color:#fff}
+.boss-dealer-region-btn:focus-visible{outline:2px solid #a56e5d;outline-offset:2px}
+.boss-dealer-filter[hidden]{display:none!important}
+/* 縣市篩選與上方台灣／香港切換按鈕左右切齊 */
+#boss-dealer-city-wrap{display:flex;flex-direction:column;align-items:stretch;gap:8px;width:100%;margin:16px 0 12px}
+#boss-dealer-city-wrap label{display:block}
+#boss-dealer-city-filter{display:block;box-sizing:border-box;width:100%;max-width:none;min-width:0;flex:none}
+
+
+.boss-dealer-filter{display:flex;align-items:center;gap:12px;margin:18px 0 12px;flex-wrap:wrap}
+.boss-dealer-filter label{font-size:13px;font-weight:600;color:var(--text-main)}
+#boss-dealer-city-filter{flex:1;min-width:160px;max-width:320px;padding:10px 13px;border:1px solid #e7d9d2;border-radius:9px;background:#fff;color:var(--text-main);font-size:13px;cursor:pointer}
+#boss-dealer-city-filter:focus{outline:2px solid var(--accent-color);outline-offset:1px}
+#boss-dealer-city-filter:disabled{opacity:.55;cursor:wait}
+@media(max-width:650px){.boss-dealer-filter{align-items:stretch;flex-direction:column;gap:7px}#boss-dealer-city-filter{max-width:none;width:100%}}
+
+/* 修正：篩選欄與台灣／香港按鈕同寬，覆蓋舊的 max-width:320px */
+#boss-dealer-overlay #boss-dealer-city-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  flex-wrap:nowrap;
+  gap:8px;
+  width:100%;
+  max-width:none;
+  box-sizing:border-box;
+}
+#boss-dealer-overlay #boss-dealer-city-wrap #boss-dealer-city-filter{
+  display:block;
+  flex:0 0 auto;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+
+
+
+/* 2026-11-16｜僅放大快速查詢訂單視窗，其他彈窗維持原樣 */
+#order-modal-overlay { padding: 16px; box-sizing: border-box; }
+#order-modal-overlay > .custom-modal {
+    width: min(760px, 100%);
+    max-width: 760px;
+    max-height: 92dvh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 34px 38px;
+}
+#order-modal-overlay .search-result-box {
+    max-height: min(55dvh, 560px);
+    overflow-y: auto;
+}
+@media (max-width: 600px) {
+    #order-modal-overlay { padding: 12px; }
+    #order-modal-overlay > .custom-modal {
+        width: 100%; max-width: none;
+        padding: 26px 18px;
+        max-height: 94dvh;
+    }
+    #order-modal-overlay .search-result-box {
+        padding: 12px;
+        max-height: 55dvh;
+    }
+}
+
+/* 海外付款帳號複製按鈕 */
+.boss-copy-account{display:inline-block;margin:5px 0 5px 9px;padding:5px 11px;border:1px solid #d4a373;border-radius:18px;background:#fffaf5;color:#876044;font-size:12px;cursor:pointer;white-space:nowrap}
+.boss-copy-account:hover{background:#f8ebdf}
+</style>
+<style id="boss-mobile-cart-popup-style">
+#boss-mobile-cart-popup[hidden]{display:none!important}
+#boss-mobile-cart-popup{background:#fff;border:1px solid #e8dcd6;border-radius:14px;box-shadow:0 7px 24px #0002;margin-bottom:10px;overflow:hidden;color:#4a3f35;text-align:left}
+.boss-mobile-cart-popup-head{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid #f1eae4;font-size:14px}
+.boss-mobile-cart-popup-head button{border:0;background:#faf2ef;border-radius:7px;width:32px;height:29px;font-size:22px;color:#9d6c62;cursor:pointer;line-height:1}
+.boss-mobile-cart-popup-items{max-height:min(42vh,320px);overflow-y:auto;padding:8px 12px;font-size:12px}
+.boss-mobile-cart-popup-items .cart-item{flex-wrap:wrap;gap:8px}.boss-mobile-cart-popup-items .cart-item-info{max-width:100%;flex:1 1 100%;font-size:12px}.boss-mobile-cart-popup-items .cart-item-actions{width:100%;justify-content:flex-end}
+.boss-mobile-cart-popup-items .empty-cart-text{text-align:center;padding:25px 8px;color:#8a7e72}
+.boss-mobile-cart-checkout{width:calc(100% - 24px);margin:8px 12px 12px;padding:11px;border:0;border-radius:22px;background:#e8a598;color:white;font-weight:600;cursor:pointer}
+/* 2026-11-18：手機購物車展開為螢幕 100% 寬、90% 高，清單獨立滾動 */
+@media(max-width:768px){
+  #mobile-quick-nav #boss-mobile-cart-popup{
+    position:fixed;left:0;right:0;top:5vh;top:5dvh;
+    width:100vw;width:100dvw;height:90vh;height:90dvh;
+    max-width:none;box-sizing:border-box;margin:0;
+    display:flex;flex-direction:column;min-height:0;
+    border-radius:16px;z-index:510;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  #mobile-quick-nav #boss-mobile-cart-popup[hidden]{display:none!important}
+  #boss-mobile-cart-popup .boss-mobile-cart-popup-head{flex:0 0 auto}
+  #boss-mobile-cart-popup .boss-mobile-cart-popup-items{
+    flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto;
+    overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  }
+  #boss-mobile-cart-popup .boss-mobile-cart-checkout{
+    flex:0 0 auto;margin:10px 12px 12px;
+  }
+  #boss-mobile-cart-popup .boss-mobile-cart-checkout[hidden]{display:none!important}
+}
+@media(min-width:769px){#boss-mobile-cart-popup{display:none!important}}
+</style>
+
+<!-- 2026-11-17 手機版搜尋下方三按鈕均分；電腦版不受影響 -->
+<style id="boss-mobile-header-three-equal">
+@media screen and (max-width:768px) {
+  header .nav-tools {
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    column-gap:8px;
+    row-gap:9px;
+    width:100%;
+    align-items:stretch;
+  }
+  header .nav-tools > .search-bar {
+    grid-column:1 / -1;
+    grid-row:1;
+    width:100%;
+    min-width:0;
+    box-sizing:border-box;
+  }
+  header .nav-tools > .nav-btn {
+    grid-column:1;
+    grid-row:2;
+  }
+  header #member-status-area { display:contents; }
+  header #member-status-area > .nav-btn:first-child {
+    grid-column:2;
+    grid-row:2;
+  }
+  header #member-status-area > .nav-btn:nth-child(2) {
+    grid-column:3;
+    grid-row:2;
+    margin-left:0 !important;
+  }
+  header .nav-tools > .nav-btn,
+  header #member-status-area > .nav-btn {
+    width:100%;
+    min-width:0;
+    min-height:40px;
+    padding:8px 2px;
+    margin:0 !important;
+    box-sizing:border-box;
+    white-space:nowrap;
+    font-size:clamp(10px,3vw,12px);
+    line-height:1.3;
+    text-align:center;
+  }
+  header #member-status-area > .user-info {
+    grid-column:1 / -1;
+    grid-row:2;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    min-width:0;
+    box-sizing:border-box;
+    gap:6px 10px;
+    padding:10px;
+    overflow-wrap:anywhere;
+  }
+  header #member-status-area > .user-info .member-expiry {
+    white-space:normal;
+  }
+}
 </style>
 </head>
 <body>
@@ -1049,7 +1388,7 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
             <img src="https://i.ibb.co/BH9z3D5D/image.png" alt="睫老闆美妝百貨" class="logo-img">
         </a>
         <div class="nav-tools">
-            <input type="text" class="search-bar" id="product-search-input" placeholder="搜尋精選商品..." oninput="filterProducts()">
+            <input type="text" class="search-bar" id="product-search-input" placeholder="搜尋全站商品..." oninput="filterProducts()">
             <button class="nav-btn secondary" onclick="toggleOrderModal(true)">查詢訂單</button>
             <div id="member-status-area">
                 <button class="nav-btn" onclick="toggleLoginModal(true)">會員登入</button>
@@ -1060,17 +1399,25 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 </header>
 
 <nav id="mobile-quick-nav" aria-label="手機快速導覽">
+    <section id="boss-mobile-cart-popup" hidden aria-label="購物車預覽">
+      <div class="boss-mobile-cart-popup-head"><strong>🛒 購物車</strong><button type="button" onclick="toggleBossMobileCart(false)" aria-label="收合購物車" title="收合購物車">－</button></div>
+      <div id="boss-mobile-cart-popup-items" class="boss-mobile-cart-popup-items">購物車沒有加入任何商品</div>
+      <button type="button" class="boss-mobile-cart-checkout" onclick="bossMobileCartCheckoutJump()">前往結帳</button>
+    </section>
     <div id="mobile-quick-menu" hidden>
         <button type="button" onclick="mobileQuickGo('search')">🔍 搜尋商品</button>
         <button type="button" onclick="mobileQuickGo('categories')">📦 商品分類</button>
-        <button type="button" onclick="mobileQuickGo('cart')">🛒 商品明細</button>
-        <button type="button" onclick="mobileQuickGo('form')">📝 填寫收件資料</button>
         <button type="button" onclick="mobileQuickGo('balance')">💰 儲值金使用紀錄</button>
-        <button type="button" onclick="mobileQuickGo('top')">⬆️ 返回頁首</button>
+        <button type="button" onclick="mobileQuickGo('top')">⬆️ 返回頂部</button>
     </div>
-    <button id="mobile-floating-checkout" type="button" onclick="toggleMobileQuickNav()" aria-expanded="false" aria-controls="mobile-quick-menu">
-        <span>☰</span><span>快速導覽</span><span id="mobile-cart-count">0</span>
-    </button>
+    <div class="boss-mobile-nav-actions">
+        <button id="boss-mobile-cart-jump" type="button" onclick="toggleBossMobileCart()" aria-label="展開購物車明細" aria-expanded="false" aria-controls="boss-mobile-cart-popup">
+            <span aria-hidden="true">🛒</span><span id="mobile-cart-count">0</span><span id="boss-mobile-cart-amount" class="boss-mobile-cart-amount">NT$ 0</span>
+        </button>
+        <button id="mobile-floating-checkout" type="button" onclick="toggleMobileQuickNav()" aria-label="快速導覽" title="快速導覽" aria-expanded="false" aria-controls="mobile-quick-menu">
+            <span class="boss-nav-icon" aria-hidden="true">☰</span>
+        </button>
+    </div>
 </nav>
 
 <style id="boss-promo-v5-layout">
@@ -1181,7 +1528,33 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                 <button class="category-tab" onclick="selectCategory('ear', this); toggleSaleMenu(false);">採耳商品</button>
                 <button class="category-tab" onclick="selectCategory('nail', this); toggleSaleMenu(false);">美甲商品</button>
                 <button class="category-tab" onclick="selectCategory('sale', this); toggleSaleMenu(true);">出清五折</button>
+                <button class="category-tab" onclick="selectCategory('welfare', this); toggleSaleMenu(false);">福利品專區</button>
                 <button class="category-tab" onclick="selectCategory('membership', this); toggleSaleMenu(false);">購買會籍</button>
+                <button class="category-tab" onclick="selectCategory('store-adjustment', this); toggleSaleMenu(false);">門市購買</button>
+            </div>
+
+            <div id="sub-category-welfare" class="sub-category-menu" style="display:none;flex-wrap:wrap">
+                <span style="font-size:13px;font-weight:600;margin-right:5px">細分項目 ｜</span>
+                <button class="sub-tab active" onclick="filterSubCategory('all',this)">顯示全部</button>
+                <button class="sub-tab" onclick="filterSubCategory('美睫',this)">美睫</button>
+                <button class="sub-tab" onclick="filterSubCategory('熱蠟',this)">熱蠟</button>
+                <button class="sub-tab" onclick="filterSubCategory('紋繡',this)">紋繡</button>
+            </div>
+            <div id="boss-welfare-notice" style="display:none;background:#fff8f5;border:1px solid #f0d9d2;border-radius:12px;padding:16px;margin:0 0 20px;font-size:13px;line-height:1.9">
+              <div class="boss-notice-heading"><span class="boss-notice-heading-icon" aria-hidden="true">🎁</span><strong>福利品購買須知</strong></div>
+              <div>福利品僅有外盒壓傷、裂開等包裝瑕疵，不影響正常使用，數量有限，售完為止。</div>
+              <div style="margin-top:8px"><strong>💰 福利品價格計算方式：原價 × 會員折扣 − $20</strong><div>未登入會員以原價減 $20 計算；特殊轉賣價商品則依各會籍適用售價再減 $20。</div></div>
+              <div style="margin-top:8px">除依法應受理的退換貨或商品瑕疵情形外，恕不接受退換貨。每件商品瑕疵情況以商品說明為準。</div>
+              <div style="margin-top:8px">📩 欲了解商品詳細狀況，歡迎聯繫 <a href="https://line.me/ti/p/4RwpD-atgZ" target="_blank" rel="noopener noreferrer" style="color:#b76c64;text-decoration:underline;font-weight:700">客服</a>，並提供商品名稱及規格，以便協助查詢。</div>
+            </div>
+
+            <!-- VIP 會籍購買須知：與福利品購買須知採相同版型 -->
+            <div id="boss-vip-notice" style="display:none;background:#fff8f5;border:1px solid #f0d9d2;border-radius:12px;padding:16px;margin:0 0 20px;font-size:13px;line-height:1.9">
+              <div class="boss-notice-heading"><span class="boss-notice-heading-icon" aria-hidden="true">👑</span><strong>加入VIP 會員須知</strong></div>
+              <div style="margin-top:8px"><strong>VIP 會員採一年一約制</strong>，會員有效期限為一年，可於有效期間內享有對應等級的專屬優惠及會員權益。</div>
+              <div style="margin-top:8px"><strong>續約規則：</strong>會籍到期日前兩個月開放續約，請於到期日前完成續約，以保留續約資格及相關優惠。</div>
+              <div style="margin-top:8px"><strong>逾期規則：</strong>會籍到期後將自動降為一般會員，商品折扣改依一般會員優惠（9折）計算；原有儲值金餘額仍可繼續使用，不因 VIP 會籍到期而失效。日後再次加入 VIP 將視為新加入會員，無法享有續約購物金優惠。</div>
+              <div style="margin-top:8px">📩 如需了解會籍方案、會員權益或續約方式，歡迎聯繫 <a href="https://line.me/ti/p/4RwpD-atgZ" target="_blank" rel="noopener noreferrer" style="color:#b76c64;text-decoration:underline;font-weight:700">客服</a>。</div>
             </div>
 
             <div id="sub-category-eyelash" class="sub-category-menu" style="display: none; flex-wrap: wrap;">
@@ -1189,9 +1562,9 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                 <button class="sub-tab active" onclick="filterSubCategory('all', this); toggleEyelashMenu('', false);">顯示全部</button>
                 <button class="sub-tab" onclick="filterSubCategory('lash-straight', this); toggleEyelashMenu('', false);">排毛/齊長毛</button>
                 <button class="sub-tab" onclick="filterSubCategory('lash-layered-bloom', this); toggleEyelashMenu('', false);">層次/開花毛</button>
-                <button class="sub-tab" onclick="filterSubCategory('lash-color', this); toggleEyelashMenu('', false);">彩毛</button>
-                <button class="sub-tab" onclick="filterSubCategory('lash-flat', this); toggleEyelashMenu('', false);">扁毛</button>
-                <button class="sub-tab" onclick="filterSubCategory('lash-tech', this); toggleEyelashMenu('', false);">科技毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('lash-color', this); toggleEyelashMenu('', false);">繽紛彩毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('lash-flat', this); toggleEyelashMenu('', false);">輕量扁毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('lash-tech', this); toggleEyelashMenu('', false);">YY毛/三葉草/科技毛</button>
             </div>
 
 
@@ -1241,13 +1614,13 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                 <button class="sub-tab" onclick="filterSubCategory('needle-all', this)">免麻儀與腕表專用全拋針</button>
                 <button class="sub-tab" onclick="filterSubCategory('manual-pen', this)">專業紋繡手工筆</button>
                 <button class="sub-tab" onclick="filterSubCategory('manual-needle', this)">手工針片系列</button>
-                <button class="sub-tab" onclick="filterSubCategory('combo-needle', this)">通用/卡扣一體式機器針片</button>
-                <button class="sub-tab" onclick="filterSubCategory('needle-cap', this)">精準機器配備針帽</button>
-                <button class="sub-tab" onclick="filterSubCategory('bionic-tools', this)">仿生練習皮系列</button>
-                <button class="sub-tab" onclick="filterSubCategory('palette', this)">色料筆架系列</button>
-                <button class="sub-tab" onclick="filterSubCategory('cup', this)">紋繡專用色料杯系列</button>
-                <button class="sub-tab" onclick="filterSubCategory('repair', this)">專業修護保養系列</button>
-                <button class="sub-tab" onclick="filterSubCategory('location', this)">周邊耗材系列</button>
+                <button class="sub-tab" onclick="filterSubCategory('combo-needle', this)">機器專用針片</button>
+                <button class="sub-tab" onclick="filterSubCategory('needle-cap', this)">半拋機專用針帽</button>
+                <button class="sub-tab" onclick="filterSubCategory('bionic-tools', this)">仿生練習皮</button>
+                <button class="sub-tab" onclick="filterSubCategory('palette', this)">色料筆架</button>
+                <button class="sub-tab" onclick="filterSubCategory('cup', this)">紋繡專用色料杯</button>
+                <button class="sub-tab" onclick="filterSubCategory('repair', this)">專業修護保養</button>
+                <button class="sub-tab" onclick="filterSubCategory('location', this)">周邊耗材</button>
 				<button class="sub-tab" onclick="filterSubCategory('brows-professional-kit', this)">專業套組</button>
             </div>
 
@@ -1262,12 +1635,22 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 
                 <div id="lashes-series-menu" style="display: none; width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); gap: 6px; flex-wrap: wrap;">
                     <span style="font-size: 12px; color: var(--text-muted); align-self: center; margin-right: 5px;">假睫毛系列 ｜</span>
+                    <button class="sub-tab active" onclick="filterSubCategory('lashes', this)">顯示全部</button>
                     <button class="sub-tab" onclick="filterSubCategory('lashes-jw', this)">尖尾系列</button>
                     <button class="sub-tab" onclick="filterSubCategory('lashes-gz', this)">公主系列</button>
                     <button class="sub-tab" onclick="filterSubCategory('lashes-zr', this)">自然系列</button>
                     <button class="sub-tab" onclick="filterSubCategory('lashes-wt', this)">舞台系列</button>
                     <button class="sub-tab" onclick="filterSubCategory('lashes-tm', this)">透明梗系列</button>
                 </div>
+            </div>
+
+            <!-- 假睫毛出清購買須知：僅美妝商品／假睫毛分類顯示 -->
+            <div id="boss-lashes-notice" style="display:none;background:#fff8f5;border:1px solid #f0d9d2;border-radius:12px;padding:16px;margin:0 0 20px;font-size:13px;line-height:1.9">
+              <div class="boss-notice-heading"><span class="boss-notice-heading-icon" aria-hidden="true">👁️</span><strong>假睫毛出清購買須知</strong></div>
+              <div>📢 <strong>假睫毛商品全數出清，售完不補！</strong></div>
+              <div style="margin-top:8px">所有款式及數量均以現貨庫存為主，數量有限，售完即止。下單前請確認欲購買的款式及數量。</div>
+              <div style="margin-top:8px">📸 各款假睫毛實際商品圖片，歡迎點選 <a href="https://drive.google.com/drive/folders/1phXxQ7kHEgdXsnDperZxjPVD5Sbg_wJ1" target="_blank" rel="noopener noreferrer" style="color:#b76c64;text-decoration:underline;font-weight:700">查看</a>。</div>
+              <div style="margin-top:8px">📩 如需協助確認商品款式或庫存，歡迎聯繫 <a href="https://line.me/ti/p/4RwpD-atgZ" target="_blank" rel="noopener noreferrer" style="color:#b76c64;text-decoration:underline;font-weight:700">客服</a>。</div>
             </div>
 
             <div id="sub-category-ear" class="sub-category-menu" style="display: none;">
@@ -1307,9 +1690,9 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                 <button class="sub-tab active" onclick="filterSubCategory('all', this)">顯示全部</button>
                 <button class="sub-tab" onclick="filterSubCategory('sale-straight', this)">排毛/齊長毛</button>
                 <button class="sub-tab" onclick="filterSubCategory('sale-layered-bloom', this)">層次/開花毛</button>
-                <button class="sub-tab" onclick="filterSubCategory('sale-color-group', this)">彩毛</button>
-                <button class="sub-tab" onclick="filterSubCategory('sale-flat', this)">扁毛</button>
-                <button class="sub-tab" onclick="filterSubCategory('sale-tech', this)">科技毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-color-group', this)">繽紛彩毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-flat', this)">輕量扁毛</button>
+                <button class="sub-tab" onclick="filterSubCategory('sale-tech', this)">朵毛/科技毛</button>
             </div>
 
             <div class="product-grid" id="main-product-grid">
@@ -3140,6 +3523,63 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                     </div>
                 </div>
 
+                <!-- 出清五折：W20_UP -->
+                <div class="product-item" data-id="W20_UP" data-name="一代美瞳線超輕量扁毛(黑)" data-category="sale" data-sub="sale-flat-new" data-lash="true" data-origin-price="390" data-base-price="390" data-price="390" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                    <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">商品編號：W20_UP</div><div class="product-name">一代美瞳線超輕量扁毛(黑)</div>
+                    <div class="lash-variant-container"><div class="variant-group"><div class="variant-title">翹度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="curl" data-value="J" onclick="executeLashSpecSelect(this, 'W20_UP')">J55˚</button>
+<button class="spec-btn" data-type="curl" data-value="B" onclick="executeLashSpecSelect(this, 'W20_UP')">B65˚</button>
+<button class="spec-btn" data-type="curl" data-value="C" onclick="executeLashSpecSelect(this, 'W20_UP')">C75˚</button></div></div>
+                    <div class="variant-group"><div class="variant-title">粗度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="thickness" data-value="0.15" onclick="executeLashSpecSelect(this, 'W20_UP')">0.15</button></div></div>
+                    <div class="variant-group"><div class="variant-title">尺寸／長度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="length" data-value="8mm" onclick="executeLashSpecSelect(this, 'W20_UP')">8mm</button>
+<button class="spec-btn" data-type="length" data-value="9mm" onclick="executeLashSpecSelect(this, 'W20_UP')">9mm</button>
+<button class="spec-btn" data-type="length" data-value="10mm" onclick="executeLashSpecSelect(this, 'W20_UP')">10mm</button>
+<button class="spec-btn" data-type="length" data-value="11mm" onclick="executeLashSpecSelect(this, 'W20_UP')">11mm</button>
+<button class="spec-btn" data-type="length" data-value="12mm" onclick="executeLashSpecSelect(this, 'W20_UP')">12mm</button>
+<button class="spec-btn" data-type="length" data-value="13mm" onclick="executeLashSpecSelect(this, 'W20_UP')">13mm</button>
+<button class="spec-btn" data-type="length" data-value="14mm" onclick="executeLashSpecSelect(this, 'W20_UP')">14mm</button>
+<button class="spec-btn" data-type="length" data-value="MIX8-14" onclick="executeLashSpecSelect(this, 'W20_UP')">MIX 8-14</button></div></div></div></div>
+                    <div><div class="product-price" id="price-display-W20_UP"><span style="text-decoration:line-through;color:var(--text-muted);font-size:13px;margin-right:6px;">$390</span><span style="color:var(--accent-color);font-weight:bold;">$195</span></div>
+                    <div class="product-stock" id="stock-text-W20_UP" style="color:var(--accent-color);font-weight:600;">請點選規格按鈕組合</div>
+                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('W20_UP', -1)">-</button><input type="number" class="quantity-input" id="left-input-W20_UP" value="0" min="0"><button class="quantity-btn" onclick="changeLeftQty('W20_UP', 1)">+</button></div>
+                    <button class="btn" onclick="addLashToCart('W20_UP')">加入購物車</button></div></div>
+                <!-- 出清五折：W21_UP -->
+                <div class="product-item" data-id="W21_UP" data-name="一代美瞳線超輕量扁毛(咖)" data-category="sale" data-sub="sale-flat-new" data-lash="true" data-origin-price="390" data-base-price="390" data-price="390" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                    <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">商品編號：W21_UP</div><div class="product-name">一代美瞳線超輕量扁毛(咖)</div>
+                    <div class="lash-variant-container"><div class="variant-group"><div class="variant-title">翹度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="curl" data-value="J" onclick="executeLashSpecSelect(this, 'W21_UP')">J55˚</button>
+<button class="spec-btn" data-type="curl" data-value="B" onclick="executeLashSpecSelect(this, 'W21_UP')">B65˚</button>
+<button class="spec-btn" data-type="curl" data-value="U" onclick="executeLashSpecSelect(this, 'W21_UP')">U95˚</button></div></div>
+                    <div class="variant-group"><div class="variant-title">粗度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="thickness" data-value="0.15" onclick="executeLashSpecSelect(this, 'W21_UP')">0.15</button></div></div>
+                    <div class="variant-group"><div class="variant-title">尺寸／長度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="length" data-value="MIX8-14" onclick="executeLashSpecSelect(this, 'W21_UP')">MIX 8-14</button></div></div></div></div>
+                    <div><div class="product-price" id="price-display-W21_UP"><span style="text-decoration:line-through;color:var(--text-muted);font-size:13px;margin-right:6px;">$390</span><span style="color:var(--accent-color);font-weight:bold;">$195</span></div>
+                    <div class="product-stock" id="stock-text-W21_UP" style="color:var(--accent-color);font-weight:600;">請點選規格按鈕組合</div>
+                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('W21_UP', -1)">-</button><input type="number" class="quantity-input" id="left-input-W21_UP" value="0" min="0"><button class="quantity-btn" onclick="changeLeftQty('W21_UP', 1)">+</button></div>
+                    <button class="btn" onclick="addLashToCart('W21_UP')">加入購物車</button></div></div>
+                <!-- 出清五折：W22_UP 科技毛 -->
+                <div class="product-item" data-id="W22_UP" data-name="一代法式輕柔孔雀羽(黑)" data-category="sale" data-sub="sale-tech" data-lash="true" data-origin-price="99" data-base-price="99" data-price="99" data-selected-color="" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                    <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">商品編號：W22_UP</div><div class="product-name">一代法式輕柔孔雀羽(黑)</div>
+                    <div class="lash-variant-container"><div class="variant-group"><div class="variant-title">根數：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="color" data-value="3根" onclick="executeLashSpecSelect(this, 'W22_UP')">3根</button><button class="spec-btn" data-type="color" data-value="5根" onclick="executeLashSpecSelect(this, 'W22_UP')">5根</button></div></div><div class="variant-group"><div class="variant-title">翹度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="curl" data-value="B" onclick="executeLashSpecSelect(this, 'W22_UP')">B40˚</button><button class="spec-btn" data-type="curl" data-value="C" onclick="executeLashSpecSelect(this, 'W22_UP')">C50˚</button><button class="spec-btn" data-type="curl" data-value="D" onclick="executeLashSpecSelect(this, 'W22_UP')">D60˚</button></div></div><div class="variant-group"><div class="variant-title">粗度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="thickness" data-value="0.07" onclick="executeLashSpecSelect(this, 'W22_UP')">0.07</button></div></div><div class="variant-group"><div class="variant-title">尺寸／長度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="length" data-value="8-10mm" onclick="executeLashSpecSelect(this, 'W22_UP')">8-10mm</button><button class="spec-btn" data-type="length" data-value="9-11mm" onclick="executeLashSpecSelect(this, 'W22_UP')">9-11mm</button><button class="spec-btn" data-type="length" data-value="10-12mm" onclick="executeLashSpecSelect(this, 'W22_UP')">10-12mm</button><button class="spec-btn" data-type="length" data-value="11-13mm" onclick="executeLashSpecSelect(this, 'W22_UP')">11-13mm</button><button class="spec-btn" data-type="length" data-value="12-14mm" onclick="executeLashSpecSelect(this, 'W22_UP')">12-14mm</button><button class="spec-btn" data-type="length" data-value="13-15mm" onclick="executeLashSpecSelect(this, 'W22_UP')">13-15mm</button></div></div></div></div>
+                    <div><div class="product-price" id="price-display-W22_UP">$99</div>
+                    <div class="product-stock" id="stock-text-W22_UP" style="color:var(--accent-color);font-weight:600;">請點選規格按鈕組合</div>
+                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('W22_UP', -1)">-</button><input type="number" class="quantity-input" id="left-input-W22_UP" value="0" min="0"><button class="quantity-btn" onclick="changeLeftQty('W22_UP', 1)">+</button></div>
+                    <button class="btn" onclick="addLashToCart('W22_UP')">加入購物車</button></div></div>
+
+                <!-- 出清五折：W23_UP 科技毛 -->
+                <div class="product-item" data-id="W23_UP" data-name="一代法式輕柔孔雀羽(咖)" data-category="sale" data-sub="sale-tech" data-lash="true" data-origin-price="99" data-base-price="99" data-price="99" data-selected-color="" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                    <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">商品編號：W23_UP</div><div class="product-name">一代法式輕柔孔雀羽(咖)</div>
+                    <div class="lash-variant-container"><div class="variant-group"><div class="variant-title">根數：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="color" data-value="3根" onclick="executeLashSpecSelect(this, 'W23_UP')">3根</button><button class="spec-btn" data-type="color" data-value="5根" onclick="executeLashSpecSelect(this, 'W23_UP')">5根</button></div></div><div class="variant-group"><div class="variant-title">翹度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="curl" data-value="B" onclick="executeLashSpecSelect(this, 'W23_UP')">B40˚</button><button class="spec-btn" data-type="curl" data-value="C" onclick="executeLashSpecSelect(this, 'W23_UP')">C50˚</button><button class="spec-btn" data-type="curl" data-value="D" onclick="executeLashSpecSelect(this, 'W23_UP')">D60˚</button></div></div><div class="variant-group"><div class="variant-title">粗度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="thickness" data-value="0.07" onclick="executeLashSpecSelect(this, 'W23_UP')">0.07</button></div></div><div class="variant-group"><div class="variant-title">尺寸／長度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="length" data-value="8-10mm" onclick="executeLashSpecSelect(this, 'W23_UP')">8-10mm</button><button class="spec-btn" data-type="length" data-value="9-11mm" onclick="executeLashSpecSelect(this, 'W23_UP')">9-11mm</button><button class="spec-btn" data-type="length" data-value="10-12mm" onclick="executeLashSpecSelect(this, 'W23_UP')">10-12mm</button><button class="spec-btn" data-type="length" data-value="11-13mm" onclick="executeLashSpecSelect(this, 'W23_UP')">11-13mm</button><button class="spec-btn" data-type="length" data-value="12-14mm" onclick="executeLashSpecSelect(this, 'W23_UP')">12-14mm</button></div></div></div></div>
+                    <div><div class="product-price" id="price-display-W23_UP">$99</div>
+                    <div class="product-stock" id="stock-text-W23_UP" style="color:var(--accent-color);font-weight:600;">請點選規格按鈕組合</div>
+                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('W23_UP', -1)">-</button><input type="number" class="quantity-input" id="left-input-W23_UP" value="0" min="0"><button class="quantity-btn" onclick="changeLeftQty('W23_UP', 1)">+</button></div>
+                    <button class="btn" onclick="addLashToCart('W23_UP')">加入購物車</button></div></div>
+
+                <!-- 出清五折：W24_UP 科技毛 -->
+                <div class="product-item" data-id="W24_UP" data-name="法式輕柔孔雀羽-(咖/3根)" data-category="sale" data-sub="sale-tech" data-lash="true" data-origin-price="410" data-base-price="410" data-price="410" data-selected-color="" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                    <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">商品編號：W24_UP</div><div class="product-name">法式輕柔孔雀羽-(咖/3根)</div>
+                    <div class="lash-variant-container"><div class="variant-group"><div class="variant-title">翹度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="curl" data-value="B" onclick="executeLashSpecSelect(this, 'W24_UP')">B40˚</button><button class="spec-btn" data-type="curl" data-value="C" onclick="executeLashSpecSelect(this, 'W24_UP')">C50˚</button><button class="spec-btn" data-type="curl" data-value="D" onclick="executeLashSpecSelect(this, 'W24_UP')">D60˚</button></div></div><div class="variant-group"><div class="variant-title">粗度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="thickness" data-value="0.07" onclick="executeLashSpecSelect(this, 'W24_UP')">0.07</button></div></div><div class="variant-group"><div class="variant-title">尺寸／長度：</div><div class="btn-tabs-container"><button class="spec-btn" data-type="length" data-value="8-10mm" onclick="executeLashSpecSelect(this, 'W24_UP')">8-10mm</button><button class="spec-btn" data-type="length" data-value="9-11mm" onclick="executeLashSpecSelect(this, 'W24_UP')">9-11mm</button><button class="spec-btn" data-type="length" data-value="10-12mm" onclick="executeLashSpecSelect(this, 'W24_UP')">10-12mm</button><button class="spec-btn" data-type="length" data-value="11-13mm" onclick="executeLashSpecSelect(this, 'W24_UP')">11-13mm</button><button class="spec-btn" data-type="length" data-value="12-14mm" onclick="executeLashSpecSelect(this, 'W24_UP')">12-14mm</button></div></div></div></div>
+                    <div><div class="product-price" id="price-display-W24_UP">$410</div>
+                    <div class="product-stock" id="stock-text-W24_UP" style="color:var(--accent-color);font-weight:600;">請點選規格按鈕組合</div>
+                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('W24_UP', -1)">-</button><input type="number" class="quantity-input" id="left-input-W24_UP" value="0" min="0"><button class="quantity-btn" onclick="changeLeftQty('W24_UP', 1)">+</button></div>
+                    <button class="btn" onclick="addLashToCart('W24_UP')">加入購物車</button></div></div>
                 <!-- 常規材料品項 -->
                 <div class="product-item" data-id="A2" data-name="嫁接睫毛專用黑膠-Mild初學黑膠/5G" data-category="perimeter" data-sub="glue">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：A2</div>
@@ -7551,7 +7991,7 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('A37', -1)">-</button><input type="number" class="quantity-input" id="left-input-A37" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('A37', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('A37')">加入購物車</button>
                 </div>
-                <div class="product-item" data-id="AA81" data-category="makeup" data-sub="lashes-zr" data-name=">自然711 (單副)" data-price="20">
+                <div class="product-item" data-id="AA81" data-category="makeup" data-sub="lashes-zr" data-name="自然711 (單副)" data-price="20">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：AA81</div>
                     <div class="product-name">自然711 (單副)</div><div class="product-price">$20</div>
                     <div class="product-stock" id="stock-text-AA81">載入中...</div>
@@ -9526,6 +9966,14 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                     <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('Q62', -1)">-</button><input type="number" class="quantity-input" id="left-input-Q62" value="0" min="0" ><button class="quantity-btn" onclick="changeLeftQty('Q62', 1)">+</button></div>
                     <button class="btn" onclick="addToCart('Q62')">加入購物車</button>
                 </div>
+                <!-- 門市補金額：每 1 件代表 NT$1，可與其他商品混合結帳 -->
+                <div class="product-item" data-id="STORE_ADJUST" data-category="store-adjustment" data-sub="all" data-name="門市購買" data-price="1" data-origin-price="1">
+                    <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">商品編號：STORE_ADJUST</div>
+                    <div class="product-name">門市購買</div><div class="product-price">$1</div>
+                    <div class="product-stock" style="color:#8da48f;">補金額專用・不計會員折扣</div>
+                    <div class="quantity-selector"><button class="quantity-btn" onclick="changeLeftQty('STORE_ADJUST',-1)">-</button><input type="number" class="quantity-input" id="left-input-STORE_ADJUST" value="0" min="0" max="99999999" step="1" inputmode="numeric"><button class="quantity-btn" onclick="changeLeftQty('STORE_ADJUST',1)">+</button></div>
+                    <button class="btn" onclick="addToCart('STORE_ADJUST')">加入購物車</button>
+                </div>
 		<div class="product-item" data-id="V1" data-category="membership" data-sub="all" data-name="凱莉VIP+ 會籍" data-price="6000">
                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; letter-spacing: 0.02em;">商品編號：V1</div>
                     <div class="product-name">凱莉VIP+ 會籍</div><div class="product-price">$6,000</div>
@@ -9578,16 +10026,19 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                 <div class="form-row">
                     <div class="form-control" style="display:none;"></div>
                     <div class="form-group">
-                        <label for="lineid">LINE ID</label>
-                        <input type="text" id="lineid" class="form-control" placeholder="便於與您聯繫細節">
+                        <label for="lineid">LINE ID（選填）</label>
+                        <input type="text" id="lineid" class="form-control" placeholder="首次訂購請填寫 LINE ID，以便確認訂單內容">
+                        <div style="font-size:12px;color:var(--text-muted);line-height:1.7;margin-top:7px;">※ 首次訂購者請務必填寫 LINE ID，以便客服確認訂單內容；已加入睫老闆官方 LINE 好友者，無須重複填寫。</div>
                     </div>
                     <div class="form-group">
                         <label for="payment">付款方式</label>
                         <select id="payment" class="form-control">
                             <option value="" selected disabled>請選擇付款方式</option>
                             <option value="cod">貨到付款</option>
-                            <option value="transfer">轉帳( 中國信託-銀行代號：822 帳號：7275401-24855 )</option>
+                            <option value="transfer">轉帳</option>
                             <option value="stored">扣儲值金</option>
+                            <option value="card" hidden>線上刷卡</option>
+                            <option value="monthly" hidden>月結</option>
                         </select>
                     </div>
                 </div>
@@ -9595,29 +10046,36 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                 <div class="form-row">
                     <div class="form-group">
                         <label for="company-title">公司抬頭 (選填)</label>
-                        <input type="text" id="company-title" class="form-control" placeholder="需開立三聯式發票請填寫抬頭+統編">
+                        <input type="text" id="company-title" class="form-control" placeholder="例如：睫老闆美妝百貨有限公司">
+                        <div style="font-size:12px;color:var(--text-muted);line-height:1.6;margin-top:6px;">※ 三聯式發票請填寫完整公司抬頭及統一編號。</div>
                     </div>
                     <div class="form-group">
                         <label for="tax-id">統一編號 (選填)</label>
                         <input type="text" id="tax-id" class="form-control" placeholder="8碼數字">
+                        <div style="font-size:12px;color:var(--text-muted);line-height:1.6;margin-top:6px;">※ 紙本傳統發票如需統編，請填寫8碼統一編號。</div>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="shipping">配送方式</label>
-                    <select id="shipping" class="form-control" onchange="updateCartSummary()">
+                    <select id="shipping" class="form-control" onchange="bossShippingChanged(); updateCartSummary()">
                         <option value="" selected disabled>請選擇配送方式</option>
                         <option value="normal">常溫宅配</option>
                         <option value="cvs">7-11店到店</option>
                         <option value="blackcat">指定黑貓</option>
                         <option value="blackcat-cold">黑貓低溫</option>
                         <option value="store-pickup">門市自取</option>
+                        <option value="sf-hk" hidden disabled>順豐速運(運費到付)</option>
                     </select>
+                    <div id="boss-store-pickup-reminder" role="note" hidden style="display:none;margin-top:10px;padding:12px 14px;background:#fff8f3;border:1px solid #f0ded1;border-radius:10px;color:#765a4b;font-size:13px;line-height:1.8;">
+                        <strong style="display:block;margin-bottom:3px;">ⓘ 門市自取提醒</strong>
+                        請於下方「訂單備註」欄位填寫<strong>預計取貨日期與時段</strong>，取貨時間須於門市營業時間內，以便我們提前為您準備商品。
+                    </div>
                 </div>
-<div class="form-group">
-    <label for="address">配送地址 / 7-11取貨門市</label>
-    <input type="text" id="address" class="form-control"
-           placeholder="請輸入完整外送收件地址（若選7-11店到店請填店號/門市名稱）">
+<div class="form-group" id="boss-address-group">
+    <label for="address" id="boss-address-label">請先選擇配送方式</label>
+    <input type="text" id="address" class="form-control" autocomplete="off" placeholder="請先選擇配送方式" disabled>
+    <div id="boss-address-hint" style="font-size:12px;color:var(--text-muted);margin-top:7px;line-height:1.6">選擇配送方式後，才會顯示對應的填寫說明。</div>
 </div>
 
                 <div class="form-group">
@@ -9774,6 +10232,7 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 
     // 常規耗材品項設定資料庫（已在此名冊中追加 FE6 ~ FA50 美容周邊商品完整資料庫）
     const productConfig = {
+        "STORE_ADJUST": {name:"門市購買",price:1,_originalPrice:1,max:99999999},
         "A2": { name: "A2 嫁接睫毛專用黑膠-Mild初學黑膠/5G", price: 450, max: 20 },
         "A3": { name: "A3 嫁接睫毛專用黑膠-韓國PRO專業開花黑膠/5G", price: 450, max: 20 },
         "A4": { name: "A4 嫁接睫毛專用黑膠-韓國HighSpeed極速黑膠/5G", price: 450, max: 20 },
@@ -10662,6 +11121,7 @@ function refreshStockDisplay() {
     checkAndRestoreMemberLogin();
     // 重新進入網站時，恢復會員預設資料與常用分店選單。
     if (deptIsLoggedIn && deptMemberData) autoFillMemberContact();
+            if (typeof bossSyncPaymentOptions === 'function') bossSyncPaymentOptions();
     loadCartFromStorage(); // 👈 載入 localStorage 購物車快存
 
     // 1. 🌟 【核心修復】：依據會員身份即時動態計算並渲染商品折扣價格
@@ -10891,11 +11351,11 @@ async function bossSubmitCancelRequest(index) {
     const order = bossReorderSearchOrders[index];
     if (!order || !bossCanRequestCancel(order)) return alert('此訂單目前不開放取消申請，請重新查詢。');
     const orderId = String(order.id || '').trim();
-    const phoneInput = prompt('請輸入此訂單下單時的完整10碼手機號碼，以確認取消申請：');
+    const phoneInput = await bossPrompt('請輸入此訂單下單時的完整10碼手機號碼，以確認取消申請：', '', '確認手機號碼');
     if (phoneInput === null) return;
     const phone = phoneInput.replace(/\s/g, '');
     if (!/^09\d{8}$/.test(phone)) return alert('請輸入正確的10碼手機號碼。');
-    if (!confirm('確定申請取消訂單 ' + orderId + ' 嗎？\n符合自動取消條件的訂單將直接取消；其他訂單需等待客服確認。')) return;
+    if (!(await bossConfirm('確定申請取消訂單 ' + orderId + ' 嗎？\n符合自動取消條件的訂單將直接取消；其他訂單需等待客服確認。', '確認取消訂單', '！'))) return;
     const url = "https://script.google.com/macros/s/AKfycbxz6vwBoJznRPoJy7-ldlbdpSPwL1736tGqxZGPEHcTo5W2mm3kqUTvWRCfKJm-N9Oz/exec"; // 已部署取消申請功能的訂單後台
     const body = JSON.stringify({action:'request_cancel',orderId,phone});
     // 使用原生 HTML 表單提交，避開跨網域 fetch POST 可能被瀏覽器攔截的情況。
@@ -11006,6 +11466,115 @@ function bossReorderFromSearch(index) {
     if (added) { toggleOrderModal(false); document.querySelector('.mobile-cart-card')?.scrollIntoView({behavior:'smooth',block:'start'}); }
 }
 
+/* 下載客戶版 A4 訂單明細（html2pdf；載入失敗時提供列印另存 PDF） */
+let bossPdfLibraryLoading = null;
+function bossLoadPdfLibrary() {
+    if (window.html2pdf) return Promise.resolve();
+    if (bossPdfLibraryLoading) return bossPdfLibraryLoading;
+    bossPdfLibraryLoading = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        script.onload = () => window.html2pdf ? resolve() : reject(new Error('PDF 元件載入失敗'));
+        script.onerror = () => reject(new Error('PDF 元件下載失敗'));
+        document.head.appendChild(script);
+    }).catch(err => { bossPdfLibraryLoading = null; throw err; });
+    return bossPdfLibraryLoading;
+}
+function bossPdfSafeName(value) {
+    return String(value || '訂單').replace(/[\\/:*?"<>|\s]+/g, '_').slice(0, 90);
+}
+function bossMakePdfContent(order) {
+    const temp = document.createElement('div');
+    temp.innerHTML = buildCustomerOrderDetailHtml(order);
+    const slip = temp.querySelector('.customer-order-slip');
+    if (!slip) throw new Error('無法取得訂單明細');
+    // 不輸出互動按鈕及配送查詢連結，僅保留可閱讀的訂單文字。
+    slip.querySelectorAll('button').forEach(el => el.remove());
+    slip.querySelectorAll('a').forEach(el => el.replaceWith(document.createTextNode(el.textContent || '')));
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'width:690px;box-sizing:border-box;padding:28px 34px;background:#fff;color:#352d29;font-family:"Microsoft JhengHei","PingFang TC",sans-serif;font-size:12px;line-height:1.65;letter-spacing:0;';
+    wrapper.appendChild(slip);
+    const style = document.createElement('style');
+    style.textContent = `
+      .customer-order-slip{padding:0!important;background:white!important}
+      .customer-order-slip-head{text-align:center;border-bottom:2px solid #55483d;padding-bottom:12px;margin-bottom:15px}
+      .customer-order-slip-title{font-size:20px;font-weight:bold}
+      .customer-order-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-bottom:18px;font-size:12px;overflow-wrap:anywhere}
+      .customer-order-table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+      .customer-order-table th,.customer-order-table td{padding:9px 6px;border-bottom:1px solid #ddd;vertical-align:top;overflow-wrap:anywhere}
+      .customer-order-table th{background:#f8f3ef;text-align:left}
+      .customer-order-table th:first-child{width:52%}
+      .customer-order-table .num{text-align:right;white-space:nowrap}
+      .customer-order-table tr{break-inside:avoid;page-break-inside:avoid}
+      .customer-order-totals{width:250px;max-width:100%;margin:16px 0 12px auto;font-size:12px;break-inside:avoid}
+      .customer-order-total-row{display:flex;justify-content:space-between;padding:5px 0}
+      .customer-order-total-row.grand{border-top:1px solid #55483d;font-size:15px;font-weight:bold;padding-top:9px}
+      .customer-order-slip>div:last-child{break-inside:avoid;overflow-wrap:anywhere}
+    `;
+    wrapper.prepend(style);
+    return wrapper;
+}
+// 使用瀏覽器原生列印引擎產生 PDF，避免 html2canvas 截圖空白。
+// 使用者在列印視窗選擇「另存為 PDF」即可儲存完整 A4 訂單明細。
+function bossDownloadOrderPdf(index) {
+    const order = bossReorderSearchOrders[index];
+    if (!order) { alert('找不到訂單資料，請重新查詢。'); return; }
+    let wrapper;
+    try {
+        wrapper = bossMakePdfContent(order);
+        const popup = window.open('', '_blank');
+        if (!popup) {
+            alert('瀏覽器封鎖了列印視窗，請允許此網站開啟彈出視窗後重試。');
+            return;
+        }
+        const styles = `
+          @page { size: A4 portrait; margin: 12mm; }
+          html,body { margin:0; padding:0; background:#fff; color:#352d29; }
+          body { font-family: "Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif; }
+          .boss-pdf-page { width:100% !important; max-width:100% !important; padding:0 !important; box-sizing:border-box; }
+          .customer-order-slip { padding:0 !important; }
+          .customer-order-slip-head { text-align:center; border-bottom:2px solid #55483d; padding-bottom:12px; margin-bottom:15px; }
+          .customer-order-slip-title { font-size:20px; font-weight:bold; }
+          .customer-order-meta { display:grid; grid-template-columns:1fr 1fr; gap:8px 16px; margin-bottom:18px; font-size:12px; overflow-wrap:anywhere; }
+          .customer-order-table { width:100%; border-collapse:collapse; font-size:12px; table-layout:fixed; }
+          .customer-order-table th,.customer-order-table td { padding:9px 6px; border-bottom:1px solid #ddd; vertical-align:top; overflow-wrap:anywhere; }
+          .customer-order-table th { background:#f8f3ef; text-align:left; }
+          .customer-order-table th:first-child { width:52%; }
+          .customer-order-table .num { text-align:right; white-space:nowrap; }
+          .customer-order-table tr { break-inside:avoid; page-break-inside:avoid; }
+          .customer-order-totals { width:250px; max-width:100%; margin:16px 0 12px auto; font-size:12px; break-inside:avoid; }
+          .customer-order-total-row { display:flex; justify-content:space-between; padding:5px 0; }
+          .customer-order-total-row.grand { border-top:1px solid #55483d; font-size:15px; font-weight:bold; padding-top:9px; }
+          @media print { button {display:none !important;} }
+        `;
+        // 從已建立的訂單明細節點複製內容，避免把來源畫面滾動容器帶入。
+        const slip = wrapper.querySelector('.customer-order-slip');
+        const content = slip ? slip.outerHTML : wrapper.innerHTML;
+        popup.document.open();
+        popup.document.write('<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>' +
+          '睫老闆_訂單明細_' + bossPdfSafeName(order.id) +
+          '</title><style>' + styles + '</style></head><body><main class="boss-pdf-page">' +
+          content + '</main></body></html>');
+        popup.document.close();
+        popup.focus();
+        // 讓列印頁完成排版與中文字型載入後再開啟列印視窗。
+        popup.onload = async () => {
+            try { if (popup.document.fonts && popup.document.fonts.ready) await popup.document.fonts.ready; } catch (_) {}
+            popup.focus();
+            popup.print();
+        };
+        // document.write 的 load 可能已觸發，另設一次性保底呼叫。
+        if (popup.document.readyState === 'complete') {
+            popup.onload = null;
+            popup.focus();
+            popup.print();
+        }
+    } catch (err) {
+        console.error('訂單 PDF 列印失敗', err);
+        alert('無法開啟訂單明細列印視窗，請稍後再試。');
+    }
+}
+
 function queryOrderFromServer() {
     const rawInput = document.getElementById('search-input').value;
     const keyword = rawInput ? rawInput.trim().replace(/\s+/g, '') : '';
@@ -11054,6 +11623,7 @@ function queryOrderFromServer() {
                         </div>
                         ${buildDeliveryTrackingHtml(matchedOrder)}
                         ${buildCustomerOrderDetailHtml(matchedOrder)}
+                        <button type="button" class="boss-order-pdf-btn" onclick="bossDownloadOrderPdf(${orderIndex})">📄 儲存 PDF 訂單明細</button>
                         ${bossCancelButton(matchedOrder, orderIndex)}
                         ${bossReorderButton(matchedOrder, orderIndex)}
                     </div>
@@ -11096,6 +11666,7 @@ function queryOrderFromServer() {
                         </div>
                         ${buildDeliveryTrackingHtml(matchedOrder)}
                         ${buildCustomerOrderDetailHtml(matchedOrder)}
+                        <button type="button" class="boss-order-pdf-btn" onclick="bossDownloadOrderPdf(${orderIndex})">📄 儲存 PDF 訂單明細</button>
                         ${bossCancelButton(matchedOrder, orderIndex)}
                         ${bossReorderButton(matchedOrder, orderIndex)}
                     </div>
@@ -11279,28 +11850,24 @@ function checkMemberRenewalReminder(forceCheck) {
     const renewalOpen = new Date(expiry);
     renewalOpen.setMonth(renewalOpen.getMonth() - 2);
 
-    // 尚未進入續約期，不提醒
-    if (today < renewalOpen) return;
+    // 只在到期日前兩個月（含到期當天）顯示提醒；到期隔日起不再彈出。
+    // 此處只控制提醒視窗，不變更會員實際等級或後台降級規則。
+    if (today < renewalOpen || today > expiry) {
+        toggleRenewalReminder(false);
+        return;
+    }
 
     const expiryText = formatMemberExpiryDate(expiry);
     const content = document.getElementById("renewal-reminder-content");
     if (!content) return;
 
-    if (today <= expiry) {
-        content.innerHTML = `
-            您的會員資格將於 <strong>${expiryText}</strong> 到期，目前已進入續約期間。<br><br>
-            會員續約於<strong>到期日前兩個月開放辦理</strong>，請於會員效期內完成續約；<strong>逾期後將視為新加入會員辦理</strong>。<br><br>
-            如需辦理續約，請洽
-            <a class="renewal-line-link" href="${MEMBER_SERVICE_LINE_URL}" target="_blank" rel="noopener noreferrer">客服</a>。
-        `;
-    } else {
-        content.innerHTML = `
-            您的會員資格已於 <strong>${expiryText}</strong> 到期。<br><br>
-            依會員規則，<strong>逾期後將視為新加入會員辦理</strong>。<br><br>
-            如需重新加入會員，請洽
-            <a class="renewal-line-link" href="${MEMBER_SERVICE_LINE_URL}" target="_blank" rel="noopener noreferrer">客服</a>。
-        `;
-    }
+    content.innerHTML = `
+        您的會員資格將於 <strong>${expiryText}</strong> 到期，目前已進入續約期間。<br><br>
+        會員續約於<strong>到期日前兩個月開放辦理</strong>，請於會員效期內完成續約。<br><br>
+        會籍到期後將<strong>自動降為一般會員</strong>；日後再次加入 VIP 將視為<strong>新加入會員</strong>，無法享有<strong>續約購物金優惠</strong>。<br><br>
+        如需辦理續約，請洽
+        <a class="renewal-line-link" href="${MEMBER_SERVICE_LINE_URL}" target="_blank" rel="noopener noreferrer">客服</a>。
+    `;
 
     // 同一個瀏覽器工作階段、同一到期日只自動跳一次；
     // 重新登入或重新開啟瀏覽器工作階段可再次提醒。
@@ -11311,20 +11878,43 @@ function checkMemberRenewalReminder(forceCheck) {
     toggleRenewalReminder(true);
 }
 
-// 指定會員預設「貨到付款＋常溫宅配」，但可自由更改選項。
+// 香港加盟商專屬付款及配送設定（僅比對登入會員帳號，不使用收件電話）
+const BOSS_HK_FRANCHISE_ACCOUNTS = new Set(['85263414123', '85261922607']);
+function bossIsHongKongFranchise(){
+    if (typeof deptIsLoggedIn === 'undefined' || !deptIsLoggedIn ||
+        typeof deptMemberData === 'undefined' || !deptMemberData) return false;
+    const phone = String(deptMemberData.phone || '').replace(/\D/g, '');
+    const level = String(deptMemberData.member_level || '').trim();
+    return BOSS_HK_FRANCHISE_ACCOUNTS.has(phone) && (level === '加盟A' || level === '加盟B');
+}
+function bossSyncHongKongShipping(){
+    const select = document.getElementById('shipping'); if(!select) return;
+    const hk = bossIsHongKongFranchise();
+    const sf = select.querySelector('option[value="sf-hk"]');
+    if(sf){sf.hidden = !hk; sf.disabled = !hk;}
+    Array.from(select.options).forEach(function(opt){
+        if(opt.value && opt.value !== 'sf-hk'){
+            opt.hidden = hk; opt.disabled = hk;
+        }
+    });
+    if(hk){select.value = 'sf-hk';}
+    else if(select.value === 'sf-hk'){select.value = '';}
+    if(typeof updateCartSummary === 'function') updateCartSummary();
+}
+// 指定會員配送方式維持原設定；付款方式另依會員等級管理。
 const AUTO_DEFAULT_DELIVERY_LEVELS = new Set([
     '業務A', '業務B', '連鎖店B', '加盟A', '加盟B', '儲值商A', '儲值商B'
 ]);
 function applyMemberPaymentDeliveryDefaults() {
     const level = (deptIsLoggedIn && deptMemberData)
         ? String(deptMemberData.member_level || '').trim() : '';
-    if (!AUTO_DEFAULT_DELIVERY_LEVELS.has(level)) return;
     const payment = document.getElementById('payment');
     const shipping = document.getElementById('shipping');
-    // 只填入空白欄位；會員已自行選擇時，絕不覆蓋。
+    // 所有會員登入／登出時都立即更新付款選項；僅指定特殊會員自動設定配送。
     let changed = false;
-    if (payment && !payment.value) { payment.value = 'cod'; changed = true; }
-    if (shipping && !shipping.value) { shipping.value = 'normal'; changed = true; }
+    if (payment && typeof bossSyncPaymentOptions === 'function') bossSyncPaymentOptions();
+    bossSyncHongKongShipping();
+    if (!bossIsHongKongFranchise() && AUTO_DEFAULT_DELIVERY_LEVELS.has(level) && shipping && !shipping.value) { shipping.value = 'normal'; changed = true; }
     if (changed && typeof updateCartSummary === 'function') updateCartSummary();
 }
 
@@ -11429,8 +12019,8 @@ function openBalanceHistory() {
     }).catch(()=>{ if(body) body.innerHTML=`<div class="balance-history-empty">連線失敗，請稍後再試。</div>`; });
 }
 
-function executeLogout() {
-    if (confirm("確認要登出會員帳號嗎？")) {
+async function executeLogout() {
+    if (await bossConfirm('確認要登出會員帳號嗎？', '確認登出', '↪')) {
         deptIsLoggedIn = false;
         deptMemberData = null;
         localStorage.removeItem("deptMemberData");
@@ -11715,6 +12305,12 @@ function selectCategory(category, btnElement) {
         resetSubTabs(firstSubTab);
     }
 
+    const welfareNotice = document.getElementById('boss-welfare-notice');
+    if (welfareNotice) welfareNotice.style.display = category === 'welfare' ? 'block' : 'none';
+    const vipNotice = document.getElementById('boss-vip-notice');
+    if (vipNotice) vipNotice.style.display = category === 'membership' ? 'block' : 'none';
+    const lashesNotice = document.getElementById('boss-lashes-notice');
+    if (lashesNotice) lashesNotice.style.display = 'none';
     filterProducts();
 }
 
@@ -11763,7 +12359,7 @@ function filterProducts() {
 
     let visibleCount = 0;
     items.forEach(item => {
-        const productId = item.getAttribute('data-id').toLowerCase();
+        const productId = (item.getAttribute('data-id') || '').toLowerCase();
         
         let productName = item.getAttribute('data-name');
         if(!productName && productConfig[item.getAttribute('data-id')]) productName = productConfig[item.getAttribute('data-id')].name;
@@ -11773,15 +12369,19 @@ function filterProducts() {
         const productSub = item.getAttribute('data-sub') || 'none';
         
         const matchesQuery = productId.includes(query) || productName.includes(query);
-        const matchesCategory = (currentCategory === 'all' || productCat === currentCategory);
+        // 輸入關鍵字時全站搜尋；清空後恢復原本分類篩選。
+        const matchesCategory = query.length > 0 || currentCategory === 'all' || productCat === currentCategory;
         
         let matchesSubCategory = true;
-        if (currentCategory !== 'all' && currentSubCategory !== 'all') {
+        if (!query && currentCategory !== 'all' && currentSubCategory !== 'all') {
             if (currentSubCategory === 'dash-layered') {
                 matchesSubCategory = (productSub === 'lash-layered' || productSub === 'lash-kellis' || productSub === 'lash-camellia');
             } else if (currentSubCategory === 'dash-bloom') {
                 matchesSubCategory = (productSub === 'lash-bloom' ||
                     productSub === 'lash-yy' || productSub === 'lash-clover3' || productSub === 'lash-clover5' || productSub === 'lash-w');
+            } else if (currentSubCategory === 'lashes') {
+                // 假睫毛「顯示全部」需涵蓋所有系列，而非尋找不存在的 data-sub=lashes。
+                matchesSubCategory = ['lashes-jw', 'lashes-gz', 'lashes-zr', 'lashes-wt', 'lashes-tm'].includes(productSub);
             } else if (currentSubCategory === 'sale-straight') {
                 matchesSubCategory = (productSub === 'sale-fan' || productSub === 'sale-mink' ||
                     productSub === 'sale-real-mink' || productSub === 'sale-l-plus');
@@ -11791,9 +12391,9 @@ function filterProducts() {
             } else if (currentSubCategory === 'sale-color-group') {
                 matchesSubCategory = (productSub === 'sale-5th-ave' || productSub === 'sale-gradient');
             } else if (currentSubCategory === 'sale-flat') {
-                matchesSubCategory = (productSub === 'sale-pillow-swallow');
+                matchesSubCategory = (productSub === 'sale-pillow-swallow' || productSub === 'sale-flat-new');
             } else if (currentSubCategory === 'sale-tech') {
-                matchesSubCategory = (productSub === 'sale-peacock');
+                matchesSubCategory = (productSub === 'sale-peacock' || productSub === 'sale-tech');
             } else {
                 matchesSubCategory = (productSub === currentSubCategory);
             }
@@ -11808,7 +12408,11 @@ function filterProducts() {
     });
 
     if (visibleCount === 0) {
-        grid.insertAdjacentHTML('beforeend', `<div id="no-search-notice" class="no-search-results">✨ 該分類下找不到符合「${query}」的美學商品唷！</div>`);
+        const notice = document.createElement('div');
+        notice.id = 'no-search-notice';
+        notice.className = 'no-search-results';
+        notice.textContent = query ? `找不到符合「${searchInput.value.trim()}」的商品，請嘗試其他關鍵字。` : '此分類目前沒有商品。';
+        grid.appendChild(notice);
     }
 }
 
@@ -11963,11 +12567,11 @@ function executeLashSpecSelect(btn, productId) {
     const length = card.getAttribute('data-selected-length');
 
     const stockTxt = document.getElementById(`stock-text-${productId}`);
-    const colorRequiredIds = ['E22_UP', 'W8_UP', 'W9_UP'];
+    const colorRequiredIds = ['E22_UP', 'W8_UP', 'W9_UP', 'W22_UP', 'W23_UP'];
     const requiresColor = colorRequiredIds.includes(productId);
     
     if (requiresColor && !chosenColor) {
-        stockTxt.innerText = "請選齊『色彩選擇、捲度、粗度、長度』四個按鈕";
+        stockTxt.innerText = ['W22_UP','W23_UP'].includes(productId) ? "請選齊『根數、捲度、粗度、長度』四個按鈕" : "請選齊『色彩選擇、捲度、粗度、長度』四個按鈕";
         stockTxt.style.color = "var(--accent-color)";
         return;
     }
@@ -12085,17 +12689,17 @@ function addLashToCart(productId) {
     
     const finalDisplayName = chosenColor ? `${productName}-${chosenColor}` : productName;
     const originalPrice = parseInt(card.getAttribute('data-base-price')) || 290;
-    const isClearanceLash = /^W(?:[1-9]|1[0-9])_UP$/.test(productId);
+    const isClearanceLash = /^W(?:[1-9]|1[0-9]|2[014])_UP$/.test(productId);
     const clearanceLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5,
-        '柏金VIP': 0.3, '頂極VIP': 0.3,
+        '柏金VIP': 0.3, '頂極VIP': 0.3, '極VIP': 0.3, '頂級VIP': 0.3,
         '業務A': 0.3, '加盟A': 0.3, '儲值商A': 0.3,
         '加盟B': 0.3, '儲值商B': 0.3, '業務B': 0.3, '連鎖店B': 0.3
     };
     const clearanceLevel = (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn && deptMemberData)
         ? (deptMemberData.member_level || '一般會員') : '未登入';
     const clearanceRate = clearanceLevelRates[clearanceLevel] || 0.5;
-    const basePrice = isClearanceLash ? Math.round(originalPrice * clearanceRate) : getDeptDiscountedPrice(originalPrice);
+    const basePrice = ['W22_UP', 'W23_UP'].includes(productId) ? originalPrice : (isClearanceLash ? Math.round(originalPrice * clearanceRate) : getDeptDiscountedPrice(originalPrice));
 
     let cartItemSku = "";
     let cartDisplayName = "";
@@ -12583,13 +13187,14 @@ function addToCart(productId) {
     let currentInCart = cart[productId] || 0;
     let newQty = currentInCart + qtySelected;
     
-    let max = 999;
+    let max = productId === "STORE_ADJUST" ? 99999999 : 999;
     let productName = "";
     if (productItem) {
         productName = productItem.getAttribute('data-name') || productConfig[productId]?.name || "";
     }
     
-    if (productName) {
+    if (productConfig[productId]?._isWelfare) max = Number(productConfig[productId].max) || 0;
+    else if (productName && productId !== "STORE_ADJUST") {
         let currentStock = getStockFromDatabase(productId + productName);
         if (currentStock === null) currentStock = getStockFromDatabase(productName);
         if (currentStock !== null) max = currentStock;
@@ -12615,7 +13220,7 @@ function changeCartItemQty(cartKey, change) {
     if (currentQty <= 0) {
         delete cart[cartKey];
     } else {
-        const maxStock = productConfig[cartKey]?.max || 999;
+        const maxStock = cartKey === "STORE_ADJUST" ? 99999999 : (productConfig[cartKey]?.max || 999);
         if (currentQty > maxStock) {
             alert(`抱歉，該商品此規格現貨庫存上限為 ${maxStock} 件唷！`);
             currentQty = maxStock;
@@ -12623,6 +13228,36 @@ function changeCartItemQty(cartKey, change) {
         cart[cartKey] = currentQty;
     }
     saveCartToStorage(); // 💾 [儲存至 localStorage]
+    renderCart();
+}
+
+// 購物車：直接輸入數量（保留原本的會員價格、優惠及訂單重算流程）
+function setCartItemQty(cartKey, input) {
+    if (!Object.prototype.hasOwnProperty.call(cart, cartKey)) return;
+    const raw = String(input.value).trim();
+    const requested = Number(raw);
+    if (!raw || !Number.isSafeInteger(requested) || requested < 1) {
+        alert('請輸入大於 0 的整數；如需移除商品，請點選垃圾桶。');
+        renderCart();
+        return;
+    }
+    const maxStock = cartKey === 'STORE_ADJUST' ? 99999999 : (productConfig[cartKey]?.max || 999);
+    if (requested > maxStock) {
+        alert(`抱歉，該商品此規格現貨庫存上限為 ${maxStock} 件唷！`);
+        renderCart();
+        return;
+    }
+    cart[cartKey] = requested;
+    saveCartToStorage();
+    renderCart();
+}
+
+async function removeCartItem(cartKey) {
+    if (!Object.prototype.hasOwnProperty.call(cart, cartKey)) return;
+    const name = productConfig[cartKey]?.name || cartKey;
+    if (!(await bossConfirm(`確定要從購物車移除「${name}」嗎？`, '確認移除商品', '🗑'))) return;
+    delete cart[cartKey];
+    saveCartToStorage();
     renderCart();
 }
 
@@ -12679,10 +13314,11 @@ function renderCart() {
                     <div class="cart-item-actions">
                         <div class="quantity-selector">
                             <button type="button" class="quantity-btn" onclick="changeCartItemQty('${safeId}', -1)">-</button>
-                            <input type="number" class="quantity-input" value="${qty}" readonly>
+                            <input type="number" class="quantity-input cart-editable-qty" value="${qty}" min="1" step="1" inputmode="numeric" aria-label="${pInfo.name} 數量" onchange="setCartItemQty('${safeId}', this)" onkeydown="if(event.key==='Enter'){this.blur();}">
                             <button type="button" class="quantity-btn" onclick="changeCartItemQty('${safeId}', 1)">+</button>
                         </div>
                         <div class="cart-item-price">$${(pInfo.price * qty).toLocaleString()}</div>
+                        <button type="button" class="cart-remove-btn" aria-label="刪除商品" title="刪除商品" onclick="removeCartItem('${safeId}')">&#128465;</button>
                     </div>
                 </div>
             `;
@@ -12705,12 +13341,12 @@ function updateCartSummary() {
     let subtotal = 0;
     const bossCartActualPrices = {}; // 每次重算均重建，活動優惠依購物車實際售價計算
 
-    const absoluteOriginalPriceIds = ['V1', 'V2', 'V3'];
+    const absoluteOriginalPriceIds = ['V1', 'V2', 'V3', 'STORE_ADJUST', 'W22_UP', 'W23_UP'];
     const fixedHalfDiscountIds = ['A116', 'A129', 'A275'];
 
     const customDiscountIds = [
         'W1_UP', 'W2_UP', 'W3_UP', 'W4_UP', 'W5_UP', 'W6_UP', 'W7_UP', 'W8_UP', 'W9_UP',
-        'W10_UP', 'W11_UP', 'W12_UP', 'W13_UP', 'W14_UP', 'W15_UP', 'W16_UP', 'W17_UP', 'W18_UP', 'W19_UP',
+        'W10_UP', 'W11_UP', 'W12_UP', 'W13_UP', 'W14_UP', 'W15_UP', 'W16_UP', 'W17_UP', 'W18_UP', 'W19_UP', 'W20_UP', 'W21_UP', 'W24_UP',
         'TC1', 'TC2', 'TC9', 'TC12', 'TC13', 'TF35', 'TF36', 'TF38', 'TF48', 'TF49', 'TF50', 'TF40', 'TF41',
         'TF42', 'TF43', 'TF44', 'TF45', 'TF46', 'TF47', 'TD4', 'TD7', 'TD8', 'TD10', 'TD11', 'TD12', 'TD13',
         'TD14', 'TD15', 'TD16', 'TD17', 'TD23', 'TD24',
@@ -12739,7 +13375,7 @@ function updateCartSummary() {
     ]; 
     const customLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5, 
-        '柏金VIP': 0.3,  '頂極VIP': 0.3,
+        '柏金VIP': 0.3,  '頂極VIP': 0.3, '極VIP': 0.3, '頂級VIP': 0.3,
         '業務A': 0.3, '加盟A': 0.3, '儲值商A': 0.3, 
         '加盟B': 0.3, '儲值商B': 0.3, '業務B': 0.3, '連鎖店B': 0.3
     };
@@ -12756,17 +13392,51 @@ function updateCartSummary() {
 
     const isLoggedIn = (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn && deptMemberData);
     let activeLevel = isLoggedIn ? (deptMemberData.member_level || "一般會員") : "未登入";
+    // 福利品價格沿用原商品在本函式中的會籍規則，最後再減20元。
+    const bossWelfarePriceForLevel = (info) => {
+        const origin = String(info._sourceProductId || '').trim().toUpperCase();
+        const originalPrice = Number(info._originalPrice) || 0;
+        let rate = 1;
+        if (absoluteOriginalPriceIds.includes(origin)) rate = 1;
+        else if (fixedHalfDiscountIds.includes(origin)) rate = 0.5;
+        else if (customDiscountIds.includes(origin)) rate = customLevelRates[activeLevel] || 1;
+        else if (specialDiscountIds.includes(origin)) rate = specialRates[activeLevel] || 1;
+        else if (isLoggedIn) {
+            const setting = DEPT_MEMBER_LEVEL_SETTINGS[activeLevel] || DEPT_MEMBER_LEVEL_SETTINGS[activeLevel === '極VIP' ? '頂極VIP' : activeLevel];
+            rate = setting ? Number(setting.discountRate) || 1 : 1;
+        }
+        return Math.max(0, Math.round(originalPrice * rate) - 20);
+    };
+    document.querySelectorAll('.boss-welfare-item').forEach(card => {
+        const info = productConfig[card.dataset.id];
+        if (!info) return;
+        info.price = bossWelfarePriceForLevel(info);
+        const el = card.querySelector('.product-price');
+        if (el) el.textContent = '福利價 $' + info.price.toLocaleString();
+    });
 
     Object.keys(cart).forEach(id => {
         const qty = cart[id];
         if (qty <= 0) return;
         totalQty += qty;
 
-        const pureId = id.split('_')[0];
+        const pureId = id === 'STORE_ADJUST' ? 'STORE_ADJUST' : id.split('_')[0];
         let itemRealPrice = 0;
 
-        if (id.includes('_') && productConfig[id] && productConfig[id]._isSpecialSku) {
-            itemRealPrice = productConfig[id].price;
+        if (productConfig[id] && productConfig[id]._isWelfare) {
+            itemRealPrice = bossWelfarePriceForLevel(productConfig[id]);
+            productConfig[id].price = itemRealPrice;
+        } else if (id.includes('_') && productConfig[id] && productConfig[id]._isSpecialSku) {
+            if (/^W24_UP_/.test(id)) {
+                const w24Rate = customLevelRates[activeLevel] ?? 0.5;
+                itemRealPrice = Math.round(410 * w24Rate);
+                productConfig[id].price = itemRealPrice;
+            } else if (/^W(?:22|23)_UP_/.test(id)) {
+                itemRealPrice = 99;
+                productConfig[id].price = 99;
+            } else {
+                itemRealPrice = productConfig[id].price;
+            }
         } else {
             const card = document.querySelector(`.product-item[data-id="${pureId}"]`);
             let itemOriginPrice = 0;
@@ -12815,7 +13485,8 @@ function updateCartSummary() {
 
     let shippingFee = 0; let shippingText = "$0";
     if (subtotal > 0 && shippingMethod) {
-        if (subtotal >= 3000) {
+        if (shippingMethod === 'sf-hk') { shippingFee = 0; shippingText = '$0'; }
+        else if (subtotal >= 3000) {
             if (shippingMethod === 'blackcat') { shippingFee = 60; shippingText = "$60 (滿額優惠)"; }
             else if (shippingMethod === 'blackcat-cold') { shippingFee = 160; shippingText = "$160"; }
             else { shippingFee = 0; shippingText = "免運 (滿額)"; }
@@ -12826,7 +13497,7 @@ function updateCartSummary() {
                     // 👈 判斷超商取貨的付款方式
                     if (paymentMethodText.includes('貨到付款')) {
                         shippingFee = 38;
-                    } else if (paymentMethodText.includes('轉帳') || paymentMethodText.includes('儲值金')) {
+                    } else if (paymentMethodText.includes('轉帳') || paymentMethodText.includes('儲值金') || paymentMethodText.includes('線上刷卡') || paymentMethodText.includes('月結')) {
                         shippingFee = 60;
                     } else {
                         shippingFee = 38; // 預設或選其他付款方式時的運費
@@ -12844,6 +13515,8 @@ function updateCartSummary() {
 
     if(document.getElementById('total-qty')) document.getElementById('total-qty').innerText = `${totalQty} 件`;
     if(document.getElementById('subtotal-price')) document.getElementById('subtotal-price').innerText = `$${subtotal.toLocaleString()}`;
+    const bossMobileAmount = document.getElementById('boss-mobile-cart-amount');
+    if (bossMobileAmount) bossMobileAmount.textContent = `NT$ ${subtotal.toLocaleString()}`;
     if(document.getElementById('shipping-fee')) {
         document.getElementById('shipping-fee').innerText = shippingText;
         document.getElementById('shipping-fee').style.color = shippingText.includes("免運") ? "var(--accent-color)" : "var(--text-main)";
@@ -12863,7 +13536,16 @@ function updateCartSummary() {
 
 function toggleLashesMenu(show) {
     const lashesMenu = document.getElementById('lashes-series-menu');
-    if (lashesMenu) lashesMenu.style.display = show ? 'flex' : 'none';
+    const lashesNotice = document.getElementById('boss-lashes-notice');
+    if (lashesNotice) lashesNotice.style.display = (show && currentCategory === 'makeup') ? 'block' : 'none';
+    if (lashesMenu) {
+        lashesMenu.style.display = show ? 'flex' : 'none';
+        if (show) {
+            lashesMenu.querySelectorAll('.sub-tab').forEach((tab, index) => {
+                tab.classList.toggle('active', index === 0);
+            });
+        }
+    }
 }
 
 function toggleNailBrushMenu(show) {
@@ -12874,7 +13556,7 @@ function toggleNailBrushMenu(show) {
 // =============================================================
 // 10. 遠端 Google Sheets 即時庫存同步與模糊比對機制
 // =============================================================
-const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyA4w1YKCpbs-9AxDsXFLKJL3sBRNhHitE4vntHuQPvQI5mAxSgPLJit0pk7mOh-zbcJw/exec";
+const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyTsGYiRH-6Ixh6a3jqlF9k5KVsAkkRkpj-22S9ACokHT87ConzvqYoaEZ0HNG9tIzRRg/exec";
 const ORDER_QUERY_API_URL = "https://script.google.com/macros/s/AKfycbzGS2QhX4G_hVVSWytGN8_46YFoLn_GwwCnrwcS9JdkWcFtQQeSBo-iKGxaGQgAQdPC/exec"; // 訂單查詢／配送／會員訂單關聯專用 
 
 function sendDeductStockRequestToBackend(cartData) {
@@ -12902,11 +13584,66 @@ function sendDeductStockRequestToBackend(cartData) {
     });
 }
 
+function bossWelfareEscape(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function bossRenderWelfareProducts(items) {
+    const grid = document.getElementById('main-product-grid');
+    if (!grid) return;
+    grid.querySelectorAll('.boss-welfare-item').forEach(el => el.remove());
+    const available = new Set();
+    items.forEach(item => {
+        const id = String(item.id || '').trim().toUpperCase();
+        if (!/^WF-[A-Z0-9_-]+$/.test(id)) return;
+        const qty = Math.max(0, Math.floor(Number(item.stock) || 0));
+        const price = Math.max(20, Number(item.price) || 0);
+        if (!item.active || !['美睫','熱蠟','紋繡'].includes(item.category)) return;
+        available.add(id);
+        productConfig[id] = {name: '【福利品】' + id + ' ' + String(item.name || '') + (item.spec ? ' ' + String(item.spec) : ''),
+            price:price - 20, _originalPrice:price, _sourceProductId:String(item.originalId || '').trim().toUpperCase(),
+            _isWelfare:true, backendStockKey:id, max:qty};
+        const card = document.createElement('div');
+        card.className = 'product-item boss-welfare-item';
+        card.dataset.id=id; card.dataset.name=String(item.name || '');
+        card.dataset.category='welfare'; card.dataset.sub=item.category;
+        card.dataset.originPrice=String(price);
+        card.innerHTML = `<div><div class="product-name">【福利品】${bossWelfareEscape(id)} ${bossWelfareEscape(item.name)}</div>
+          <div style="font-size:12px;color:#8a7e72;margin:6px 0">${bossWelfareEscape(item.spec || '')}</div>
+          <div style="font-size:12px;color:#b56c62;margin:6px 0">瑕疵說明：${bossWelfareEscape(item.note || '包裝瑕疵')}</div>
+          <div style="font-size:12px;text-decoration:line-through;color:#999">原價 $${price.toLocaleString()}</div>
+          <div class="product-price" id="boss-welfare-price-${id}">福利價計算中</div>
+          <div class="product-stock">剩餘庫存：${qty}</div></div>
+          <div><div class="quantity-selector"><button type="button" class="quantity-btn" data-wf-step="-1">−</button>
+          <input id="left-input-${id}" type="number" class="quantity-input" min="0" max="${qty}" value="0" inputmode="numeric">
+          <button type="button" class="quantity-btn" data-wf-step="1">＋</button></div>
+          <button type="button" class="btn" data-wf-add="1" ${qty===0?'disabled':''}>${qty===0?'已售完':'加入購物車'}</button></div>`;
+        card.querySelectorAll('[data-wf-step]').forEach(btn => btn.addEventListener('click', () => {
+            const input = card.querySelector('.quantity-input');
+            input.value = Math.max(0,Math.min(qty,(parseInt(input.value,10)||0)+Number(btn.dataset.wfStep)));
+        }));
+        card.querySelector('[data-wf-add]').addEventListener('click', () => addToCart(id));
+        grid.appendChild(card);
+    });
+    Object.keys(productConfig).forEach(id => {
+        if (productConfig[id]?._isWelfare && !available.has(id)) {
+            if (!cart[id]) delete productConfig[id];
+            else productConfig[id].max=0;
+        }
+    });
+    updateCartSummary();
+    grid.querySelectorAll('.boss-welfare-item').forEach(card => {
+        const id=card.dataset.id, el=card.querySelector('.product-price');
+        if (el) el.textContent='福利價 $'+(productConfig[id]?.price || 0).toLocaleString();
+    });
+    filterProducts();
+}
+
 function fetchInventoryFromSheet() {
     fetch(GOOGLE_SHEET_API_URL)
         .then(response => response.json())
         .then(data => {
             globalInventoryData = data;
+            bossRenderWelfareProducts(data.__welfare || []);
             console.log("=== 遠端 10 個工作表雲端總庫存同步成功 ===");
             updateAllLoadedStocks();
             if (typeof window.bossPromoGiftRefresh === 'function') window.bossPromoGiftRefresh();
@@ -12928,6 +13665,16 @@ function cleanString(str) {
 
 function getStockFromDatabase(targetName) {
     if (!targetName) return null;
+    // 假睫毛 AA 系列：用完整商品編號核對，不依賴品名的空格及括號格式。
+    const aaMatch = String(targetName).trim().match(/^(AA\d+)(?!\d)/i);
+    if (aaMatch && globalInventoryData) {
+        const wantedId = aaMatch[1].toUpperCase();
+        const aaKeys = Object.keys(globalInventoryData).filter(key => {
+            const m = String(key).trim().match(/^(AA\d+)(?!\d)/i);
+            return m && m[1].toUpperCase() === wantedId;
+        });
+        if (aaKeys.length === 1) return globalInventoryData[aaKeys[0]];
+    }
     const cleanedTarget = cleanString(targetName);
     
     for (let key in globalInventoryData) {
@@ -12953,7 +13700,7 @@ function getStockFromDatabase(targetName) {
 // 這裡用「商品系列＋顏色＋翹度＋粗度＋長度」尋找真正的試算表列名，
 // 找到後會把 A 欄原始文字保存為 backendStockKey，結帳時精準扣同一列。
 function findClearanceLashInventoryMatch(productId, baseName, color, curl, thickness, length) {
-    if (!/^W(?:[1-9]|1[0-9])_UP$/.test(productId || '')) return null;
+    if (!/^W(?:[1-9]|1[0-9]|2[0-4])_UP$/.test(productId || '')) return null;
     if (typeof globalInventoryData === 'undefined' || !globalInventoryData) return null;
 
     function compact(value) {
@@ -12983,7 +13730,12 @@ function findClearanceLashInventoryMatch(productId, baseName, color, curl, thick
         'W16_UP': ['麥斯雅花園'],
         'W17_UP': ['完美茶花黑粗細005'],
         'W18_UP': ['完美茶花咖'],
-        'W19_UP': ['L絕翹天后粗細010']
+        'W19_UP': ['L絕翹天后粗細010'],
+        'W20_UP': ['一代美瞳線超輕量扁毛黑'],
+        'W21_UP': ['一代美瞳線超輕量扁毛咖'],
+        'W22_UP': ['一代法式輕柔孔雀羽黑'],
+        'W23_UP': ['一代法式輕柔孔雀羽咖'],
+        'W24_UP': ['法式輕柔孔雀羽咖3根']
     };
 
     const productTokens = (clearanceInventoryAliases[productId] || [baseName || ''])
@@ -13010,14 +13762,52 @@ function findClearanceLashInventoryMatch(productId, baseName, color, curl, thick
     let bestMatch = null;
     for (const realKey in globalInventoryData) {
         const keyToken = compact(realKey);
+        // W22 / W23 的試算表實際名稱包含「-朵毛(黑/3根)」等文字，
+        // 前台名稱則省略「朵毛」；必須依原始列名精確組合比對。
+        if (productId === 'W24_UP') {
+            const curlCode = String(curl || '').trim().toUpperCase().replace(/[^BCD]/g, '');
+            const thick = String(thickness || '').trim();
+            const size = String(length || '').trim().replace(/[–—－]/g, '-').replace(/\s+/g, '');
+            if (!/^[BCD]$/.test(curlCode) || !thick || !size) continue;
+            // Google Sheet A 欄：法式輕柔孔雀羽-朵毛(咖/3根)(B-0.07-8-10mm)
+            // 同時容許該列有額外的前置商品編號或「一代」字樣。
+            const exactSuffix = compact(`法式輕柔孔雀羽-朵毛(咖/3根)(${curlCode}-${thick}-${size})`);
+            const alternateSuffix = compact(`法式輕柔孔雀羽-(咖/3根)(${curlCode}-${thick}-${size})`);
+            if (!keyToken.endsWith(exactSuffix) && !keyToken.endsWith(alternateSuffix)) continue;
+            const rawStock = Number(globalInventoryData[realKey]);
+            return {key: realKey, stock: Number.isFinite(rawStock) ? rawStock : 0, score: 0};
+        }
+        if (productId === 'W22_UP' || productId === 'W23_UP') {
+            const shade = productId === 'W22_UP' ? '黑' : '咖';
+            const roots = String(color || '').trim();
+            const curlCode = String(curl || '').trim().toUpperCase().replace(/[^BCD]/g, '');
+            const thick = String(thickness || '').trim();
+            const size = String(length || '').trim().replace(/[–—－]/g, '-').replace(/\s+/g, '');
+            if (!['3根', '5根'].includes(roots) || !/^[BCD]$/.test(curlCode) || !thick || !size) continue;
+            const expectedName = compact(`一代法式輕柔孔雀羽-朵毛(${shade}/${roots})(${curlCode}-${thick}-${size})`);
+            // 不以 includes 比對長度，避免 8-10mm 與其他尺寸混淆。
+            if (keyToken !== expectedName) continue;
+            const stockValue = Number(globalInventoryData[realKey]);
+            return {key: realKey, stock: Number.isFinite(stockValue) ? stockValue : 0, score: 0};
+        }
+        if (['W22_UP','W23_UP','W24_UP'].includes(productId)) {
+            const keyIdMatch = keyToken.match(/W(?:22|23|24)UP/);
+            if (keyIdMatch && keyIdMatch[0] !== productId.replace('_','')) continue;
+            // 根數是不同的實體庫存，不能混用；W24 只有3根。
+            const expectedRoots = productId === 'W24_UP' ? '3根' : color;
+            if (!expectedRoots || !keyToken.includes(expectedRoots)) continue;
+            // W22 / W23 的黑咖品名不能互相混淆。
+            if (productId === 'W22_UP' && keyToken.includes('咖')) continue;
+            if (productId === 'W23_UP' && keyToken.includes('黑')) continue;
+        }
         const matchedProductToken = productTokens.find(token => keyToken.includes(token));
-        if (!matchedProductToken) continue;
+        if (!matchedProductToken && !(['W22_UP','W23_UP','W24_UP'].includes(productId) && keyToken.includes(productId.replace('_','')))) continue;
 
         // 規格必須全部存在，避免同系列不同粗度或長度抓到錯誤庫存。
         if (!requiredTokenGroups.every(group => group.some(token => keyToken.includes(token)))) continue;
 
         // 名稱越接近且多餘字越少者優先。
-        const score = keyToken.length - matchedProductToken.length;
+        const score = keyToken.length - (matchedProductToken || productId.replace('_','')).length;
         if (!bestMatch || score < bestMatch.score) {
             const rawStock = globalInventoryData[realKey];
             const parsedStock = Number(rawStock);
@@ -13047,6 +13837,7 @@ function updateAllLoadedStocks() {
             if (labelNode) productName = labelNode.innerText.trim();
         }
 
+        if (productId === "STORE_ADJUST") return; // 門市補金額不查庫存
         if (stockTextElement && productName) {
             if (!isLash) {
                 let stock = null;
@@ -13093,7 +13884,7 @@ function updateLashVariantStockDisplay(productId) {
     const length = card.getAttribute('data-selected-length') || "";       
 
     let colorStr = "";
-    if (['E22_UP', 'W8_UP', 'W9_UP'].includes(productId)) colorStr = card.getAttribute('data-selected-color') || ""; 
+    if (['E22_UP', 'W8_UP', 'W9_UP', 'W22_UP', 'W23_UP'].includes(productId)) colorStr = card.getAttribute('data-selected-color') || ""; 
 
     let combinedName = "";
     let isEyeMask100 = false;
@@ -13117,7 +13908,7 @@ function updateLashVariantStockDisplay(productId) {
     // 「頂級人造水貂絲／凱莉絲花園／完美茶花」等無數量的分類標題列，
     // 並把標題列當成 0 庫存，導致真正的規格列永遠沒有機會被搜尋。
     // 這也是水貂絲、凱莉絲、真貂毛、第五大道、麥斯雅及茶花不同步的主因。
-    const isClearanceLash = /^W(?:[1-9]|1[0-9])_UP$/.test(productId || '');
+    const isClearanceLash = /^W(?:[1-9]|1[0-9]|2[0-4])_UP$/.test(productId || '');
     if (isClearanceLash) {
         const clearanceMatch = findClearanceLashInventoryMatch(
             productId, baseName, colorStr, curl, thickness, length
@@ -13247,24 +14038,204 @@ async function requestStoredValueDeduction(payload) {
     throw lastError || new Error("無法確認扣款結果");
 }
 
-function submitOrder(evt) {
+// 結帳即時庫存驗證：每次按下送出都重新讀取，不能使用加入購物車時的舊快取。
+async function bossVerifyCheckoutInventory_(currentCart) {
+    const endpoint = GOOGLE_SHEET_API_URL + (GOOGLE_SHEET_API_URL.includes('?') ? '&' : '?') + '_checkout=' + Date.now();
+    let response;
+    try {
+        response = await fetch(endpoint, {method:'GET', cache:'no-store'});
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+    } catch (e) {
+        throw new Error('目前無法連線取得最新庫存，為避免超賣，已暫停下單。');
+    }
+    let inventory;
+    try { inventory = await response.json(); }
+    catch(e) { throw new Error('最新庫存資料讀取異常，請稍後重試。'); }
+    if (!inventory || typeof inventory !== 'object' || Array.isArray(inventory) ||
+        !Object.keys(inventory).length || inventory.status === 'error') {
+        throw new Error('庫存表目前沒有可核對的資料，請稍後重試。');
+    }
+    // 更新既有全站庫存快取，但本次比對只採用剛剛讀到的資料。
+    globalInventoryData = inventory;
+    const rows = Array.isArray(currentCart) ? currentCart.map(x=>({...x})) :
+        Object.entries(currentCart || {}).map(([id,v]) => (typeof v === 'number' || typeof v === 'string') ? {id,qty:v} : {id,...(v || {})});
+    const normalize = x => String(x == null ? '' : x).replace(/[\s\u3000]/g,'').toUpperCase();
+    const byNormalized = new Map();
+    for (const [key, value] of Object.entries(inventory)) {
+        const n = normalize(key);
+        if (!byNormalized.has(n)) byNormalized.set(n, []);
+        byNormalized.get(n).push({key,qty:Number(value)});
+    }
+    const requested = new Map(), problems=[], issueRows=[];
+    for (const item of rows) {
+        const id=String(item.id||item.product_id||'').trim();
+        const qty=Number(item.qty ?? item.quantity ?? item.count ?? 0);
+        // 與購物車畫面一致：數量 0 是未選購／已移除的商品，不應參與結帳庫存驗證。
+        if (qty === 0) continue;
+        if (!Number.isInteger(qty) || qty < 0) { problems.push(id+'：購買數量異常'); continue; }
+        // 會員會籍屬非實體商品，不檢查庫存表。
+        const baseId=(typeof productConfig!=='undefined' && productConfig && !productConfig[id])
+            ? Object.keys(productConfig).filter(k=>id.startsWith(k+'_')).sort((a,b)=>b.length-a.length)[0] || id : id;
+        if (/^V[123]$/.test(baseId) || baseId === 'STORE_ADJUST') continue; // 會籍與門市補金額不檢查庫存
+        const config=(typeof productConfig!=='undefined' && productConfig) ? (productConfig[id]||productConfig[baseId]||{}) : {};
+        const name=String(item.name||config.name||id).trim();
+        const candidates=[];
+        const add=k=>{if(k && !candidates.includes(String(k))) candidates.push(String(k));};
+        add(item.backend_stock_key); add(item.backendStockKey); add(config.backendStockKey);
+        if (typeof resolveBackendStockKeyForSpecialItem === 'function') {
+            try { add(resolveBackendStockKeyForSpecialItem(id,{...config,...item,name})); } catch(e) {}
+        }
+        add(name); add(id+name); add(id); add(item.spec ? name+' '+item.spec : '');
+        // 一般商品可能在庫存 A 欄使用「商品編號＋品名」，
+        // 而前台品名本身已含商品編號，避免變成 TD30TD30...
+        const withoutId=(name.toUpperCase().startsWith(id.toUpperCase()) ? name.slice(id.length).replace(/^[\\s\\-－:：]+/,'') : name);
+        add(id+withoutId); add(id+' '+withoutId);
+        // 同一商品編號只在「唯一且沒有規格尾碼」時允許回退，
+        // 不對睫毛等帶有動態 SKU 的商品模糊匹配。
+        if(id && !id.includes('_') && !item.spec) {
+            const idMatches=Object.entries(inventory).filter(([k,v])=>{
+                const nk=normalize(k), ni=normalize(id);
+                return nk.startsWith(ni) && Number.isFinite(Number(v)) &&
+                    (nk.length===ni.length || !/[0-9A-Z_]/.test(nk.charAt(ni.length)));
+            });
+            if(idMatches.length===1) add(idMatches[0][0]);
+        }
+        // 針對一般無規格商品：庫存表可能只有中文品名、沒有商品編號。
+        // 必須整個品名完全相同且唯一，避免誤配其他顏色或規格。
+        if (id && !item.spec && !id.includes('_')) {
+            const plainName = withoutId;
+            const normalizePlain = x => normalize(x).replace(/[\-－–—_：:()（）\[\]]/g,'');
+            const targetPlain = normalizePlain(plainName);
+            const exactNameMatches = Object.entries(inventory).filter(([k,v]) => {
+                const nk=normalizePlain(k);
+                const stripped=nk.startsWith(normalize(id)) ? nk.slice(normalize(id).length) : nk;
+                return stripped === targetPlain && Number.isFinite(Number(v));
+            });
+            if(exactNameMatches.length===1) add(exactNameMatches[0][0]);
+        }
+        // 依商品編號找唯一庫存列：TA2 不可誤對應 TA20、TA21，且不能混用不同色號。
+        // 庫存表如「TA2 德國頂級植萃美顏色乳10ML-02 焦糖深棕」可直接對應。
+        if (baseId && !item.spec && !id.includes('_')) {
+            const codeMatches=Object.entries(inventory).filter(([k,v])=>{
+                const raw=String(k).trim().toUpperCase();
+                const code=baseId.toUpperCase();
+                return raw.startsWith(code) && (raw.length===code.length || !/[A-Z0-9_]/.test(raw.charAt(code.length))) && Number.isFinite(Number(v));
+            });
+            if(codeMatches.length===1) add(codeMatches[0][0]);
+        }
+        // 商品頁可正常顯示庫存：結帳也沿用相同的「編號＋品名」來源。
+        // TA2 等固定商品即使購物車帶有 spec 欄位，仍可依唯一商品編號核對。
+        // 僅允許庫存鍵在編號後接非英數字，防止 TA2 誤配 TA20、TA21。
+        if (/^[A-Z]{1,3}[0-9]+$/i.test(baseId) && !id.includes('_')) {
+            const safeCode=baseId.toUpperCase();
+            const matchesByCode=Object.entries(inventory).filter(([key,value])=>{
+                const k=String(key).trim().toUpperCase();
+                return k.startsWith(safeCode) &&
+                    (k.length===safeCode.length || !/[A-Z0-9_]/.test(k.charAt(safeCode.length))) &&
+                    Number.isFinite(Number(value));
+            });
+            if(matchesByCode.length===1) add(matchesByCode[0][0]);
+        }
+        let matched=null;
+        // 庫存資料可能同時有「TA2 品名」與「TA2品名」兩種鍵。
+        // 正規化後相同時，原版要求 matches.length===1，造成明明有庫存卻被誤判未對應。
+        // 先取完全相同的原始鍵；否則只在所有重複鍵的庫存數量一致時採用。
+        function bossChooseInventoryMatch_(candidate) {
+            if (!candidate) return null;
+            const raw=String(candidate);
+            if(Object.prototype.hasOwnProperty.call(inventory,raw))
+                return {key:raw,qty:Number(inventory[raw])};
+            const matches=byNormalized.get(normalize(raw))||[];
+            if(matches.length===1) return matches[0];
+            if(matches.length>1 && matches.every(m=>Number.isFinite(m.qty) && m.qty===matches[0].qty))
+                return matches[0];
+            return null;
+        }
+        for(const candidate of candidates) {
+            matched=bossChooseInventoryMatch_(candidate);
+            if(matched) break;
+        }
+        if(!matched) {
+            // 固定品項改用商品頁相同的 data-name 組合比對，並取回實際庫存鍵。
+            const card=document.querySelector('.product-item[data-id="'+CSS.escape(baseId)+'"]');
+            const cardName=card && card.getAttribute('data-name');
+            if(cardName){
+                const lookups=[baseId+cardName,cardName];
+                for(const lookup of lookups){
+                    matched=bossChooseInventoryMatch_(lookup);
+                    if(matched) break;
+                }
+            }
+        }
+        if(!matched) {
+            // 記錄實際收到的鍵，協助定位「商品頁正常、結帳未對應」的根因。
+            console.warn('[結帳庫存診斷]', {id,baseId,name,inventoryKeyCount:Object.keys(inventory).length,
+                possibleKeys:Object.keys(inventory).filter(k=>normalize(k).includes(normalize(baseId))).slice(0,15)});
+            problems.push(name+'：庫存資料未對應');
+            issueRows.push({cartKey:id,name,requested:qty,available:null,adjustable:false});continue;
+        }
+        if(!requested.has(matched.key)) requested.set(matched.key,{qty:0,items:[],name:matched.key});
+        const group=requested.get(matched.key);
+        group.qty+=qty;
+        group.items.push({cartKey:id,name,qty});
+        if(!Number.isFinite(matched.qty) || matched.qty<0) {
+            problems.push(name+'：庫存資料異常'); issueRows.push({cartKey:id,name,requested:qty,available:null,adjustable:false});
+        }
+    }
+    for(const [key,group] of requested) {
+        const available=Number(inventory[key]);
+        if(Number.isFinite(available) && available>=0 && group.qty>available) {
+            const remaining=Math.floor(available);
+            problems.push(key+'：購物車 '+group.qty+' 件，庫存 '+remaining+' 件');
+            // 同一庫存鍵可能有多筆購物車商品；依購物車順序分配剩餘庫存。
+            let left=remaining;
+            for(const entry of group.items) {
+                const allowed=Math.min(entry.qty,left);
+                left-=allowed;
+                issueRows.push({cartKey:entry.cartKey,name:entry.name,requested:entry.qty,
+                    available:remaining,target:allowed,adjustable:true});
+            }
+        }
+    }
+    if(problems.length) {
+        const err=new Error('以下商品庫存狀態異動：\n• '+problems.join('\n• '));
+        err.bossStockIssues=issueRows;
+        throw err;
+    }
+    return true;
+}
+
+async function submitOrder(evt) {
     // 僅指定且已登入的會員等級，可略過付款與配送選擇。
     const skipSelectionLevels = new Set(['業務A','業務B','連鎖店B','加盟A','加盟B','儲值商A','儲值商B']);
     const memberLevel = (typeof deptIsLoggedIn !== 'undefined' && deptIsLoggedIn &&
         typeof deptMemberData !== 'undefined' && deptMemberData)
         ? String(deptMemberData.member_level || '').trim() : '';
     const canSkipSelection = skipSelectionLevels.has(memberLevel);
+    if (typeof bossSyncPaymentOptions === 'function') bossSyncPaymentOptions();
     const requiredPayment = document.getElementById('payment');
     const requiredShipping = document.getElementById('shipping');
-    if (!canSkipSelection && (!requiredPayment || !requiredPayment.value)) {
+    if (bossIsHongKongFranchise() && requiredPayment && !['monthly','card'].includes(requiredPayment.value)) {
+        alert('香港加盟會員僅可選擇月結或線上刷卡。');
+        requiredPayment.value='monthly';
+        return;
+    }
+    if ((!requiredPayment || !requiredPayment.value) || (memberLevel && ['加盟A','加盟B','業務A','業務B','連鎖店B'].includes(memberLevel) && requiredPayment.value !== 'monthly' && !(bossIsHongKongFranchise() && requiredPayment.value === 'card'))) {
         alert('請先選擇付款方式，再送出訂單。');
         if (requiredPayment) { requiredPayment.scrollIntoView({behavior:'smooth',block:'center'}); requiredPayment.focus(); }
         return;
+    }
+    if (requiredPayment && ((requiredPayment.value === 'card' && memberLevel !== '' && !bossIsHongKongFranchise() && !['一般會員','凱莉VIP','柏金VIP','頂極VIP','極VIP'].includes(memberLevel)) || (requiredPayment.value === 'monthly' && !['加盟A','加盟B','業務A','業務B','連鎖店B'].includes(memberLevel)))) {
+        alert('此會員等級不適用所選付款方式。'); return;
     }
     if (!canSkipSelection && (!requiredShipping || !requiredShipping.value)) {
         alert('請先選擇配送方式，再送出訂單。');
         if (requiredShipping) { requiredShipping.scrollIntoView({behavior:'smooth',block:'center'}); requiredShipping.focus(); }
         return;
+    }
+    // 送出前再次核對香港專屬配送，避免使用舊選項。
+    if (bossIsHongKongFranchise() ? (!requiredShipping || requiredShipping.value !== 'sf-hk') : (requiredShipping && requiredShipping.value === 'sf-hk')) {
+        alert('配送方式不適用，請重新確認。'); bossSyncHongKongShipping(); return;
     }
     saveMemberContact();
 
@@ -13321,7 +14292,7 @@ function submitOrder(evt) {
     const customerName = document.getElementById('name')?.value?.trim() || "";
     const customerPhone = document.getElementById('phone')?.value?.trim() || "";
     const customerLine = document.getElementById('lineid')?.value?.trim() || "無";
-    const customerAddress = document.getElementById('address')?.value?.trim() || "";
+    const customerAddress = document.getElementById('shipping')?.value === 'store-pickup' ? '門市自取' : (document.getElementById('address')?.value?.trim() || '');
     const companyTitle = document.getElementById('company-title')?.value?.trim() || "無";
     const taxId = document.getElementById('tax-id')?.value?.trim() || "無";
     const orderNotes = document.getElementById('notes')?.value?.trim() || "無備註";
@@ -13332,8 +14303,14 @@ function submitOrder(evt) {
     const shippingElement = document.getElementById('shipping');
     const shippingMethod = shippingElement && shippingElement.value ? shippingElement.options[shippingElement.selectedIndex].text : "未指定";
 
-    if (!customerName || !customerPhone || !customerAddress) {
-        alert("❌ 送出失敗：請完整填寫收件人「姓名」、「電話」與「配送地址 / 取貨門市」！");
+    if (!customerName || !customerPhone) {
+        alert('請完整填寫收件人姓名與電話。');
+        return;
+    }
+    const shippingValidation = bossValidateShippingAddress(shippingElement?.value || '', customerAddress);
+    if (!shippingValidation.ok) {
+        alert(shippingValidation.message);
+        document.getElementById('address')?.focus();
         return;
     }
 
@@ -13351,7 +14328,15 @@ function submitOrder(evt) {
         return;
     }
 
+    // 結帳前重新向庫存後台讀取最新資料；確認前不允許扣儲值金或送出 Google 表單。
     setSubmittingState(true);
+    try {
+        await bossVerifyCheckoutInventory_(currentCart);
+    } catch (stockError) {
+        bossShowStockDialog_(stockError.message || String(stockError), stockError.bossStockIssues || []);
+        setSubmittingState(false);
+        return;
+    }
 
     const grandTotalText = document.getElementById("grand-total") ? document.getElementById("grand-total").textContent : "0";
     const finalTotalAmount = parseInt(grandTotalText.replace(/[^0-9]/g, ""), 10) || 0;
@@ -13464,7 +14449,7 @@ function resolveBackendStockKeyForSpecialItem(itemId, pInfo) {
 
             // 舊購物車或重新整理後，五折商品也能由購物車 SKU 還原到
             // 試算表真正的 A 欄品名，避免畫面有庫存但結帳沒有扣除。
-            if (/^W(?:[1-9]|1[0-9])_UP$/.test(baseId)) {
+            if (/^W(?:[1-9]|1[0-9]|2[0-4])_UP$/.test(baseId)) {
                 const parts = suffix.split('_');
                 if (parts.length >= 3) {
                     const oldLength = parts.pop() || '';
@@ -13549,7 +14534,7 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
 
             const isLashOrVariant = itemId.includes('_') || (typeof productConfig !== 'undefined' && productConfig[itemId] && productConfig[itemId]._isSpecialSku) || itemName.includes("睫毛");
 
-            if (!isLashOrVariant) {
+            if (!isLashOrVariant && itemId !== "STORE_ADJUST" && !productConfig[itemId]?._isWelfare) {
                 let currentStock = null;
                 if (typeof getStockFromDatabase === 'function') {
                     currentStock = getStockFromDatabase(itemName);
@@ -13569,8 +14554,10 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             itemsSummary.push(`${itemName} x${itemQty}`);
             validItemIndex++;
 
-            if (typeof productConfig !== 'undefined' && productConfig[itemId]) {
-                if (productConfig[itemId].isSharedStock) {
+            if (itemId !== "STORE_ADJUST" && typeof productConfig !== 'undefined' && productConfig[itemId]) {
+                if (productConfig[itemId]._isWelfare) {
+                    // 福利品獨立庫存：在下方統一建立扣庫存請求，避免提前使用尚未宣告的 qty。
+                } else if (productConfig[itemId].isSharedStock) {
                     if (typeof lashRealTimeStocks !== 'undefined' && lashRealTimeStocks.hasOwnProperty(eyeMaskSharedKey)) {
                         lashRealTimeStocks[eyeMaskSharedKey] -= itemQty;
                         if (lashRealTimeStocks[eyeMaskSharedKey] < 0) lashRealTimeStocks[eyeMaskSharedKey] = 0;
@@ -13589,8 +14576,10 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             if (typeof productConfig !== 'undefined' && productConfig[itemId]) {
                 const pInfo = productConfig[itemId];
 
-                // A313：扣套組本身 + 實際選取的水貂/凱莉絲規格
-                if (pInfo._isA313Kit && pInfo.a313Components) {
+                // 福利品以獨立 WF 編號扣除 G 欄庫存，不影響原商品庫存。
+                if (pInfo._isWelfare) {
+                    cartBackup[itemId] = (cartBackup[itemId] || 0) + qty;
+                } else if (pInfo._isA313Kit && pInfo.a313Components) {
                     const baseInfo = productConfig['A313'];
                     const baseKey = baseInfo?.name || 'A313 美睫開花高手套組';
                     cartBackup[baseKey] = (cartBackup[baseKey] || 0) + qty;
@@ -13694,11 +14683,13 @@ function executeFinalBackendOrderSubmission(customerName, customerPhone, custome
             sendDataToGoogleForm();
         })
         .catch(err => {
-            console.error("❌ 庫存扣除通訊失敗，但仍嘗試寫入表單:", err);
-            sendDataToGoogleForm();
+            console.error("❌ 庫存請求通訊失敗，停止寫入表單:", err);
+            alert("庫存處理連線失敗，訂單尚未送出。請稍後重試。");
+            if (typeof setSubmittingState === "function") setSubmittingState(false);
         });
     } else {
-        sendDataToGoogleForm();
+        alert("無法取得本次訂單的庫存核對資料，已暫停送出。請聯絡客服。");
+        if (typeof setSubmittingState === "function") setSubmittingState(false);
     }
 
     function sendDataToGoogleForm() {
@@ -13760,8 +14751,9 @@ if (typeof mockOrderDatabase !== 'undefined') {
             }
 
             const isTransferPayment = document.getElementById('payment')?.value === 'transfer';
-            if (!isTransferPayment) {
-                alert(`🎉 訂單已送出！\n您的專屬訂單編號為：${orderSerialNumber}\n非常感謝您的購買！`);
+            const isCardPayment = document.getElementById('payment')?.value === 'card';
+            if (!isTransferPayment && !isCardPayment) {
+                showBossOrderSuccessModal(orderSerialNumber);
             }
             
             if (typeof clearCart === "function") {
@@ -13796,11 +14788,13 @@ if (typeof mockOrderDatabase !== 'undefined') {
                 }
             });
 
-            if (isTransferPayment) {
-                showTransferPayment(orderSerialNumber, grandTotalText);
+            if (isTransferPayment || isCardPayment) {
+                if (isTransferPayment) showTransferPayment(orderSerialNumber, grandTotalText);
+                else showCardPayment(orderSerialNumber, grandTotalText);
                 if (typeof setSubmittingState === 'function') setSubmittingState(false);
             } else {
-                setTimeout(() => { location.reload(); }, 1500);
+                // 改由成功通知視窗的「完成」按鈕重新整理，避免視窗被自動關閉。
+                if (typeof setSubmittingState === 'function') setSubmittingState(false);
             }
         })
         .catch(error => {
@@ -13868,12 +14862,12 @@ function updateHomepageProductPrices() {
         '業務A': 0.48, '加盟A': 0.43, '儲值商A': 0.43, '加盟B': 0.38, '儲值商B': 0.38, '業務B': 0.38, '連鎖店B': 0.38
     };
 
-    const absoluteOriginalPriceIds = ['V1', 'V2', 'V3'];
+    const absoluteOriginalPriceIds = ['V1', 'V2', 'V3', 'STORE_ADJUST', 'W22_UP', 'W23_UP'];
     const fixedHalfDiscountIds = ['A116', 'A129', 'A275'];
 
     const customDiscountIds = [
         'W1_UP', 'W2_UP', 'W3_UP', 'W4_UP', 'W5_UP', 'W6_UP', 'W7_UP', 'W8_UP', 'W9_UP',
-        'W10_UP', 'W11_UP', 'W12_UP', 'W13_UP', 'W14_UP', 'W15_UP', 'W16_UP', 'W17_UP', 'W18_UP', 'W19_UP',
+        'W10_UP', 'W11_UP', 'W12_UP', 'W13_UP', 'W14_UP', 'W15_UP', 'W16_UP', 'W17_UP', 'W18_UP', 'W19_UP', 'W20_UP', 'W21_UP', 'W24_UP',
         'TC1', 'TC2', 'TC9', 'TC12', 'TC13', 'TF35', 'TF36', 'TF38', 'TF48', 'TF49', 'TF50', 'TF40', 'TF41',
         'TF42', 'TF43', 'TF44', 'TF45', 'TF46', 'TF47', 'TD4', 'TD7', 'TD8', 'TD10', 'TD11', 'TD12', 'TD13',
         'TD14', 'TD15', 'TD16', 'TD17', 'TD23', 'TD24',
@@ -13903,7 +14897,7 @@ function updateHomepageProductPrices() {
 
     const customLevelRates = {
         '未登入': 0.5, '一般會員': 0.5, '凱莉VIP': 0.5, 
-        '柏金VIP': 0.3, '頂極VIP': 0.3, 
+        '柏金VIP': 0.3, '頂極VIP': 0.3, '極VIP': 0.3, '頂級VIP': 0.3, 
         '業務A': 0.3, '加盟A': 0.3, '儲值商A': 0.3, 
         '加盟B': 0.3, '儲值商B': 0.3, '業務B': 0.3, '連鎖店B': 0.3
     };
@@ -14063,13 +15057,52 @@ function goToMobileCart() {
 </script>
 
 <script>
+function syncBossMobileCartPopup(){
+    const source=document.getElementById('cart-items-container');
+    const target=document.getElementById('boss-mobile-cart-popup-items');
+    if(!source||!target)return;
+    target.innerHTML=source.innerHTML||'<div class="empty-cart-text">購物車沒有加入任何商品</div>';
+    const checkout=document.querySelector('.boss-mobile-cart-checkout');
+    if(checkout)checkout.hidden=!Object.values(window.cart||cart||{}).some(q=>Number(q)>0);
+}
+function toggleBossMobileCart(force){
+    const popup=document.getElementById('boss-mobile-cart-popup');
+    const trigger=document.getElementById('boss-mobile-cart-jump');
+    if(!popup||!trigger)return;
+    const show=typeof force==='boolean'?force:popup.hidden;
+    if(show){toggleMobileQuickNav(false);syncBossMobileCartPopup();}
+    popup.hidden=!show;
+    trigger.setAttribute('aria-expanded',String(show));
+}
+document.addEventListener('DOMContentLoaded',()=>{
+    const source=document.getElementById('cart-items-container');
+    if(source){new MutationObserver(()=>{
+        const popup=document.getElementById('boss-mobile-cart-popup');
+        if(popup&&!popup.hidden)syncBossMobileCartPopup();
+    }).observe(source,{childList:true,subtree:true,characterData:true,attributes:true});}
+});
 function toggleMobileQuickNav(force) {
     const menu=document.getElementById('mobile-quick-menu');
     const trigger=document.getElementById('mobile-floating-checkout');
     if (!menu || !trigger) return;
     const show=(typeof force==='boolean')?force:menu.hidden;
+    if(show)toggleBossMobileCart(false);
     menu.hidden=!show;
     trigger.setAttribute('aria-expanded',String(show));
+}
+// 手機購物車：一次點擊收合並準確定位商品明細（避免長頁面平滑捲動中斷）。
+function bossMobileCartCheckoutJump() {
+    toggleBossMobileCart(false);
+    toggleMobileQuickNav(false);
+    const cartCard = document.querySelector('.mobile-cart-card');
+    if (!cartCard) return;
+    const title = cartCard.querySelector('.cart-title-row') || cartCard;
+    const position = () => {
+        const y = window.scrollY + title.getBoundingClientRect().top - 12;
+        window.scrollTo({top: Math.max(0, y), behavior: 'instant'});
+    };
+    // 等收合引起的畫面重新排版完成，再執行一次定位。
+    requestAnimationFrame(() => requestAnimationFrame(position));
 }
 function mobileQuickGo(where) {
     toggleMobileQuickNav(false);
@@ -14102,7 +15135,7 @@ function mobileQuickGo(where) {
         const offset = 12;
         const jump = () => {
             const y = window.pageYOffset + destination.getBoundingClientRect().top - offset;
-            window.scrollTo({top: Math.max(0, y), behavior: 'instant'});
+            window.scrollTo({top: Math.max(0, y), behavior: where === 'cart' ? 'smooth' : 'instant'});
         };
         requestAnimationFrame(() => requestAnimationFrame(jump));
         if (where==='search') setTimeout(()=>target.focus({preventScroll:true}),100);
@@ -14142,6 +15175,71 @@ const IMAGE_URLS = {"E1_UNDER":"https://i.ibb.co/0phDqB5L/image.png","E1_UP":"ht
 })();
 </script>
 
+<style>
+#boss-card-overlay{position:fixed;inset:0;z-index:3100;background:rgba(50,40,35,.62);display:none;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
+#boss-card-overlay.active{display:flex}
+.boss-card-panel{background:#fffaf7;border-radius:18px;padding:25px;max-width:440px;width:100%;max-height:90vh;overflow-y:auto;box-sizing:border-box;text-align:center;color:#4a3023;box-shadow:0 16px 48px #0002}
+.boss-card-panel h2{margin:0 0 12px;font-size:22px}.boss-card-panel p{font-size:13px;line-height:1.8}
+.boss-card-total{background:#f8eee9;border-radius:12px;padding:15px;font-size:25px;font-weight:700;margin:12px 0}
+.boss-card-btn{display:block;width:100%;box-sizing:border-box;border:0;border-radius:24px;padding:12px;margin:10px 0;background:#4a3f35;color:#fff;font-size:14px;cursor:pointer;text-decoration:none}
+.boss-card-btn.secondary{background:#e8a598;color:#3f302c}
+</style>
+<div id="boss-card-overlay" role="dialog" aria-modal="true" aria-labelledby="boss-card-title">
+ <div class="boss-card-panel">
+  <h2 id="boss-card-title">線上刷卡付款</h2>
+  <p>訂單資料已送出，請複製應付金額，再前往藍新金流自行輸入相同金額。<br>訂單是否建立成功及付款狀態仍以後台核對為準。</p>
+  <p>訂單編號：<strong id="boss-card-order"></strong></p>
+  <div class="boss-card-total" id="boss-card-amount"></div>
+  <button type="button" class="boss-card-btn secondary" onclick="bossCopyCardAmount()">複製應付金額</button>
+  <a class="boss-card-btn" href="https://core.newebpay.com/EPG/job1588com/AD5uDQ" target="_blank" rel="noopener noreferrer">前往線上刷卡付款</a>
+  <button type="button" class="boss-card-btn secondary" onclick="bossCloseCardPayment()">完成／返回網站</button>
+  <p>請勿重複送出訂單。此連結需自行填入金額，官網不會自動確認刷卡成功。付款後請保留付款紀錄供核對。</p>
+ </div>
+</div>
+<script>
+const BOSS_MONTHLY_LEVELS = new Set(['加盟A','加盟B','業務A','業務B','連鎖店B']);
+const BOSS_CARD_LEVELS = new Set(['一般會員','凱莉VIP','柏金VIP','頂極VIP','極VIP']);
+function bossSyncPaymentOptions(){
+ const select=document.getElementById('payment');if(!select)return;
+ const level=(typeof deptIsLoggedIn!=='undefined'&&deptIsLoggedIn&&typeof deptMemberData!=='undefined'&&deptMemberData)?String(deptMemberData.member_level||'').trim():'';
+ const hk=bossIsHongKongFranchise();
+ const monthly=BOSS_MONTHLY_LEVELS.has(level),card=(hk || !level || BOSS_CARD_LEVELS.has(level));
+ const m=select.querySelector('option[value="monthly"]'),c=select.querySelector('option[value="card"]');
+ // 香港指定加盟商只能使用月結或線上刷卡；其他會員恢復原有一般付款選項。
+ Array.from(select.options).forEach(function(opt){
+   if(['cod','transfer','stored'].includes(opt.value)){
+     opt.hidden=hk;
+     opt.disabled=hk;
+   }
+ });
+ if(m){m.hidden=!monthly;m.disabled=!monthly;}
+ if(c){c.hidden=!card;c.disabled=!card;}
+ if(monthly){
+   if(!hk || (select.value!=='monthly' && select.value!=='card'))select.value='monthly';
+   select.disabled=!hk;
+   if(hk)delete select.dataset.bossMonthly;else select.dataset.bossMonthly='1';
+ }
+ else {select.disabled=false;delete select.dataset.bossMonthly;
+   if(select.value==='monthly'||(select.value==='card'&&!card))select.value='';
+ }
+ if(typeof updateCartSummary==='function')updateCartSummary();
+}
+function showCardPayment(orderId,amount){
+ const overlay=document.getElementById('boss-card-overlay');if(!overlay)return;
+ document.getElementById('boss-card-order').textContent=String(orderId||'');
+ document.getElementById('boss-card-amount').textContent=String(amount||'$0');
+ overlay.classList.add('active');document.body.style.overflow='hidden';
+}
+async function bossCopyCardAmount(){
+ const display=document.getElementById('boss-card-amount').textContent;
+ const amount=String(display).replace(/[^0-9]/g,'');
+ if(!amount){alert('無法取得應付金額，請聯絡客服。');return;}
+ try{await navigator.clipboard.writeText(amount);alert('已複製金額：'+amount+' 元');}
+ catch(e){await bossPrompt('請複製應付金額：',amount,'複製應付金額',true);}
+}
+function bossCloseCardPayment(){document.getElementById('boss-card-overlay').classList.remove('active');document.body.style.overflow='';location.reload();}
+document.addEventListener('DOMContentLoaded',bossSyncPaymentOptions);
+</script>
 <div id="transfer-payment-overlay" role="dialog" aria-modal="true" aria-labelledby="transfer-payment-title">
  <div class="transfer-payment-panel">
   <h2 id="transfer-payment-title">匯款資訊</h2>
@@ -14163,14 +15261,14 @@ function showTransferPayment(orderId,amount){
  document.body.style.overflow='hidden';
 }
 function closeTransferPayment(){document.getElementById('transfer-payment-overlay').classList.remove('active');document.body.style.overflow='';location.reload();}
-async function copyTransferAccount(){try{await navigator.clipboard.writeText('727540124855');alert('已複製匯款帳號');}catch(e){prompt('請複製匯款帳號：','727540124855');}}
+async function copyTransferAccount(){try{await navigator.clipboard.writeText('727540124855');alert('已複製匯款帳號');}catch(e){await bossPrompt('請複製匯款帳號：','727540124855','複製匯款帳號',true);}}
 </script>
 
 <section id="eyelash-coupon-panel" class="boss-coupon-panel" aria-label="我的優惠券" style="display:none">
-  <div class="boss-coupon-head"><div><div class="boss-coupon-heading">🎟 我的優惠券</div><div class="boss-coupon-sub">會員專屬優惠｜購物金折抵券、免運券可各使用一張</div></div><button type="button" class="boss-coupon-query" onclick="eyelashLoadCoupons()">查詢可用優惠券 →</button></div>
+  <div class="boss-coupon-head"><div><div class="boss-coupon-heading">🎟 我的優惠券 <button type="button" class="boss-coupon-help" onclick="bossCouponHelpOpen()" aria-label="查看優惠券使用教學" title="優惠券使用教學">?</button></div><div class="boss-coupon-sub">會員專屬優惠｜購物金折抵券、免運券可各使用一張</div></div><button type="button" class="boss-coupon-query" onclick="eyelashLoadCoupons()">查詢可用優惠券 →</button></div>
   <div class="boss-coupon-grid">
-    <div class="boss-coupon-tile money"><div class="boss-coupon-label">🏷 購物金折抵券 <span id="boss-money-count" class="boss-coupon-count">尚未查詢</span></div><select id="eyelash-money-coupon" class="boss-coupon-select" onchange="eyelashCouponChanged()"><option value="">不使用優惠券</option></select><div id="boss-money-expiry" class="boss-coupon-expiry">使用期限：選取優惠券後顯示</div><div class="boss-coupon-notes">購物金需一次使用完畢，未使用餘額不保留。<br>購物金折抵金額不列入滿額贈計算。</div></div>
-    <div class="boss-coupon-tile shipping"><div class="boss-coupon-label">🚚 免運券 <span id="boss-shipping-count" class="boss-coupon-count">尚未查詢</span></div><select id="eyelash-shipping-coupon" class="boss-coupon-select" onchange="eyelashCouponChanged()"><option value="">不使用優惠券</option></select><div id="boss-shipping-expiry" class="boss-coupon-expiry">使用期限：選取優惠券後顯示</div><div class="boss-coupon-notes">以常溫宅配運費 $100 為折抵上限。<br>指定黑貓宅配及黑貓低溫仍需補差價。</div></div>
+    <div class="boss-coupon-tile money"><div class="boss-coupon-label">🏷 購物金折抵券 <span id="boss-money-count" class="boss-coupon-count">尚未查詢</span></div><select id="eyelash-money-coupon" class="boss-coupon-select" onchange="eyelashCouponChanged()"><option value="">不使用優惠券</option></select><div id="boss-money-choices" class="boss-coupon-choices" aria-label="選擇購物金優惠券"></div><div id="boss-money-expiry" class="boss-coupon-expiry">使用期限：選取優惠券後顯示</div><div class="boss-coupon-notes">購物金需一次使用完畢，未使用餘額不保留。<br>購物金折抵金額不列入滿額贈計算。</div></div>
+    <div class="boss-coupon-tile shipping"><div class="boss-coupon-label">🚚 免運券 <span id="boss-shipping-count" class="boss-coupon-count">尚未查詢</span></div><select id="eyelash-shipping-coupon" class="boss-coupon-select" onchange="eyelashCouponChanged()"><option value="">不使用優惠券</option></select><div id="boss-shipping-choices" class="boss-coupon-choices" aria-label="選擇免運券"></div><div id="boss-shipping-expiry" class="boss-coupon-expiry">使用期限：選取優惠券後顯示</div><div class="boss-coupon-notes">以常溫宅配運費 $100 為折抵上限。<br>指定黑貓宅配及黑貓低溫仍需補差價。</div></div>
   </div><div id="eyelash-coupon-status" class="boss-coupon-status" role="status" aria-live="polite">請先登入會員，再查詢可用優惠券</div>
 </section>
 <script>
@@ -14194,6 +15292,7 @@ function bossCouponSyncVisibility(){
    const sel=document.getElementById(id);
    if(sel){sel.replaceChildren(new Option('不使用優惠券',''));sel.value='';}
   }
+  bossCouponRenderChoices();
   if(changed && typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
  }
 }
@@ -14219,22 +15318,55 @@ async function eyelashLoadCoupons(){
    eyelashCouponState.coupons.filter(c=>type==='money'?/購物金|折抵/.test(c.type):/免運/.test(c.type)).forEach(c=>sel.add(new Option(c.name+'（'+(type==='money'?'折抵 $'+c.amount:'免運')+'）'+(bossCouponExpiryText(c)?'｜'+bossCouponExpiryText(c):''),c.id)));
    if([...sel.options].some(o=>o.value===prev))sel.value=prev;
   }
-  bossCouponUpdateCounts();status.textContent='已更新可用優惠券';eyelashCouponChanged();
+  bossCouponRenderChoices();bossCouponUpdateCounts();status.textContent='已更新可用優惠券';eyelashCouponChanged();
  }catch(e){status.textContent='查詢失敗：'+e.message;}
 }
 function eyelashCouponChanged(){
  if(!bossCouponIsEligible()){bossCouponSyncVisibility();return;}
  const get=id=>eyelashCouponState.coupons.find(c=>c.id===document.getElementById(id)?.value)||null;
  eyelashCouponState.money=get('eyelash-money-coupon');eyelashCouponState.shipping=get('eyelash-shipping-coupon');
- bossCouponUpdateExpiry();
+ bossCouponUpdateExpiry();bossCouponRenderChoices();
  if(typeof executeDeptDiscountCalculate==='function')executeDeptDiscountCalculate();
+}
+function bossCouponFormatDate(value){
+ if(!value)return '';
+ const raw=String(value).trim();
+ const match=raw.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+ if(match)return match[1]+'/'+match[2].padStart(2,'0')+'/'+match[3].padStart(2,'0');
+ const date=new Date(value);
+ if(!Number.isNaN(date.getTime()))return date.getFullYear()+'/'+String(date.getMonth()+1).padStart(2,'0')+'/'+String(date.getDate()).padStart(2,'0');
+ return raw;
 }
 function bossCouponExpiryText(c){
  if(!c)return '';
  const start=c.start||c.startDate||c.start_date||c.validFrom||'';
  const end=c.end||c.endDate||c.end_date||c.expiry||c.expiresAt||c.expiration||'';
- const format=v=>{if(!v)return '';const d=new Date(v);if(!Number.isNaN(d.getTime()))return d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0');return String(v).replace(/\s.*$/,'');};
- return end?(start?format(start)+' ～ ':'')+format(end):'未設定到期日';
+ if(start&&end)return bossCouponFormatDate(start)+' - '+bossCouponFormatDate(end);
+ if(end)return '至 '+bossCouponFormatDate(end);
+ if(start)return '自 '+bossCouponFormatDate(start);
+ return '未設定有效期限';
+}
+function bossCouponRenderChoices(){
+ for(const [type,selectId,containerId] of [['money','eyelash-money-coupon','boss-money-choices'],['shipping','eyelash-shipping-coupon','boss-shipping-choices']]){
+  const select=document.getElementById(selectId),container=document.getElementById(containerId);
+  if(!select||!container)continue;
+  container.replaceChildren();
+  const options=[{id:'',name:'不使用優惠券'}].concat(eyelashCouponState.coupons.filter(c=>type==='money'?/購物金|折抵/.test(c.type):/免運/.test(c.type)));
+  options.forEach(c=>{
+   const btn=document.createElement('button');btn.type='button';btn.className='boss-coupon-choice'+(String(select.value)===String(c.id)?' is-selected':'');
+   btn.setAttribute('aria-pressed',String(select.value)===String(c.id)?'true':'false');
+   const title=document.createElement('div');title.className='boss-coupon-choice-title';
+   const name=document.createElement('span');name.textContent=c.name;
+   const check=document.createElement('span');check.className='boss-coupon-choice-check';check.textContent=String(select.value)===String(c.id)?'✓ 已選取':'○';
+   title.append(name,check);btn.append(title);
+   if(c.id){
+    const detail=document.createElement('div');detail.className='boss-coupon-choice-detail';detail.textContent=type==='money'?'折抵 $'+Number(c.amount||0).toLocaleString('en-US'):'免運優惠';btn.append(detail);
+    const date=document.createElement('div');date.className='boss-coupon-choice-date';date.textContent='有效期限：'+bossCouponExpiryText(c);btn.append(date);
+   }
+   btn.addEventListener('click',()=>{select.value=String(c.id);eyelashCouponChanged();});
+   container.append(btn);
+  });
+ }
 }
 function bossCouponUpdateCounts(){
  for(const [type,id] of [['money','boss-money-count'],['shipping','boss-shipping-count']]){
@@ -14252,7 +15384,7 @@ function eyelashCouponPayload(){return {phone:bossCouponIsEligible()?eyelashCoup
 window.addEventListener('DOMContentLoaded',()=>{
  const panel=document.getElementById('eyelash-coupon-panel'),target=document.getElementById('grand-total');
  if(panel&&target){const container=target.closest('div');(container?.parentElement||target.parentElement).before(panel);}
- bossCouponSyncVisibility();
+ bossCouponSyncVisibility();bossCouponRenderChoices();
 });
 </script>
 <div id="boss-gift-overlay" role="dialog" aria-modal="true" aria-label="滿額贈品選擇">
@@ -14281,7 +15413,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   add(2000,'東方之綉3點定位眉型設計筆黑咖組','東方之綉｜3點定位眉型設計筆（黑／咖各1支）');
   add(3000,'A52','四效合一深層潔淨卸妝棉／100片');
   add(3000,'F62','完美呵護私密淨化噴霧／20ml');
-  add(3000,'東方之綉｜紋飾修護素-10ml');
+  add(3000,'東方之綉｜紋飾修護素-10ml','東方之綉｜紋飾修護素 10ml');
   add(4000,'TB4','紋繡唇部去角質霜／10g');
   add(4000,'TB1','紋繡眉眼唇專用鎖色精華／10ml');
   add(4000,'TB3','紋繡唇部持久留色修復精華／10入裝');
@@ -14330,15 +15462,23 @@ window.addEventListener('DOMContentLoaded',()=>{
         const row=document.createElement('div');row.className='boss-gift-item';
         const name=document.createElement('span');name.textContent=/^[A-Z]{1,3}\d+[A-Z0-9_-]*$/.test(g.id) ? g.id+'｜'+g.name : g.name;
         const input=document.createElement('input');input.type='number';input.min='0';input.step='1';input.inputMode='numeric';input.setAttribute('aria-label',g.name+'數量');input.id='boss-gift-qty-'+gifts.indexOf(g);input.value=chosen[g.id]||0;
-        input.addEventListener('change',()=>{
-          const next=Math.max(0,Math.floor(Number(input.value)||0));
+        function setGiftQuantity(value){
+          const next=Math.max(0,Math.floor(Number(value)||0));
           const prev=chosen[g.id]||0;
           if(spent()+(next-prev)*tier>available()){
             alert('贈品額度不足，請調整數量。');input.value=prev;return;
           }
-          if(next){chosen[g.id]=next;giftDeclined=false;}else delete chosen[g.id];update();
-        });
-        row.append(name,input);section.appendChild(row);
+          if(next){chosen[g.id]=next;giftDeclined=false;}else delete chosen[g.id];
+          input.value=next;update();
+        }
+        input.addEventListener('change',()=>setGiftQuantity(input.value));
+        const control=document.createElement('div');control.className='boss-gift-qty-control';
+        const minus=document.createElement('button');minus.type='button';minus.textContent='−';minus.setAttribute('aria-label',g.name+'減少一件');
+        const plus=document.createElement('button');plus.type='button';plus.textContent='+';plus.setAttribute('aria-label',g.name+'增加一件');
+        minus.addEventListener('click',()=>setGiftQuantity((chosen[g.id]||0)-1));
+        plus.addEventListener('click',()=>setGiftQuantity((chosen[g.id]||0)+1));
+        control.append(minus,input,plus);
+        row.append(name,control);section.appendChild(row);
       });container.appendChild(section);
     });update();
   }
@@ -14352,8 +15492,8 @@ window.addEventListener('DOMContentLoaded',()=>{
   };
   window.bossGiftClose=function(){getEl('boss-gift-overlay')?.classList.remove('open');document.body.style.overflow='';update();};
   window.bossGiftClear=function(){Object.keys(chosen).forEach(k=>delete chosen[k]);giftDeclined=false;build();};
-  window.bossGiftDecline=function(){
-    if(!window.confirm('確定本次訂單不需要滿額贈品嗎？'))return;
+  window.bossGiftDecline=async function(){
+    if(!(await bossConfirm('確定本次訂單不需要滿額贈品嗎？', '確認放棄贈品', '？')))return;
     Object.keys(chosen).forEach(k=>delete chosen[k]);
     giftDeclined=true;
     bossGiftClose();
@@ -14793,6 +15933,18 @@ render();
       if(anchor && submit.parentElement!==cart)anchor.insertAdjacentElement('beforebegin',submit);
       if(summary.nextElementSibling!==submit)submit.insertAdjacentElement('beforebegin',summary);
     }
+    // 優惠券／活動贈品必須跟著金額統計移動，避免手機版留在商品明細區而看不到。
+    const benefits=document.getElementById('boss-checkout-benefits');
+    if(benefits){
+      if(mobile){
+        // 手機版：三種優惠直接接在商品明細清單下方，點擊前往結帳即可看到。
+        const items=document.getElementById('cart-items-container');
+        if(items && items.nextElementSibling!==benefits)items.insertAdjacentElement('afterend',benefits);
+      }else if(benefits.nextElementSibling!==summary){
+        summary.insertAdjacentElement('beforebegin',benefits);
+      }
+    }
+    if(typeof bossCouponSyncVisibility==='function')bossCouponSyncVisibility();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(positionFinalSummary,30));
   else setTimeout(positionFinalSummary,30);
@@ -14821,16 +15973,22 @@ render();
     if(!summary||!coupon||!promo||!gift)return;
     let wrap=document.getElementById('boss-checkout-benefits');
     if(!wrap){wrap=document.createElement('section');wrap.id='boss-checkout-benefits';wrap.setAttribute('aria-label','結帳優惠專區');summary.insertAdjacentElement('beforebegin',wrap);}
-    if (wrap.nextElementSibling !== summary) summary.insertAdjacentElement('beforebegin',wrap);
+    const mobile=window.matchMedia('(max-width: 768px)').matches;
+    if(mobile){
+      const items=document.getElementById('cart-items-container');
+      if(items && items.nextElementSibling!==wrap)items.insertAdjacentElement('afterend',wrap);
+    }else if(wrap.nextElementSibling!==summary){
+      summary.insertAdjacentElement('beforebegin',wrap);
+    }
     wrap.append(coupon,promo,gift);
-    const shipping=document.querySelector('.mobile-cart-card .shipping-policy-box');
-    if(shipping && shipping.previousElementSibling !== wrap) wrap.insertAdjacentElement('afterend',shipping);
+    // 運費規範維持商品明細原位置，避免把優惠區移回表單底部。
     if(typeof bossCouponSyncVisibility==='function')bossCouponSyncVisibility();
     if(typeof bossGiftSyncEligibility==='function')bossGiftSyncEligibility();
     if(typeof bossPromoGiftRefresh==='function')bossPromoGiftRefresh();
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(arrange,0));
-  else setTimeout(arrange,0);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(arrange,100));
+  else setTimeout(arrange,100);
+  window.addEventListener('resize',()=>setTimeout(arrange,0));
 })();
 </script>
 <style id="boss-promo-empty-fix">
@@ -14972,13 +16130,533 @@ render();
       items.push(el);
     }
     track.replaceChildren();if(!items.length){bar.classList.remove('is-visible');return;}
-    for(let repeat=0;repeat<2;repeat++)for(const item of items)track.appendChild(item.cloneNode(true));
-    track.style.setProperty('--boss-scroll-duration',Math.max(18,items.reduce((n,el)=>n+el.textContent.length,0)*0.42)+'s');
     bar.classList.add('is-visible');
+    // 一次只跑一則：完整從右邊進場，左邊完全離場後才換下一則。
+    let current=0;
+    const viewport=document.getElementById('boss-announcement-viewport');
+    const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function showNext(){
+      track.classList.remove('boss-running');
+      track.replaceChildren(items[current].cloneNode(true));
+      if(reduceMotion){track.style.transform='none';return;}
+      track.style.transform='';
+      const start=viewport.clientWidth;
+      const end=-track.scrollWidth;
+      track.style.setProperty('--boss-start',start+'px');
+      track.style.setProperty('--boss-end',end+'px');
+      track.style.setProperty('--boss-scroll-duration',Math.max(9,(start-end)/40)+'s');
+      void track.offsetWidth; // 重新啟動下一則的動畫
+      track.classList.add('boss-running');
+    }
+    track.addEventListener('animationend',function(e){
+      if(e.animationName!=='boss-announcement-single')return;
+      current=(current+1)%items.length;
+      showNext();
+    });
+    showNext();
   }
   fetch(api+'?action=announcements&_='+Date.now(),{cache:'no-store'})
     .then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json();})
     .then(render).catch(e=>{console.warn('網站公告讀取失敗：',e);bar.classList.remove('is-visible');});
+})();
+</script>
+
+<style id="boss-stock-modal-style">
+.boss-stock-overlay{position:fixed;inset:0;z-index:999999;background:rgba(58,45,41,.45);display:none;align-items:center;justify-content:center;padding:18px;box-sizing:border-box}
+.boss-stock-overlay.is-open{display:flex}
+.boss-stock-dialog{width:min(100%,440px);max-height:85vh;overflow:auto;background:#fff;border-radius:18px;padding:26px 24px;box-sizing:border-box;box-shadow:0 18px 60px rgba(64,45,40,.2);font-family:"Microsoft JhengHei",sans-serif;color:#4a3f35}
+.boss-stock-heading{display:flex;align-items:center;justify-content:center;gap:9px;font-size:19px;font-weight:700;margin:0 0 14px}
+.boss-stock-heading-symbol{color:#c77770;font-size:24px}
+.boss-stock-description{text-align:center;color:#7d7067;font-size:14px;line-height:1.8;margin:0 0 14px}
+.boss-stock-issues{background:#faf7f5;border-radius:12px;padding:14px 16px;margin:0 0 14px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.8;color:#ad5858}
+.boss-stock-footnote{text-align:center;color:#7d7067;font-size:13px;margin:0 0 18px;line-height:1.7}
+.boss-stock-confirm{width:100%;border:0;border-radius:25px;background:#dfa99e;color:#fff;padding:12px 20px;font-size:15px;font-weight:600;cursor:pointer}
+.boss-stock-confirm:hover{background:#ce9187}
+</style>
+
+<div class="boss-stock-overlay" id="boss-stock-overlay" role="presentation">
+  <div class="boss-stock-dialog" role="alertdialog" aria-modal="true" aria-labelledby="boss-stock-heading" aria-describedby="boss-stock-description">
+    <h2 class="boss-stock-heading" id="boss-stock-heading"><span class="boss-stock-heading-symbol">⚠</span>商品庫存異動通知</h2>
+    <p class="boss-stock-description" id="boss-stock-description">很抱歉，以下商品庫存狀態有異動，訂單尚未送出。</p>
+    <div class="boss-stock-issues" id="boss-stock-issues"></div>
+    <button type="button" class="boss-stock-confirm" id="boss-stock-adjust" style="display:none;margin-bottom:10px">一鍵調整為剩餘庫存</button>
+    <p class="boss-stock-footnote">請確認購物車商品後，再重新送出訂單。</p>
+    <button type="button" class="boss-stock-confirm" id="boss-stock-confirm">我知道了</button>
+  </div>
+</div>
+<script>
+function bossShowStockDialog_(message, issueRows){
+  const overlay=document.getElementById('boss-stock-overlay');
+  const issues=document.getElementById('boss-stock-issues');
+  const adjust=document.getElementById('boss-stock-adjust');
+  if(!overlay || !issues){alert('訂單尚未送出\n\n'+message);return;}
+  const rows=Array.isArray(issueRows)?issueRows:[];
+  issues.replaceChildren();
+  if(rows.length){
+    rows.forEach(entry=>{
+      const line=document.createElement('div');
+      line.style.marginBottom='10px';
+      const title=document.createElement('div');
+      title.style.fontWeight='600';
+      title.textContent=entry.name;
+      line.appendChild(title);
+      const details=document.createElement('div');
+      details.textContent=entry.adjustable
+        ? '購物車：'+entry.requested+' 件｜目前庫存：'+entry.available+' 件｜建議調整：'+entry.target+' 件'
+        : '庫存資料未對應，請聯絡客服確認';
+      line.appendChild(details);
+      issues.appendChild(line);
+    });
+  } else {
+    const clean=String(message||'無法確認最新庫存').replace(/\\n/g,'\n').replace(/^以下商品庫存狀態異動：\s*/,'').replace(/^•\s*/,'');
+    issues.textContent=clean;
+  }
+  const actionable=rows.filter(x=>x.adjustable);
+  if(adjust){
+    adjust.style.display=actionable.length && actionable.length===rows.length?'block':'none';
+    adjust.onclick=()=>{
+      if(actionable.some(x=>Number(cart[x.cartKey])!==Number(x.requested))){
+        alert('購物車數量已有變動，請重新送出訂單以取得最新庫存。');
+        overlay.classList.remove('is-open');return;
+      }
+      actionable.forEach(x=>{
+        if(x.target<=0) delete cart[x.cartKey];
+        else cart[x.cartKey]=x.target;
+      });
+      saveCartToStorage();
+      renderCart();
+      if(typeof updateCartSummary==='function') updateCartSummary();
+      overlay.classList.remove('is-open');
+    };
+  }
+  overlay.classList.add('is-open');
+  const button=document.getElementById('boss-stock-confirm');
+  if(button){button.focus();button.onclick=()=>overlay.classList.remove('is-open');}
+}
+
+</script>
+<style id="boss-unified-confirm-style">
+.boss-confirm-overlay{position:fixed;inset:0;z-index:99999;background:rgba(54,43,39,.48);display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box;backdrop-filter:blur(3px)}
+.boss-confirm-dialog{width:min(390px,100%);background:#fffdfb;border-radius:18px;padding:27px 24px 24px;box-sizing:border-box;box-shadow:0 20px 60px rgba(54,43,39,.2);text-align:center;color:#4a3f35}
+.boss-confirm-icon{width:54px;height:54px;margin:0 auto 15px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff0ed;color:#c47c70;font-size:25px}
+.boss-confirm-title{font-size:19px;font-weight:700;margin:0 0 12px}
+.boss-confirm-message{font-size:14px;line-height:1.8;color:#806e66;white-space:pre-line;overflow-wrap:anywhere;margin:0 0 24px}
+.boss-confirm-actions{display:flex;gap:12px}
+.boss-confirm-actions button{flex:1;border-radius:24px;padding:11px 8px;font-size:14px;cursor:pointer;border:1px solid #e8a598}
+.boss-confirm-cancel{background:#fff;color:#a57d74}
+.boss-confirm-ok{background:#e8a598;color:#fff;font-weight:600}
+.boss-confirm-actions button:focus-visible{outline:2px solid #a86b60;outline-offset:3px}
+</style>
+<script>
+// 官網統一確認視窗：Promise<boolean>；不更動原本購物車或訂單運算。
+function bossConfirm(message, title='確認操作', icon='？'){
+  return new Promise(resolve=>{
+    const overlay=document.createElement('div');overlay.className='boss-confirm-overlay';
+    overlay.setAttribute('role','presentation');
+    const dialog=document.createElement('div');dialog.className='boss-confirm-dialog';
+    dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');
+    const ico=document.createElement('div');ico.className='boss-confirm-icon';ico.textContent=icon;
+    const heading=document.createElement('h2');heading.className='boss-confirm-title';heading.textContent=title;
+    const body=document.createElement('p');body.className='boss-confirm-message';body.textContent=String(message);
+    const actions=document.createElement('div');actions.className='boss-confirm-actions';
+    const cancel=document.createElement('button');cancel.type='button';cancel.className='boss-confirm-cancel';cancel.textContent='取消';
+    const ok=document.createElement('button');ok.type='button';ok.className='boss-confirm-ok';ok.textContent='確認';
+    actions.append(cancel,ok);dialog.append(ico,heading,body,actions);overlay.append(dialog);
+    const previous=document.activeElement;
+    const keydown=e=>{if(e.key==='Escape'){e.preventDefault();finish(false)}if(e.key==='Tab'){const target=e.shiftKey?ok:cancel;if(document.activeElement===(e.shiftKey?cancel:ok)){e.preventDefault();target.focus()}}};
+    function finish(result){document.removeEventListener('keydown',keydown);overlay.remove();if(previous&&previous.isConnected&&previous.focus)previous.focus();resolve(result)}
+    cancel.addEventListener('click',()=>finish(false));ok.addEventListener('click',()=>finish(true));
+    overlay.addEventListener('click',e=>{if(e.target===overlay)finish(false)});
+    document.body.append(overlay);document.addEventListener('keydown',keydown);cancel.focus();
+  });
+}
+</script>
+
+
+<style id="boss-unified-message-style">
+.boss-message-overlay{position:fixed;inset:0;z-index:110000;background:rgba(54,43,39,.48);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box}
+.boss-message-dialog{width:min(420px,100%);max-height:calc(100dvh - 36px);overflow:auto;background:#fffdfb;border-radius:18px;padding:27px 24px 24px;box-sizing:border-box;box-shadow:0 20px 60px rgba(54,43,39,.2);text-align:center;color:#4a3f35}
+.boss-message-icon{width:54px;height:54px;margin:0 auto 15px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff0ed;color:#c47c70;font-size:25px}
+.boss-message-title{font-size:19px;font-weight:700;margin:0 0 12px}
+.boss-message-body{font-size:14px;line-height:1.8;color:#806e66;white-space:pre-line;overflow-wrap:anywhere;margin:0 0 24px}
+.boss-message-actions{display:flex;gap:12px}
+.boss-message-actions button{flex:1;border-radius:24px;padding:11px 8px;font-size:14px;cursor:pointer;border:1px solid #e8a598}
+.boss-message-cancel{background:#fff;color:#a57d74}
+.boss-message-ok{background:#e8a598;color:#fff;font-weight:600}
+.boss-message-input{display:block;width:100%;box-sizing:border-box;border:1px solid #e8d8d1;border-radius:10px;padding:12px;margin:-8px 0 22px;color:#4a3f35;font-size:15px;background:#fff}
+.boss-message-input:focus-visible,.boss-message-actions button:focus-visible{outline:2px solid #a86b60;outline-offset:2px}
+@media(max-width:576px){.boss-message-dialog{padding:23px 18px}}
+</style>
+<script>
+/* 統一原生 alert 與需要輸入的 prompt；保留既有 bossConfirm 的確認/取消行為。 */
+(function(){
+  const nativeAlert=window.alert.bind(window);
+  const queue=[];
+  let busy=false;
+  function dialog(message,title,mode,initial,readonly){
+    return new Promise(resolve=>{
+      const overlay=document.createElement('div');overlay.className='boss-message-overlay';
+      const panel=document.createElement('div');panel.className='boss-message-dialog';
+      panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');
+      const ico=document.createElement('div');ico.className='boss-message-icon';ico.textContent=mode==='prompt'?'✎':'!';
+      const heading=document.createElement('h2');heading.className='boss-message-title';heading.textContent=title;
+      const body=document.createElement('p');body.className='boss-message-body';body.textContent=String(message??'');
+      panel.append(ico,heading,body);
+      let input=null;
+      if(mode==='prompt'){
+        input=document.createElement('input');input.type='text';input.className='boss-message-input';
+        input.value=String(initial??'');input.readOnly=!!readonly;
+        input.setAttribute('aria-label',String(title));panel.append(input);
+      }
+      const actions=document.createElement('div');actions.className='boss-message-actions';
+      if(mode==='prompt'&&!readonly){
+        const cancel=document.createElement('button');cancel.type='button';cancel.className='boss-message-cancel';cancel.textContent='取消';
+        cancel.onclick=()=>finish(null);actions.append(cancel);
+      }
+      const ok=document.createElement('button');ok.type='button';ok.className='boss-message-ok';ok.textContent=mode==='prompt'?'確認':'我知道了';
+      ok.onclick=()=>finish(mode==='prompt'?input.value:true);actions.append(ok);panel.append(actions);overlay.append(panel);
+      const previous=document.activeElement;
+      const keydown=e=>{
+        if(e.key==='Escape'){e.preventDefault();finish(mode==='prompt'?null:true);}
+        if(e.key==='Enter'&&mode==='prompt'){e.preventDefault();finish(input.value);}
+        if(e.key==='Tab'){
+          const focusables=Array.from(panel.querySelectorAll('button,input'));
+          const first=focusables[0],last=focusables[focusables.length-1];
+          if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+          else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+        }
+      };
+      let closed=false;
+      function finish(value){
+        if(closed)return;closed=true;
+        document.removeEventListener('keydown',keydown,true);overlay.remove();
+        if(previous&&previous.isConnected&&typeof previous.focus==='function')previous.focus();
+        resolve(value);
+      }
+      overlay.addEventListener('click',e=>{if(e.target===overlay)finish(mode==='prompt'?null:true)});
+      document.body.append(overlay);document.addEventListener('keydown',keydown,true);
+      if(input){input.focus();input.select();}else ok.focus();
+    });
+  }
+  function drain(){
+    if(busy||!queue.length)return;
+    busy=true;const next=queue.shift();
+    dialog(next.message,next.title,'alert').then(()=>{busy=false;drain();});
+  }
+  window.alert=function(message){
+    if(!document.body)return nativeAlert(message);
+    queue.push({message,title:'系統提示'});drain();
+  };
+  window.bossPrompt=function(message,initial='',title='請輸入資料',readonly=false){
+    return dialog(message,title,'prompt',initial,readonly);
+  };
+})();
+</script>
+
+<!-- 統一風格：訂單送出成功通知（僅非轉帳、非刷卡付款使用） -->
+<div id="boss-order-success-overlay" role="dialog" aria-modal="true" aria-labelledby="boss-order-success-title" style="display:none;position:fixed;inset:0;z-index:25000;background:rgba(52,43,40,.48);align-items:center;justify-content:center;padding:18px;box-sizing:border-box;">
+  <div style="width:min(420px,100%);background:#fff;border-radius:20px;padding:32px 24px;box-sizing:border-box;box-shadow:0 20px 55px rgba(0,0,0,.17);text-align:center;color:#4a3f35;">
+    <div style="font-size:42px;color:#83a995;line-height:1.2;" aria-hidden="true">✓</div>
+    <h2 id="boss-order-success-title" style="font-size:23px;margin:10px 0 12px;">訂單送出成功！</h2>
+    <p style="font-size:14px;color:#8a7e72;line-height:1.8;margin:0 0 20px;">感謝您的購買，我們已收到您的訂單。</p>
+    <div style="background:#faf7f5;border-radius:12px;padding:18px 12px;">
+      <div style="font-size:12px;color:#8a7e72;margin-bottom:8px;">您的專屬訂單編號</div>
+      <div id="boss-order-success-number" style="font-size:15px;font-weight:700;overflow-wrap:anywhere;user-select:all;"></div>
+      <button type="button" onclick="bossCopySuccessOrderNo()" style="margin-top:14px;padding:8px 16px;border:1px solid #e8a598;border-radius:20px;background:white;color:#b57a70;cursor:pointer;">複製訂單編號</button>
+      <div id="boss-order-success-copy-status" role="status" style="font-size:12px;color:#678a75;margin-top:6px;min-height:16px;"></div>
+    </div>
+    <button type="button" onclick="bossCloseOrderSuccessModal()" style="width:100%;margin-top:24px;padding:14px;border:0;border-radius:30px;background:#e8a598;color:#fff;font-size:16px;font-weight:700;cursor:pointer;">完成</button>
+  </div>
+</div>
+<script>
+let bossSuccessOrderNo = '';
+function showBossOrderSuccessModal(orderNo) {
+  bossSuccessOrderNo = String(orderNo || '');
+  const overlay = document.getElementById('boss-order-success-overlay');
+  document.getElementById('boss-order-success-number').textContent = bossSuccessOrderNo;
+  document.getElementById('boss-order-success-copy-status').textContent = '';
+  overlay.style.display = 'flex';
+  overlay.querySelector('button[onclick="bossCloseOrderSuccessModal()"]')?.focus();
+}
+async function bossCopySuccessOrderNo() {
+  const status = document.getElementById('boss-order-success-copy-status');
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('clipboard unavailable');
+    await navigator.clipboard.writeText(bossSuccessOrderNo);
+    status.textContent = '訂單編號已複製';
+  } catch (err) {
+    status.textContent = '請長按或選取上方訂單編號複製';
+  }
+}
+function bossCloseOrderSuccessModal() {
+  document.getElementById('boss-order-success-overlay').style.display = 'none';
+  location.reload();
+}
+</script>
+
+
+<!-- 優惠券使用教學：點擊問號開啟，不影響結帳 -->
+<div id="boss-coupon-help-overlay" role="dialog" aria-modal="true" aria-label="優惠券使用教學" onclick="if(event.target===this)bossCouponHelpClose()">
+  <div class="boss-coupon-help-dialog">
+    <button type="button" class="boss-coupon-help-close" aria-label="關閉教學" onclick="bossCouponHelpClose()">×</button>
+    <img src="https://i.ibb.co/v4tPYVhk/image.png" alt="優惠券使用教學：查詢可用優惠券、選擇優惠券、確認折抵送出訂單" loading="lazy">
+  </div>
+</div>
+<script>
+function bossCouponHelpOpen(){var el=document.getElementById('boss-coupon-help-overlay');if(el){el.classList.add('open');document.addEventListener('keydown',bossCouponHelpEscape);}}
+function bossCouponHelpClose(){var el=document.getElementById('boss-coupon-help-overlay');if(el)el.classList.remove('open');document.removeEventListener('keydown',bossCouponHelpEscape);}
+function bossCouponHelpEscape(e){if(e.key==='Escape')bossCouponHelpClose();}
+
+/* 配送方式連動：保留既有 #shipping / #address 與後台寫入格式 */
+let bossPreviousShippingType = '';
+const bossShippingDrafts = Object.create(null);
+function bossShippingChanged() {
+  const select = document.getElementById('shipping');
+  const field = document.getElementById('address');
+  const group = document.getElementById('boss-address-group');
+  const label = document.getElementById('boss-address-label');
+  const hint = document.getElementById('boss-address-hint');
+  if (!select || !field || !group || !label || !hint) return;
+  const type = select.value;
+  const pickupReminder = document.getElementById('boss-store-pickup-reminder');
+  if (pickupReminder) { pickupReminder.hidden = type !== 'store-pickup'; pickupReminder.style.display = type === 'store-pickup' ? 'block' : 'none'; }
+  if (bossPreviousShippingType && bossPreviousShippingType !== type) {
+    bossShippingDrafts[bossPreviousShippingType] = field.value;
+  }
+  if (bossPreviousShippingType !== type) {
+    field.value = bossShippingDrafts[type] || '';
+  }
+  bossPreviousShippingType = type;
+  group.style.display = type === 'store-pickup' ? 'none' : '';
+  field.disabled = !type || type === 'store-pickup';
+  field.required = !!type && type !== 'store-pickup';
+  if (type === 'cvs') {
+    label.textContent = '7-11 取貨門市名稱或店號（必填）';
+    field.placeholder = '例如：○○門市 或 6位數門市店號';
+    hint.textContent = '只需填寫 7-11 門市名稱或店號，請勿填寫住家地址。';
+    field.autocomplete = 'off';
+  } else if (type === 'normal' || type === 'blackcat' || type === 'blackcat-cold') {
+    label.textContent = '完整宅配收件地址（必填）';
+    field.placeholder = '例如：桃園市桃園區中正路100號3樓';
+    hint.textContent = '請填寫縣市、鄉鎮市區、路街及門牌號碼，公寓請加註樓層。';
+    field.autocomplete = 'street-address';
+  } else if (type === 'sf-hk') {
+    label.textContent = '配送地址（必填）';
+    field.placeholder = '請輸入完整配送地址';
+    hint.textContent = '請填寫完整收件地址。';
+    field.autocomplete = 'street-address';
+  } else {
+    label.textContent = '配送地址 / 7-11取貨門市';
+    field.placeholder = '請先選擇配送方式';
+    hint.textContent = '選擇配送方式後，才會顯示對應的填寫說明。';
+  }
+}
+function bossValidateShippingAddress(type, raw) {
+  const value = String(raw || '').trim();
+  if (type === 'store-pickup') return {ok:true};
+  if (!type) return {ok:false,message:'請先選擇配送方式。'};
+  if (type === 'cvs') {
+    if (!value) return {ok:false,message:'請填寫 7-11 取貨門市名稱或店號。'};
+    if (/^\d+$/.test(value)) return /^\d{6}$/.test(value) ? {ok:true} : {ok:false,message:'7-11 門市店號請輸入6位數；或填寫門市名稱。'};
+    if (value.length < 2 || /(?:路|街|巷|弄).{0,15}\d+號|(?:縣|市).*(?:區|鄉|鎮).*(?:路|街)/.test(value)) return {ok:false,message:'請填寫 7-11 門市名稱或6位數店號，不要填寫住家地址。'};
+    return {ok:true};
+  }
+  if (!value) return {ok:false,message:'請填寫完整宅配收件地址。'};
+  if (type === 'sf-hk') return {ok:true}; // 保留原本專屬配送，不套用台灣地址格式檢查
+  if (value.length < 9 || !/[縣市]/.test(value) || !/[區鄉鎮市]/.test(value) || !/(?:路|街|道|村|里)/.test(value) || !/\d/.test(value)) {
+    return {ok:false,message:'宅配地址不完整，請填寫縣市、鄉鎮市區、路街及門牌號碼。'};
+  }
+  return {ok:true};
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bossShippingChanged);
+else bossShippingChanged();
+</script>
+
+<footer class="boss-footer-five" aria-label="睫老闆網站資訊">
+  <div class="boss-footer-grid">
+    <section class="boss-footer-col"><h3>聯絡我們</h3>
+      <p>服務電話：<a href="tel:033588280">03-3588-280</a></p>
+      <p>客服專線：<a href="tel:0908998988">0908-998-988</a></p>
+      <p>官方 LINE：<a href="https://line.me/R/ti/p/@ebnb" target="_blank" rel="noopener noreferrer">@ebnb ↗</a></p><p>客服時間：週一至週五 08:30–17:30</p>
+    </section>
+    <section class="boss-footer-col"><h3>顧客服務</h3>
+      <button type="button" onclick="bossOpenLegal(0)">購物須知</button>
+      <button type="button" onclick="bossOpenLegal(1)">服務條款</button>
+      <button type="button" onclick="bossOpenLegal(2)">隱私權政策</button>
+      <button type="button" onclick="bossOpenLegal(3)">退款／退換貨政策</button>
+      <button type="button" onclick="bossOpenLegal(4)">消費糾紛處理方式</button>
+    </section>
+    <section class="boss-footer-col"><h3>購物與配送</h3>
+      <button type="button" onclick="bossOpenLegal(7)">物流配送／運費說明</button>
+      <button type="button" onclick="bossOpenLegal(5)">海外地區配送</button>
+      <button type="button" onclick="bossOpenLegal(6)">優惠券使用說明</button>
+    </section>
+    <section class="boss-footer-col"><h3>授權經銷商</h3>
+      <button type="button" class="boss-dealer-open" onclick="bossOpenDealers()">查看授權經銷商名單 ↗</button>
+    </section>
+    <section class="boss-footer-col"><h3>直營門市</h3>
+      <div class="boss-footer-store"><strong class="boss-store-title">桃園經國門市<a class="boss-store-arrow" href="https://share.google/oMJJxIOimQRAc5kvm" target="_blank" rel="noopener noreferrer" title="開啟 Google 地圖導航" aria-label="桃園經國門市 Google 地圖導航">↗</a></strong><p>桃園市桃園區經國路859號9樓之1</p><p><a href="tel:033588280">03-3588-280</a></p><p>週一至週五 08:30–17:30</p></div>
+      <div class="boss-footer-store"><strong class="boss-store-title">台中一中門市<a class="boss-store-arrow" href="https://share.google/42mqefQQMWCDpUt12" target="_blank" rel="noopener noreferrer" title="開啟 Google 地圖導航" aria-label="台中一中門市 Google 地圖導航">↗</a></strong><p>台中市北區一中街160-12號2樓</p><p><a href="tel:0919047333">0919-047-333</a></p><p>週二至週日 13:00–21:00（週一公休）</p></div>
+    </section>
+  </div>
+  <div class="boss-footer-bottom">© 睫老闆美妝百貨有限公司</div>
+</footer>
+<div id="boss-dealer-overlay" role="dialog" aria-modal="true" aria-labelledby="boss-dealer-modal-title" aria-hidden="true">
+  <div class="boss-dealer-panel">
+    <button type="button" class="boss-dealer-close" onclick="bossCloseDealers()" aria-label="關閉經銷商名單">×</button>
+    <h2 id="boss-dealer-modal-title">授權經銷商名單</h2>
+    <p class="boss-dealer-intro">以下為睫老闆授權經銷商，資料以最新公告為準。</p>
+    <div class="boss-dealer-region" role="group" aria-label="經銷商地區">
+      <button type="button" class="boss-dealer-region-btn active" data-region="tw" aria-pressed="true">台灣</button>
+      <button type="button" class="boss-dealer-region-btn" data-region="hk" aria-pressed="false">香港</button>
+    </div>
+    <div class="boss-dealer-filter" id="boss-dealer-city-wrap">
+      <label for="boss-dealer-city-filter">篩選縣市</label>
+      <select id="boss-dealer-city-filter" aria-label="篩選授權經銷商縣市" disabled>
+        <option value="">全部縣市</option>
+      </select>
+    </div>
+    <div id="boss-dealer-list" aria-live="polite"><p class="boss-dealer-status">開啟後載入經銷商資料…</p></div>
+  </div>
+</div>
+<div id="boss-legal-overlay" role="dialog" aria-modal="true" aria-labelledby="boss-legal-title" onclick="if(event.target===this)bossCloseLegal()"><div class="boss-legal-panel"><button type="button" class="boss-legal-close" aria-label="關閉政策視窗" onclick="bossCloseLegal()">×</button><h2 id="boss-legal-title"></h2><div id="boss-legal-content"></div></div></div>
+<script>
+/* 顧客服務政策閱讀視窗，與原有結帳功能獨立 */
+const bossLegalTitles = ["購物須知", "服務條款", "隱私權政策", "退款／退換貨政策", "消費糾紛處理方式", "海外地區配送", "優惠券使用說明", "物流配送／運費說明"];
+const bossLegalHtml = ["<section><h3>訂購方式</h3><p>請於官網選擇商品及規格、確認購物車內容，填寫收件資料、配送與付款方式後送出訂單。訂單是否成立及出貨狀態，以本公司實際確認結果為準。</p></section><section><h3>商品價格與優惠</h3><p>商品售價、會員折扣、優惠券及滿額贈活動，以結帳頁面顯示及活動規則為準；實際結帳前請確認金額。</p></section><section><h3>付款與配送</h3><p>本網站依會員資格及配送地區提供可選擇的付款與配送方式，包含網站實際開放之付款選項。運費及適用條件以結帳頁面揭露資訊為準。</p></section><section><h3>發票</h3><p>請依結帳頁面選擇發票方式，需開立統一編號或三聯式發票者，請正確填寫相關資料。</p></section><section><h3>商品與訂單疑問</h3><p>如需修改訂單、確認庫存或配送情形，請儘速於客服時間聯繫本公司。</p></section>", "<section><h3>適用範圍</h3><p>使用睫老闆美妝百貨有限公司網站購物、註冊會員或使用相關服務，即適用本服務條款；消費者依法享有之權利不受本條款限制。</p></section><section><h3>會員資料</h3><p>註冊及訂購時請提供真實、完整資料，並妥善保管登入資訊。如發現帳號異常，請聯繫客服。</p></section><section><h3>商品及訂單</h3><p>商品資訊、售價、庫存及優惠以網站實際揭露為準。遇缺貨、資料錯誤或其他無法履約情形，本公司將主動聯繫並依法協商處理。</p></section><section><h3>會員與優惠</h3><p>會員等級、有效期間、折扣、優惠券及活動贈品依網站公告及各活動條件辦理。會員資格終止或到期後之權益依購買時約定及相關法律處理。</p></section><section><h3>儲值金與付費會籍</h3><p>儲值金可使用範圍、餘額及使用紀錄以會員帳戶顯示及實際交易紀錄為準。儲值金及付費會籍之取消、終止與退款，依交易時約定及相關法令個案處理，不以本條款排除法定權利。</p></section><section><h3>網站使用</h3><p>請勿以不法方式干擾網站、冒用他人資料或侵害他人權益。網站內容及商品圖文之權利依相關法令保護。</p></section><section><h3>條款變更</h3><p>如有條款更新，將於網站公告；已成立交易之權益不因單方修改而受到不當影響。</p></section>", "<section><h3>蒐集資料及目的</h3><p>為辦理會員註冊、訂單、付款、配送、客服、退換貨及依法應辦事項，本公司可能蒐集姓名、電話、電子郵件、配送地址、發票資料、訂單與交易紀錄及會員使用紀錄。</p></section><section><h3>使用與提供對象</h3><p>個人資料僅於上述目的及必要範圍內使用；為完成交易，可能提供必要資料予金流服務商、物流業者及協助網站維運之服務提供者，並依法律要求提供予主管機關。</p></section><section><h3>付款資料</h3><p>線上付款由合作金流服務商依其交易流程處理；請勿透過一般客服訊息傳送完整信用卡號或安全碼。</p></section><section><h3>資料保護及保存</h3><p>本公司採取合理之資料安全管理措施，並依業務需求、契約及法定保存期限保存資料；保存目的消失或期限屆滿時依法處理。</p></section><section><h3>當事人權利</h3><p>您可依個人資料保護法，就個人資料請求查詢、閱覽、製給複製本、補充、更正、停止蒐集處理利用或刪除；法律另有規定者從其規定。請透過網站頁尾「聯絡我們」所列客服管道提出申請。</p></section><section><h3>外部服務</h3><p>本網站可能連結第三方付款或其他服務；其資料處理方式請參閱該服務提供者之政策。</p></section><section><h3>政策更新</h3><p>本政策如有修訂，將公布於本網站。</p></section>", "<section><h3>七日解除權</h3><p>消費者於本網站進行適用消費者保護法之通訊交易，除法律規定之例外情形外，得於收受商品後七日內依法解除契約，無須說明理由，亦無須負擔依法解除契約之退回運費。七日鑑賞期並非試用期。</p></section><section><h3>退貨商品及例外</h3><p>請儘量妥善保存商品、配件與包裝，以利確認。必要檢查所為之拆封，不當然喪失法定解除權；若有超出必要檢查之使用或損壞，依法律規定處理。依法屬於例外之商品，須符合規定並於購買前明確告知，始得排除七日解除權。出清、特價或福利品不因其名稱而當然排除法定退貨權利。</p></section><section><h3>非瑕疵商品換貨</h3><p>因買錯款式、捲度、粗度、長度或其他個人因素申請換貨，請於收到商品後七天內聯繫客服。換貨商品應保持全新未使用及完整商品、配件與包裝。請自行將商品寄回並支付寄回運費，包裹內另附新臺幣100元，作為本公司重新寄出換貨商品之運費；此為自願性換貨服務規則，不適用依法行使七日解除權之退貨。</p></section><section><h3>瑕疵、短缺或寄錯商品</h3><p>若收到瑕疵、規格錯誤、數量短缺或寄錯商品，請聯繫客服並提供訂單資料及必要照片，以利確認；經確認屬本公司責任者，必要退換貨運費由本公司負擔，並依法處理。</p></section><section><h3>申請方式</h3><p>請先透過官方 LINE 或客服電話聯繫，提供訂單編號、商品名稱與申請需求；客服將說明寄回方式及後續流程。</p></section><section><h3>退換貨聯繫地址</h3><p>330 桃園市桃園區經國路859號9樓之1。寄回商品前請先聯繫客服確認退換貨方式。</p></section><section><h3>作業與退款</h3><p>一般退換貨處理時間預計約七至十個工作天，惟依法解除契約之退款及取回商品仍依相關法定期限辦理。刷卡退款原則上透過原交易管道處理，實際入帳依金流及發卡銀行作業時間而定。</p></section><section><h3>儲值金及付費會籍</h3><p>儲值金與付費會籍涉及不同交易性質，其取消、退款及剩餘權益，請先聯繫客服確認購買時條件，並依適用法律辦理。</p></section>", "<section><h3>客服申訴</h3><p>如對商品、付款、配送、退款、會員或其他交易事項有疑問或爭議，請先聯繫客服，並提供訂單編號、交易日期、問題說明及必要資料。</p></section><section><h3>申訴聯絡方式</h3><p>客服專線：0908-998-988；官方 LINE：@ebnb。服務時間：週一至週五 08:30～17:30。</p></section><section><h3>處理程序</h3><p>本公司收到申訴後將確認相關訂單與事實，於客服時間內儘速回覆，必要時與物流、金流或其他相關單位查核，並提出處理方式。</p></section><section><h3>消費者救濟</h3><p>消費者得依消費者保護法向企業經營者提出申訴；未獲妥適處理時，可向所在地消費者服務中心、消費者保護官或消費爭議調解委員會尋求協助。亦可撥打1950消費者服務專線諮詢。</p></section><section><h3>權利保障</h3><p>本公司將依中華民國相關法律及個案交易資料處理爭議；本政策不限制消費者依法享有的權利。</p></section>", "<section><h3>海外配送方式</h3><p>提供<a href=\"https://htm.sf-express.com/tw/tc/\" target=\"_blank\" rel=\"noopener noreferrer\">順豐速運官方網站 ↗</a>及<a href=\"https://www.post.gov.tw/post/internet/Postal/index.jsp?ID=2010201\" target=\"_blank\" rel=\"noopener noreferrer\">EMS 國際快捷官方網站 ↗</a>兩種國際物流服務。海外運費皆由買家負擔。</p></section><section><h3>香港地區配送</h3><p>香港地區採順豐速運寄出。商品訂單金額須於出貨前付清；國際運費採貨到付款，由收件人於收貨時支付。既有合作客戶如有個別付款約定，依雙方確認條件辦理。</p></section><section><h3>海外訂單付款方式</h3><p>海外訂單可使用以下付款方式，請於出貨前完成付款，既有合作客戶如有個別付款約定，依雙方確認條件辦理。</p><ul><li><strong>線上刷卡：</strong><a href=\"https://core.newebpay.com/EPG/job1588com/AD5uDQ\" target=\"_blank\" rel=\"noopener noreferrer\">點此前往線上刷卡付款 ↗</a>（請於產品單價欄填寫台幣金額）</li><li><strong>支付寶：</strong>帳號 diamondeyelash@yahoo.cn <button type='button' class='boss-copy-account' onclick='navigator.clipboard.writeText(&quot;diamondeyelash@yahoo.cn&quot;).then(()=>{this.textContent=&quot;已複製 ✓&quot;;}).catch(()=>{window.prompt(&quot;請手動複製帳號&quot;,&quot;diamondeyelash@yahoo.cn&quot;);})'>複製帳號</button></li><li><strong>PayPal：</strong>帳號 createbillion01@gmail.com <button type='button' class='boss-copy-account' onclick='navigator.clipboard.writeText(&quot;createbillion01@gmail.com&quot;).then(()=>{this.textContent=&quot;已複製 ✓&quot;;}).catch(()=>{window.prompt(&quot;請手動複製帳號&quot;,&quot;createbillion01@gmail.com&quot;);})'>複製帳號</button></li></ul><p>付款完成後請提供付款資訊供客服核對；海外運費另依配送方式計收。</p></section><section><h3>其他海外地區</h3><p>可先至順豐速運及 EMS 國際快捷官方網站參考目的地運費標準，再與客服確認配送方式。官網費率僅供參考，實際運費依包裹材積、重量、目的地及物流公司最終計價為準。</p></section><section><h3>海關及進口規定</h3><p>請買家於訂購前自行確認收件地區海關規定、商品進口限制及相關稅費。若因海關查驗、扣押、退運或禁止進口造成延誤或損失，睫老闆可協助提供必要證明文件；因買家未遵守當地進口規定而產生之費用或損失，原則上由買家負擔，依法應由賣方負責者除外。</p></section>", "<section><h3>優惠券種類及期限</h3><p>優惠券分為「購物金折抵券」及「免運券」。單筆訂單每種類型最多各使用一張，須於有效期限內使用；逾期未使用恕不補發，另有活動公告者除外。</p></section><section><h3>購物金折抵券</h3><p>購物金折抵券包含會員續約購物金及不定期活動購物金。會員續約購物金使用期限為一年，實際有效日期依券面顯示為準；活動購物金依各活動規定辦理。</p><p>購物金折抵券限單次使用，未折抵完的餘額不予保留。滿額贈資格以會員折扣後商品金額計算，不因購物金折抵而降低原有滿額贈資格；購物金折抵金額本身不列入滿額贈門檻。</p></section><section><h3>免運券</h3><p>僅在訂單原須收取運費時可使用，以常溫宅配 NT$100 為折抵基準。選擇指定黑貓或黑貓低溫配送，須自行補足超出 NT$100 的運費差額；若選擇較低運費配送方式，差額不退還，亦不可抵扣商品金額。</p></section><section><h3>使用資格</h3><p>優惠券須符合適用會員等級、使用期限及活動條件，實際可使用券別以結帳畫面為準。購物金折抵券與會員儲值金為不同項目。</p></section>", "<section><h3>滿額免運</h3><p>單筆訂單商品金額滿 <strong>NT$3,000（含）以上</strong>，享台灣本島、外島常溫宅配及 7-ELEVEN 店到店免運。指定黑貓及黑貓低溫配送如有額外運費差額，仍由買家負擔。</p></section><section><h3>未滿 NT$3,000 運費標準</h3><ul><li>常溫宅配：NT$100</li><li>7-ELEVEN 店到店（貨到付款）：NT$38</li><li>7-ELEVEN 店到店（儲值金／轉帳／線上刷卡）：NT$60</li><li>指定黑貓宅配：NT$160</li><li>黑貓低溫配送：依包裹大小計算</li><li>門市自取：免運費</li><li>海外配送（順豐／EMS）：依包裹材積、重量及目的地計算，運費由買家負擔</li></ul></section><section><h3>7-ELEVEN 店到店注意事項</h3><p><strong>7-ELEVEN 店到店貨到付款運費 NT$38；依 7-ELEVEN 賣貨便規定，商品金額加計運費後，訂單總金額須達 NT$58（含）以上，方可成立訂單。</strong></p><p>請於結帳時正確填寫取貨門市名稱或店號。</p></section><section><h3>其他配送注意事項</h3><p>門市自取請先確認取貨通知。黑貓低溫及海外運費可能依包裹實際條件調整；實際配送方式及運費以結帳確認資訊為準。海外配送請另參閱「海外地區配送」。</p></section>"];
+function bossOpenLegal(index){
+ if(!Number.isInteger(index)||index<0||index>=bossLegalTitles.length)return;
+ document.getElementById('boss-legal-title').textContent=bossLegalTitles[index];
+ document.getElementById('boss-legal-content').innerHTML=bossLegalHtml[index];
+ const overlay=document.getElementById('boss-legal-overlay');overlay.classList.add('open');
+ overlay.querySelector('.boss-legal-panel').scrollTop=0;
+ overlay.querySelector('.boss-legal-close').focus();
+}
+function bossCloseLegal(){document.getElementById('boss-legal-overlay').classList.remove('open');}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLegal();});
+</script>
+
+<script>
+/* 授權經銷商：台灣／香港切換、縣市篩選；沿用原有 dealer_list API */
+(function(){
+  const overlay=document.getElementById('boss-dealer-overlay');
+  const target=document.getElementById('boss-dealer-list');
+  const cityFilter=document.getElementById('boss-dealer-city-filter');
+  const cityWrap=document.getElementById('boss-dealer-city-wrap');
+  const regionButtons=Array.from(overlay.querySelectorAll('.boss-dealer-region-btn'));
+  let loaded=false, loading=false, region='tw', dealerData=[];
+  const api=GAS_API_URL+(GAS_API_URL.includes('?')?'&':'?')+'action=dealer_list';
+  const cityOrder=['基隆市','臺北市','新北市','桃園市','新竹市','新竹縣','苗栗縣','臺中市','彰化縣','南投縣','雲林縣','嘉義市','嘉義縣','臺南市','高雄市','屏東縣','宜蘭縣','花蓮縣','臺東縣','澎湖縣','金門縣','連江縣'];
+  const normalizeCity=value=>String(value||'').trim().replace(/^台/,'臺');
+  const cityRank=city=>{const i=cityOrder.indexOf(city);return i<0?999:i;};
+  const isHongKong=d=>/香港|hong\s*kong/i.test(String(d.city||'').trim());
+  function addLine(parent,value,prefix){
+    if(!value)return;
+    const div=document.createElement('div');
+    div.textContent=(prefix||'')+String(value);
+    parent.appendChild(div);
+  }
+  function render(){
+    target.replaceChildren();
+    cityWrap.hidden=region==='hk';
+    regionButtons.forEach(btn=>{
+      const active=btn.dataset.region===region;
+      btn.classList.toggle('active',active);
+      btn.setAttribute('aria-pressed',String(active));
+    });
+    const dealers=dealerData.filter(d=>region==='hk'?isHongKong(d):!isHongKong(d));
+    const groups=new Map();
+    dealers.forEach(d=>{
+      const city=region==='hk'?'香港':(normalizeCity(d.city)||'其他地區');
+      if(!groups.has(city))groups.set(city,[]);
+      groups.get(city).push(d);
+    });
+    const cities=[...groups.keys()].sort((a,b)=>cityRank(a)-cityRank(b)||a.localeCompare(b,'zh-TW'));
+    if(region==='tw'){
+      cityFilter.replaceChildren(new Option('全部縣市',''));
+      cities.forEach(city=>cityFilter.add(new Option(city,city)));
+      cityFilter.disabled=!cities.length;
+    }
+    if(!dealers.length){
+      const empty=document.createElement('p');
+      empty.className='boss-dealer-status';
+      empty.textContent=region==='hk'?'目前尚無公開的香港授權經銷商。':'目前尚無公開的台灣授權經銷商。';
+      target.appendChild(empty);
+      return;
+    }
+    cities.forEach(city=>{
+      const heading=document.createElement('h3');
+      heading.className='boss-dealer-city';heading.textContent=city;heading.dataset.city=city;
+      target.appendChild(heading);
+      groups.get(city).forEach(d=>{
+        const item=document.createElement('div');item.className='boss-dealer-entry';item.dataset.city=city;
+        const title=document.createElement('strong');title.textContent=String(d.name||'');item.appendChild(title);
+        addLine(item,d.address,'地址：');
+        addLine(item,d.phone,'電話：');
+        addLine(item,d.hours,'營業時間：');
+        if(d.address){
+          const link=document.createElement('a');
+          link.className='boss-map-link';
+          link.href='https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(String(d.address));
+          link.target='_blank';link.rel='noopener noreferrer';
+          link.textContent='↗ Google 地圖導航';
+          item.appendChild(link);
+        }
+        target.appendChild(item);
+      });
+    });
+  }
+  function loadDealers(){
+    if(loaded||loading)return;
+    loading=true;
+    target.textContent='經銷商資料載入中…';
+    fetch(api,{method:'GET',redirect:'follow'})
+      .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+      .then(data=>{
+        if(!data||data.success!==true||!Array.isArray(data.dealers))throw new Error('invalid dealer response');
+        dealerData=data.dealers;
+        loaded=true;
+        render();
+      })
+      .catch(err=>{
+        console.warn('授權經銷商載入失敗',err);
+        target.textContent='經銷商名單暫時無法載入，請關閉後重新開啟。';
+      })
+      .finally(()=>{loading=false;});
+  }
+  regionButtons.forEach(btn=>btn.addEventListener('click',()=>{
+    region=btn.dataset.region;
+    if(loaded)render();
+    else {
+      cityWrap.hidden=region==='hk';
+      regionButtons.forEach(b=>{
+        const active=b.dataset.region===region;
+        b.classList.toggle('active',active);
+        b.setAttribute('aria-pressed',String(active));
+      });
+    }
+    overlay.querySelector('.boss-dealer-panel').scrollTop=0;
+  }));
+  cityFilter.addEventListener('change',()=>{
+    const selected=cityFilter.value;
+    target.querySelectorAll('.boss-dealer-city,.boss-dealer-entry').forEach(el=>{
+      el.hidden=!!selected&&el.dataset.city!==selected;
+      el.style.display=el.hidden?'none':'';
+    });
+    overlay.querySelector('.boss-dealer-panel').scrollTop=0;
+  });
+  window.bossOpenDealers=function(){
+    overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');
+    document.body.dataset.bossDealerPreviousOverflow=document.body.style.overflow;
+    document.body.style.overflow='hidden';
+    loadDealers();
+  };
+  window.bossCloseDealers=function(){
+    overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');
+    document.body.style.overflow=document.body.dataset.bossDealerPreviousOverflow||'';
+  };
+  overlay.addEventListener('click',e=>{if(e.target===overlay)window.bossCloseDealers();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))window.bossCloseDealers();});
 })();
 </script>
 </body>
