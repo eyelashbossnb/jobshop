@@ -17295,7 +17295,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
 <script id="boss-sheet-carousel-script">
 (function(){
  // 只需設定一次：Google 試算表「發布到網路」的 CSV 網址，之後圖片由試算表管理。
- const SHEET_CSV_URL = '請貼上Google試算表發布CSV網址';
+ const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRYieJzb9rP_4YuWjNIc7idHiMY-nMGusaUpXGDKRf67TUK1kTz3yQeS38IowvFKndEuwLhIlx8RqiR/pub?gid=822030310&single=true&output=csv';
  const FALLBACK=[
   {id:'B001',title:'VIP好禮加碼贈',desktop:'https://i.ibb.co/0VGksSpn/VIP-2025.png',mobile:'',link:'',sort:1,start:'',end:'',enabled:'是'},
   {id:'B002',title:'Mild初學黑膠',desktop:'https://i.ibb.co/0R5N7ws8/image.png',mobile:'',link:'',sort:2,start:'',end:'',enabled:'是'}
@@ -17320,7 +17320,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
  function activeSlides(rows){
   const now=new Date();now.setHours(0,0,0,0);
   return rows.filter(r=>{
-   const yes=/^(是|yes|true|1|啟用)$/i.test(String(r.enabled).trim());
+   const yes=!String(r.enabled).trim()||/^(是|yes|true|1|啟用)$/i.test(String(r.enabled).trim());
    const start=parseDate(r.start),end=parseDate(r.end);
    return yes&&isValidUrl(r.desktop)&&( !start||now>=start )&&(!end||now<=end);
   }).sort((a,b)=>a.sort-b.sort);
