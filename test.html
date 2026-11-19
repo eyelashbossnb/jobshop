@@ -15069,6 +15069,8 @@ function toggleBossMobileCart(force){
     const popup=document.getElementById('boss-mobile-cart-popup');
     const trigger=document.getElementById('boss-mobile-cart-jump');
     if(!popup||!trigger)return;
+    // 彈窗脫離手機導覽容器，避免父層的定位、裁切或堆疊層級讓購物車無法顯示。
+    if(popup.parentElement!==document.body)document.body.appendChild(popup);
     const show=typeof force==='boolean'?force:popup.hidden;
     if(show){toggleMobileQuickNav(false);syncBossMobileCartPopup();}
     popup.hidden=!show;
@@ -16914,6 +16916,34 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
     z-index:1;
   }
 }
+</style>
+
+<!-- 手機版購物車顯示層修正：彈窗移至 body，避開導覽列層級與 overflow 裁切 -->
+<style id="boss-mobile-cart-body-layer-fix">
+@media(max-width:768px){
+  body > #boss-mobile-cart-popup:not([hidden]){
+    display:flex!important;flex-direction:column!important;
+    position:fixed!important;left:0!important;right:0!important;
+    top:calc(58px + env(safe-area-inset-top,0px))!important;
+    bottom:calc(68px + env(safe-area-inset-bottom,0px))!important;
+    width:100%!important;height:auto!important;max-height:none!important;
+    box-sizing:border-box!important;overflow:hidden!important;
+    margin:0!important;padding:0!important;
+    border-radius:14px!important;z-index:99990!important;
+    background:#fff!important;visibility:visible!important;opacity:1!important;
+  }
+  body > #boss-mobile-cart-popup[hidden]{display:none!important}
+  body > #boss-mobile-cart-popup .boss-mobile-cart-popup-head{flex:0 0 auto!important}
+  body > #boss-mobile-cart-popup .boss-mobile-cart-popup-items{
+    flex:1 1 auto!important;min-height:0!important;max-height:none!important;
+    overflow-y:auto!important;-webkit-overflow-scrolling:touch;
+  }
+  body > #boss-mobile-cart-popup .boss-mobile-cart-checkout{
+    flex:0 0 auto!important;width:calc(100% - 24px)!important;
+    margin:8px 12px 12px!important;position:relative!important;
+  }
+}
+@media(min-width:769px){body > #boss-mobile-cart-popup{display:none!important}}
 </style>
 </body>
 </html>
