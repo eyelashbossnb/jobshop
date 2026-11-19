@@ -17032,10 +17032,12 @@ body.boss-checkout-view #boss-checkout-page{display:block}
   const catalogBlock=catalog.parentElement;
   if(catalogBlock)catalogBlock.remove(); // VIP guide removed only from home, no other account features.
   home.insertBefore(grid,home.firstChild);grid.append(sidebar,body);
-  body.append(announce,banner);
+  // 首頁順序：最新消息 → 限時優惠活動 → 形象圖 → VIP／滿額贈／免運說明
+  body.append(announce);
+  if(promo)body.append(promo);
+  body.append(banner);
   const bossEvents=document.getElementById('boss-home-event-images');
   if(bossEvents)body.append(bossEvents);
-  if(promo)body.append(promo);
   body.append(productCard);
   productCard.id='boss-desktop-products-card';
   const productNav=document.createElement('div');productNav.id='boss-product-page-nav';
