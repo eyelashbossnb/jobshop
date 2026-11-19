@@ -17030,7 +17030,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
       productNav.querySelector('#boss-product-page-title').textContent=label||'全部商品';
       window.scrollTo({top:0,behavior:'instant'});
     }else{
-      window.bossShowProducts(b.textContent);
+      productCard.scrollIntoView({behavior:'smooth',block:'start'});
     }
   };
   const list=sidebar.querySelector('.boss-side-categories');
@@ -17043,7 +17043,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
      list.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
      b.classList.add('active');
      if(typeof window.filterProducts==='function')window.filterProducts();
-     productCard.scrollIntoView({behavior:'smooth',block:'start'});
+     window.bossShowProducts(b.textContent);
    });
    list.append(b);
   });
@@ -17060,7 +17060,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
   };
   // Preserve the old names used by existing buttons, but route them to checkout view.
   window.scrollToOrderForm=function(){window.bossShowCheckout();setTimeout(()=>form.scrollIntoView({behavior:'smooth',block:'start'}),60)};
-  window.goToMobileCart=function(){window.bossShowCheckout()};
+  window.goToMobileCart=function(){if(window.matchMedia('(max-width:768px)').matches){document.getElementById('cart-items-container')?.scrollIntoView({behavior:'smooth'});}else window.bossShowCheckout()};
   window.bossMobileCartCheckoutJump=function(){window.bossShowCheckout()};
   // Other existing "checkout" buttons may use in-page anchors.
   document.addEventListener('click',function(e){
@@ -17074,6 +17074,19 @@ body.boss-checkout-view #boss-checkout-page{display:block}
   // The checkout button inside the desktop cart card now goes directly to the form.
   const desktopCheckout=cart.querySelector('.cart-checkout-btn');
   if(desktopCheckout)desktopCheckout.onclick=()=>window.scrollToOrderForm();
+
+  const mobileRestore=()=>{
+    if(!window.matchMedia('(max-width:768px)').matches)return;
+    document.body.classList.remove('boss-products-view','boss-checkout-view');
+    if(announce.parentElement===body)home.insertBefore(announce,grid);
+    if(banner.parentElement===body)home.insertBefore(banner,grid);
+    if(promo&&promo.parentElement===body)home.insertBefore(promo,grid);
+    if(productCard.parentElement===body)home.append(productCard);
+    if(cart.parentElement===cols)main.append(cart);
+    if(form.parentElement===cols)main.append(form);
+    grid.style.display='none';
+  };
+  mobileRestore();
   // Original mobile checkout button is moved by the existing script; no duplicate submit button.
   if(location.hash==='#checkout')window.bossShowCheckout();
  }
@@ -17087,7 +17100,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
  .boss-desktop-cart-wrap{position:relative;display:flex;align-items:center;z-index:1000}
  .boss-desktop-cart-trigger{display:flex;align-items:center;gap:7px;white-space:nowrap;border:1px solid #e6d3cb;background:#fff;border-radius:22px;padding:9px 13px;color:#795e55;font-size:13px;cursor:pointer}
  .boss-desktop-cart-trigger:hover,.boss-desktop-cart-wrap:focus-within .boss-desktop-cart-trigger{background:#fff7f4}
- .boss-desktop-cart-preview{display:none;position:absolute;top:100%;right:0;width:345px;max-width:calc(100vw - 28px);background:#fff;border:1px solid #e8d9d3;box-shadow:0 8px 24px #0002;border-radius:12px;padding:16px;box-sizing:border-box;z-index:1001}
+ .boss-desktop-cart-preview{display:none;position:absolute;top:100%;right:0;width:460px;max-width:calc(100vw - 28px);background:#fff;border:1px solid #e8d9d3;box-shadow:0 8px 24px #0002;border-radius:12px;padding:16px;box-sizing:border-box;z-index:1001}
  .boss-desktop-cart-wrap:hover .boss-desktop-cart-preview,.boss-desktop-cart-wrap:focus-within .boss-desktop-cart-preview{display:block}
  .boss-desktop-cart-preview h3{margin:0 0 12px;font-size:15px}
  .boss-desktop-cart-preview .boss-preview-items{max-height:250px;overflow:auto;font-size:13px}
@@ -17104,7 +17117,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
   if(!nav||document.getElementById('boss-desktop-cart-trigger'))return;
   const wrap=document.createElement('div');
   wrap.className='boss-desktop-cart-wrap';
-  wrap.innerHTML='<button type="button" class="boss-desktop-cart-trigger" id="boss-desktop-cart-trigger" aria-label="購物車，前往結帳">🛒 購物車 <span id="boss-desktop-cart-count">0</span></button><div class="boss-desktop-cart-preview"><h3>🛒 購物車預覽</h3><div class="boss-preview-items">購物車目前是空的</div><button type="button" class="boss-preview-checkout">前往結帳 ❯</button></div>';
+  wrap.innerHTML='<button type="button" class="boss-desktop-cart-trigger" id="boss-desktop-cart-trigger" aria-label="購物車，前往結帳">🛒 購物車 <span id="boss-desktop-cart-count">0</span></button><div class="boss-desktop-cart-preview"><div class="boss-preview-items">購物車目前是空的</div><button type="button" class="boss-preview-checkout">前往結帳 ❯</button></div>';
   const orderButton=nav.querySelector('button[onclick*="toggleOrderModal"]');
   if(orderButton)nav.insertBefore(wrap,orderButton);else nav.append(wrap);
   function refresh(){
@@ -17118,7 +17131,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
     ids.forEach(id=>{
       const p=productConfig[id];if(!p)return;
       const row=document.createElement('div');row.className='boss-preview-item';
-      const name=document.createElement('span');name.textContent=p.name||id;
+      const name=document.createElement('span');name.textContent=(p.name||id).replace(/\\s+/g,' ').trim();
       const qty=document.createElement('span');qty.textContent='× '+cart[id];
       row.append(name,qty);items.append(row);
     });
@@ -17192,5 +17205,12 @@ body.boss-checkout-view #boss-checkout-page{display:block}
  else setTimeout(setup,100);
 })();
 </script>
+<style id="boss-desktop-preview-polish">
+@media(min-width:769px){
+.boss-desktop-cart-preview .boss-preview-item{align-items:flex-start}
+.boss-desktop-cart-preview .boss-preview-item span:first-child{flex:1;min-width:0;overflow-wrap:anywhere;line-height:1.65}
+.boss-desktop-cart-preview .boss-preview-item span:last-child{flex:none}
+}
+</style>
 </body>
 </html>
