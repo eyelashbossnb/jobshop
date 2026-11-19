@@ -6,7 +6,7 @@
     <title>睫老闆官方網站｜專業美睫材料・熱蠟・紋繡用品</title>
     <!-- SEO：搜尋引擎與社群分享資訊 -->
     <meta name="description" content="睫老闆美妝百貨提供專業美睫黑膠、嫁接睫毛、美睫耗材、熱蠟除毛、紋繡材料及美容保養用品，滿足美睫師、美容師與美業店家的採購需求。">
-   <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="noindex, nofollow">
     <link rel="canonical" href="https://eyelashbossnb.github.io/jobshop/">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="zh_TW">
@@ -16673,7 +16673,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
  .boss-mobile-header-btn{position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;min-width:43px;min-height:43px;padding:3px;border:0;background:transparent;color:var(--text-main);font-size:10px;cursor:pointer}
  .boss-mobile-header-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
  #boss-mobile-header-cart-count{position:absolute;top:0;right:0;min-width:16px;height:16px;border-radius:10px;background:var(--accent-color);color:white;font-size:10px;line-height:16px;text-align:center;padding:0 2px}
- .boss-mobile-search-row{display:block;padding:10px 14px;background:var(--bg-color)}
+ .boss-mobile-search-row{display:block;padding:10px 14px 0;background:var(--bg-color)}
  .boss-mobile-search-row .search-bar{display:block;width:100%!important;box-sizing:border-box;height:44px;font-size:14px}
  #boss-announcement-bar.boss-mobile-announcement{margin:0!important;border-radius:0!important;border-left:0;border-right:0;padding:11px 14px!important}
  #mobile-quick-nav{display:block!important;position:static!important;width:auto!important;max-width:none!important;right:auto!important;bottom:auto!important}
@@ -16700,6 +16700,12 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
  .main-container>div:first-child>div:first-child:has(a[href*="heyzine.com/flip-book/a792795585.html"]){display:none!important}
  .main-container .mobile-cart-card{scroll-margin-top:76px!important}
  .category-container{display:none!important}
+ /* 搜尋框位於活動區下方、精選商品上方；分類選擇後直接顯示商品 */
+ #product-search-input{display:block!important;width:calc(100% - 28px)!important;margin:8px 14px 18px!important;height:46px!important;box-sizing:border-box!important}
+ body.boss-mobile-category-view #banner-image-block,
+ body.boss-mobile-category-view #boss-promo-test{display:none!important}
+ body.boss-mobile-category-view .main-container>div:first-child>div:first-child:not(.card):not(#boss-announcement-bar){margin-bottom:0}
+ #order-modal-overlay .modal-close{z-index:5;min-width:42px;min-height:42px;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
  #mobile-floating-checkout,#boss-mobile-cart-jump{display:none!important}
 }
 </style>
@@ -16725,20 +16731,23 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
   const searchAnchor=document.createComment('original mobile search'),announceAnchor=document.createComment('original announcement'),navAnchor=document.createComment('original mobile nav');
   search.before(searchAnchor);announce.before(announceAnchor);nav.before(navAnchor);
   function relocate(){
-   if(mobile()){row.append(announce,search);announce.classList.add('boss-mobile-announcement');header.append(nav);}
-   else{searchAnchor.after(search);announceAnchor.after(announce);announce.classList.remove('boss-mobile-announcement');navAnchor.after(nav);closeDrawer();}
+   if(mobile()){row.append(announce);announce.classList.add('boss-mobile-announcement');const promo=document.getElementById('boss-promo-test');if(promo)promo.after(search);else row.after(search);header.append(nav);}
+   else{searchAnchor.after(search);announceAnchor.after(announce);document.body.classList.remove('boss-mobile-category-view');announce.classList.remove('boss-mobile-announcement');navAnchor.after(nav);closeDrawer();}
   }
   window.openBossMobileDrawer=openDrawer;
   function openDrawer(type){if(!mobile())return;toggleBossMobileCart(false);const content=drawer.querySelector('#boss-mobile-drawer-content');drawer.querySelector('#boss-mobile-drawer-title').textContent=type==='member'?'會員中心':'商品分類';content.replaceChildren();if(type==='member'){
     content.append(tools);tools.style.display='flex';
   }else{
     const catalog=document.createElement('a');catalog.className='boss-mobile-drawer-category boss-mobile-catalog-link';catalog.href='https://heyzine.com/flip-book/a792795585.html';catalog.target='_blank';catalog.rel='noopener noreferrer';catalog.textContent='睫老闆商品型錄 ↗';catalog.addEventListener('click',closeDrawer);content.append(catalog);
-    document.querySelectorAll('.category-container .category-tab').forEach(original=>{const btn=document.createElement('button');btn.className='boss-mobile-drawer-category';btn.textContent=original.textContent;btn.onclick=()=>{original.click();closeDrawer();document.querySelector('.card:has(.category-container)')?.scrollIntoView({behavior:'smooth',block:'start'});};content.append(btn);});
+    document.querySelectorAll('.category-container .category-tab').forEach(original=>{const btn=document.createElement('button');btn.className='boss-mobile-drawer-category';btn.textContent=original.textContent;btn.onclick=()=>{original.click();closeDrawer();document.body.classList.add('boss-mobile-category-view');const target=document.querySelector('.category-container')?.closest('.card');if(target)requestAnimationFrame(()=>{const top=target.getBoundingClientRect().top+window.scrollY-72;window.scrollTo({top:Math.max(0,top),behavior:'smooth'});});};content.append(btn);});
 
   }drawer.classList.add('is-open');backdrop.classList.add('is-open');}
   function closeDrawer(){drawer.classList.remove('is-open');backdrop.classList.remove('is-open');if(tools.parentElement!==header){header.append(tools);tools.style.display='';}}
   // 會員選單按下任何原有功能後，先關閉抽屜，再讓原按鈕照常執行。
   drawer.addEventListener('click',e=>{const button=e.target.closest('#boss-mobile-drawer-content .nav-btn, #boss-mobile-drawer-content .logout-link, #boss-mobile-drawer-content .balance-clickable');if(button)closeDrawer();});
+  // 訂單查詢視窗的 X：明確關閉，不依賴其他側欄事件。
+  const orderClose=document.querySelector('#order-modal-overlay .modal-close');
+  if(orderClose){orderClose.type='button';orderClose.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();toggleOrderModal(false);},true);}
   window.closeBossMobileDrawer=closeDrawer;
   relocate();window.addEventListener('resize',relocate);
   const original=document.getElementById('mobile-cart-count');const badge=document.getElementById('boss-mobile-header-cart-count');
