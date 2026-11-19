@@ -17324,5 +17324,45 @@ body.boss-products-view #boss-home-event-images,
 body.boss-checkout-view #boss-home-event-images{display:none!important}
 </style>
 
+
+<!-- 2026-11-19 手機首頁版面微調：僅 CSS，不變更分類、結帳或電腦版 -->
+<style id="boss-mobile-home-layout-only-20261119">
+@media (max-width:768px) {
+  /* 最新消息：恢復正式版卡片式尺寸，避免之前的貼邊、無間距覆寫 */
+  #boss-announcement-bar,
+  #boss-announcement-bar.boss-mobile-announcement {
+    width:calc(100% - 24px)!important;
+    max-width:calc(100% - 24px)!important;
+    min-height:44px!important;
+    margin:12px auto 16px!important;
+    padding:10px 12px!important;
+    border:1px solid var(--border-color)!important;
+    border-radius:12px!important;
+    box-sizing:border-box!important;
+    gap:8px!important;
+    font-size:12px!important;
+    line-height:1.5!important;
+  }
+  /* 活動說明圖片：VIP、滿額贈、免運各自獨立，圖片間留白 */
+  #boss-home-event-images {
+    display:flex!important;
+    flex-direction:column!important;
+    gap:18px!important;
+    margin:18px 0 24px!important;
+  }
+  #boss-home-event-images > .boss-home-event-card {
+    display:block!important;
+    width:100%!important;
+    margin:0!important;
+    padding:0!important;
+  }
+  #boss-home-event-images > .boss-home-event-card > img {
+    display:block!important;
+    width:100%!important;
+    height:auto!important;
+  }
+}
+</style>
+
 </body>
 </html>
