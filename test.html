@@ -17270,63 +17270,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
 }
 </style>
 
-<style id="boss-banner-carousel-v1-css">
-#banner-image-block .boss-banner-carousel{position:relative;width:100%;overflow:hidden;border-radius:12px;background:transparent;aspect-ratio:1.56/1}
-#banner-image-block .boss-banner-track{display:flex;width:100%;height:100%;transition:transform .55s ease;will-change:transform}
-#banner-image-block .boss-banner-slide{flex:0 0 100%;height:100%;display:flex;align-items:center;justify-content:center;min-width:0}
-#banner-image-block .boss-banner-slide img{display:block;width:100%;height:100%;object-fit:fill}
-#banner-image-block .boss-banner-arrow{display:none!important;position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;border-radius:50%;background:rgba(255,255,255,.9);box-shadow:0 2px 8px #0002;cursor:pointer;color:#65564d;font-size:24px;z-index:2}
-#banner-image-block .boss-banner-arrow.prev{left:9px}
-#banner-image-block .boss-banner-arrow.next{right:9px}
-#banner-image-block .boss-banner-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;gap:8px;justify-content:center;z-index:2}
-#banner-image-block .boss-banner-dot{width:9px;height:9px;border-radius:50%;padding:0;border:1px solid #fff;background:#ffffff99;cursor:pointer}
-#banner-image-block .boss-banner-dot.active{background:#ad8274;border-color:#ad8274}
-@media(max-width:768px){
- #banner-image-block .boss-banner-carousel{aspect-ratio:1.56/1}
- #banner-image-block .boss-banner-arrow{width:29px;height:29px;font-size:19px}
-}
-@media(prefers-reduced-motion:reduce){#banner-image-block .boss-banner-track{transition:none}}
-</style>
-<script id="boss-banner-carousel-v1-script">
-(function(){
- const slides=[
-  {src:'https://i.ibb.co/0VGksSpn/VIP-2025.png',alt:'睫老闆 VIP 好禮加碼贈',url:'https://ibb.co/sJVhWGpg'},
-  {src:'https://i.ibb.co/0R5N7ws8/image.png',alt:'睫老闆 Mild 初學黑膠',url:'https://ibb.co/S4STjLfW'}
- ];
- function init(){
-  const host=document.getElementById('banner-image-block');
-  if(!host||host.dataset.bossCarouselReady)return;
-  host.dataset.bossCarouselReady='1';
-  host.replaceChildren();
-  const shell=document.createElement('div');shell.className='boss-banner-carousel';shell.setAttribute('aria-label','首頁活動輪播圖');
-  const track=document.createElement('div');track.className='boss-banner-track';
-  const dots=document.createElement('div');dots.className='boss-banner-dots';
-  const prev=document.createElement('button');prev.type='button';prev.className='boss-banner-arrow prev';prev.textContent='‹';prev.setAttribute('aria-label','上一張');
-  const next=document.createElement('button');next.type='button';next.className='boss-banner-arrow next';next.textContent='›';next.setAttribute('aria-label','下一張');
-  slides.forEach((slide,i)=>{
-   const a=document.createElement('a');a.className='boss-banner-slide';a.href=slide.url;a.target='_blank';a.rel='noopener noreferrer';a.setAttribute('aria-label',slide.alt);
-   const img=document.createElement('img');img.src=slide.src;img.alt=slide.alt;img.loading=i===0?'eager':'lazy';
-   a.append(img);track.append(a);img.addEventListener('load',()=>{if(current===i&&img.naturalWidth&&img.naturalHeight)shell.style.aspectRatio=img.naturalWidth+' / '+img.naturalHeight});
-   const dot=document.createElement('button');dot.type='button';dot.className='boss-banner-dot';dot.setAttribute('aria-label','第'+(i+1)+'張');dot.addEventListener('click',()=>go(i));dots.append(dot);
-  });
-  shell.append(track,dots);host.append(shell);
-  let current=0,interval;
-  function go(n){current=(n+slides.length)%slides.length;const activeImg=track.children[current]?.querySelector('img');if(activeImg?.naturalWidth&&activeImg?.naturalHeight)shell.style.aspectRatio=activeImg.naturalWidth+' / '+activeImg.naturalHeight;track.style.transform='translateX(-'+current*100+'%)';dots.querySelectorAll('button').forEach((d,i)=>{d.classList.toggle('active',i===current);d.setAttribute('aria-current',i===current?'true':'false')})}
-  function stop(){if(interval){clearInterval(interval);interval=null}}
-  function start(){stop();if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)interval=setInterval(()=>go(current+1),5000)}
-  
-  
-  shell.addEventListener('mouseenter',stop);shell.addEventListener('mouseleave',start);
-  shell.addEventListener('focusin',stop);shell.addEventListener('focusout',e=>{if(!shell.contains(e.relatedTarget))start()});
-  document.addEventListener('visibilitychange',()=>document.hidden?stop():start());
-  let x=null;
-  shell.addEventListener('touchstart',e=>{x=e.touches[0]?.clientX??null},{passive:true});
-  shell.addEventListener('touchend',e=>{if(x===null)return;const diff=(e.changedTouches[0]?.clientX??x)-x;if(Math.abs(diff)>45){go(current+(diff<0?1:-1));start()}x=null},{passive:true});
-  go(0);start();
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
-})();
-</script>
+
 
 <style id="boss-side-catalog-thumbnail-css">
 @media(min-width:769px){
@@ -17338,5 +17282,87 @@ body.boss-checkout-view #boss-checkout-page{display:block}
  #boss-desktop-side .boss-side-catalog-arrow{font-size:14px;flex-shrink:0;color:#b38475}
 }
 </style>
+<style id="boss-sheet-carousel-css">
+#banner-image-block .boss-sheet-carousel{position:relative;width:100%;overflow:hidden;background:#fff;border-radius:12px}
+#banner-image-block .boss-sheet-track{display:flex;transition:transform .55s ease;align-items:stretch}
+#banner-image-block .boss-sheet-slide{flex:0 0 100%;min-width:0;display:block;text-decoration:none}
+#banner-image-block .boss-sheet-slide img{width:100%;height:auto;display:block;object-fit:contain}
+#banner-image-block .boss-sheet-dots{display:flex;justify-content:center;gap:8px;padding:8px 0;background:#fff}
+#banner-image-block .boss-sheet-dot{border:0;border-radius:50%;background:#d6c5bd;width:9px;height:9px;padding:0;cursor:pointer}
+#banner-image-block .boss-sheet-dot.active{background:#9b6e60}
+@media(prefers-reduced-motion:reduce){#banner-image-block .boss-sheet-track{transition:none}}
+</style>
+<script id="boss-sheet-carousel-script">
+(function(){
+ // 只需設定一次：Google 試算表「發布到網路」的 CSV 網址，之後圖片由試算表管理。
+ const SHEET_CSV_URL = '請貼上Google試算表發布CSV網址';
+ const FALLBACK=[
+  {id:'B001',title:'VIP好禮加碼贈',desktop:'https://i.ibb.co/0VGksSpn/VIP-2025.png',mobile:'',link:'',sort:1,start:'',end:'',enabled:'是'},
+  {id:'B002',title:'Mild初學黑膠',desktop:'https://i.ibb.co/0R5N7ws8/image.png',mobile:'',link:'',sort:2,start:'',end:'',enabled:'是'}
+ ];
+ function parseCSV(input){
+  const rows=[];let row=[],cell='',quoted=false;
+  for(let i=0;i<input.length;i++){
+   const c=input[i];
+   if(c==='"'){if(quoted&&input[i+1]==='"'){cell+='"';i++}else quoted=!quoted}
+   else if(c===','&&!quoted){row.push(cell);cell=''}
+   else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&input[i+1]==='\n')i++;row.push(cell);if(row.some(x=>x.trim()))rows.push(row);row=[];cell=''}
+   else cell+=c;
+  }
+  row.push(cell);if(row.some(x=>x.trim()))rows.push(row);return rows;
+ }
+ function parseDate(v){if(!v)return null;const m=String(v).trim().match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);return m?new Date(+m[1],+m[2]-1,+m[3]):null}
+ function isValidUrl(s){try{const u=new URL(s);return u.protocol==='https:'||u.protocol==='http:'}catch(e){return false}}
+ function rowsToSlides(csv){
+  const rows=parseCSV(csv.replace(/^\uFEFF/,''));
+  return rows.slice(1).map(r=>({id:r[0]||'',title:r[1]||'',desktop:r[2]||'',mobile:r[3]||'',link:r[4]||'',sort:Number(r[5])||9999,start:r[6]||'',end:r[7]||'',enabled:r[8]||''}));
+ }
+ function activeSlides(rows){
+  const now=new Date();now.setHours(0,0,0,0);
+  return rows.filter(r=>{
+   const yes=/^(是|yes|true|1|啟用)$/i.test(String(r.enabled).trim());
+   const start=parseDate(r.start),end=parseDate(r.end);
+   return yes&&isValidUrl(r.desktop)&&( !start||now>=start )&&(!end||now<=end);
+  }).sort((a,b)=>a.sort-b.sort);
+ }
+ function init(){
+  const host=document.getElementById('banner-image-block');if(!host)return;
+  let current=0,timer=null,slides=[];
+  host.replaceChildren();
+  const shell=document.createElement('div');shell.className='boss-sheet-carousel';
+  const track=document.createElement('div');track.className='boss-sheet-track';
+  const dots=document.createElement('div');dots.className='boss-sheet-dots';
+  shell.append(track,dots);host.append(shell);
+  function stop(){if(timer){clearInterval(timer);timer=null}}
+  function go(i){if(!slides.length)return;current=(i+slides.length)%slides.length;track.style.transform='translateX(-'+(current*100)+'%)';[...dots.children].forEach((b,j)=>b.classList.toggle('active',j===current));}
+  function start(){stop();if(slides.length>1&&!document.hidden)timer=setInterval(()=>go(current+1),5000)}
+  function render(data){
+   stop();slides=activeSlides(data);track.replaceChildren();dots.replaceChildren();current=0;
+   slides.forEach((s,i)=>{
+    const a=document.createElement('a');a.className='boss-sheet-slide';
+    if(isValidUrl(s.link)){a.href=s.link;a.target='_blank';a.rel='noopener noreferrer'}else{a.removeAttribute('href')}
+    const pic=document.createElement('picture');
+    if(isValidUrl(s.mobile)){const source=document.createElement('source');source.media='(max-width: 768px)';source.srcset=s.mobile;pic.append(source)}
+    const img=document.createElement('img');img.src=s.desktop;img.alt=s.title||'活動輪播圖';img.loading=i?'lazy':'eager';img.decoding='async';pic.append(img);a.append(pic);track.append(a);
+    const dot=document.createElement('button');dot.type='button';dot.className='boss-sheet-dot';dot.setAttribute('aria-label','切換至第'+(i+1)+'張');dot.addEventListener('click',()=>{go(i);start()});dots.append(dot);
+   });
+   dots.style.display=slides.length>1?'flex':'none';go(0);start();
+  }
+  shell.addEventListener('mouseenter',stop);shell.addEventListener('mouseleave',start);
+  shell.addEventListener('focusin',stop);shell.addEventListener('focusout',e=>{if(!shell.contains(e.relatedTarget))start()});
+  document.addEventListener('visibilitychange',()=>document.hidden?stop():start());
+  let touchX=null;shell.addEventListener('touchstart',e=>{touchX=e.touches[0]?.clientX??null},{passive:true});
+  shell.addEventListener('touchend',e=>{if(touchX===null)return;const diff=(e.changedTouches[0]?.clientX??touchX)-touchX;if(Math.abs(diff)>40){go(current+(diff<0?1:-1));start()}touchX=null},{passive:true});
+  render(FALLBACK);
+  if(/^https:\/\//.test(SHEET_CSV_URL)){
+   fetch(SHEET_CSV_URL,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('CSV HTTP '+r.status);return r.text()}).then(csv=>{
+    const data=rowsToSlides(csv);if(data.length)render(data);
+    else console.warn('輪播圖試算表沒有資料，暫時顯示預設圖片');
+   }).catch(err=>console.warn('輪播圖試算表讀取失敗，暫時顯示預設圖片',err));
+  }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
 </body>
 </html>
