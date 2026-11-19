@@ -17334,28 +17334,6 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
 </style>
 
 
-<style id="boss-mobile-three-pages-20261119">
-@media(max-width:768px){
- /* Three distinct screens without changing checkout IDs or handlers */
- body:not(.boss-products-view):not(.boss-checkout-view) #boss-desktop-products-card{display:none!important}
- body.boss-products-view .main-container{display:block!important}
- body.boss-products-view .main-container>div:first-child{display:block!important}
- body.boss-products-view .main-container>div:first-child>*:not(#boss-desktop-products-card){display:none!important}
- body.boss-products-view #boss-desktop-products-card{display:block!important;margin:12px!important}
- body.boss-products-view #boss-product-page-nav{display:flex!important;align-items:center;gap:12px;margin:0 0 16px;padding:0 0 14px;border-bottom:1px solid #eee}
- body.boss-products-view #boss-product-page-title{font-size:17px}
- body.boss-products-view #boss-product-return-home{font-size:13px;white-space:nowrap}
- body.boss-products-view #boss-mobile-drawer,body.boss-products-view .boss-mobile-drawer-backdrop{z-index:9999}
- body.boss-checkout-view #boss-checkout-page{display:block!important}
- body.boss-checkout-view #boss-checkout-page .boss-checkout-columns{display:flex!important;flex-direction:column!important}
- body.boss-checkout-view #boss-checkout-page .mobile-cart-card,
- body.boss-checkout-view #boss-checkout-page .mobile-order-form-card{display:block!important;position:static!important;width:100%!important}
- body.boss-checkout-view #boss-checkout-page .boss-checkout-heading{display:flex!important}
- body.boss-checkout-view #boss-checkout-page .boss-checkout-submit-panel{display:block!important}
- body.boss-products-view #boss-mobile-bottom-bar{display:flex}
-}
-</style>
-
 <style id="boss-mobile-home-visibility-repair-20261119">
 /* 僅修復手機版：電腦版 CSS、分類及購物流程不變。 */
 @media(max-width:768px){
@@ -17407,5 +17385,46 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
   }
 }
 </style>
+<style id="boss-mobile-three-page-layout-corrected-20261119">
+@media screen and (max-width:768px){
+ html,body{width:100%!important;max-width:100%!important;overflow-x:clip!important}
+ main.main-container{display:block!important;width:100%!important;max-width:100%!important;margin:0!important;padding:0 12px 72px!important;box-sizing:border-box!important;min-width:0!important}
+ main.main-container>div:first-child{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:0!important;box-sizing:border-box!important}
+ #boss-desktop-home-grid{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+ #boss-desktop-home-grid .boss-home-main{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+ #boss-desktop-side{display:none!important}
+ #boss-desktop-home-grid #banner-image-block,#boss-desktop-home-grid #boss-home-event-images{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+ #boss-desktop-home-grid #banner-image-block img,#boss-desktop-home-grid #boss-home-event-images img{max-width:100%!important;height:auto!important;display:block!important}
+ #boss-desktop-home-grid #boss-promo-test{width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+ #boss-announcement-bar{max-width:100%!important;box-sizing:border-box!important}
+ body:not(.boss-products-view):not(.boss-checkout-view) #boss-desktop-products-card{display:none!important}
+ body.boss-products-view #boss-desktop-home-grid #boss-announcement-bar,
+ body.boss-products-view #boss-desktop-home-grid #boss-promo-test,
+ body.boss-products-view #boss-desktop-home-grid #banner-image-block,
+ body.boss-products-view #boss-desktop-home-grid #boss-home-event-images{display:none!important}
+ body.boss-products-view #boss-desktop-products-card{display:block!important;visibility:visible!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:12px 0!important;box-sizing:border-box!important}
+ body.boss-products-view #boss-product-page-nav{display:flex!important;align-items:center!important;gap:12px!important;margin-bottom:14px!important}
+ body.boss-products-view #main-product-grid{display:grid!important;visibility:visible!important;max-width:100%!important;min-width:0!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body.boss-products-view #boss-desktop-products-card #product-search-input{display:block!important;width:100%!important;box-sizing:border-box!important}
+ body.boss-checkout-view main.main-container{display:none!important}
+ body.boss-checkout-view #boss-checkout-page{display:block!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+ body.boss-checkout-view #boss-checkout-page .boss-checkout-columns{display:flex!important;flex-direction:column!important}
+ body.boss-checkout-view #boss-checkout-page .mobile-cart-card,body.boss-checkout-view #boss-checkout-page .mobile-order-form-card{display:block!important;position:static!important;width:100%!important;max-width:100%!important}
+}
+</style>
+<script id="boss-mobile-category-navigation-repair-20261119">
+(function(){
+ document.addEventListener('click',function(event){
+   if(!window.matchMedia('(max-width:768px)').matches)return;
+   const item=event.target.closest('#boss-mobile-drawer-content .boss-mobile-drawer-category');
+   if(!item || item.matches('a') || item.classList.contains('boss-mobile-catalog-link'))return;
+   // Existing menu handler performs category filtering; ensure the independent product view opens.
+   setTimeout(function(){
+     if(typeof window.bossShowProducts==='function' && !document.body.classList.contains('boss-products-view'))
+       window.bossShowProducts(item.textContent.trim());
+   },0);
+ },false);
+})();
+</script>
 </body>
 </html>
