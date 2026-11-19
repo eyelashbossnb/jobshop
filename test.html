@@ -16791,11 +16791,20 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
    top();
  });
  document.getElementById('boss-shortcut-search').addEventListener('click',()=>{
-   document.body.classList.remove('boss-mobile-category-view');
    const search=document.getElementById('product-search-input');
    if(!search)return;
-   search.scrollIntoView({behavior:'smooth',block:'center'});
-   setTimeout(()=>{try{search.focus({preventScroll:true})}catch(e){search.focus()}},350);
+   // Restore the normal search layout before measuring its position.
+   document.body.classList.remove('boss-mobile-category-view');
+   if(typeof window.closeBossMobileDrawer==='function')window.closeBossMobileDrawer();
+   const moveToSearch=()=>{
+     const header=document.querySelector('header');
+     const fixedHeaderHeight=header && getComputedStyle(header).position==='fixed' ? header.getBoundingClientRect().height : (header && getComputedStyle(header).position==='sticky' ? header.getBoundingClientRect().height : 0);
+     const top=search.getBoundingClientRect().top+window.scrollY-fixedHeaderHeight-16;
+     window.scrollTo({top:Math.max(0,top),behavior:'auto'});
+     try{search.focus({preventScroll:true})}catch(e){search.focus()}
+   };
+   // Wait until the page has finished switching from category view.
+   requestAnimationFrame(()=>requestAnimationFrame(moveToSearch));
  });
 })();
 </script>
