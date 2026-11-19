@@ -11554,7 +11554,41 @@ function bossDownloadOrderPdf(index) {
         popup.document.write('<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>' +
           '睫老闆_訂單明細_' + bossPdfSafeName(order.id) +
           '</title><style>' + styles + '</style></head><body><main class="boss-pdf-page">' +
-          content + '</main></body></html>');
+          content + '</main>
+<!-- 手機購物車：保留底部三功能列空間，避免遮擋前往結帳 -->
+<style id="boss-mobile-cart-checkout-visibility-fix">
+@media (max-width:768px){
+  #mobile-quick-nav #boss-mobile-cart-popup:not([hidden]){
+    top:5vh!important;
+    top:5dvh!important;
+    bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
+    height:auto!important;
+    max-height:none!important;
+    display:flex!important;
+    flex-direction:column!important;
+    overflow:hidden!important;
+    padding-bottom:0!important;
+  }
+  #mobile-quick-nav #boss-mobile-cart-popup .boss-mobile-cart-popup-head{
+    flex:0 0 auto!important;
+  }
+  #mobile-quick-nav #boss-mobile-cart-popup .boss-mobile-cart-popup-items{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch;
+  }
+  #mobile-quick-nav #boss-mobile-cart-popup .boss-mobile-cart-checkout{
+    flex:0 0 auto!important;
+    width:calc(100% - 24px)!important;
+    margin:8px 12px 12px!important;
+    position:relative;
+    z-index:1;
+  }
+}
+</style>
+</body></html>');
         popup.document.close();
         popup.focus();
         // 讓列印頁完成排版與中文字型載入後再開啟列印視窗。
@@ -16739,7 +16773,29 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
     content.append(tools);tools.style.display='flex';
   }else{
     const catalog=document.createElement('a');catalog.className='boss-mobile-drawer-category boss-mobile-catalog-link';catalog.href='https://heyzine.com/flip-book/a792795585.html';catalog.target='_blank';catalog.rel='noopener noreferrer';catalog.textContent='睫老闆商品型錄 ↗';catalog.addEventListener('click',closeDrawer);content.append(catalog);
-    document.querySelectorAll('.category-container .category-tab').forEach(original=>{const btn=document.createElement('button');btn.className='boss-mobile-drawer-category';btn.textContent=original.textContent;btn.onclick=()=>{
+    document.querySelectorAll('.category-container .category-tab').forEach(original=>{const btn=document.createElement('button');btn.className='boss-mobile-drawer-category';
+      // A 方案：簡約線條 SVG；沿用原本分類按鈕與事件，不改商品篩選邏輯。
+      const catKey=(original.getAttribute('onclick')||'').match(/selectCategory\(['"]([^'"]+)['"]/)?.[1]||'all';
+      const iconPaths={
+        all:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+        eyelash:'<path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12Z"/><path d="M12 9v6M7 4 5 2M12 4V2M17 4l2-2"/>',
+        perimeter:'<path d="M4 8h16v12H4zM3 8l3-5h12l3 5M12 8v12M4 12h16"/>',
+        wax:'<path d="M12 22c5 0 8-3 8-8 0-4-3-7-5-9 0 4-2 5-3 6-1-4-2-6-4-8 0 5-4 8-4 12 0 4 3 7 8 7Z"/><path d="M12 22c2 0 4-2 4-4s-2-4-4-5c0 3-3 4-3 6 0 2 1 3 3 3Z"/>',
+        brows:'<path d="m4 20 4-.8L20 7.2 16.8 4 4.8 16 4 20ZM14.5 6.3l3.2 3.2M3 22h18"/>',
+        skincare:'<path d="M9 3h6M10 3v4l-4 5v8h12v-8l-4-5V3M6 14h12M10 17h4"/>',
+        makeup:'<path d="m5 20 2-8 9-9 5 5-9 9-7 3ZM14 5l5 5M4 21h16"/>',
+        ear:'<path d="M7 14c-2-2-2-5-1-8 2-5 10-5 13 0 2 4 0 9-4 11-2 1-2 4-5 4-2 0-3-2-3-4"/><path d="M10 13c-2-2-1-6 2-7 4-1 6 3 4 6-1 2-4 2-4 5"/>',
+        nail:'<path d="M8 11V5a2 2 0 0 1 4 0v5-7a2 2 0 0 1 4 0v8-5a2 2 0 0 1 4 0v9c0 4-3 7-7 7h-2c-3 0-5-2-6-4l-2-4a2 2 0 0 1 3-2l2 2"/>',
+        sale:'<path d="M3 4h9l9 9-8 8L3 11V4Z"/><circle cx="7.5" cy="8" r="1"/><path d="m11 16 5-5"/>',
+        welfare:'<rect x="3" y="9" width="18" height="12" rx="1"/><path d="M2 6h20v3H2zM12 6v15M12 6C7 6 6 4 7 2c2-2 5 1 5 4ZM12 6c5 0 6-2 5-4-2-2-5 1-5 4Z"/>',
+        membership:'<path d="m3 8 4 4 5-7 5 7 4-4-2 12H5L3 8ZM7 16h10"/>',
+        'store-adjustment':'<path d="M3 10h18l-2-6H5l-2 6ZM5 10v11h14V10M9 21v-7h6v7M3 10c0 3 4 3 4 0 0 3 4 3 4 0 0 3 4 3 4 0 0 3 4 3 4 0"/>'
+      };
+      const svg=(paths)=>'<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+paths+'</svg>';
+      const icon=document.createElement('span');icon.className='boss-cat-line-icon';icon.innerHTML=svg(iconPaths[catKey]||iconPaths.all);
+      const label=document.createElement('span');label.className='boss-cat-line-label';label.textContent=original.textContent.trim();
+      const arrow=document.createElement('span');arrow.className='boss-cat-line-arrow';arrow.innerHTML=svg('<path d="m9 18 6-6-6-6"/>');
+      btn.append(icon,label,arrow);btn.onclick=()=>{
       // 分類與關鍵字搜尋互斥：切換分類時先清除搜尋，避免 query 使分類條件失效。
       const input=document.getElementById('product-search-input');
       if(input) input.value='';
@@ -16847,5 +16903,17 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
 </style>
 
 <!-- 手機搜尋沿用原始 input oninput="filterProducts()"，避免重複執行 -->
+
+<!-- 2026/11/19 手機版分類 A 方案：簡約線條圖示 -->
+<style id="boss-mobile-category-line-icons">
+@media(max-width:768px){
+ .boss-mobile-drawer button.boss-mobile-drawer-category{display:flex!important;align-items:center;gap:12px;min-height:53px;padding:10px 7px!important;text-align:left!important}
+ .boss-cat-line-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 25px;color:#846d60}
+ .boss-cat-line-icon svg{width:22px;height:22px;display:block}
+ .boss-cat-line-label{flex:1;min-width:0;font-size:14px;line-height:1.5}
+ .boss-cat-line-arrow{display:inline-flex;flex:0 0 16px;color:#a89c96}
+ .boss-cat-line-arrow svg{width:16px;height:16px}
+}
+</style>
 </body>
 </html>
