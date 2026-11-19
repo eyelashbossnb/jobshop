@@ -16780,9 +16780,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       else original.click();
       if(typeof window.filterProducts==='function') window.filterProducts();
       closeDrawer();
-      document.body.classList.add('boss-mobile-category-view');
-      const target=document.getElementById('main-product-grid')?.closest('.card');
-      if(target)requestAnimationFrame(()=>{const top=target.getBoundingClientRect().top+window.scrollY-76;window.scrollTo({top:Math.max(0,top),behavior:'auto'});});
+      if(typeof window.bossShowProducts==='function')window.bossShowProducts(original.textContent.trim());
     };content.append(btn);});
 
   }drawer.classList.add('is-open');backdrop.classList.add('is-open');}
@@ -17037,13 +17035,10 @@ body.boss-checkout-view #boss-checkout-page{display:block}
   productNav.querySelector('button').addEventListener('click',()=>window.bossShowHome());
   window.bossShowProducts=function(label){
     document.body.classList.remove('boss-checkout-view');
-    if(window.matchMedia('(min-width:769px)').matches){
-      document.body.classList.add('boss-products-view');
-      productNav.querySelector('#boss-product-page-title').textContent=label||'全部商品';
-      window.scrollTo({top:0,behavior:'instant'});
-    }else{
-      productCard.scrollIntoView({behavior:'smooth',block:'start'});
-    }
+    document.body.classList.add('boss-products-view');
+    document.body.classList.remove('boss-mobile-category-view');
+    productNav.querySelector('#boss-product-page-title').textContent=label||'全部商品';
+    window.scrollTo({top:0,behavior:'instant'});
   };
   const list=sidebar.querySelector('.boss-side-categories');
   categories.querySelectorAll('.category-tab').forEach(original=>{
@@ -17117,7 +17112,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
   };
   // Preserve the old names used by existing buttons, but route them to checkout view.
   window.scrollToOrderForm=function(){window.bossShowCheckout();setTimeout(()=>form.scrollIntoView({behavior:'smooth',block:'start'}),60)};
-  window.goToMobileCart=function(){if(window.matchMedia('(max-width:768px)').matches){document.getElementById('cart-items-container')?.scrollIntoView({behavior:'smooth'});}else window.bossShowCheckout()};
+  window.goToMobileCart=function(){window.bossShowCheckout()};
   window.bossMobileCartCheckoutJump=function(){window.bossShowCheckout()};
   // Other existing "checkout" buttons may use in-page anchors.
   document.addEventListener('click',function(e){
@@ -17132,19 +17127,29 @@ body.boss-checkout-view #boss-checkout-page{display:block}
   const desktopCheckout=cart.querySelector('.cart-checkout-btn');
   if(desktopCheckout)desktopCheckout.onclick=()=>window.scrollToOrderForm();
 
-  const mobileRestore=()=>{
-    if(!window.matchMedia('(max-width:768px)').matches)return;
-    document.body.classList.remove('boss-products-view','boss-checkout-view');
-    if(announce.parentElement===body)home.insertBefore(announce,grid);
-    if(banner.parentElement===body)home.insertBefore(banner,grid);
-    if(bossEvents&&bossEvents.parentElement===body)home.insertBefore(bossEvents,grid);
-    if(promo&&promo.parentElement===body)home.insertBefore(promo,grid);
-    if(productCard.parentElement===body)home.append(productCard);
-    if(cart.parentElement===cols)main.append(cart);
-    if(form.parentElement===cols)main.append(form);
-    grid.style.display='none';
-  };
-  mobileRestore();
+  // Mobile shares the same checkout DOM as desktop. Do not move cart/form back.
+  // Mobile homepage still uses the original banner, news and navigation nodes.
+  if(window.matchMedia('(max-width:768px)').matches){
+    grid.style.display='contents';
+  }
+  // Mobile: home -> products -> checkout, using original product/filter/order nodes.
+  categories.querySelectorAll('.category-tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      if(window.matchMedia('(max-width:768px)').matches)
+        window.bossShowProducts(tab.textContent.trim());
+    });
+  });
+  const searchInput=document.getElementById('product-search-input');
+  if(searchInput){
+    searchInput.addEventListener('input',()=>{
+      if(window.matchMedia('(max-width:768px)').matches && searchInput.value.trim())
+        window.bossShowProducts('搜尋商品');
+    });
+  }
+  window.addEventListener('resize',()=>{
+    if(window.matchMedia('(max-width:768px)').matches)grid.style.display='contents';
+    else grid.style.display='grid';
+  });
   // Original mobile checkout button is moved by the existing script; no duplicate submit button.
   if(location.hash==='#checkout')window.bossShowCheckout();
  }
@@ -17324,5 +17329,27 @@ body.boss-products-view #boss-home-event-images,
 body.boss-checkout-view #boss-home-event-images{display:none!important}
 </style>
 
+
+<style id="boss-mobile-three-pages-20261119">
+@media(max-width:768px){
+ /* Three distinct screens without changing checkout IDs or handlers */
+ body:not(.boss-products-view):not(.boss-checkout-view) #boss-desktop-products-card{display:none!important}
+ body.boss-products-view .main-container{display:block!important}
+ body.boss-products-view .main-container>div:first-child{display:block!important}
+ body.boss-products-view .main-container>div:first-child>*:not(#boss-desktop-products-card){display:none!important}
+ body.boss-products-view #boss-desktop-products-card{display:block!important;margin:12px!important}
+ body.boss-products-view #boss-product-page-nav{display:flex!important;align-items:center;gap:12px;margin:0 0 16px;padding:0 0 14px;border-bottom:1px solid #eee}
+ body.boss-products-view #boss-product-page-title{font-size:17px}
+ body.boss-products-view #boss-product-return-home{font-size:13px;white-space:nowrap}
+ body.boss-products-view #boss-mobile-drawer,body.boss-products-view .boss-mobile-drawer-backdrop{z-index:9999}
+ body.boss-checkout-view #boss-checkout-page{display:block!important}
+ body.boss-checkout-view #boss-checkout-page .boss-checkout-columns{display:flex!important;flex-direction:column!important}
+ body.boss-checkout-view #boss-checkout-page .mobile-cart-card,
+ body.boss-checkout-view #boss-checkout-page .mobile-order-form-card{display:block!important;position:static!important;width:100%!important}
+ body.boss-checkout-view #boss-checkout-page .boss-checkout-heading{display:flex!important}
+ body.boss-checkout-view #boss-checkout-page .boss-checkout-submit-panel{display:block!important}
+ body.boss-products-view #boss-mobile-bottom-bar{display:flex}
+}
+</style>
 </body>
 </html>
