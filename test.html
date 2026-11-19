@@ -1527,7 +1527,8 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
             <div class="category-container">
                 <button class="category-tab active" onclick="selectCategory('all', this); toggleSaleMenu(false);">全部商品</button>
                 
-                <button class="category-tab" onclick="selectCategory('eyelash', this); toggleSaleMenu(false);">睫毛款式專區</button>
+                <button class="category-tab" onclick="selectCategory('eyelash', this); toggleSaleMenu(false);">睫毛款式</button>
+                <button class="category-tab" onclick="selectCategory('sale', this); toggleSaleMenu(true);">出清睫毛</button>
                 <button class="category-tab" onclick="selectCategory('perimeter', this); toggleSaleMenu(false);">美睫周邊</button>
                 <button class="category-tab" onclick="selectCategory('wax', this); toggleSaleMenu(false);">頂級熱蠟</button>
                 <button class="category-tab" onclick="selectCategory('brows', this); toggleSaleMenu(false);">紋繡商品</button>
@@ -1535,7 +1536,6 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                 <button class="category-tab" onclick="selectCategory('makeup', this); toggleSaleMenu(false);">美妝商品</button>
                 <button class="category-tab" onclick="selectCategory('ear', this); toggleSaleMenu(false);">採耳商品</button>
                 <button class="category-tab" onclick="selectCategory('nail', this); toggleSaleMenu(false);">美甲商品</button>
-                <button class="category-tab" onclick="selectCategory('sale', this); toggleSaleMenu(true);">出清五折</button>
                 <button class="category-tab" onclick="selectCategory('welfare', this); toggleSaleMenu(false);">福利品專區</button>
                 <button class="category-tab" onclick="selectCategory('membership', this); toggleSaleMenu(false);">購買會籍</button>
                 <button class="category-tab" onclick="selectCategory('store-adjustment', this); toggleSaleMenu(false);">門市購買</button>
@@ -17053,7 +17053,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
     [/全部商品/, 'grid'],[/睫毛款式/, 'eye'],[/美睫周邊/, 'sparkles'],
     [/頂級熱蠟/, 'flame'],[/紋繡商品/, 'pen'],[/臉部保養/, 'droplet'],
     [/美妝商品/, 'brush'],[/採耳商品/, 'ear'],[/美甲商品/, 'hand'],
-    [/出清五折/, 'tag'],[/福利品專區/, 'gift'],[/購買會籍/, 'crown'],
+    [/出清睫毛|出清五折/, 'tag'],[/福利品專區/, 'gift'],[/購買會籍/, 'crown'],
     [/門市購買/, 'store'],[/活動專區/, 'megaphone']
    ];
    const bossPaths={
