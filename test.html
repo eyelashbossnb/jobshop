@@ -1504,6 +1504,14 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 </div>
 <!-- 👆 置中的中間活動圖片區塊 👆 -->
 
+<!-- 首頁活動圖片：靜態展示，順序 活動 → VIP → 滿額贈 -->
+<section id="boss-home-event-images" aria-label="首頁活動、VIP及滿額贈圖片">
+  <a class="boss-home-event-card" href="https://ibb.co/hJ81Vwmb" target="_blank" rel="noopener noreferrer"><img src="https://i.ibb.co/B5sKBFCb/A4.png" alt="睫老闆活動公告" loading="lazy"></a>
+  <a class="boss-home-event-card" href="https://ibb.co/7t1fy31G" target="_blank" rel="noopener noreferrer"><img src="https://i.ibb.co/4RVqNbVj/15.png" alt="睫老闆VIP活動" loading="lazy"></a>
+  <a class="boss-home-event-card" href="https://ibb.co/4Hb81H0" target="_blank" rel="noopener noreferrer"><img src="https://i.ibb.co/FFQ5HFd/20260301.png" alt="睫老闆滿額贈活動" loading="lazy"></a>
+</section>
+
+
         <!-- 網站公告：與 Banner、限時優惠活動同屬左側欄位 -->
         <div id="boss-announcement-bar" role="region" aria-label="最新消息">
           <span id="boss-announcement-label">📢 最新消息</span>
@@ -11554,7 +11562,16 @@ function bossDownloadOrderPdf(index) {
         popup.document.write('<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>' +
           '睫老闆_訂單明細_' + bossPdfSafeName(order.id) +
           '</title><style>' + styles + '</style></head><body><main class="boss-pdf-page">' +
-          content + '</main></body></html>');
+          content + '</main><style id="boss-home-event-images-css">
+#boss-home-event-images{display:grid;grid-template-columns:1fr;gap:14px;margin:0 0 24px;width:100%}
+#boss-home-event-images .boss-home-event-card{display:flex;align-items:center;gap:15px;min-height:95px;padding:18px 24px;border:1px solid #eee1da;border-radius:12px;background:#fffaf7;color:#514039;text-decoration:none;box-sizing:border-box}
+#boss-home-event-images .boss-home-event-card>span:nth-child(2){display:flex;flex-direction:column;gap:7px;flex:1}
+#boss-home-event-images .boss-home-event-card strong{font-size:17px}
+#boss-home-event-images .boss-home-event-card small{color:#9b8176;font-size:12px}
+#boss-home-event-images .boss-home-event-icon{font-size:27px;color:#b98675}
+@media(max-width:768px){#boss-home-event-images{gap:10px;margin-bottom:18px}#boss-home-event-images .boss-home-event-card{min-height:80px;padding:12px 16px}}
+</style>
+</body></html>');
         popup.document.close();
         popup.focus();
         // 讓列印頁完成排版與中文字型載入後再開啟列印視窗。
@@ -17016,6 +17033,8 @@ body.boss-checkout-view #boss-checkout-page{display:block}
   if(catalogBlock)catalogBlock.remove(); // VIP guide removed only from home, no other account features.
   home.insertBefore(grid,home.firstChild);grid.append(sidebar,body);
   body.append(announce,banner);
+  const bossEvents=document.getElementById('boss-home-event-images');
+  if(bossEvents)body.append(bossEvents);
   if(promo)body.append(promo);
   body.append(productCard);
   productCard.id='boss-desktop-products-card';
@@ -17111,6 +17130,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
     document.body.classList.remove('boss-products-view','boss-checkout-view');
     if(announce.parentElement===body)home.insertBefore(announce,grid);
     if(banner.parentElement===body)home.insertBefore(banner,grid);
+    if(bossEvents&&bossEvents.parentElement===body)home.insertBefore(bossEvents,grid);
     if(promo&&promo.parentElement===body)home.insertBefore(promo,grid);
     if(productCard.parentElement===body)home.append(productCard);
     if(cart.parentElement===cols)main.append(cart);
@@ -17282,87 +17302,13 @@ body.boss-checkout-view #boss-checkout-page{display:block}
  #boss-desktop-side .boss-side-catalog-arrow{font-size:14px;flex-shrink:0;color:#b38475}
 }
 </style>
-<style id="boss-sheet-carousel-css">
-#banner-image-block .boss-sheet-carousel{position:relative;width:100%;overflow:hidden;background:#fff;border-radius:12px}
-#banner-image-block .boss-sheet-track{display:flex;transition:transform .55s ease;align-items:stretch}
-#banner-image-block .boss-sheet-slide{flex:0 0 100%;min-width:0;display:block;text-decoration:none}
-#banner-image-block .boss-sheet-slide img{width:100%;height:auto;display:block;object-fit:contain}
-#banner-image-block .boss-sheet-dots{display:flex;justify-content:center;gap:8px;padding:8px 0;background:#fff}
-#banner-image-block .boss-sheet-dot{border:0;border-radius:50%;background:#d6c5bd;width:9px;height:9px;padding:0;cursor:pointer}
-#banner-image-block .boss-sheet-dot.active{background:#9b6e60}
-@media(prefers-reduced-motion:reduce){#banner-image-block .boss-sheet-track{transition:none}}
+
+
+<style id="boss-home-static-activity-image-style">
+#boss-home-event-images{display:flex!important;flex-direction:column!important;gap:18px!important;width:100%!important;max-width:100%!important;margin:18px 0 26px!important}
+#boss-home-event-images .boss-home-event-card{display:block!important;width:100%!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;box-shadow:none!important;background:transparent!important;overflow:hidden;border-radius:12px;text-decoration:none}
+#boss-home-event-images .boss-home-event-card img{display:block;width:100%;height:auto;max-width:100%;object-fit:contain;border-radius:12px}
+@media(max-width:768px){#boss-home-event-images{gap:12px!important;margin:12px 0 20px!important}#boss-home-event-images .boss-home-event-card{border-radius:8px}}
 </style>
-<script id="boss-sheet-carousel-script">
-(function(){
- // 只需設定一次：Google 試算表「發布到網路」的 CSV 網址，之後圖片由試算表管理。
- const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRYieJzb9rP_4YuWjNIc7idHiMY-nMGusaUpXGDKRf67TUK1kTz3yQeS38IowvFKndEuwLhIlx8RqiR/pub?gid=822030310&single=true&output=csv';
- const FALLBACK=[
-  {id:'B001',title:'VIP好禮加碼贈',desktop:'https://i.ibb.co/0VGksSpn/VIP-2025.png',mobile:'',link:'',sort:1,start:'',end:'',enabled:'是'},
-  {id:'B002',title:'Mild初學黑膠',desktop:'https://i.ibb.co/0R5N7ws8/image.png',mobile:'',link:'',sort:2,start:'',end:'',enabled:'是'}
- ];
- function parseCSV(input){
-  const rows=[];let row=[],cell='',quoted=false;
-  for(let i=0;i<input.length;i++){
-   const c=input[i];
-   if(c==='"'){if(quoted&&input[i+1]==='"'){cell+='"';i++}else quoted=!quoted}
-   else if(c===','&&!quoted){row.push(cell);cell=''}
-   else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&input[i+1]==='\n')i++;row.push(cell);if(row.some(x=>x.trim()))rows.push(row);row=[];cell=''}
-   else cell+=c;
-  }
-  row.push(cell);if(row.some(x=>x.trim()))rows.push(row);return rows;
- }
- function parseDate(v){if(!v)return null;const m=String(v).trim().match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);return m?new Date(+m[1],+m[2]-1,+m[3]):null}
- function isValidUrl(s){try{const u=new URL(s);return u.protocol==='https:'||u.protocol==='http:'}catch(e){return false}}
- function rowsToSlides(csv){
-  const rows=parseCSV(csv.replace(/^\uFEFF/,''));
-  return rows.slice(1).map(r=>({id:r[0]||'',title:r[1]||'',desktop:r[2]||'',mobile:r[3]||'',link:r[4]||'',sort:Number(r[5])||9999,start:r[6]||'',end:r[7]||'',enabled:r[8]||''}));
- }
- function activeSlides(rows){
-  const now=new Date();now.setHours(0,0,0,0);
-  return rows.filter(r=>{
-   const yes=!String(r.enabled).trim()||/^(是|yes|true|1|啟用)$/i.test(String(r.enabled).trim());
-   const start=parseDate(r.start),end=parseDate(r.end);
-   return yes&&isValidUrl(r.desktop)&&( !start||now>=start )&&(!end||now<=end);
-  }).sort((a,b)=>a.sort-b.sort);
- }
- function init(){
-  const host=document.getElementById('banner-image-block');if(!host)return;
-  let current=0,timer=null,slides=[];
-  host.replaceChildren();
-  const shell=document.createElement('div');shell.className='boss-sheet-carousel';
-  const track=document.createElement('div');track.className='boss-sheet-track';
-  const dots=document.createElement('div');dots.className='boss-sheet-dots';
-  shell.append(track,dots);host.append(shell);
-  function stop(){if(timer){clearInterval(timer);timer=null}}
-  function go(i){if(!slides.length)return;current=(i+slides.length)%slides.length;track.style.transform='translateX(-'+(current*100)+'%)';[...dots.children].forEach((b,j)=>b.classList.toggle('active',j===current));}
-  function start(){stop();if(slides.length>1&&!document.hidden)timer=setInterval(()=>go(current+1),5000)}
-  function render(data){
-   stop();slides=activeSlides(data);track.replaceChildren();dots.replaceChildren();current=0;
-   slides.forEach((s,i)=>{
-    const a=document.createElement('a');a.className='boss-sheet-slide';
-    if(isValidUrl(s.link)){a.href=s.link;a.target='_blank';a.rel='noopener noreferrer'}else{a.removeAttribute('href')}
-    const pic=document.createElement('picture');
-    if(isValidUrl(s.mobile)){const source=document.createElement('source');source.media='(max-width: 768px)';source.srcset=s.mobile;pic.append(source)}
-    const img=document.createElement('img');img.src=s.desktop;img.alt=s.title||'活動輪播圖';img.loading=i?'lazy':'eager';img.decoding='async';pic.append(img);a.append(pic);track.append(a);
-    const dot=document.createElement('button');dot.type='button';dot.className='boss-sheet-dot';dot.setAttribute('aria-label','切換至第'+(i+1)+'張');dot.addEventListener('click',()=>{go(i);start()});dots.append(dot);
-   });
-   dots.style.display=slides.length>1?'flex':'none';go(0);start();
-  }
-  shell.addEventListener('mouseenter',stop);shell.addEventListener('mouseleave',start);
-  shell.addEventListener('focusin',stop);shell.addEventListener('focusout',e=>{if(!shell.contains(e.relatedTarget))start()});
-  document.addEventListener('visibilitychange',()=>document.hidden?stop():start());
-  let touchX=null;shell.addEventListener('touchstart',e=>{touchX=e.touches[0]?.clientX??null},{passive:true});
-  shell.addEventListener('touchend',e=>{if(touchX===null)return;const diff=(e.changedTouches[0]?.clientX??touchX)-touchX;if(Math.abs(diff)>40){go(current+(diff<0?1:-1));start()}touchX=null},{passive:true});
-  render(FALLBACK);
-  if(/^https:\/\//.test(SHEET_CSV_URL)){
-   fetch(SHEET_CSV_URL,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('CSV HTTP '+r.status);return r.text()}).then(csv=>{
-    const data=rowsToSlides(csv);if(data.length)render(data);
-    else console.warn('輪播圖試算表沒有資料，暫時顯示預設圖片');
-   }).catch(err=>console.warn('輪播圖試算表讀取失敗，暫時顯示預設圖片',err));
-  }
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
-})();
-</script>
 </body>
 </html>
