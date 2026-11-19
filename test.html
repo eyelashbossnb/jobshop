@@ -1461,14 +1461,8 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 </style>
 <main class="main-container">
     <div>
-        <!-- 網站公告：維持原本左側欄寬，移至商品型錄上方 -->
-        <div id="boss-announcement-bar" role="region" aria-label="最新消息">
-          <span id="boss-announcement-label">📢 最新消息</span>
-          <div id="boss-announcement-viewport"><div id="boss-announcement-track"></div></div>
-        </div>
-
         <!-- 🆕 特大尊榮美業雙電子型錄區塊 -->
-        <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; margin-bottom: 35px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 35px;">
             <!-- 左側型錄 -->
             <a href="https://heyzine.com/flip-book/a792795585.html" target="_BLANK" style="text-decoration: none; display: block;">
                 <div class="card" style="padding: 24px 26px; margin-bottom: 0; background: linear-gradient(135deg, #ffffff 0%, #faf7f5 100%); border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; height: 100%; box-sizing: border-box;">
@@ -1476,6 +1470,22 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                         <img src="https://i.ibb.co/rRWmDjvH/catalog-png.png" alt="睫老闆商品型錄" style="width: 75px; height: 100px; object-fit: cover; border-radius: 8px; box-shadow: 0 6px 14px rgba(0,0,0,0.12); flex-shrink: 0;">
                         <div>
                             <div style="font-size: 18px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; letter-spacing: 0.05em;">睫老闆商品型錄</div>
+                            <div style="font-size: 13px; color: var(--text-muted);">點擊開啟電子型錄</div>
+                        </div>
+                    </div>
+                    <div style="background-color: var(--accent-color); color: #ffffff; padding: 9px 20px; border-radius: 22px; font-size: 13px; font-weight: 500; letter-spacing: 0.05em; white-space: nowrap; margin-left: 12px;">
+                        翻閱 ↗
+                    </div>
+                </div>
+            </a>
+
+            <!-- 右側型錄 -->
+            <a href="https://heyzine.com/flip-book/d75993a20d.html" target="_BLANK" style="text-decoration: none; display: block;">
+                <div class="card" style="padding: 24px 26px; margin-bottom: 0; background: linear-gradient(135deg, #ffffff 0%, #faf7f5 100%); border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; height: 100%; box-sizing: border-box;">
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <img src="https://i.ibb.co/KpY4YFWC/0.png" alt="VIP會員｜訂購指南" style="width: 75px; height: 100px; object-fit: cover; border-radius: 8px; box-shadow: 0 6px 14px rgba(0,0,0,0.12); flex-shrink: 0;">
+                        <div>
+                            <div style="font-size: 18px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; letter-spacing: 0.05em;">VIP會員｜訂購指南</div>
                             <div style="font-size: 13px; color: var(--text-muted);">點擊開啟電子型錄</div>
                         </div>
                     </div>
@@ -1493,6 +1503,12 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
     </a>
 </div>
 <!-- 👆 置中的中間活動圖片區塊 👆 -->
+
+        <!-- 網站公告：與 Banner、限時優惠活動同屬左側欄位 -->
+        <div id="boss-announcement-bar" role="region" aria-label="最新消息">
+          <span id="boss-announcement-label">📢 最新消息</span>
+          <div id="boss-announcement-viewport"><div id="boss-announcement-track"></div></div>
+        </div>
 
         <section id="boss-promo-test" aria-label="限時優惠活動"><div class="boss-promo-box"><div class="boss-promo-heading">🎁 限時優惠活動</div><div id="boss-promo-test-result" class="boss-promo-muted">正在讀取活動資料…</div></div></section>
 
@@ -16929,5 +16945,125 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
 }
 @media(min-width:769px){body > #boss-mobile-cart-popup{display:none!important}}
 </style>
+
+<style id="boss-checkout-two-view-css">
+/* Test-only: desktop homepage and independent checkout view */
+#boss-checkout-page{display:none;max-width:1200px;margin:24px auto 70px;padding:0 20px;box-sizing:border-box}
+#boss-checkout-page .boss-checkout-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px}
+#boss-checkout-page .boss-checkout-heading h1{font-size:25px;margin:0}
+#boss-checkout-page .boss-checkout-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
+#boss-checkout-page .mobile-cart-card,#boss-checkout-page .mobile-order-form-card{position:static!important;max-height:none!important;overflow:visible!important;margin:0!important}
+body.boss-checkout-view .main-container{display:none!important}
+body.boss-checkout-view #boss-checkout-page{display:block}
+.boss-back-shopping{border:1px solid #e8a598;border-radius:22px;background:white;color:#8b655d;padding:10px 17px;cursor:pointer;font-size:13px}
+#boss-desktop-side{display:none}
+@media(min-width:769px){
+ .main-container{display:block!important;max-width:1200px;margin:24px auto;padding:0 20px}
+ .main-container>div:first-child{display:block!important;min-width:0}
+ .main-container>div:nth-child(2){display:none!important}
+ #boss-desktop-home-grid{display:grid;grid-template-columns:195px minmax(0,1fr);gap:20px;align-items:start}
+ #boss-desktop-side{display:block;min-width:0}
+ #boss-desktop-side .boss-side-catalog{display:block;text-decoration:none;background:#fff;border:1px solid var(--border-color);padding:15px 10px;border-radius:12px;margin-bottom:10px;color:var(--text-main);font-weight:600;text-align:center}
+ #boss-desktop-side .boss-side-categories{background:#fff;border:1px solid var(--border-color);border-radius:12px;padding:12px}
+ #boss-desktop-side .boss-side-categories h3{font-size:15px;margin:0 0 12px}
+ #boss-desktop-side .boss-side-categories button{display:block;width:100%;text-align:left;padding:10px 9px;margin:2px 0;background:transparent;border:0;border-radius:8px;color:var(--text-main);font-size:13px;cursor:pointer}
+ #boss-desktop-side .boss-side-categories button:hover,#boss-desktop-side .boss-side-categories button.active{background:#f8eee9;color:#a36f61}
+ #boss-desktop-home-grid .boss-home-main{min-width:0}
+ #boss-desktop-home-grid #boss-announcement-bar{margin:0 0 12px}
+ #boss-desktop-home-grid #banner-image-block{margin:0 0 20px!important}
+ #boss-desktop-home-grid .category-container{display:none!important}
+ #boss-desktop-home-grid .boss-home-main>.card{margin-top:20px}
+ #boss-checkout-page .mobile-cart-card #cart-items-container{max-height:390px;overflow:auto}
+}
+@media(max-width:768px){
+ #boss-desktop-home-grid{display:contents}
+ #boss-desktop-home-grid .boss-home-main{display:contents}
+ #boss-checkout-page{padding:0 12px;margin:14px auto 75px}
+ #boss-checkout-page .boss-checkout-columns{display:flex;flex-direction:column;gap:14px}
+ #boss-checkout-page .boss-checkout-columns>.card{width:100%;box-sizing:border-box;padding:20px 16px}
+ #boss-checkout-page .boss-checkout-heading h1{font-size:21px}
+ body.boss-checkout-view #boss-mobile-bottom-bar{display:none!important}
+ body.boss-checkout-view #boss-checkout-page{padding-bottom:70px}
+}
+</style>
+
+<script id="boss-checkout-two-view-script">
+(function(){
+ function init(){
+  const main=document.querySelector('main.main-container');
+  const home=main&&main.firstElementChild;
+  const cart=document.querySelector('.mobile-cart-card');
+  const form=document.querySelector('.mobile-order-form-card');
+  const catalog=home&&home.querySelector('a[href*="heyzine.com/flip-book/a792795585"]');
+  const announce=document.getElementById('boss-announcement-bar');
+  const banner=document.getElementById('banner-image-block');
+  const promo=document.getElementById('boss-promo-test');
+  const productCard=document.getElementById('main-product-grid')?.closest('.card');
+  const categories=document.querySelector('.category-container');
+  if(!main||!home||!cart||!form||!catalog||!announce||!banner||!productCard||!categories)return;
+  const page=document.createElement('section');page.id='boss-checkout-page';
+  page.innerHTML='<div class="boss-checkout-heading"><h1>結帳確認</h1><button type="button" class="boss-back-shopping">← 返回購物</button></div><div class="boss-checkout-columns"></div>';
+  main.after(page);
+  const cols=page.querySelector('.boss-checkout-columns');
+  cols.append(cart,form);
+  page.querySelector('.boss-back-shopping').addEventListener('click',()=>window.bossShowHome());
+  // Reuse the original nodes (IDs, discounts, gifts, delivery and submit logic).
+  const grid=document.createElement('div');grid.id='boss-desktop-home-grid';
+  const sidebar=document.createElement('aside');sidebar.id='boss-desktop-side';
+  sidebar.innerHTML='<a class="boss-side-catalog" target="_blank" rel="noopener noreferrer" href="https://heyzine.com/flip-book/a792795585.html">📖 睫老闆商品型錄 ↗</a><div class="boss-side-categories"><h3>商品分類</h3></div>';
+  const body=document.createElement('div');body.className='boss-home-main';
+  const catalogBlock=catalog.parentElement;
+  if(catalogBlock)catalogBlock.remove(); // VIP guide removed only from home, no other account features.
+  home.insertBefore(grid,home.firstChild);grid.append(sidebar,body);
+  body.append(announce,banner);
+  if(promo)body.append(promo);
+  body.append(productCard);
+  const list=sidebar.querySelector('.boss-side-categories');
+  categories.querySelectorAll('.category-tab').forEach(original=>{
+   const b=document.createElement('button');b.type='button';b.textContent=original.textContent.trim();
+   if(original.classList.contains('active'))b.classList.add('active');
+   b.addEventListener('click',()=>{
+     const search=document.getElementById('product-search-input');if(search)search.value='';
+     original.click();
+     list.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+     b.classList.add('active');
+     if(typeof window.filterProducts==='function')window.filterProducts();
+     productCard.scrollIntoView({behavior:'smooth',block:'start'});
+   });
+   list.append(b);
+  });
+  window.bossShowCheckout=function(){
+    document.body.classList.add('boss-checkout-view');
+    if(typeof window.toggleBossMobileCart==='function')window.toggleBossMobileCart(false);
+    if(typeof window.toggleMobileQuickNav==='function')window.toggleMobileQuickNav(false);
+    window.scrollTo({top:0,behavior:'instant'});
+  };
+  window.bossShowHome=function(){
+    document.body.classList.remove('boss-checkout-view');
+    window.scrollTo({top:0,behavior:'instant'});
+  };
+  // Preserve the old names used by existing buttons, but route them to checkout view.
+  window.scrollToOrderForm=function(){window.bossShowCheckout();setTimeout(()=>form.scrollIntoView({behavior:'smooth',block:'start'}),60)};
+  window.goToMobileCart=function(){window.bossShowCheckout()};
+  window.bossMobileCartCheckoutJump=function(){window.bossShowCheckout()};
+  // Other existing "checkout" buttons may use in-page anchors.
+  document.addEventListener('click',function(e){
+   const a=e.target.closest('a[href="#order-form"],a[href="#cart-items-container"]');
+   if(a){e.preventDefault();window.bossShowCheckout();}
+  });
+  window.addEventListener('popstate',()=>{
+   if(location.hash==='#checkout')window.bossShowCheckout();
+   else window.bossShowHome();
+  });
+  // The checkout button inside the desktop cart card now goes directly to the form.
+  const desktopCheckout=cart.querySelector('.cart-checkout-btn');
+  if(desktopCheckout)desktopCheckout.onclick=()=>window.scrollToOrderForm();
+  // Original mobile checkout button is moved by the existing script; no duplicate submit button.
+  if(location.hash==='#checkout')window.bossShowCheckout();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0));
+ else setTimeout(init,0);
+})();
+</script>
 </body>
 </html>
