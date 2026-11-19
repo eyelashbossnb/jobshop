@@ -17065,5 +17065,58 @@ body.boss-checkout-view #boss-checkout-page{display:block}
  else setTimeout(init,0);
 })();
 </script>
+
+<style id="boss-desktop-cart-preview-css">
+@media(min-width:769px){
+ .boss-desktop-cart-wrap{position:relative;display:flex;align-items:center;z-index:1000}
+ .boss-desktop-cart-trigger{display:flex;align-items:center;gap:7px;white-space:nowrap;border:1px solid #e6d3cb;background:#fff;border-radius:22px;padding:9px 13px;color:#795e55;font-size:13px;cursor:pointer}
+ .boss-desktop-cart-trigger:hover,.boss-desktop-cart-wrap:focus-within .boss-desktop-cart-trigger{background:#fff7f4}
+ .boss-desktop-cart-preview{display:none;position:absolute;top:100%;right:0;width:345px;max-width:calc(100vw - 28px);background:#fff;border:1px solid #e8d9d3;box-shadow:0 8px 24px #0002;border-radius:12px;padding:16px;box-sizing:border-box;z-index:1001}
+ .boss-desktop-cart-wrap:hover .boss-desktop-cart-preview,.boss-desktop-cart-wrap:focus-within .boss-desktop-cart-preview{display:block}
+ .boss-desktop-cart-preview h3{margin:0 0 12px;font-size:15px}
+ .boss-desktop-cart-preview .boss-preview-items{max-height:250px;overflow:auto;font-size:13px}
+ .boss-desktop-cart-preview .boss-preview-item{border-bottom:1px solid #eee;padding:9px 0;display:flex;justify-content:space-between;gap:12px}
+ .boss-desktop-cart-preview .boss-preview-item span:last-child{white-space:nowrap}
+ .boss-desktop-cart-preview .boss-preview-checkout{width:100%;margin-top:14px;border:0;border-radius:6px;padding:12px;color:white;background:#3d3938;cursor:pointer;font-weight:600}
+}
+@media(max-width:768px){.boss-desktop-cart-wrap{display:none!important}}
+</style>
+<script id="boss-desktop-cart-preview-script">
+(function(){
+ function init(){
+  const nav=document.querySelector('header .nav-tools');
+  if(!nav||document.getElementById('boss-desktop-cart-trigger'))return;
+  const wrap=document.createElement('div');
+  wrap.className='boss-desktop-cart-wrap';
+  wrap.innerHTML='<button type="button" class="boss-desktop-cart-trigger" id="boss-desktop-cart-trigger" aria-label="購物車，前往結帳">🛒 購物車 <span id="boss-desktop-cart-count">0</span></button><div class="boss-desktop-cart-preview"><h3>🛒 購物車預覽</h3><div class="boss-preview-items">購物車目前是空的</div><button type="button" class="boss-preview-checkout">前往結帳 ❯</button></div>';
+  const orderButton=nav.querySelector('button[onclick*="toggleOrderModal"]');
+  if(orderButton)nav.insertBefore(wrap,orderButton);else nav.append(wrap);
+  function refresh(){
+   const items=wrap.querySelector('.boss-preview-items');
+   const counter=wrap.querySelector('#boss-desktop-cart-count');
+   try{
+    const ids=Object.keys(cart||{}).filter(id=>Number(cart[id])>0);
+    counter.textContent=ids.reduce((sum,id)=>sum+(Number(cart[id])||0),0);
+    if(!ids.length){items.textContent='購物車目前是空的';return;}
+    items.replaceChildren();
+    ids.forEach(id=>{
+      const p=productConfig[id];if(!p)return;
+      const row=document.createElement('div');row.className='boss-preview-item';
+      const name=document.createElement('span');name.textContent=p.name||id;
+      const qty=document.createElement('span');qty.textContent='× '+cart[id];
+      row.append(name,qty);items.append(row);
+    });
+   }catch(err){items.textContent='購物車資料載入中';}
+  }
+  wrap.addEventListener('mouseenter',refresh);
+  wrap.addEventListener('focusin',refresh);
+  wrap.querySelector('.boss-desktop-cart-trigger').addEventListener('click',()=>window.bossShowCheckout&&window.bossShowCheckout());
+  wrap.querySelector('.boss-preview-checkout').addEventListener('click',()=>window.bossShowCheckout&&window.bossShowCheckout());
+  document.addEventListener('click',e=>{if(e.target.closest('button[onclick*="addToCart"]'))setTimeout(refresh,100)});
+  refresh();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
 </body>
 </html>
