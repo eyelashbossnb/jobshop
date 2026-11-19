@@ -17212,5 +17212,23 @@ body.boss-checkout-view #boss-checkout-page{display:block}
 .boss-desktop-cart-preview .boss-preview-item span:last-child{flex:none}
 }
 </style>
+
+<style id="boss-desktop-four-products-20261119">
+/* 電腦版商品列表每排四件；手機維持原本每排兩件 */
+@media (min-width: 1100px) {
+  #main-product-grid.product-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+  }
+  #main-product-grid > .product-item {
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 14px 10px;
+  }
+  #main-product-grid > .product-item .product-name {
+    overflow-wrap: anywhere;
+  }
+}
+</style>
 </body>
 </html>
