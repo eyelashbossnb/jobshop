@@ -11562,48 +11562,7 @@ function bossDownloadOrderPdf(index) {
         popup.document.write('<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>' +
           '睫老闆_訂單明細_' + bossPdfSafeName(order.id) +
           '</title><style>' + styles + '</style></head><body><main class="boss-pdf-page">' +
-          content + '</main>
-<style id="boss-mobile-home-compact-polish-20261119">
-/* 手機專用：公告單行、首頁圖區緊湊、商品頁返回鍵與全站同風格。 */
-@media screen and (max-width:768px){
- body:not(.boss-products-view):not(.boss-checkout-view) #boss-announcement-bar,
- body:not(.boss-products-view):not(.boss-checkout-view) #boss-desktop-home-grid #boss-announcement-bar{
-   display:flex!important;align-items:center!important;flex-wrap:nowrap!important;
-   width:100%!important;max-width:100%!important;min-width:0!important;
-   height:42px!important;min-height:42px!important;max-height:42px!important;
-   margin:0 0 10px!important;padding:7px 10px!important;
-   overflow:hidden!important;border-radius:0!important;box-sizing:border-box!important;
- }
- #boss-announcement-label{flex:0 0 auto!important;white-space:nowrap!important;line-height:26px!important}
- #boss-announcement-bar .boss-announcement-viewport,
- #boss-announcement-bar .boss-announcement-track{min-width:0!important;max-height:28px!important;overflow:hidden!important}
- #boss-announcement-bar .boss-announcement-item{white-space:nowrap!important;line-height:26px!important}
- body:not(.boss-products-view):not(.boss-checkout-view) #boss-desktop-home-grid #boss-promo-test{
-   margin:0 0 12px!important;padding:0!important;
- }
- body:not(.boss-products-view):not(.boss-checkout-view) #boss-desktop-home-grid #banner-image-block{
-   margin:0 0 8px!important;padding:0!important;min-height:0!important;
- }
- body:not(.boss-products-view):not(.boss-checkout-view) #boss-home-event-images{
-   margin:8px 0 10px!important;padding:0!important;gap:10px!important;
- }
- body:not(.boss-products-view):not(.boss-checkout-view) #boss-home-event-images .boss-home-event-card{
-   margin:0!important;padding:0!important;min-height:0!important;line-height:0!important;
- }
- body.boss-products-view #boss-product-return-home{
-   display:inline-flex!important;align-items:center!important;justify-content:center!important;
-   flex:0 0 auto!important;gap:6px!important;
-   background:#fff!important;border:1px solid #e6b4a7!important;border-radius:999px!important;
-   color:#9e6d60!important;font-size:13px!important;font-weight:500!important;
-   line-height:1.3!important;padding:9px 13px!important;min-height:38px!important;
-   box-shadow:none!important;white-space:nowrap!important;
- }
- body.boss-products-view #boss-product-page-nav strong{font-size:18px!important}
-}
-</style>
-
-
-</body></html>');
+          content + '</main></body></html>');
         popup.document.close();
         popup.focus();
         // 讓列印頁完成排版與中文字型載入後再開啟列印視窗。
@@ -16813,18 +16772,16 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       const label=document.createElement('span');label.className='boss-cat-line-label';label.textContent=original.textContent.trim();
       const arrow=document.createElement('span');arrow.className='boss-cat-line-arrow';arrow.innerHTML=svg('<path d="m9 18 6-6-6-6"/>');
       btn.append(icon,label,arrow);btn.onclick=()=>{
-        const input=document.getElementById('product-search-input');
-        if(input)input.value='';
-        const code=(original.getAttribute('onclick')||'').match(/selectCategory\(\s*['"]([^'"]+)['"]/)?.[1]||'all';
-        closeDrawer();
-        try{
-          // 使用原分類函式，不透過 click() 觸發其他舊版事件。
-          if(typeof selectCategory==='function')selectCategory(code,original);
-          if(typeof filterProducts==='function')filterProducts();
-        }catch(err){console.error('手機分類篩選',err);}
-        if(typeof window.bossShowProducts==='function')window.bossShowProducts(label.textContent.trim());
-        window.scrollTo(0,0);
-      };content.append(btn);});
+      // 分類與關鍵字搜尋互斥：切換分類時先清除搜尋，避免 query 使分類條件失效。
+      const input=document.getElementById('product-search-input');
+      if(input) input.value='';
+      const match=(original.getAttribute('onclick')||'').match(/selectCategory\(['"]([^'"]+)['"]/);
+      if(match && typeof window.selectCategory==='function') window.selectCategory(match[1],original);
+      else original.click();
+      if(typeof window.filterProducts==='function') window.filterProducts();
+      closeDrawer();
+      if(typeof window.bossShowProducts==='function')window.bossShowProducts(original.textContent.trim());
+    };content.append(btn);});
 
   }drawer.classList.add('is-open');backdrop.classList.add('is-open');}
   function closeDrawer(){drawer.classList.remove('is-open');backdrop.classList.remove('is-open');if(tools.parentElement!==header){header.append(tools);tools.style.display='';}}
@@ -17081,11 +17038,6 @@ body.boss-checkout-view #boss-checkout-page{display:block}
     document.body.classList.add('boss-products-view');
     document.body.classList.remove('boss-mobile-category-view');
     productNav.querySelector('#boss-product-page-title').textContent=label||'全部商品';
-    if(window.matchMedia('(max-width:768px)').matches){const redundant=productNav.querySelector('#boss-product-return-home');if(redundant)redundant.style.setProperty('display','none','important');}
-    if(window.matchMedia('(max-width:768px)').matches){
-      const mobileSearch=document.getElementById('product-search-input');
-      if(mobileSearch && mobileSearch.parentElement!==productCard)productNav.after(mobileSearch);
-    }
     window.scrollTo({top:0,behavior:'instant'});
   };
   const list=sidebar.querySelector('.boss-side-categories');
@@ -17378,6 +17330,28 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
 </style>
 
 
+<style id="boss-mobile-three-pages-20261119">
+@media(max-width:768px){
+ /* Three distinct screens without changing checkout IDs or handlers */
+ body:not(.boss-products-view):not(.boss-checkout-view) #boss-desktop-products-card{display:none!important}
+ body.boss-products-view .main-container{display:block!important}
+ body.boss-products-view .main-container>div:first-child{display:block!important}
+ body.boss-products-view .main-container>div:first-child>*:not(#boss-desktop-products-card){display:none!important}
+ body.boss-products-view #boss-desktop-products-card{display:block!important;margin:12px!important}
+ body.boss-products-view #boss-product-page-nav{display:flex!important;align-items:center;gap:12px;margin:0 0 16px;padding:0 0 14px;border-bottom:1px solid #eee}
+ body.boss-products-view #boss-product-page-title{font-size:17px}
+ body.boss-products-view #boss-product-return-home{font-size:13px;white-space:nowrap}
+ body.boss-products-view #boss-mobile-drawer,body.boss-products-view .boss-mobile-drawer-backdrop{z-index:9999}
+ body.boss-checkout-view #boss-checkout-page{display:block!important}
+ body.boss-checkout-view #boss-checkout-page .boss-checkout-columns{display:flex!important;flex-direction:column!important}
+ body.boss-checkout-view #boss-checkout-page .mobile-cart-card,
+ body.boss-checkout-view #boss-checkout-page .mobile-order-form-card{display:block!important;position:static!important;width:100%!important}
+ body.boss-checkout-view #boss-checkout-page .boss-checkout-heading{display:flex!important}
+ body.boss-checkout-view #boss-checkout-page .boss-checkout-submit-panel{display:block!important}
+ body.boss-products-view #boss-mobile-bottom-bar{display:flex}
+}
+</style>
+
 <style id="boss-mobile-home-visibility-repair-20261119">
 /* 僅修復手機版：電腦版 CSS、分類及購物流程不變。 */
 @media(max-width:768px){
@@ -17406,123 +17380,6 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
  }
  body.boss-products-view #boss-desktop-home-grid .boss-home-main{display:block!important}
  body.boss-checkout-view #boss-desktop-home-grid{display:none!important}
-}
-</style>
-
-<style id="boss-mobile-search-only-product-and-header-seam-20261119">
-@media screen and (max-width:768px){
-  html,body{max-width:100%!important;overflow-x:clip!important}
-  header{width:100%!important;max-width:100%!important;box-sizing:border-box!important;margin:0!important;padding:0!important;border-bottom:0!important}
-  header .header-container{width:100%!important;max-width:100%!important;box-sizing:border-box!important;margin:0!important;border-bottom:0!important}
-  #boss-mobile-search-row{display:none!important;height:0!important;padding:0!important;margin:0!important;border:0!important}
-  /* 公告原本被放進搜尋列，維持公告顯示，但搜尋框獨立放在商品頁。 */
-  #boss-mobile-search-row:has(#boss-announcement-bar){display:block!important;height:auto!important}
-  #boss-mobile-search-row #product-search-input{display:none!important}
-  body:not(.boss-products-view) #product-search-input{display:none!important}
-  body.boss-products-view #boss-desktop-products-card #product-search-input{
-    display:block!important;position:relative!important;width:100%!important;max-width:100%!important;
-    height:46px!important;box-sizing:border-box!important;margin:12px 0 18px!important;
-    padding:0 15px 0 43px!important;border-radius:25px!important;
-    background-color:#fff!important;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='%238e8580' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4-4'/%3E%3C/svg%3E")!important;
-    background-repeat:no-repeat!important;background-position:14px center!important;background-size:20px!important;
-  }
-}
-</style>
-<style id="boss-mobile-three-page-layout-corrected-20261119">
-@media screen and (max-width:768px){
- html,body{width:100%!important;max-width:100%!important;overflow-x:clip!important}
- main.main-container{display:block!important;width:100%!important;max-width:100%!important;margin:0!important;padding:0 12px 72px!important;box-sizing:border-box!important;min-width:0!important}
- main.main-container>div:first-child{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:0!important;box-sizing:border-box!important}
- #boss-desktop-home-grid{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
- #boss-desktop-home-grid .boss-home-main{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
- #boss-desktop-side{display:none!important}
- #boss-desktop-home-grid #banner-image-block,#boss-desktop-home-grid #boss-home-event-images{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
- #boss-desktop-home-grid #banner-image-block img,#boss-desktop-home-grid #boss-home-event-images img{max-width:100%!important;height:auto!important;display:block!important}
- #boss-desktop-home-grid #boss-promo-test{width:100%!important;max-width:100%!important;box-sizing:border-box!important}
- #boss-announcement-bar{max-width:100%!important;box-sizing:border-box!important}
- body:not(.boss-products-view):not(.boss-checkout-view) #boss-desktop-products-card{display:none!important}
- body.boss-products-view #boss-desktop-home-grid #boss-announcement-bar,
- body.boss-products-view #boss-desktop-home-grid #boss-promo-test,
- body.boss-products-view #boss-desktop-home-grid #banner-image-block,
- body.boss-products-view #boss-desktop-home-grid #boss-home-event-images{display:none!important}
- body.boss-products-view #boss-desktop-products-card{display:block!important;visibility:visible!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:12px 0!important;box-sizing:border-box!important}
- body.boss-products-view #boss-product-page-nav{display:flex!important;align-items:center!important;gap:12px!important;margin-bottom:14px!important}
- body.boss-products-view #main-product-grid{display:grid!important;visibility:visible!important;max-width:100%!important;min-width:0!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
- body.boss-products-view #boss-desktop-products-card #product-search-input{display:block!important;width:100%!important;box-sizing:border-box!important}
- body.boss-checkout-view main.main-container{display:none!important}
- body.boss-checkout-view #boss-checkout-page{display:block!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important}
- body.boss-checkout-view #boss-checkout-page .boss-checkout-columns{display:flex!important;flex-direction:column!important}
- body.boss-checkout-view #boss-checkout-page .mobile-cart-card,body.boss-checkout-view #boss-checkout-page .mobile-order-form-card{display:block!important;position:static!important;width:100%!important;max-width:100%!important}
-}
-</style>
-
-
-<style id="boss-mobile-home-compact-polish-20261119">
-/* 手機專用：公告單行、首頁圖區緊湊、商品頁返回鍵與全站同風格。 */
-@media screen and (max-width:768px){
- body:not(.boss-products-view):not(.boss-checkout-view) #boss-announcement-bar,
- body:not(.boss-products-view):not(.boss-checkout-view) #boss-desktop-home-grid #boss-announcement-bar{
-   display:flex!important;align-items:center!important;flex-wrap:nowrap!important;
-   width:100%!important;max-width:100%!important;min-width:0!important;
-   height:42px!important;min-height:42px!important;max-height:42px!important;
-   margin:0 0 10px!important;padding:7px 10px!important;
-   overflow:hidden!important;border-radius:0!important;box-sizing:border-box!important;
- }
- #boss-announcement-label{flex:0 0 auto!important;white-space:nowrap!important;line-height:26px!important}
- #boss-announcement-bar .boss-announcement-viewport,
- #boss-announcement-bar .boss-announcement-track{min-width:0!important;max-height:28px!important;overflow:hidden!important}
- #boss-announcement-bar .boss-announcement-item{white-space:nowrap!important;line-height:26px!important}
- body:not(.boss-products-view):not(.boss-checkout-view) #boss-desktop-home-grid #boss-promo-test{
-   margin:0 0 12px!important;padding:0!important;
- }
- body:not(.boss-products-view):not(.boss-checkout-view) #boss-desktop-home-grid #banner-image-block{
-   margin:0 0 8px!important;padding:0!important;min-height:0!important;
- }
- body:not(.boss-products-view):not(.boss-checkout-view) #boss-home-event-images{
-   margin:8px 0 10px!important;padding:0!important;gap:10px!important;
- }
- body:not(.boss-products-view):not(.boss-checkout-view) #boss-home-event-images .boss-home-event-card{
-   margin:0!important;padding:0!important;min-height:0!important;line-height:0!important;
- }
- body.boss-products-view #boss-product-return-home{
-   display:inline-flex!important;align-items:center!important;justify-content:center!important;
-   flex:0 0 auto!important;gap:6px!important;
-   background:#fff!important;border:1px solid #e6b4a7!important;border-radius:999px!important;
-   color:#9e6d60!important;font-size:13px!important;font-weight:500!important;
-   line-height:1.3!important;padding:9px 13px!important;min-height:38px!important;
-   box-shadow:none!important;white-space:nowrap!important;
- }
- body.boss-products-view #boss-product-page-nav strong{font-size:18px!important}
-}
-</style>
-
-
-
-<style id="boss-mobile-only-final-20261119">
-@media screen and (max-width:768px){
-  body.boss-products-view #boss-product-return-home,
-  #boss-product-page-nav #boss-product-return-home{display:none!important}
-  /* 公告沿用正式版的單行高度，並與上方導覽保留 12px 間隔 */
-  body:not(.boss-products-view):not(.boss-checkout-view) #boss-announcement-bar{
-    margin-top:12px!important;margin-bottom:12px!important;
-    height:40px!important;min-height:40px!important;max-height:40px!important;
-    padding:6px 10px!important;overflow:hidden!important;box-sizing:border-box!important;
-  }
-  #boss-announcement-label,#boss-announcement-track,#boss-announcement-viewport{white-space:nowrap!important}
-  /* 圖片實際是同一個 section 的相鄰 a 元素，直接設外距避免 gap 被舊樣式覆蓋 */
-  body:not(.boss-products-view):not(.boss-checkout-view) #boss-home-event-images{
-    display:block!important;margin-top:18px!important;margin-bottom:20px!important;
-  }
-  body:not(.boss-products-view):not(.boss-checkout-view) #boss-home-event-images > a.boss-home-event-card{
-    display:block!important;width:100%!important;margin:0!important;padding:0!important;
-  }
-  body:not(.boss-products-view):not(.boss-checkout-view) #boss-home-event-images > a.boss-home-event-card + a.boss-home-event-card{
-    margin-top:18px!important;
-  }
-  body:not(.boss-products-view):not(.boss-checkout-view) #boss-home-event-images > a.boss-home-event-card img{
-    display:block!important;width:100%!important;height:auto!important;
-  }
 }
 </style>
 </body>
