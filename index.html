@@ -6,7 +6,7 @@
     <title>睫老闆官方網站｜專業美睫材料・熱蠟・紋繡用品</title>
     <!-- SEO：搜尋引擎與社群分享資訊 -->
     <meta name="description" content="睫老闆美妝百貨提供專業美睫黑膠、嫁接睫毛、美睫耗材、熱蠟除毛、紋繡材料及美容保養用品，滿足美睫師、美容師與美業店家的採購需求。">
-    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://eyelashbossnb.github.io/jobshop/">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="zh_TW">
@@ -1505,8 +1505,8 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 <!-- 👆 置中的中間活動圖片區塊 👆 -->
 
         <!-- 網站公告：與 Banner、限時優惠活動同屬左側欄位 -->
-        <div id="boss-announcement-bar" role="region" aria-label="最新公告">
-          <span id="boss-announcement-label">📢 最新公告</span>
+        <div id="boss-announcement-bar" role="region" aria-label="最新消息">
+          <span id="boss-announcement-label">📢 最新消息</span>
           <div id="boss-announcement-viewport"><div id="boss-announcement-track"></div></div>
         </div>
 
@@ -15069,6 +15069,8 @@ function toggleBossMobileCart(force){
     const popup=document.getElementById('boss-mobile-cart-popup');
     const trigger=document.getElementById('boss-mobile-cart-jump');
     if(!popup||!trigger)return;
+    // 彈窗脫離手機導覽容器，避免父層的定位、裁切或堆疊層級讓購物車無法顯示。
+    if(popup.parentElement!==document.body)document.body.appendChild(popup);
     const show=typeof force==='boolean'?force:popup.hidden;
     if(show){toggleMobileQuickNav(false);syncBossMobileCartPopup();}
     popup.hidden=!show;
@@ -15138,7 +15140,7 @@ function mobileQuickGo(where) {
             window.scrollTo({top: Math.max(0, y), behavior: where === 'cart' ? 'smooth' : 'instant'});
         };
         requestAnimationFrame(() => requestAnimationFrame(jump));
-        if (where==='search') setTimeout(()=>target.focus({preventScroll:true}),100);
+        // 搜尋跳轉不自動聚焦；避免手機虛擬鍵盤閃動。
     }
 }
 document.addEventListener('click',function(e){
@@ -16659,5 +16661,289 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))window.bossCloseDealers();});
 })();
 </script>
+<!-- 2026/11/19 手機版頂部導覽：僅行動裝置啟用 -->
+<style id="boss-mobile-header-redesign">
+.boss-mobile-top-actions,.boss-mobile-search-row,.boss-mobile-drawer,.boss-mobile-drawer-backdrop{display:none}
+@media(max-width:768px){
+ html{scroll-padding-top:84px!important}body{padding-bottom:0!important}
+ header{position:sticky!important;top:0;z-index:900!important}
+ .header-container{display:flex!important;flex-direction:row!important;justify-content:space-between!important;gap:8px!important;padding:7px 12px!important;min-height:56px;box-sizing:border-box}
+ .header-container .logo{flex:1;min-width:0;justify-content:center}
+ .header-container .logo-img{height:43px!important;max-height:43px!important;max-width:100%!important;width:auto!important}
+ .header-container>.nav-tools{display:none!important}
+ .boss-mobile-top-actions{display:flex;align-items:center;gap:5px;flex:0 0 auto}
+ .boss-mobile-header-btn{position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;min-width:43px;min-height:43px;padding:3px;border:0;background:transparent;color:var(--text-main);font-size:10px;cursor:pointer}
+ .boss-mobile-header-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+ #boss-mobile-header-cart-count{position:absolute;top:0;right:0;min-width:16px;height:16px;border-radius:10px;background:var(--accent-color);color:white;font-size:10px;line-height:16px;text-align:center;padding:0 2px}
+ .boss-mobile-search-row{display:block;padding:10px 14px 0;background:var(--bg-color)}
+ .boss-mobile-search-row .search-bar{display:block;width:100%!important;box-sizing:border-box;height:44px;font-size:14px}
+ #boss-announcement-bar.boss-mobile-announcement{margin:0!important;border-radius:0!important;border-left:0;border-right:0;padding:11px 14px!important}
+ #mobile-quick-nav{display:block!important;position:static!important;width:auto!important;max-width:none!important;right:auto!important;bottom:auto!important}
+ #mobile-quick-nav .boss-mobile-nav-actions,#mobile-quick-menu{display:none!important}
+ #boss-mobile-cart-popup{position:fixed!important;top:64px!important;left:0!important;right:0!important;bottom:auto!important;width:100vw!important;max-width:none!important;max-height:90dvh!important;overflow:auto!important;box-sizing:border-box!important;z-index:1100!important;margin:0!important;border-radius:0 0 16px 16px!important}
+ #boss-mobile-cart-popup[hidden]{display:none!important}
+ .boss-mobile-drawer-backdrop.is-open{display:block;position:fixed;inset:0;background:#0006;z-index:1100}
+ .boss-mobile-drawer{display:block;position:fixed;top:0;bottom:0;left:0;width:min(320px,88vw);box-sizing:border-box;background:#fff;z-index:1101;overflow-y:auto;transform:translateX(-105%);transition:transform .2s ease;padding:18px;box-shadow:0 5px 28px #0002}
+ .boss-mobile-drawer.is-open{transform:translateX(0)}
+ .boss-mobile-drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;font-weight:700}
+ .boss-mobile-drawer button.boss-mobile-drawer-category{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--border-color);background:white;padding:13px 7px;color:var(--text-main);font-size:14px}
+ .boss-mobile-drawer .nav-tools{display:flex!important;flex-direction:column!important;gap:10px!important;width:100%!important}
+ .boss-mobile-drawer .nav-tools .search-bar{display:none!important}
+ .boss-mobile-drawer #member-status-area{display:block!important}
+ .boss-mobile-drawer #member-status-area .user-info{width:100%;box-sizing:border-box;flex-wrap:wrap}
+ .boss-mobile-drawer .nav-btn{width:100%;margin:0!important}
+ .boss-mobile-drawer a.boss-mobile-drawer-category{display:block;text-decoration:none;border-bottom:1px solid var(--border-color);padding:13px 7px;color:var(--text-main);font-size:14px;box-sizing:border-box}
+ .boss-mobile-drawer .nav-tools{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:0!important}
+ .boss-mobile-drawer .nav-tools>.nav-btn{display:block!important;width:100%!important;margin:0 0 14px!important;min-height:46px!important;padding:11px 12px!important;box-sizing:border-box!important;font-size:14px!important}
+ .boss-mobile-drawer #member-status-area{display:flex!important;flex-direction:column!important;gap:14px!important;width:100%!important}
+ .boss-mobile-drawer #member-status-area>.nav-btn{display:block!important;width:100%!important;min-height:46px!important;margin:0!important;padding:11px 12px!important;box-sizing:border-box!important;font-size:14px!important}
+ .boss-mobile-drawer #member-status-area .user-info{width:100%!important;box-sizing:border-box!important;justify-content:center!important}
+ /* 電子型錄改放分類抽屜，首頁不重複顯示；VIP 訂購指南僅從手機版移除 */
+ .main-container>div:first-child>div:first-child:has(a[href*="heyzine.com/flip-book/a792795585.html"]){display:none!important}
+ .main-container .mobile-cart-card{scroll-margin-top:76px!important}
+ .category-container{display:none!important}
+ /* 搜尋框位於活動區下方、精選商品上方；分類選擇後直接顯示商品 */
+ #product-search-input{display:block!important;width:calc(100% - 28px)!important;margin:8px 14px 18px!important;height:46px!important;box-sizing:border-box!important}
+ body.boss-mobile-category-view #banner-image-block,
+ body.boss-mobile-category-view #boss-promo-test{display:none!important}
+ body.boss-mobile-category-view .main-container>div:first-child>div:first-child:not(.card):not(#boss-announcement-bar){margin-bottom:0}
+ #order-modal-overlay .modal-close{z-index:5;min-width:42px;min-height:42px;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
+ #mobile-floating-checkout,#boss-mobile-cart-jump{display:none!important}
+}
+</style>
+<script id="boss-mobile-header-redesign-script">
+(function(){
+ const mobile=()=>window.matchMedia('(max-width:768px)').matches;
+ const svg=(paths)=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+paths+'</svg>';
+ const icons={menu:svg('<path d="M4 7h16M4 12h16M4 17h16"/>'),cart:svg('<circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/><path d="M2 3h2l3 13h13l2-9H5"/>'),user:svg('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-5 16-5 16 0"/>')};
+ function setup(){
+  const header=document.querySelector('header .header-container'),tools=header?.querySelector('.nav-tools'),nav=document.getElementById('mobile-quick-nav'),search=document.getElementById('product-search-input'),announce=document.getElementById('boss-announcement-bar');
+  if(!header||!tools||!nav||!search||!announce)return;
+  if(document.getElementById('boss-mobile-top-actions'))return;
+  const actions=document.createElement('div');actions.className='boss-mobile-top-actions';actions.id='boss-mobile-top-actions';
+  const menu=document.createElement('button');menu.className='boss-mobile-header-btn';menu.type='button';menu.innerHTML=icons.menu+'<span>分類</span>';menu.setAttribute('aria-label','開啟商品分類');
+  const right=document.createElement('div');right.className='boss-mobile-top-actions';
+  const cart=document.createElement('button');cart.className='boss-mobile-header-btn';cart.type='button';cart.innerHTML=icons.cart+'<span>購物車</span><b id="boss-mobile-header-cart-count">0</b>';cart.setAttribute('aria-label','展開購物車');cart.onclick=()=>{closeDrawer();toggleBossMobileCart();};
+  const user=document.createElement('button');user.className='boss-mobile-header-btn';user.type='button';user.innerHTML=icons.user+'<span>會員</span>';user.onclick=()=>openDrawer('member');
+  menu.onclick=()=>openDrawer('categories');actions.append(menu);right.append(cart,user);header.insertBefore(actions,header.firstChild);header.append(right);
+  const row=document.createElement('div');row.className='boss-mobile-search-row';row.id='boss-mobile-search-row';header.parentNode.insertBefore(row,header.nextSibling);
+  const backdrop=document.createElement('div');backdrop.className='boss-mobile-drawer-backdrop';backdrop.onclick=closeDrawer;
+  const drawer=document.createElement('aside');drawer.className='boss-mobile-drawer';drawer.id='boss-mobile-drawer';drawer.innerHTML='<div class="boss-mobile-drawer-head"><span id="boss-mobile-drawer-title">商品分類</span><button type="button" aria-label="關閉選單" style="border:0;background:transparent;font-size:25px">×</button></div><div id="boss-mobile-drawer-content"></div>';
+  drawer.querySelector('.boss-mobile-drawer-head button').onclick=closeDrawer;document.body.append(backdrop,drawer);
+  const searchAnchor=document.createComment('original mobile search'),announceAnchor=document.createComment('original announcement'),navAnchor=document.createComment('original mobile nav');
+  search.before(searchAnchor);announce.before(announceAnchor);nav.before(navAnchor);
+  function relocate(){
+   if(mobile()){row.append(announce);announce.classList.add('boss-mobile-announcement');const promo=document.getElementById('boss-promo-test');if(promo)promo.after(search);else row.after(search);header.append(nav);}
+   else{searchAnchor.after(search);announceAnchor.after(announce);document.body.classList.remove('boss-mobile-category-view');announce.classList.remove('boss-mobile-announcement');navAnchor.after(nav);closeDrawer();}
+  }
+  window.openBossMobileDrawer=openDrawer;
+  function openDrawer(type){if(!mobile())return;toggleBossMobileCart(false);const content=drawer.querySelector('#boss-mobile-drawer-content');drawer.querySelector('#boss-mobile-drawer-title').textContent=type==='member'?'會員中心':'商品分類';content.replaceChildren();if(type==='member'){
+    content.append(tools);tools.style.display='flex';
+  }else{
+    const catalog=document.createElement('a');catalog.className='boss-mobile-drawer-category boss-mobile-catalog-link';catalog.href='https://heyzine.com/flip-book/a792795585.html';catalog.target='_blank';catalog.rel='noopener noreferrer';catalog.textContent='睫老闆商品型錄 ↗';catalog.addEventListener('click',closeDrawer);content.append(catalog);
+    document.querySelectorAll('.category-container .category-tab').forEach(original=>{const btn=document.createElement('button');btn.className='boss-mobile-drawer-category';
+      // A 方案：簡約線條 SVG；沿用原本分類按鈕與事件，不改商品篩選邏輯。
+      const catKey=(original.getAttribute('onclick')||'').match(/selectCategory\(['"]([^'"]+)['"]/)?.[1]||'all';
+      const iconPaths={
+        all:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+        eyelash:'<path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12Z"/><path d="M12 9v6M7 4 5 2M12 4V2M17 4l2-2"/>',
+        perimeter:'<path d="M4 8h16v12H4zM3 8l3-5h12l3 5M12 8v12M4 12h16"/>',
+        wax:'<path d="M12 22c5 0 8-3 8-8 0-4-3-7-5-9 0 4-2 5-3 6-1-4-2-6-4-8 0 5-4 8-4 12 0 4 3 7 8 7Z"/><path d="M12 22c2 0 4-2 4-4s-2-4-4-5c0 3-3 4-3 6 0 2 1 3 3 3Z"/>',
+        brows:'<path d="m4 20 4-.8L20 7.2 16.8 4 4.8 16 4 20ZM14.5 6.3l3.2 3.2M3 22h18"/>',
+        skincare:'<path d="M9 3h6M10 3v4l-4 5v8h12v-8l-4-5V3M6 14h12M10 17h4"/>',
+        makeup:'<path d="m5 20 2-8 9-9 5 5-9 9-7 3ZM14 5l5 5M4 21h16"/>',
+        ear:'<path d="M7 14c-2-2-2-5-1-8 2-5 10-5 13 0 2 4 0 9-4 11-2 1-2 4-5 4-2 0-3-2-3-4"/><path d="M10 13c-2-2-1-6 2-7 4-1 6 3 4 6-1 2-4 2-4 5"/>',
+        nail:'<path d="M8 11V5a2 2 0 0 1 4 0v5-7a2 2 0 0 1 4 0v8-5a2 2 0 0 1 4 0v9c0 4-3 7-7 7h-2c-3 0-5-2-6-4l-2-4a2 2 0 0 1 3-2l2 2"/>',
+        sale:'<path d="M3 4h9l9 9-8 8L3 11V4Z"/><circle cx="7.5" cy="8" r="1"/><path d="m11 16 5-5"/>',
+        welfare:'<rect x="3" y="9" width="18" height="12" rx="1"/><path d="M2 6h20v3H2zM12 6v15M12 6C7 6 6 4 7 2c2-2 5 1 5 4ZM12 6c5 0 6-2 5-4-2-2-5 1-5 4Z"/>',
+        membership:'<path d="m3 8 4 4 5-7 5 7 4-4-2 12H5L3 8ZM7 16h10"/>',
+        'store-adjustment':'<path d="M3 10h18l-2-6H5l-2 6ZM5 10v11h14V10M9 21v-7h6v7M3 10c0 3 4 3 4 0 0 3 4 3 4 0 0 3 4 3 4 0 0 3 4 3 4 0"/>'
+      };
+      const svg=(paths)=>'<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+paths+'</svg>';
+      const icon=document.createElement('span');icon.className='boss-cat-line-icon';icon.innerHTML=svg(iconPaths[catKey]||iconPaths.all);
+      const label=document.createElement('span');label.className='boss-cat-line-label';label.textContent=original.textContent.trim();
+      const arrow=document.createElement('span');arrow.className='boss-cat-line-arrow';arrow.innerHTML=svg('<path d="m9 18 6-6-6-6"/>');
+      btn.append(icon,label,arrow);btn.onclick=()=>{
+      // 分類與關鍵字搜尋互斥：切換分類時先清除搜尋，避免 query 使分類條件失效。
+      const input=document.getElementById('product-search-input');
+      if(input) input.value='';
+      const match=(original.getAttribute('onclick')||'').match(/selectCategory\(['"]([^'"]+)['"]/);
+      if(match && typeof window.selectCategory==='function') window.selectCategory(match[1],original);
+      else original.click();
+      if(typeof window.filterProducts==='function') window.filterProducts();
+      closeDrawer();
+      document.body.classList.add('boss-mobile-category-view');
+      const target=document.getElementById('main-product-grid')?.closest('.card');
+      if(target)requestAnimationFrame(()=>{const top=target.getBoundingClientRect().top+window.scrollY-76;window.scrollTo({top:Math.max(0,top),behavior:'auto'});});
+    };content.append(btn);});
+
+  }drawer.classList.add('is-open');backdrop.classList.add('is-open');}
+  function closeDrawer(){drawer.classList.remove('is-open');backdrop.classList.remove('is-open');if(tools.parentElement!==header){header.append(tools);tools.style.display='';}}
+  // 會員選單按下任何原有功能後，先關閉抽屜，再讓原按鈕照常執行。
+  drawer.addEventListener('click',e=>{const button=e.target.closest('#boss-mobile-drawer-content .nav-btn, #boss-mobile-drawer-content .logout-link, #boss-mobile-drawer-content .balance-clickable');if(button)closeDrawer();});
+  // 訂單查詢視窗的 X：明確關閉，不依賴其他側欄事件。
+  const orderClose=document.querySelector('#order-modal-overlay .modal-close');
+  if(orderClose){orderClose.type='button';orderClose.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();toggleOrderModal(false);},true);}
+  window.closeBossMobileDrawer=closeDrawer;
+  relocate();
+  // Android 鍵盤開啟會觸發 resize；不可在同一版型反覆移動輸入框，否則失焦／鍵盤閃爍。
+  let bossLastMobileMode=mobile();
+  window.addEventListener('resize',()=>{
+    const nextMode=mobile();
+    if(nextMode===bossLastMobileMode)return;
+    bossLastMobileMode=nextMode;
+    relocate();
+  });
+  const original=document.getElementById('mobile-cart-count');const badge=document.getElementById('boss-mobile-header-cart-count');
+  const update=()=>{badge.textContent=original?.textContent?.trim()||'0'};update();if(original)new MutationObserver(update).observe(original,{childList:true,subtree:true,characterData:true});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();toggleBossMobileCart(false)}});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup);else setup();
+})();
+</script>
+
+<!-- 2026-11-19 手機版固定底部三功能列；不影響桌面版 -->
+<style id="boss-mobile-bottom-shortcuts-style">
+#boss-mobile-bottom-shortcuts{display:none}
+@media(max-width:768px){
+ body{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))!important}
+ #boss-mobile-bottom-shortcuts{position:fixed;left:0;right:0;bottom:0;z-index:900;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:rgba(255,255,255,.97);border-top:1px solid #e9dfd9;box-shadow:0 -3px 15px rgba(74,63,53,.07);padding:8px 8px calc(7px + env(safe-area-inset-bottom,0px));box-sizing:border-box;backdrop-filter:blur(10px)}
+ #boss-mobile-bottom-shortcuts button,#boss-mobile-bottom-shortcuts a{min-width:0;min-height:48px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;border:0;background:transparent;color:#4a3f35;text-decoration:none;font:inherit;font-size:11px;letter-spacing:0;cursor:pointer;border-radius:9px;padding:4px 0}
+ #boss-mobile-bottom-shortcuts svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+ #boss-mobile-bottom-shortcuts button:active,#boss-mobile-bottom-shortcuts a:active{background:#faf2ef}
+ body:has(.boss-mobile-drawer.is-open) #boss-mobile-bottom-shortcuts,body:has(.modal-overlay.active) #boss-mobile-bottom-shortcuts,body:has(#boss-gift-overlay.open) #boss-mobile-bottom-shortcuts{display:none}
+}
+</style>
+<nav id="boss-mobile-bottom-shortcuts" aria-label="手機版快捷功能">
+ <button type="button" id="boss-shortcut-home" aria-label="返回首頁"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>返回首頁</span></button>
+ <button type="button" id="boss-shortcut-top" aria-label="返回頂部"><svg viewBox="0 0 24 24"><path d="m5 12 7-7 7 7M12 5v15"/></svg><span>返回頂部</span></button>
+ <a href="https://line.me/ti/p/4RwpD-atgZ" target="_blank" rel="noopener noreferrer" aria-label="聯絡客服"><svg viewBox="0 0 24 24"><path d="M4 13v-2a8 8 0 0 1 16 0v2M4 13h3v7H5a2 2 0 0 1-2-2v-3a2 2 0 0 1 1-2zm16 0h-3v7h2a2 2 0 0 0 2-2v-3a2 2 0 0 0-1-2z"/></svg><span>聯絡客服</span></a>
+</nav>
+<script id="boss-mobile-bottom-shortcuts-script">
+(()=>{
+ const top=()=>window.scrollTo({top:0,behavior:'smooth'});
+ document.getElementById('boss-shortcut-top').addEventListener('click',top);
+ document.getElementById('boss-shortcut-home').addEventListener('click',()=>{
+   if(typeof window.closeBossMobileDrawer==='function')window.closeBossMobileDrawer();
+   document.body.classList.remove('boss-mobile-category-view');
+   const tabs=[...document.querySelectorAll('.category-container .category-tab')];
+   const all=tabs.find(el=>el.textContent.trim().includes('全部商品'))||tabs[0];
+   if(all)all.click();
+   const search=document.getElementById('product-search-input');
+   if(search && search.value){search.value='';search.dispatchEvent(new Event('input',{bubbles:true}));}
+   top();
+ });
+})();
+</script>
+<!-- 手機版微調：底部快捷列、最新消息間距、搜尋框放大鏡 -->
+<style id="boss-mobile-compact-polish">
+@media (max-width:768px){
+  body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))!important}
+  #boss-mobile-bottom-shortcuts{padding:3px 5px calc(3px + env(safe-area-inset-bottom,0px))!important}
+  #boss-mobile-bottom-shortcuts button,#boss-mobile-bottom-shortcuts a{min-height:48px!important;gap:1px!important;padding:2px 0!important;font-size:10px!important;line-height:1.25!important}
+  #boss-mobile-bottom-shortcuts svg{width:20px!important;height:20px!important}
+  /* 公告貼齊容器左右邊界，減少外層留白 */
+  #boss-announcement-bar,#boss-announcement-bar.boss-mobile-announcement{width:100%!important;max-width:none!important;margin:0!important;border-radius:0!important;border-left:0!important;border-right:0!important;padding:9px 8px!important;box-sizing:border-box!important}
+  /* 搜尋框與頁面邊緣保持 8px；不觸發自動聚焦 */
+  #product-search-input{display:block!important;width:calc(100% - 16px)!important;margin:6px 8px 12px!important;height:46px!important;padding-left:40px!important;box-sizing:border-box!important;font-size:16px!important}
+  .boss-mobile-search-icon-wrap{position:relative!important;width:100%!important}
+  .boss-mobile-search-icon{position:absolute;left:21px;top:50%;transform:translateY(-50%);width:19px;height:19px;pointer-events:none;z-index:1;fill:none;stroke:#958a83;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+}
+</style>
+
+
+<style id="boss-mobile-polish-final">
+@media(max-width:768px){
+ #boss-mobile-bottom-shortcuts{display:grid!important;min-height:55px!important;padding:3px 5px calc(3px + env(safe-area-inset-bottom,0px))!important}
+ body:has(.boss-mobile-drawer.is-open) #boss-mobile-bottom-shortcuts,body:has(.modal-overlay.active) #boss-mobile-bottom-shortcuts,body:has(#boss-gift-overlay.open) #boss-mobile-bottom-shortcuts{display:none!important}
+ #boss-mobile-bottom-shortcuts button,#boss-mobile-bottom-shortcuts a{min-height:44px!important}
+ .boss-mobile-announcement{margin:0!important;max-width:100%!important}
+ .boss-mobile-search-icon-wrap{width:100%!important;box-sizing:border-box!important;padding:0 8px!important;margin:0!important}
+ .boss-mobile-search-icon-wrap #product-search-input{width:100%!important;margin:6px 0 12px!important}
+ .boss-mobile-search-icon-wrap .boss-mobile-search-icon{left:21px!important}
+}
+</style>
+<style id="boss-search-stable-fix">
+@media(max-width:768px){
+ #product-search-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23958a83' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='10.8' cy='10.8' r='7.2'/%3E%3Cpath d='m16 16 5 5'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:15px center!important;background-size:19px 19px!important;padding-left:45px!important;width:calc(100% - 16px)!important;margin-left:8px!important;margin-right:8px!important;box-sizing:border-box!important;}
+ .boss-mobile-search-icon{display:none!important}
+}
+</style>
+
+<!-- 手機搜尋沿用原始 input oninput="filterProducts()"，避免重複執行 -->
+
+<!-- 2026/11/19 手機版分類 A 方案：簡約線條圖示 -->
+<style id="boss-mobile-category-line-icons">
+@media(max-width:768px){
+ .boss-mobile-drawer button.boss-mobile-drawer-category{display:flex!important;align-items:center;gap:12px;min-height:53px;padding:10px 7px!important;text-align:left!important}
+ .boss-cat-line-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 25px;color:#846d60}
+ .boss-cat-line-icon svg{width:22px;height:22px;display:block}
+ .boss-cat-line-label{flex:1;min-width:0;font-size:14px;line-height:1.5}
+ .boss-cat-line-arrow{display:inline-flex;flex:0 0 16px;color:#a89c96}
+ .boss-cat-line-arrow svg{width:16px;height:16px}
+}
+</style>
+
+<!-- 手機購物車：保留底部三功能列空間，避免遮擋前往結帳 -->
+<style id="boss-mobile-cart-checkout-visibility-fix">
+@media (max-width:768px){
+  #mobile-quick-nav #boss-mobile-cart-popup:not([hidden]){
+    top:5vh!important;
+    top:5dvh!important;
+    bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
+    height:auto!important;
+    max-height:none!important;
+    display:flex!important;
+    flex-direction:column!important;
+    overflow:hidden!important;
+    padding-bottom:0!important;
+  }
+  #mobile-quick-nav #boss-mobile-cart-popup .boss-mobile-cart-popup-head{
+    flex:0 0 auto!important;
+  }
+  #mobile-quick-nav #boss-mobile-cart-popup .boss-mobile-cart-popup-items{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch;
+  }
+  #mobile-quick-nav #boss-mobile-cart-popup .boss-mobile-cart-checkout{
+    flex:0 0 auto!important;
+    width:calc(100% - 24px)!important;
+    margin:8px 12px 12px!important;
+    position:relative;
+    z-index:1;
+  }
+}
+</style>
+
+<!-- 手機版購物車顯示層修正：彈窗移至 body，避開導覽列層級與 overflow 裁切 -->
+<style id="boss-mobile-cart-body-layer-fix">
+@media(max-width:768px){
+  body > #boss-mobile-cart-popup:not([hidden]){
+    display:flex!important;flex-direction:column!important;
+    position:fixed!important;left:0!important;right:0!important;
+    top:calc(58px + env(safe-area-inset-top,0px))!important;
+    bottom:calc(68px + env(safe-area-inset-bottom,0px))!important;
+    width:100%!important;height:auto!important;max-height:none!important;
+    box-sizing:border-box!important;overflow:hidden!important;
+    margin:0!important;padding:0!important;
+    border-radius:14px!important;z-index:99990!important;
+    background:#fff!important;visibility:visible!important;opacity:1!important;
+  }
+  body > #boss-mobile-cart-popup[hidden]{display:none!important}
+  body > #boss-mobile-cart-popup .boss-mobile-cart-popup-head{flex:0 0 auto!important}
+  body > #boss-mobile-cart-popup .boss-mobile-cart-popup-items{
+    flex:1 1 auto!important;min-height:0!important;max-height:none!important;
+    overflow-y:auto!important;-webkit-overflow-scrolling:touch;
+  }
+  body > #boss-mobile-cart-popup .boss-mobile-cart-checkout{
+    flex:0 0 auto!important;width:calc(100% - 24px)!important;
+    margin:8px 12px 12px!important;position:relative!important;
+  }
+}
+@media(min-width:769px){body > #boss-mobile-cart-popup{display:none!important}}
+</style>
 </body>
 </html>
