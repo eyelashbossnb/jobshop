@@ -17269,5 +17269,63 @@ body.boss-checkout-view #boss-checkout-page{display:block}
  #boss-desktop-side .boss-side-categories button:hover .boss-category-svg-icon,#boss-desktop-side .boss-side-categories button.active .boss-category-svg-icon{stroke:#a66c5c}
 }
 </style>
+
+<style id="boss-banner-carousel-v1-css">
+#banner-image-block .boss-banner-carousel{position:relative;width:100%;overflow:hidden;border-radius:12px;background:#f7f4f1;aspect-ratio:2.75/1}
+#banner-image-block .boss-banner-track{display:flex;width:100%;height:100%;transition:transform .55s ease;will-change:transform}
+#banner-image-block .boss-banner-slide{flex:0 0 100%;height:100%;display:flex;align-items:center;justify-content:center;min-width:0}
+#banner-image-block .boss-banner-slide img{display:block;width:100%;height:100%;object-fit:contain}
+#banner-image-block .boss-banner-arrow{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;border-radius:50%;background:rgba(255,255,255,.9);box-shadow:0 2px 8px #0002;cursor:pointer;color:#65564d;font-size:24px;z-index:2}
+#banner-image-block .boss-banner-arrow.prev{left:9px}
+#banner-image-block .boss-banner-arrow.next{right:9px}
+#banner-image-block .boss-banner-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;gap:8px;justify-content:center;z-index:2}
+#banner-image-block .boss-banner-dot{width:9px;height:9px;border-radius:50%;padding:0;border:1px solid #fff;background:#ffffff99;cursor:pointer}
+#banner-image-block .boss-banner-dot.active{background:#ad8274;border-color:#ad8274}
+@media(max-width:768px){
+ #banner-image-block .boss-banner-carousel{aspect-ratio:1.7/1}
+ #banner-image-block .boss-banner-arrow{width:29px;height:29px;font-size:19px}
+}
+@media(prefers-reduced-motion:reduce){#banner-image-block .boss-banner-track{transition:none}}
+</style>
+<script id="boss-banner-carousel-v1-script">
+(function(){
+ const slides=[
+  {src:'https://i.ibb.co/0VGksSpn/VIP-2025.png',alt:'睫老闆 VIP 好禮加碼贈',url:'https://ibb.co/sJVhWGpg'},
+  {src:'https://i.ibb.co/0R5N7ws8/image.png',alt:'睫老闆 Mild 初學黑膠',url:'https://ibb.co/S4STjLfW'}
+ ];
+ function init(){
+  const host=document.getElementById('banner-image-block');
+  if(!host||host.dataset.bossCarouselReady)return;
+  host.dataset.bossCarouselReady='1';
+  host.replaceChildren();
+  const shell=document.createElement('div');shell.className='boss-banner-carousel';shell.setAttribute('aria-label','首頁活動輪播圖');
+  const track=document.createElement('div');track.className='boss-banner-track';
+  const dots=document.createElement('div');dots.className='boss-banner-dots';
+  const prev=document.createElement('button');prev.type='button';prev.className='boss-banner-arrow prev';prev.textContent='‹';prev.setAttribute('aria-label','上一張');
+  const next=document.createElement('button');next.type='button';next.className='boss-banner-arrow next';next.textContent='›';next.setAttribute('aria-label','下一張');
+  slides.forEach((slide,i)=>{
+   const a=document.createElement('a');a.className='boss-banner-slide';a.href=slide.url;a.target='_blank';a.rel='noopener noreferrer';a.setAttribute('aria-label',slide.alt);
+   const img=document.createElement('img');img.src=slide.src;img.alt=slide.alt;img.loading=i===0?'eager':'lazy';
+   a.append(img);track.append(a);
+   const dot=document.createElement('button');dot.type='button';dot.className='boss-banner-dot';dot.setAttribute('aria-label','第'+(i+1)+'張');dot.addEventListener('click',()=>go(i));dots.append(dot);
+  });
+  shell.append(track,prev,next,dots);host.append(shell);
+  let current=0,interval;
+  function go(n){current=(n+slides.length)%slides.length;track.style.transform='translateX(-'+current*100+'%)';dots.querySelectorAll('button').forEach((d,i)=>{d.classList.toggle('active',i===current);d.setAttribute('aria-current',i===current?'true':'false')})}
+  function stop(){if(interval){clearInterval(interval);interval=null}}
+  function start(){stop();if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)interval=setInterval(()=>go(current+1),5000)}
+  prev.addEventListener('click',()=>{go(current-1);start()});
+  next.addEventListener('click',()=>{go(current+1);start()});
+  shell.addEventListener('mouseenter',stop);shell.addEventListener('mouseleave',start);
+  shell.addEventListener('focusin',stop);shell.addEventListener('focusout',e=>{if(!shell.contains(e.relatedTarget))start()});
+  document.addEventListener('visibilitychange',()=>document.hidden?stop():start());
+  let x=null;
+  shell.addEventListener('touchstart',e=>{x=e.touches[0]?.clientX??null},{passive:true});
+  shell.addEventListener('touchend',e=>{if(x===null)return;const diff=(e.changedTouches[0]?.clientX??x)-x;if(Math.abs(diff)>45){go(current+(diff<0?1:-1));start()}x=null},{passive:true});
+  go(0);start();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
 </body>
 </html>
