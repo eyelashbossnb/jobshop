@@ -17351,5 +17351,36 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
  body.boss-products-view #boss-mobile-bottom-bar{display:flex}
 }
 </style>
+
+<style id="boss-mobile-home-visibility-repair-20261119">
+/* 僅修復手機版：電腦版 CSS、分類及購物流程不變。 */
+@media(max-width:768px){
+ body:not(.boss-products-view):not(.boss-checkout-view) main.main-container{
+   display:block!important;width:100%!important;min-height:0!important;
+ }
+ body:not(.boss-products-view):not(.boss-checkout-view) main.main-container>div:first-child{
+   display:block!important;width:100%!important;visibility:visible!important;
+ }
+ #boss-desktop-home-grid{display:block!important;width:100%!important}
+ #boss-desktop-home-grid .boss-home-main{display:block!important;width:100%!important;min-width:0!important}
+ #boss-desktop-side{display:none!important}
+ body:not(.boss-products-view):not(.boss-checkout-view) #boss-desktop-home-grid #boss-announcement-bar,
+ body:not(.boss-products-view):not(.boss-checkout-view) #boss-desktop-home-grid #boss-promo-test,
+ body:not(.boss-products-view):not(.boss-checkout-view) #boss-desktop-home-grid #banner-image-block,
+ body:not(.boss-products-view):not(.boss-checkout-view) #boss-desktop-home-grid #boss-home-event-images{
+   display:block!important;visibility:visible!important;max-width:100%!important;
+ }
+ body:not(.boss-products-view):not(.boss-checkout-view) #boss-desktop-products-card{display:none!important}
+ body.boss-products-view #boss-desktop-home-grid #boss-announcement-bar,
+ body.boss-products-view #boss-desktop-home-grid #boss-promo-test,
+ body.boss-products-view #boss-desktop-home-grid #banner-image-block,
+ body.boss-products-view #boss-desktop-home-grid #boss-home-event-images{display:none!important}
+ body.boss-products-view #boss-desktop-home-grid #boss-desktop-products-card{
+   display:block!important;width:auto!important;margin:12px 8px!important;
+ }
+ body.boss-products-view #boss-desktop-home-grid .boss-home-main{display:block!important}
+ body.boss-checkout-view #boss-desktop-home-grid{display:none!important}
+}
+</style>
 </body>
 </html>
