@@ -17038,6 +17038,10 @@ body.boss-checkout-view #boss-checkout-page{display:block}
     document.body.classList.add('boss-products-view');
     document.body.classList.remove('boss-mobile-category-view');
     productNav.querySelector('#boss-product-page-title').textContent=label||'全部商品';
+    if(window.matchMedia('(max-width:768px)').matches){
+      const mobileSearch=document.getElementById('product-search-input');
+      if(mobileSearch && mobileSearch.parentElement!==productCard)productNav.after(mobileSearch);
+    }
     window.scrollTo({top:0,behavior:'instant'});
   };
   const list=sidebar.querySelector('.boss-side-categories');
@@ -17380,6 +17384,27 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
  }
  body.boss-products-view #boss-desktop-home-grid .boss-home-main{display:block!important}
  body.boss-checkout-view #boss-desktop-home-grid{display:none!important}
+}
+</style>
+
+<style id="boss-mobile-search-only-product-and-header-seam-20261119">
+@media screen and (max-width:768px){
+  html,body{max-width:100%!important;overflow-x:clip!important}
+  header{width:100%!important;max-width:100%!important;box-sizing:border-box!important;margin:0!important;padding:0!important;border-bottom:0!important}
+  header .header-container{width:100%!important;max-width:100%!important;box-sizing:border-box!important;margin:0!important;border-bottom:0!important}
+  #boss-mobile-search-row{display:none!important;height:0!important;padding:0!important;margin:0!important;border:0!important}
+  /* 公告原本被放進搜尋列，維持公告顯示，但搜尋框獨立放在商品頁。 */
+  #boss-mobile-search-row:has(#boss-announcement-bar){display:block!important;height:auto!important}
+  #boss-mobile-search-row #product-search-input{display:none!important}
+  body:not(.boss-products-view) #product-search-input{display:none!important}
+  body.boss-products-view #boss-desktop-products-card #product-search-input{
+    display:block!important;position:relative!important;width:100%!important;max-width:100%!important;
+    height:46px!important;box-sizing:border-box!important;margin:12px 0 18px!important;
+    padding:0 15px 0 43px!important;border-radius:25px!important;
+    background-color:#fff!important;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='%238e8580' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4-4'/%3E%3C/svg%3E")!important;
+    background-repeat:no-repeat!important;background-position:14px center!important;background-size:20px!important;
+  }
 }
 </style>
 </body>
