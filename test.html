@@ -16741,7 +16741,19 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
     content.append(tools);tools.style.display='flex';
   }else{
     const catalog=document.createElement('a');catalog.className='boss-mobile-drawer-category boss-mobile-catalog-link';catalog.href='https://heyzine.com/flip-book/a792795585.html';catalog.target='_blank';catalog.rel='noopener noreferrer';catalog.textContent='睫老闆商品型錄 ↗';catalog.addEventListener('click',closeDrawer);content.append(catalog);
-    document.querySelectorAll('.category-container .category-tab').forEach(original=>{const btn=document.createElement('button');btn.className='boss-mobile-drawer-category';btn.textContent=original.textContent;btn.onclick=()=>{original.click();closeDrawer();document.body.classList.add('boss-mobile-category-view');const target=document.querySelector('.category-container')?.closest('.card');if(target)requestAnimationFrame(()=>{const top=target.getBoundingClientRect().top+window.scrollY-72;window.scrollTo({top:Math.max(0,top),behavior:'smooth'});});};content.append(btn);});
+    document.querySelectorAll('.category-container .category-tab').forEach(original=>{const btn=document.createElement('button');btn.className='boss-mobile-drawer-category';btn.textContent=original.textContent;btn.onclick=()=>{
+      // 分類與關鍵字搜尋互斥：切換分類時先清除搜尋，避免 query 使分類條件失效。
+      const input=document.getElementById('product-search-input');
+      if(input) input.value='';
+      const match=(original.getAttribute('onclick')||'').match(/selectCategory\(['"]([^'"]+)['"]/);
+      if(match && typeof window.selectCategory==='function') window.selectCategory(match[1],original);
+      else original.click();
+      if(typeof window.filterProducts==='function') window.filterProducts();
+      closeDrawer();
+      document.body.classList.add('boss-mobile-category-view');
+      const target=document.getElementById('main-product-grid')?.closest('.card');
+      if(target)requestAnimationFrame(()=>{const top=target.getBoundingClientRect().top+window.scrollY-76;window.scrollTo({top:Math.max(0,top),behavior:'auto'});});
+    };content.append(btn);});
 
   }drawer.classList.add('is-open');backdrop.classList.add('is-open');}
   function closeDrawer(){drawer.classList.remove('is-open');backdrop.classList.remove('is-open');if(tools.parentElement!==header){header.append(tools);tools.style.display='';}}
@@ -16835,5 +16847,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
  .boss-mobile-search-icon{display:none!important}
 }
 </style>
+
+<!-- 手機搜尋沿用原始 input oninput="filterProducts()"，避免重複執行 -->
 </body>
 </html>
