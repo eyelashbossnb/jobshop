@@ -6,7 +6,7 @@
     <title>睫老闆官方網站｜專業美睫材料・熱蠟・紋繡用品</title>
     <!-- SEO：搜尋引擎與社群分享資訊 -->
     <meta name="description" content="睫老闆美妝百貨提供專業美睫黑膠、嫁接睫毛、美睫耗材、熱蠟除毛、紋繡材料及美容保養用品，滿足美睫師、美容師與美業店家的採購需求。">
-    <meta name="robots" content="noindex, nofollow">
+   <meta name="robots" content="noindex, nofollow">
     <link rel="canonical" href="https://eyelashbossnb.github.io/jobshop/">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="zh_TW">
@@ -16690,6 +16690,14 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
  .boss-mobile-drawer #member-status-area{display:block!important}
  .boss-mobile-drawer #member-status-area .user-info{width:100%;box-sizing:border-box;flex-wrap:wrap}
  .boss-mobile-drawer .nav-btn{width:100%;margin:0!important}
+ .boss-mobile-drawer a.boss-mobile-drawer-category{display:block;text-decoration:none;border-bottom:1px solid var(--border-color);padding:13px 7px;color:var(--text-main);font-size:14px;box-sizing:border-box}
+ .boss-mobile-drawer .nav-tools{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:0!important}
+ .boss-mobile-drawer .nav-tools>.nav-btn{display:block!important;width:100%!important;margin:0 0 14px!important;min-height:46px!important;padding:11px 12px!important;box-sizing:border-box!important;font-size:14px!important}
+ .boss-mobile-drawer #member-status-area{display:flex!important;flex-direction:column!important;gap:14px!important;width:100%!important}
+ .boss-mobile-drawer #member-status-area>.nav-btn{display:block!important;width:100%!important;min-height:46px!important;margin:0!important;padding:11px 12px!important;box-sizing:border-box!important;font-size:14px!important}
+ .boss-mobile-drawer #member-status-area .user-info{width:100%!important;box-sizing:border-box!important;justify-content:center!important}
+ /* 電子型錄改放分類抽屜，首頁不重複顯示；VIP 訂購指南僅從手機版移除 */
+ .main-container>div:first-child>div:first-child:has(a[href*="heyzine.com/flip-book/a792795585.html"]){display:none!important}
  .main-container .mobile-cart-card{scroll-margin-top:76px!important}
  .category-container{display:none!important}
  #mobile-floating-checkout,#boss-mobile-cart-jump{display:none!important}
@@ -16724,10 +16732,13 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
   function openDrawer(type){if(!mobile())return;toggleBossMobileCart(false);const content=drawer.querySelector('#boss-mobile-drawer-content');drawer.querySelector('#boss-mobile-drawer-title').textContent=type==='member'?'會員中心':'商品分類';content.replaceChildren();if(type==='member'){
     content.append(tools);tools.style.display='flex';
   }else{
+    const catalog=document.createElement('a');catalog.className='boss-mobile-drawer-category boss-mobile-catalog-link';catalog.href='https://heyzine.com/flip-book/a792795585.html';catalog.target='_blank';catalog.rel='noopener noreferrer';catalog.textContent='睫老闆商品型錄 ↗';catalog.addEventListener('click',closeDrawer);content.append(catalog);
     document.querySelectorAll('.category-container .category-tab').forEach(original=>{const btn=document.createElement('button');btn.className='boss-mobile-drawer-category';btn.textContent=original.textContent;btn.onclick=()=>{original.click();closeDrawer();document.querySelector('.card:has(.category-container)')?.scrollIntoView({behavior:'smooth',block:'start'});};content.append(btn);});
-    const order=document.createElement('button');order.className='boss-mobile-drawer-category';order.textContent='查詢訂單';order.onclick=()=>{closeDrawer();toggleOrderModal(true)};content.append(order);
+
   }drawer.classList.add('is-open');backdrop.classList.add('is-open');}
   function closeDrawer(){drawer.classList.remove('is-open');backdrop.classList.remove('is-open');if(tools.parentElement!==header){header.append(tools);tools.style.display='';}}
+  // 會員選單按下任何原有功能後，先關閉抽屜，再讓原按鈕照常執行。
+  drawer.addEventListener('click',e=>{const button=e.target.closest('#boss-mobile-drawer-content .nav-btn, #boss-mobile-drawer-content .logout-link, #boss-mobile-drawer-content .balance-clickable');if(button)closeDrawer();});
   window.closeBossMobileDrawer=closeDrawer;
   relocate();window.addEventListener('resize',relocate);
   const original=document.getElementById('mobile-cart-count');const badge=document.getElementById('boss-mobile-header-cart-count');
