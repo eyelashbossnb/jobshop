@@ -11554,41 +11554,7 @@ function bossDownloadOrderPdf(index) {
         popup.document.write('<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>' +
           '睫老闆_訂單明細_' + bossPdfSafeName(order.id) +
           '</title><style>' + styles + '</style></head><body><main class="boss-pdf-page">' +
-          content + '</main>
-<!-- 手機購物車：保留底部三功能列空間，避免遮擋前往結帳 -->
-<style id="boss-mobile-cart-checkout-visibility-fix">
-@media (max-width:768px){
-  #mobile-quick-nav #boss-mobile-cart-popup:not([hidden]){
-    top:5vh!important;
-    top:5dvh!important;
-    bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
-    height:auto!important;
-    max-height:none!important;
-    display:flex!important;
-    flex-direction:column!important;
-    overflow:hidden!important;
-    padding-bottom:0!important;
-  }
-  #mobile-quick-nav #boss-mobile-cart-popup .boss-mobile-cart-popup-head{
-    flex:0 0 auto!important;
-  }
-  #mobile-quick-nav #boss-mobile-cart-popup .boss-mobile-cart-popup-items{
-    flex:1 1 auto!important;
-    min-height:0!important;
-    max-height:none!important;
-    overflow-y:auto!important;
-    -webkit-overflow-scrolling:touch;
-  }
-  #mobile-quick-nav #boss-mobile-cart-popup .boss-mobile-cart-checkout{
-    flex:0 0 auto!important;
-    width:calc(100% - 24px)!important;
-    margin:8px 12px 12px!important;
-    position:relative;
-    z-index:1;
-  }
-}
-</style>
-</body></html>');
+          content + '</main></body></html>');
         popup.document.close();
         popup.focus();
         // 讓列印頁完成排版與中文字型載入後再開啟列印視窗。
@@ -16913,6 +16879,40 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
  .boss-cat-line-label{flex:1;min-width:0;font-size:14px;line-height:1.5}
  .boss-cat-line-arrow{display:inline-flex;flex:0 0 16px;color:#a89c96}
  .boss-cat-line-arrow svg{width:16px;height:16px}
+}
+</style>
+
+<!-- 手機購物車：保留底部三功能列空間，避免遮擋前往結帳 -->
+<style id="boss-mobile-cart-checkout-visibility-fix">
+@media (max-width:768px){
+  #mobile-quick-nav #boss-mobile-cart-popup:not([hidden]){
+    top:5vh!important;
+    top:5dvh!important;
+    bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
+    height:auto!important;
+    max-height:none!important;
+    display:flex!important;
+    flex-direction:column!important;
+    overflow:hidden!important;
+    padding-bottom:0!important;
+  }
+  #mobile-quick-nav #boss-mobile-cart-popup .boss-mobile-cart-popup-head{
+    flex:0 0 auto!important;
+  }
+  #mobile-quick-nav #boss-mobile-cart-popup .boss-mobile-cart-popup-items{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch;
+  }
+  #mobile-quick-nav #boss-mobile-cart-popup .boss-mobile-cart-checkout{
+    flex:0 0 auto!important;
+    width:calc(100% - 24px)!important;
+    margin:8px 12px 12px!important;
+    position:relative;
+    z-index:1;
+  }
 }
 </style>
 </body>
