@@ -11602,41 +11602,7 @@ function bossDownloadOrderPdf(index) {
 }
 </style>
 
-<style id="boss-mobile-hide-duplicate-home-and-category-fix">
-@media(max-width:768px){
-  /* 手機底部已提供返回首頁，不再重複顯示分類頁的按鈕 */
-  #boss-product-return-home{display:none!important}
-  body.boss-products-view #boss-desktop-products-card{display:block!important;visibility:visible!important}
-}
-</style>
 
-<style id="boss-mobile-20261119-layout-and-category">
-@media(max-width:768px){
-  /* 公告恢復正式版：一行、固定高度，跑馬燈文字不換行 */
-  #boss-announcement-bar,#boss-announcement-bar.is-visible{
-    height:40px!important;min-height:40px!important;max-height:40px!important;
-    margin:0 0 12px!important;padding:0 10px!important;gap:8px!important;
-    border-radius:0!important;overflow:hidden!important;align-items:center!important;
-    box-sizing:border-box!important;
-  }
-  #boss-announcement-label{white-space:nowrap!important;flex-shrink:0!important}
-  #boss-announcement-viewport{height:100%!important;display:flex!important;align-items:center!important;overflow:hidden!important}
-  #boss-announcement-track,.boss-announcement-item{white-space:nowrap!important;flex-wrap:nowrap!important}
-  /* 圖片之間加入適當留白，避免上下相貼 */
-  body:not(.boss-products-view):not(.boss-checkout-view) #boss-home-event-images{
-    display:flex!important;flex-direction:column!important;gap:14px!important;
-    margin:14px 0 20px!important;padding:0!important;
-  }
-  body:not(.boss-products-view):not(.boss-checkout-view) #boss-home-event-images .boss-home-event-card{
-    display:block!important;margin:0!important;padding:0!important;line-height:0!important;
-  }
-  body:not(.boss-products-view):not(.boss-checkout-view) #boss-home-event-images .boss-home-event-card img{
-    display:block!important;width:100%!important;height:auto!important;
-    border-radius:12px!important;
-  }
-  #boss-product-return-home{display:none!important}
-}
-</style>
 </body></html>');
         popup.document.close();
         popup.focus();
@@ -16850,25 +16816,12 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       // 分類與關鍵字搜尋互斥：切換分類時先清除搜尋，避免 query 使分類條件失效。
       const input=document.getElementById('product-search-input');
       if(input) input.value='';
-      const match=(original.getAttribute('onclick')||'').match(/selectCategory\\(\\s*['"]([^'"]+)['"]/);
-      const code=match?match[1]:'all';
       closeDrawer();
-      // 與電腦版共用同一個分類入口，避免手機抽屜使用另一套不一致的篩選流程。
-      const desktopCategory=Array.from(document.querySelectorAll('.boss-side-categories button'))
-        .find(b=>b.dataset.categoryCode===code);
-      if(desktopCategory){
-        desktopCategory.click();
-      }else{
-        try{
-          if(typeof selectCategory==='function')selectCategory(code,original);
-          if(typeof toggleSaleMenu==='function')toggleSaleMenu(code==='sale');
-          if(typeof filterProducts==='function')filterProducts();
-        }catch(e){console.error('分類切換錯誤',e);}
-        if(typeof window.bossShowProducts==='function')window.bossShowProducts(original.textContent.trim());
-      }
-      document.body.classList.add('boss-products-view');
-      document.body.classList.remove('boss-mobile-category-view','boss-checkout-view');
-      window.scrollTo(0,0);
+      // 使用原始側欄分類的 click handler；該 handler 同時處理商品過濾和頁面導航。
+      original.click();
+      // 若原始側欄僅篩選而沒有切頁，補上商品頁導航。
+      if(typeof window.bossShowProducts==='function')window.bossShowProducts(original.textContent.trim());
+      window.scrollTo({top:0,behavior:'instant'});
     };content.append(btn);});
 
   }drawer.classList.add('is-open');backdrop.classList.add('is-open');}
@@ -17551,6 +17504,18 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
    box-shadow:none!important;white-space:nowrap!important;
  }
  body.boss-products-view #boss-product-page-nav strong{font-size:18px!important}
+}
+</style>
+
+<style id="boss-mobile-final-layout-20261119">
+@media(max-width:768px){
+ #boss-product-return-home{display:none!important}
+ #boss-announcement-bar{margin-top:0!important;margin-bottom:0!important;height:40px!important;min-height:40px!important;padding:0 10px!important;box-sizing:border-box!important}
+ #boss-announcement-label{white-space:nowrap!important}
+ #boss-announcement-viewport{overflow:hidden!important}
+ #boss-home-event-images{display:flex!important;flex-direction:column!important;gap:16px!important;margin:16px 0!important}
+ #boss-home-event-images > *{margin:0!important}
+ #boss-home-event-images img{display:block!important;width:100%!important;height:auto!important}
 }
 </style>
 </body>
