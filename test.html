@@ -17018,6 +17018,21 @@ body.boss-checkout-view #boss-checkout-page{display:block}
   body.append(announce,banner);
   if(promo)body.append(promo);
   body.append(productCard);
+  productCard.id='boss-desktop-products-card';
+  const productNav=document.createElement('div');productNav.id='boss-product-page-nav';
+  productNav.innerHTML='<button type="button" id="boss-product-return-home">← 返回首頁</button><strong id="boss-product-page-title">全部商品</strong>';
+  productCard.prepend(productNav);
+  productNav.querySelector('button').addEventListener('click',()=>window.bossShowHome());
+  window.bossShowProducts=function(label){
+    document.body.classList.remove('boss-checkout-view');
+    if(window.matchMedia('(min-width:769px)').matches){
+      document.body.classList.add('boss-products-view');
+      productNav.querySelector('#boss-product-page-title').textContent=label||'全部商品';
+      window.scrollTo({top:0,behavior:'instant'});
+    }else{
+      window.bossShowProducts(b.textContent);
+    }
+  };
   const list=sidebar.querySelector('.boss-side-categories');
   categories.querySelectorAll('.category-tab').forEach(original=>{
    const b=document.createElement('button');b.type='button';b.textContent=original.textContent.trim();
@@ -17033,13 +17048,14 @@ body.boss-checkout-view #boss-checkout-page{display:block}
    list.append(b);
   });
   window.bossShowCheckout=function(){
+    document.body.classList.remove('boss-products-view');
     document.body.classList.add('boss-checkout-view');
     if(typeof window.toggleBossMobileCart==='function')window.toggleBossMobileCart(false);
     if(typeof window.toggleMobileQuickNav==='function')window.toggleMobileQuickNav(false);
     window.scrollTo({top:0,behavior:'instant'});
   };
   window.bossShowHome=function(){
-    document.body.classList.remove('boss-checkout-view');
+    document.body.classList.remove('boss-checkout-view','boss-products-view');
     window.scrollTo({top:0,behavior:'instant'});
   };
   // Preserve the old names used by existing buttons, but route them to checkout view.
@@ -17118,5 +17134,19 @@ body.boss-checkout-view #boss-checkout-page{display:block}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
+
+<style id="boss-desktop-product-page-css">
+#boss-product-page-nav{display:none}
+@media(min-width:769px){
+ #boss-desktop-home-grid #boss-desktop-products-card{display:none}
+ body.boss-products-view #boss-desktop-home-grid #boss-desktop-products-card{display:block!important;margin-top:0!important}
+ body.boss-products-view #boss-desktop-home-grid #boss-announcement-bar,
+ body.boss-products-view #boss-desktop-home-grid #banner-image-block,
+ body.boss-products-view #boss-desktop-home-grid #boss-promo-test{display:none!important}
+ body.boss-products-view #boss-product-page-nav{display:flex;align-items:center;gap:24px;margin:0 0 18px;padding-bottom:15px;border-bottom:1px solid #eadfd9}
+ #boss-product-page-nav button{background:#fff;border:1px solid #e5b1a4;color:#8d665c;border-radius:20px;padding:8px 16px;cursor:pointer}
+ #boss-product-page-nav strong{font-size:20px}
+}
+</style>
 </body>
 </html>
