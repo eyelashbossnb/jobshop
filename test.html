@@ -11554,42 +11554,7 @@ function bossDownloadOrderPdf(index) {
         popup.document.write('<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>' +
           '睫老闆_訂單明細_' + bossPdfSafeName(order.id) +
           '</title><style>' + styles + '</style></head><body><main class="boss-pdf-page">' +
-          content + '</main>
-<!-- 手機版微調：底部快捷列、最新消息間距、搜尋框放大鏡 -->
-<style id="boss-mobile-compact-polish">
-@media (max-width:768px){
-  body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))!important}
-  #boss-mobile-bottom-shortcuts{padding:3px 5px calc(3px + env(safe-area-inset-bottom,0px))!important}
-  #boss-mobile-bottom-shortcuts button,#boss-mobile-bottom-shortcuts a{min-height:48px!important;gap:1px!important;padding:2px 0!important;font-size:10px!important;line-height:1.25!important}
-  #boss-mobile-bottom-shortcuts svg{width:20px!important;height:20px!important}
-  /* 公告貼齊容器左右邊界，減少外層留白 */
-  #boss-announcement-bar,#boss-announcement-bar.boss-mobile-announcement{width:100%!important;max-width:none!important;margin:0!important;border-radius:0!important;border-left:0!important;border-right:0!important;padding:9px 8px!important;box-sizing:border-box!important}
-  /* 搜尋框與頁面邊緣保持 8px；不觸發自動聚焦 */
-  #product-search-input{display:block!important;width:calc(100% - 16px)!important;margin:6px 8px 12px!important;height:46px!important;padding-left:40px!important;box-sizing:border-box!important;font-size:16px!important}
-  .boss-mobile-search-icon-wrap{position:relative!important;width:100%!important}
-  .boss-mobile-search-icon{position:absolute;left:21px;top:50%;transform:translateY(-50%);width:19px;height:19px;pointer-events:none;z-index:1;fill:none;stroke:#958a83;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-}
-</style>
-<script id="boss-mobile-search-icon-script">
-(function(){
- function setup(){
-   const search=document.getElementById('product-search-input');
-   if(!search || search.closest('.boss-mobile-search-icon-wrap'))return;
-   const wrapper=document.createElement('div');
-   wrapper.className='boss-mobile-search-icon-wrap';
-   search.parentNode.insertBefore(wrapper,search);
-   wrapper.appendChild(search);
-   const icon=document.createElementNS('http://www.w3.org/2000/svg','svg');
-   icon.setAttribute('viewBox','0 0 24 24');
-   icon.setAttribute('aria-hidden','true');
-   icon.setAttribute('class','boss-mobile-search-icon');
-   icon.innerHTML='<circle cx="10.8" cy="10.8" r="7.2"></circle><path d="m16 16 5 5"></path>';
-   wrapper.appendChild(icon);
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup);else setup();
-})();
-</script>
-</body></html>');
+          content + '</main></body></html>');
         popup.document.close();
         popup.focus();
         // 讓列印頁完成排版與中文字型載入後再開啟列印視窗。
@@ -16802,7 +16767,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
  #boss-mobile-bottom-shortcuts button,#boss-mobile-bottom-shortcuts a{min-width:0;min-height:48px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;border:0;background:transparent;color:#4a3f35;text-decoration:none;font:inherit;font-size:11px;letter-spacing:0;cursor:pointer;border-radius:9px;padding:4px 0}
  #boss-mobile-bottom-shortcuts svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
  #boss-mobile-bottom-shortcuts button:active,#boss-mobile-bottom-shortcuts a:active{background:#faf2ef}
- body:has(.boss-mobile-drawer.is-open) #boss-mobile-bottom-shortcuts,body:has(.modal-overlay.active) #boss-mobile-bottom-shortcuts,body:has(#boss-mobile-cart-popup:not([hidden])) #boss-mobile-bottom-shortcuts,body:has(#boss-gift-overlay.open) #boss-mobile-bottom-shortcuts{display:none}
+ body:has(.boss-mobile-drawer.is-open) #boss-mobile-bottom-shortcuts,body:has(.modal-overlay.active) #boss-mobile-bottom-shortcuts,body:has(#boss-gift-overlay.open) #boss-mobile-bottom-shortcuts{display:none}
 }
 </style>
 <nav id="boss-mobile-bottom-shortcuts" aria-label="手機版快捷功能">
@@ -16844,5 +16809,51 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
  });
 })();
 </script>
+<!-- 手機版微調：底部快捷列、最新消息間距、搜尋框放大鏡 -->
+<style id="boss-mobile-compact-polish">
+@media (max-width:768px){
+  body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))!important}
+  #boss-mobile-bottom-shortcuts{padding:3px 5px calc(3px + env(safe-area-inset-bottom,0px))!important}
+  #boss-mobile-bottom-shortcuts button,#boss-mobile-bottom-shortcuts a{min-height:48px!important;gap:1px!important;padding:2px 0!important;font-size:10px!important;line-height:1.25!important}
+  #boss-mobile-bottom-shortcuts svg{width:20px!important;height:20px!important}
+  /* 公告貼齊容器左右邊界，減少外層留白 */
+  #boss-announcement-bar,#boss-announcement-bar.boss-mobile-announcement{width:100%!important;max-width:none!important;margin:0!important;border-radius:0!important;border-left:0!important;border-right:0!important;padding:9px 8px!important;box-sizing:border-box!important}
+  /* 搜尋框與頁面邊緣保持 8px；不觸發自動聚焦 */
+  #product-search-input{display:block!important;width:calc(100% - 16px)!important;margin:6px 8px 12px!important;height:46px!important;padding-left:40px!important;box-sizing:border-box!important;font-size:16px!important}
+  .boss-mobile-search-icon-wrap{position:relative!important;width:100%!important}
+  .boss-mobile-search-icon{position:absolute;left:21px;top:50%;transform:translateY(-50%);width:19px;height:19px;pointer-events:none;z-index:1;fill:none;stroke:#958a83;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+}
+</style>
+<script id="boss-mobile-search-icon-script">
+(function(){
+ function setup(){
+   const search=document.getElementById('product-search-input');
+   if(!search || search.closest('.boss-mobile-search-icon-wrap'))return;
+   const wrapper=document.createElement('div');
+   wrapper.className='boss-mobile-search-icon-wrap';
+   search.parentNode.insertBefore(wrapper,search);
+   wrapper.appendChild(search);
+   const icon=document.createElementNS('http://www.w3.org/2000/svg','svg');
+   icon.setAttribute('viewBox','0 0 24 24');
+   icon.setAttribute('aria-hidden','true');
+   icon.setAttribute('class','boss-mobile-search-icon');
+   icon.innerHTML='<circle cx="10.8" cy="10.8" r="7.2"></circle><path d="m16 16 5 5"></path>';
+   wrapper.appendChild(icon);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup);else setup();
+})();
+</script>
+
+<style id="boss-mobile-polish-final">
+@media(max-width:768px){
+ #boss-mobile-bottom-shortcuts{display:grid!important;min-height:55px!important;padding:3px 5px calc(3px + env(safe-area-inset-bottom,0px))!important}
+ body:has(.boss-mobile-drawer.is-open) #boss-mobile-bottom-shortcuts,body:has(.modal-overlay.active) #boss-mobile-bottom-shortcuts,body:has(#boss-gift-overlay.open) #boss-mobile-bottom-shortcuts{display:none!important}
+ #boss-mobile-bottom-shortcuts button,#boss-mobile-bottom-shortcuts a{min-height:44px!important}
+ .boss-mobile-announcement{margin:0!important;max-width:100%!important}
+ .boss-mobile-search-icon-wrap{width:100%!important;box-sizing:border-box!important;padding:0 8px!important;margin:0!important}
+ .boss-mobile-search-icon-wrap #product-search-input{width:100%!important;margin:6px 0 12px!important}
+ .boss-mobile-search-icon-wrap .boss-mobile-search-icon{left:21px!important}
+}
+</style>
 </body>
 </html>
