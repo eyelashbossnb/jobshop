@@ -1508,6 +1508,7 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 <section id="boss-home-event-images" aria-label="首頁活動、VIP及滿額贈圖片">
   <a class="boss-home-event-card" href="https://ibb.co/7t1fy31G" target="_blank" rel="noopener noreferrer"><img src="https://i.ibb.co/4RVqNbVj/15.png" alt="睫老闆VIP活動" loading="lazy"></a>
   <a class="boss-home-event-card" href="https://ibb.co/4Hb81H0" target="_blank" rel="noopener noreferrer"><img src="https://i.ibb.co/FFQ5HFd/20260301.png" alt="睫老闆滿額贈活動" loading="lazy"></a>
+  <a class="boss-home-event-card" href="https://ibb.co/vCZnrXnt" target="_blank" rel="noopener noreferrer"><img src="https://i.ibb.co/35BZ8RZJ/image.png" alt="睫老闆免運計算說明" loading="lazy"></a>
 </section>
 
 
@@ -17088,7 +17089,15 @@ body.boss-checkout-view #boss-checkout-page{display:block}
    if(original.classList.contains('active'))b.classList.add('active');
    b.addEventListener('click',()=>{
      const search=document.getElementById('product-search-input');if(search)search.value='';
-     original.click();
+     // Use the existing category handler directly. Clicking a hidden tab can be intercepted by other UI handlers.
+     const originalAction=original.getAttribute('onclick')||'';
+     const categoryMatch=originalAction.match(/selectCategory\(['"]([^'"]+)['"]/);
+     if(categoryMatch && typeof window.selectCategory==='function'){
+       window.selectCategory(categoryMatch[1],original);
+       if(typeof window.toggleSaleMenu==='function')window.toggleSaleMenu(categoryMatch[1]==='sale');
+     }else{
+       original.click();
+     }
      list.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
      b.classList.add('active');
      if(typeof window.filterProducts==='function')window.filterProducts();
@@ -17315,5 +17324,27 @@ body.boss-checkout-view #boss-checkout-page{display:block}
 body.boss-products-view #boss-home-event-images,
 body.boss-checkout-view #boss-home-event-images{display:none!important}
 </style>
+
+<script id="boss-desktop-category-reliable-fix">
+(function(){
+ document.addEventListener('click',function(e){
+  const btn=e.target.closest('#boss-desktop-side .boss-side-categories button');
+  if(!btn || window.innerWidth<=768)return;
+  const all=[...document.querySelectorAll('.category-container .category-tab')];
+  const idx=[...btn.parentElement.querySelectorAll('button')].indexOf(btn);
+  const original=all[idx];
+  if(!original)return;
+  const action=original.getAttribute('onclick')||'';
+  const m=action.match(/selectCategory\(['"]([^'"]+)['"]/);
+  if(!m)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  const search=document.getElementById('product-search-input');if(search)search.value='';
+  if(typeof window.selectCategory==='function')window.selectCategory(m[1],original);
+  if(typeof window.toggleSaleMenu==='function')window.toggleSaleMenu(m[1]==='sale');
+  btn.parentElement.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===btn));
+  if(typeof window.bossShowProducts==='function')window.bossShowProducts(btn.textContent.trim());
+ },true);
+})();
+</script>
 </body>
 </html>
