@@ -13195,9 +13195,12 @@ function addToCart(productId) {
     
     if (productConfig[productId]?._isWelfare) max = Number(productConfig[productId].max) || 0;
     else if (productName && productId !== "STORE_ADJUST") {
-        let currentStock = getStockFromDatabase(productId + productName);
+        // 與商品列表使用相同的庫存比對方式，避免 S3 + S3品名造成重複編號而誤判為 0。
+        let currentStock = productName.toUpperCase().includes(productId.toUpperCase())
+            ? getStockFromDatabase(productName)
+            : getStockFromDatabase(productId + productName);
         if (currentStock === null) currentStock = getStockFromDatabase(productName);
-        if (currentStock !== null) max = currentStock;
+        if (currentStock !== null) max = Number(currentStock);
     }
     
     if (newQty > max) {
