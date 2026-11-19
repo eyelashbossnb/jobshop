@@ -17148,5 +17148,49 @@ body.boss-checkout-view #boss-checkout-page{display:block}
  #boss-product-page-nav strong{font-size:20px}
 }
 </style>
+
+<style id="boss-checkout-layout-polish-20261119">
+/* Checkout page only; original cart/order calculation nodes stay in place. */
+#boss-checkout-page{max-width:1080px!important}
+#boss-checkout-page .boss-checkout-columns{display:flex!important;flex-direction:column!important;gap:20px!important}
+#boss-checkout-page .boss-checkout-columns>.card{width:100%!important;box-sizing:border-box!important;padding:28px 32px!important}
+#boss-checkout-page .cart-title-row{display:block!important}
+#boss-checkout-page .cart-title-row>.cart-checkout-btn{display:none!important}
+#boss-checkout-page .mobile-cart-card #cart-items-container{max-height:none!important;overflow:visible!important}
+#boss-checkout-page .mobile-cart-card #final-order-submit-btn{display:none!important}
+#boss-checkout-page .boss-checkout-submit-panel{border:1px solid #eee0da;background:#fff;border-radius:16px;padding:22px 30px;text-align:right}
+#boss-checkout-page .boss-checkout-submit-panel .boss-checkout-submit-action{background:var(--accent-color,#e8a498);border:0;border-radius:24px;padding:13px 38px;color:#fff;font-weight:700;cursor:pointer;min-width:220px}
+#boss-checkout-page .boss-checkout-submit-panel .boss-checkout-submit-action:disabled{opacity:.5;cursor:not-allowed}
+#boss-checkout-page .boss-checkout-columns>.mobile-order-form-card{min-height:0!important}
+@media(max-width:768px){
+ #boss-checkout-page .boss-checkout-columns>.card{padding:20px 16px!important}
+ #boss-checkout-page .boss-checkout-submit-panel{padding:16px}
+ #boss-checkout-page .boss-checkout-submit-panel .boss-checkout-submit-action{width:100%}
+}
+</style>
+<script id="boss-checkout-layout-polish-script-20261119">
+(function(){
+ function setup(){
+  const page=document.getElementById('boss-checkout-page');
+  if(!page||page.querySelector('.boss-checkout-submit-panel'))return;
+  const cols=page.querySelector('.boss-checkout-columns');
+  const submit=document.getElementById('final-order-submit-btn');
+  if(!cols||!submit)return;
+  const panel=document.createElement('div');
+  panel.className='boss-checkout-submit-panel';
+  const action=document.createElement('button');
+  action.type='button';action.className='boss-checkout-submit-action';
+  action.textContent='確認送出訂單';
+  action.addEventListener('click',()=>submit.click());
+  panel.append(action);cols.after(panel);
+  // Reflect original submit state, preserving existing validation and submission logic.
+  const sync=()=>{action.disabled=submit.disabled;action.textContent=submit.textContent.trim()||'確認送出訂單'};
+  new MutationObserver(sync).observe(submit,{attributes:true,childList:true,characterData:true,subtree:true});
+  sync();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(setup,100));
+ else setTimeout(setup,100);
+})();
+</script>
 </body>
 </html>
