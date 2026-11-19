@@ -1506,7 +1506,6 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 
 <!-- 首頁活動圖片：靜態展示，順序 活動 → VIP → 滿額贈 -->
 <section id="boss-home-event-images" aria-label="首頁活動、VIP及滿額贈圖片">
-  <a class="boss-home-event-card" href="https://ibb.co/hJ81Vwmb" target="_blank" rel="noopener noreferrer"><img src="https://i.ibb.co/B5sKBFCb/A4.png" alt="睫老闆活動公告" loading="lazy"></a>
   <a class="boss-home-event-card" href="https://ibb.co/7t1fy31G" target="_blank" rel="noopener noreferrer"><img src="https://i.ibb.co/4RVqNbVj/15.png" alt="睫老闆VIP活動" loading="lazy"></a>
   <a class="boss-home-event-card" href="https://ibb.co/4Hb81H0" target="_blank" rel="noopener noreferrer"><img src="https://i.ibb.co/FFQ5HFd/20260301.png" alt="睫老闆滿額贈活動" loading="lazy"></a>
 </section>
@@ -17309,6 +17308,12 @@ body.boss-checkout-view #boss-checkout-page{display:block}
 #boss-home-event-images .boss-home-event-card{display:block!important;width:100%!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;box-shadow:none!important;background:transparent!important;overflow:hidden;border-radius:12px;text-decoration:none}
 #boss-home-event-images .boss-home-event-card img{display:block;width:100%;height:auto;max-width:100%;object-fit:contain;border-radius:12px}
 @media(max-width:768px){#boss-home-event-images{gap:12px!important;margin:12px 0 20px!important}#boss-home-event-images .boss-home-event-card{border-radius:8px}}
+</style>
+
+<style id="boss-home-event-images-visibility-fix-20261119">
+/* 活動圖片僅顯示於首頁，不顯示在商品分類及結帳頁面 */
+body.boss-products-view #boss-home-event-images,
+body.boss-checkout-view #boss-home-event-images{display:none!important}
 </style>
 </body>
 </html>
