@@ -17090,20 +17090,23 @@ body.boss-checkout-view #boss-checkout-page{display:block}
    b.prepend(icon);
    if(original.classList.contains('active'))b.classList.add('active');
    b.addEventListener('click',()=>{
-     const search=document.getElementById('product-search-input');if(search)search.value='';
-     // Use the existing category handler directly. Clicking a hidden tab can be intercepted by other UI handlers.
-     const originalAction=original.getAttribute('onclick')||'';
-     const categoryMatch=originalAction.match(/selectCategory\(['"]([^'"]+)['"]/);
-     if(categoryMatch && typeof window.selectCategory==='function'){
-       window.selectCategory(categoryMatch[1],original);
-       if(typeof window.toggleSaleMenu==='function')window.toggleSaleMenu(categoryMatch[1]==='sale');
-     }else{
+     const search=document.getElementById('product-search-input');
+     if(search)search.value='';
+     const action=original.getAttribute('onclick')||'';
+     const match=action.match(/selectCategory\(['"]([^'"]+)['"]/);
+     if(!match){original.click();return;}
+     try{
+       // Directly select the original category so every sidebar entry works.
+       if(typeof selectCategory==='function')selectCategory(match[1],original);
+       else original.click();
+       if(typeof toggleSaleMenu==='function')toggleSaleMenu(match[1]==='sale');
+       list.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));
+       window.bossShowProducts(b.textContent.trim());
+     }catch(error){
+       console.error('商品分類切換失敗',match[1],error);
        original.click();
+       window.bossShowProducts(b.textContent.trim());
      }
-     list.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
-     b.classList.add('active');
-     if(typeof window.filterProducts==='function')window.filterProducts();
-     window.bossShowProducts(b.textContent);
    });
    list.append(b);
   });
@@ -17327,26 +17330,5 @@ body.boss-products-view #boss-home-event-images,
 body.boss-checkout-view #boss-home-event-images{display:none!important}
 </style>
 
-<script id="boss-desktop-category-reliable-fix">
-(function(){
- document.addEventListener('click',function(e){
-  const btn=e.target.closest('#boss-desktop-side .boss-side-categories button');
-  if(!btn || window.innerWidth<=768)return;
-  const all=[...document.querySelectorAll('.category-container .category-tab')];
-  const idx=[...btn.parentElement.querySelectorAll('button')].indexOf(btn);
-  const original=all[idx];
-  if(!original)return;
-  const action=original.getAttribute('onclick')||'';
-  const m=action.match(/selectCategory\(['"]([^'"]+)['"]/);
-  if(!m)return;
-  e.preventDefault();e.stopImmediatePropagation();
-  const search=document.getElementById('product-search-input');if(search)search.value='';
-  if(typeof window.selectCategory==='function')window.selectCategory(m[1],original);
-  if(typeof window.toggleSaleMenu==='function')window.toggleSaleMenu(m[1]==='sale');
-  btn.parentElement.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===btn));
-  if(typeof window.bossShowProducts==='function')window.bossShowProducts(btn.textContent.trim());
- },true);
-})();
-</script>
 </body>
 </html>
