@@ -17036,6 +17036,37 @@ body.boss-checkout-view #boss-checkout-page{display:block}
   const list=sidebar.querySelector('.boss-side-categories');
   categories.querySelectorAll('.category-tab').forEach(original=>{
    const b=document.createElement('button');b.type='button';b.textContent=original.textContent.trim();
+   // 與手機版一致：單色、圓角線條 SVG 圖示（不使用字元或 Emoji）。
+   const bossCategoryIcons=[
+    [/全部商品/, 'grid'],[/睫毛款式/, 'eye'],[/美睫周邊/, 'sparkles'],
+    [/頂級熱蠟/, 'flame'],[/紋繡商品/, 'pen'],[/臉部保養/, 'droplet'],
+    [/美妝商品/, 'brush'],[/採耳商品/, 'ear'],[/美甲商品/, 'hand'],
+    [/出清五折/, 'tag'],[/福利品專區/, 'gift'],[/購買會籍/, 'crown'],
+    [/門市購買/, 'store'],[/活動專區/, 'megaphone']
+   ];
+   const bossPaths={
+    grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+    eye:'<path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
+    sparkles:'<path d="m12 3 1.9 6.1L20 11l-6.1 1.9L12 19l-1.9-6.1L4 11l6.1-1.9L12 3Z"/><path d="m19 18 .6 1.4L21 20l-1.4.6L19 22l-.6-1.4L17 20l1.4-.6L19 18Z"/>',
+    flame:'<path d="M12 22c4.4 0 7-3.1 7-7 0-3.5-2.4-5.8-4-7-.1 2.2-1.4 3.5-2.5 4C13.5 8.5 11 5 8 2c.2 3.7-1.3 6-3 8.7A7.7 7.7 0 0 0 12 22Z"/>',
+    pen:'<path d="m12 19 7-7 3 3-7 7-4 1 1-4Z"/><path d="m14 17 3 3M2 7h12M2 12h8M2 17h6"/>',
+    droplet:'<path d="M12 22a8 8 0 0 0 8-8c0-4-8-12-8-12S4 10 4 14a8 8 0 0 0 8 8Z"/><path d="M8 15a4 4 0 0 0 4 4"/>',
+    brush:'<path d="m14 5 5 5M3 21c3 0 6-1 6-4 0-2 2-3 4-5l7-7a2 2 0 0 0-3-3l-7 7c-2 2-3 4-5 4-3 0-4 3-4 6v2h2Z"/>',
+    ear:'<path d="M6 10a6 6 0 0 1 12 0c0 4-3 5-4 8-.6 2-2 4-5 4-2 0-3-1-3-3"/><path d="M10 14c-1-1-2-2-2-4a4 4 0 0 1 8 0c0 2-2 3-3 4"/>',
+    hand:'<path d="M8 13V6a1.5 1.5 0 0 1 3 0v5-7a1.5 1.5 0 0 1 3 0v7-5a1.5 1.5 0 0 1 3 0v6-3a1.5 1.5 0 0 1 3 0v6c0 5-3 8-8 8h-1c-3 0-5-2-7-5l-2-3a1.7 1.7 0 0 1 3-2l3 3"/>',
+    tag:'<path d="M20 12 12 20a2 2 0 0 1-3 0l-7-7V4a2 2 0 0 1 2-2h9l7 7a2 2 0 0 1 0 3Z"/><circle cx="7" cy="7" r="1"/>',
+    gift:'<rect x="3" y="9" width="18" height="12" rx="1"/><path d="M2 9h20M12 9v12M12 9H8a3 3 0 1 1 3-3l1 3Zm0 0h4a3 3 0 1 0-3-3l-1 3Z"/>',
+    crown:'<path d="m2 7 5 4 5-7 5 7 5-4-2 13H4L2 7Z"/>',
+    store:'<path d="M3 10h18l-2-7H5l-2 7ZM5 10v11h14V10M9 21v-7h6v7"/><path d="M3 10c0 3 4 3 5 0 1 3 7 3 8 0 1 3 5 3 5 0"/>',
+    megaphone:'<path d="m3 11 12-6v14L3 13v-2ZM15 9l5-2v10l-5-2M6 14l2 7h4l-2-5"/>'
+   };
+   const iconKey=(bossCategoryIcons.find(([pattern])=>pattern.test(b.textContent))||[])[1]||'grid';
+   const icon=document.createElementNS('http://www.w3.org/2000/svg','svg');
+   icon.setAttribute('viewBox','0 0 24 24');
+   icon.setAttribute('aria-hidden','true');
+   icon.setAttribute('class','boss-category-svg-icon');
+   icon.innerHTML=bossPaths[iconKey];
+   b.prepend(icon);
    if(original.classList.contains('active'))b.classList.add('active');
    b.addEventListener('click',()=>{
      const search=document.getElementById('product-search-input');if(search)search.value='';
@@ -17228,6 +17259,14 @@ body.boss-checkout-view #boss-checkout-page{display:block}
   #main-product-grid > .product-item .product-name {
     overflow-wrap: anywhere;
   }
+}
+</style>
+
+<style id="boss-desktop-category-icons-20261119">
+@media(min-width:769px){
+ #boss-desktop-side .boss-side-categories button{display:flex!important;align-items:center;gap:10px!important;line-height:1.5;min-height:42px}
+ #boss-desktop-side .boss-side-categories .boss-category-svg-icon{display:block;width:20px;height:20px;flex:0 0 20px;fill:none;stroke:#98776c;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+ #boss-desktop-side .boss-side-categories button:hover .boss-category-svg-icon,#boss-desktop-side .boss-side-categories button.active .boss-category-svg-icon{stroke:#a66c5c}
 }
 </style>
 </body>
