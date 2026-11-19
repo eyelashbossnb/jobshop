@@ -17089,24 +17089,27 @@ body.boss-checkout-view #boss-checkout-page{display:block}
    icon.innerHTML=bossPaths[iconKey];
    b.prepend(icon);
    if(original.classList.contains('active'))b.classList.add('active');
-   b.addEventListener('click',()=>{
+   // 直接讀取原始分類代碼，不透過會互相干擾的 click 事件。
+   const categoryMatch=(original.getAttribute('onclick')||'').match(/selectCategory\\(['"]([^'"]+)['"]/);
+   const categoryCode=categoryMatch?categoryMatch[1]:null;
+   if(categoryCode)b.dataset.categoryCode=categoryCode;
+   b.addEventListener('click',function(event){
+     event.preventDefault();
+     if(!categoryCode)return;
      const search=document.getElementById('product-search-input');
-     if(search)search.value='';
-     const action=original.getAttribute('onclick')||'';
-     const match=action.match(/selectCategory\(['"]([^'"]+)['"]/);
-     if(!match){original.click();return;}
+     if(search){search.value='';search.dispatchEvent(new Event('input',{bubbles:true}));}
      try{
-       // Directly select the original category so every sidebar entry works.
-       if(typeof selectCategory==='function')selectCategory(match[1],original);
-       else original.click();
-       if(typeof toggleSaleMenu==='function')toggleSaleMenu(match[1]==='sale');
-       list.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));
-       window.bossShowProducts(b.textContent.trim());
-     }catch(error){
-       console.error('商品分類切換失敗',match[1],error);
-       original.click();
-       window.bossShowProducts(b.textContent.trim());
-     }
+       selectCategory(categoryCode,original);
+       if(typeof toggleSaleMenu==='function')toggleSaleMenu(categoryCode==='sale');
+     }catch(error){console.error('原分類函式執行失敗',error);}
+     // 明確執行分類篩選，避免不同舊版腳本的狀態互相覆蓋。
+     try{
+       currentCategory=categoryCode;
+       currentSubCategory='all';
+       filterProducts();
+     }catch(error){console.error('商品篩選失敗',error);}
+     list.querySelectorAll('button').forEach(button=>button.classList.toggle('active',button===b));
+     window.bossShowProducts(b.textContent.trim());
    });
    list.append(b);
   });
