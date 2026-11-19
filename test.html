@@ -16738,11 +16738,11 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
   const backdrop=document.createElement('div');backdrop.className='boss-mobile-drawer-backdrop';backdrop.onclick=closeDrawer;
   const drawer=document.createElement('aside');drawer.className='boss-mobile-drawer';drawer.id='boss-mobile-drawer';drawer.innerHTML='<div class="boss-mobile-drawer-head"><span id="boss-mobile-drawer-title">商品分類</span><button type="button" aria-label="關閉選單" style="border:0;background:transparent;font-size:25px">×</button></div><div id="boss-mobile-drawer-content"></div>';
   drawer.querySelector('.boss-mobile-drawer-head button').onclick=closeDrawer;document.body.append(backdrop,drawer);
-  const searchAnchor=document.createComment('original mobile search'),announceAnchor=document.createComment('original announcement'),navAnchor=document.createComment('original mobile nav');
-  search.before(searchAnchor);announce.before(announceAnchor);nav.before(navAnchor);
+  const searchAnchor=document.createComment('original mobile search'),announceAnchor=document.createComment('original announcement'),navAnchor=document.createComment('original mobile nav'),promoAnchor=document.createComment('original promo');
+  search.before(searchAnchor);announce.before(announceAnchor);nav.before(navAnchor);const promoNode=document.getElementById('boss-promo-test');if(promoNode)promoNode.before(promoAnchor);
   function relocate(){
-   if(mobile()){row.append(announce);announce.classList.add('boss-mobile-announcement');const promo=document.getElementById('boss-promo-test');if(promo)promo.after(search);else row.after(search);header.append(nav);}
-   else{searchAnchor.after(search);announceAnchor.after(announce);document.body.classList.remove('boss-mobile-category-view');announce.classList.remove('boss-mobile-announcement');navAnchor.after(nav);closeDrawer();}
+   if(mobile()){row.append(announce);announce.classList.add('boss-mobile-announcement');const promo=document.getElementById('boss-promo-test');if(promo)row.append(promo);const banner=document.getElementById('banner-image-block');if(banner)banner.after(search);else row.after(search);header.append(nav);}
+   else{searchAnchor.after(search);announceAnchor.after(announce);const promo=document.getElementById('boss-promo-test');if(promo)promoAnchor.after(promo);document.body.classList.remove('boss-mobile-category-view');announce.classList.remove('boss-mobile-announcement');navAnchor.after(nav);closeDrawer();}
   }
   window.openBossMobileDrawer=openDrawer;
   function openDrawer(type){if(!mobile())return;toggleBossMobileCart(false);const content=drawer.querySelector('#boss-mobile-drawer-content');drawer.querySelector('#boss-mobile-drawer-title').textContent=type==='member'?'會員中心':'商品分類';content.replaceChildren();if(type==='member'){
@@ -17325,42 +17325,45 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
 </style>
 
 
-<!-- 2026-11-19 手機首頁版面微調：僅 CSS，不變更分類、結帳或電腦版 -->
+<!-- 2026-11-19 手機首頁間距與活動位置微調 -->
 <style id="boss-mobile-home-layout-only-20261119">
 @media (max-width:768px) {
-  /* 最新消息：恢復正式版卡片式尺寸，避免之前的貼邊、無間距覆寫 */
-  #boss-announcement-bar,
+  /* 最新消息緊接導覽列；避免多餘的上下留白 */
+  #boss-mobile-search-row.boss-mobile-search-row {
+    padding:6px 12px 0!important;
+    margin:0!important;
+    min-height:0!important;
+  }
   #boss-announcement-bar.boss-mobile-announcement {
-    width:calc(100% - 24px)!important;
-    max-width:calc(100% - 24px)!important;
-    min-height:44px!important;
-    margin:12px auto 16px!important;
-    padding:10px 12px!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-height:42px!important;
+    margin:0 0 10px!important;
+    padding:9px 12px!important;
     border:1px solid var(--border-color)!important;
     border-radius:12px!important;
     box-sizing:border-box!important;
-    gap:8px!important;
     font-size:12px!important;
-    line-height:1.5!important;
   }
-  /* 活動說明圖片：VIP、滿額贈、免運各自獨立，圖片間留白 */
+  /* 限時優惠活動緊接最新消息，卡片上下間距縮小 */
+  #boss-mobile-search-row #boss-promo-test {
+    display:block!important;
+    width:100%!important;
+    margin:0 0 12px!important;
+    padding:0!important;
+  }
+  #boss-mobile-search-row #boss-promo-test .boss-promo-box {
+    margin:0!important;
+  }
+  /* 活動圖片與搜尋框間距收斂 */
   #boss-home-event-images {
     display:flex!important;
     flex-direction:column!important;
-    gap:18px!important;
-    margin:18px 0 24px!important;
+    gap:12px!important;
+    margin:10px 0 12px!important;
   }
-  #boss-home-event-images > .boss-home-event-card {
-    display:block!important;
-    width:100%!important;
-    margin:0!important;
-    padding:0!important;
-  }
-  #boss-home-event-images > .boss-home-event-card > img {
-    display:block!important;
-    width:100%!important;
-    height:auto!important;
-  }
+  #boss-home-event-images > .boss-home-event-card {margin:0!important;padding:0!important}
+  #boss-home-event-images > .boss-home-event-card img {display:block;width:100%;height:auto}
 }
 </style>
 
