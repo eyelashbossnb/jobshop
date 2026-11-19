@@ -16738,11 +16738,24 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
   const backdrop=document.createElement('div');backdrop.className='boss-mobile-drawer-backdrop';backdrop.onclick=closeDrawer;
   const drawer=document.createElement('aside');drawer.className='boss-mobile-drawer';drawer.id='boss-mobile-drawer';drawer.innerHTML='<div class="boss-mobile-drawer-head"><span id="boss-mobile-drawer-title">商品分類</span><button type="button" aria-label="關閉選單" style="border:0;background:transparent;font-size:25px">×</button></div><div id="boss-mobile-drawer-content"></div>';
   drawer.querySelector('.boss-mobile-drawer-head button').onclick=closeDrawer;document.body.append(backdrop,drawer);
-  const searchAnchor=document.createComment('original mobile search'),announceAnchor=document.createComment('original announcement'),navAnchor=document.createComment('original mobile nav'),promoAnchor=document.createComment('original promo');
-  search.before(searchAnchor);announce.before(announceAnchor);nav.before(navAnchor);const promoNode=document.getElementById('boss-promo-test');if(promoNode)promoNode.before(promoAnchor);
+  const searchAnchor=document.createComment('original mobile search'),announceAnchor=document.createComment('original announcement'),navAnchor=document.createComment('original mobile nav');
+  const promo=document.getElementById('boss-promo-test');
+  const promoAnchor=document.createComment('original promo position');
+  if(promo)promo.before(promoAnchor);
+  search.before(searchAnchor);announce.before(announceAnchor);nav.before(navAnchor);
   function relocate(){
-   if(mobile()){row.append(announce);announce.classList.add('boss-mobile-announcement');const promo=document.getElementById('boss-promo-test');if(promo)row.append(promo);const banner=document.getElementById('banner-image-block');if(banner)banner.after(search);else row.after(search);header.append(nav);}
-   else{searchAnchor.after(search);announceAnchor.after(announce);const promo=document.getElementById('boss-promo-test');if(promo)promoAnchor.after(promo);document.body.classList.remove('boss-mobile-category-view');announce.classList.remove('boss-mobile-announcement');navAnchor.after(nav);closeDrawer();}
+   if(mobile()){
+    row.append(announce);announce.classList.add('boss-mobile-announcement');
+    if(promo)row.append(promo);
+    const eventImages=document.getElementById('boss-home-event-images');
+    const banner=document.getElementById('banner-image-block');
+    if(eventImages)eventImages.after(search);else if(banner)banner.after(search);else row.after(search);
+    header.append(nav);
+   }else{
+    searchAnchor.after(search);announceAnchor.after(announce);
+    if(promo)promoAnchor.after(promo);
+    document.body.classList.remove('boss-mobile-category-view');announce.classList.remove('boss-mobile-announcement');navAnchor.after(nav);closeDrawer();
+   }
   }
   window.openBossMobileDrawer=openDrawer;
   function openDrawer(type){if(!mobile())return;toggleBossMobileCart(false);const content=drawer.querySelector('#boss-mobile-drawer-content');drawer.querySelector('#boss-mobile-drawer-title').textContent=type==='member'?'會員中心':'商品分類';content.replaceChildren();if(type==='member'){
@@ -17325,47 +17338,16 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
 </style>
 
 
-<!-- 2026-11-19 手機首頁間距與活動位置微調 -->
-<style id="boss-mobile-home-layout-only-20261119">
-@media (max-width:768px) {
-  /* 最新消息緊接導覽列；避免多餘的上下留白 */
-  #boss-mobile-search-row.boss-mobile-search-row {
-    padding:6px 12px 0!important;
-    margin:0!important;
-    min-height:0!important;
-  }
-  #boss-announcement-bar.boss-mobile-announcement {
-    width:100%!important;
-    max-width:100%!important;
-    min-height:42px!important;
-    margin:0 0 10px!important;
-    padding:9px 12px!important;
-    border:1px solid var(--border-color)!important;
-    border-radius:12px!important;
-    box-sizing:border-box!important;
-    font-size:12px!important;
-  }
-  /* 限時優惠活動緊接最新消息，卡片上下間距縮小 */
-  #boss-mobile-search-row #boss-promo-test {
-    display:block!important;
-    width:100%!important;
-    margin:0 0 12px!important;
-    padding:0!important;
-  }
-  #boss-mobile-search-row #boss-promo-test .boss-promo-box {
-    margin:0!important;
-  }
-  /* 活動圖片與搜尋框間距收斂 */
-  #boss-home-event-images {
-    display:flex!important;
-    flex-direction:column!important;
-    gap:12px!important;
-    margin:10px 0 12px!important;
-  }
-  #boss-home-event-images > .boss-home-event-card {margin:0!important;padding:0!important}
-  #boss-home-event-images > .boss-home-event-card img {display:block;width:100%;height:auto}
+<!-- 2026-11-19 手機首頁：最新消息與限時活動緊鄰，電腦版不變 -->
+<style id="boss-mobile-home-spacing-084321">
+@media(max-width:768px){
+ #boss-mobile-search-row{padding:8px 12px 0!important;margin:0!important;min-height:0!important;height:auto!important}
+ #boss-mobile-search-row #boss-announcement-bar{margin:0 0 10px!important;min-height:42px!important;border:1px solid var(--border-color)!important;border-radius:14px!important;padding:9px 12px!important}
+ #boss-mobile-search-row #boss-promo-test{display:block!important;width:100%!important;margin:0 0 12px!important;padding:0!important}
+ #boss-mobile-search-row #boss-promo-test .boss-promo-box{margin:0!important}
+ #banner-image-block{margin-top:0!important;margin-bottom:12px!important}
+ #boss-home-event-images{gap:12px!important;margin:0 0 12px!important}
 }
 </style>
-
 </body>
 </html>
