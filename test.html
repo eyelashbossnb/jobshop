@@ -1505,8 +1505,8 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 <!-- 👆 置中的中間活動圖片區塊 👆 -->
 
         <!-- 網站公告：與 Banner、限時優惠活動同屬左側欄位 -->
-        <div id="boss-announcement-bar" role="region" aria-label="最新公告">
-          <span id="boss-announcement-label">📢 最新公告</span>
+        <div id="boss-announcement-bar" role="region" aria-label="最新消息">
+          <span id="boss-announcement-label">📢 最新消息</span>
           <div id="boss-announcement-viewport"><div id="boss-announcement-track"></div></div>
         </div>
 
@@ -16755,6 +16755,48 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();toggleBossMobileCart(false)}});
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup);else setup();
+})();
+</script>
+
+<!-- 2026-11-19 手機版固定底部四功能列；不影響桌面版 -->
+<style id="boss-mobile-bottom-shortcuts-style">
+#boss-mobile-bottom-shortcuts{display:none}
+@media(max-width:768px){
+ body{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))!important}
+ #boss-mobile-bottom-shortcuts{position:fixed;left:0;right:0;bottom:0;z-index:900;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:rgba(255,255,255,.97);border-top:1px solid #e9dfd9;box-shadow:0 -3px 15px rgba(74,63,53,.07);padding:8px 8px calc(7px + env(safe-area-inset-bottom,0px));box-sizing:border-box;backdrop-filter:blur(10px)}
+ #boss-mobile-bottom-shortcuts button,#boss-mobile-bottom-shortcuts a{min-width:0;min-height:48px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;border:0;background:transparent;color:#4a3f35;text-decoration:none;font:inherit;font-size:11px;letter-spacing:0;cursor:pointer;border-radius:9px;padding:4px 0}
+ #boss-mobile-bottom-shortcuts svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+ #boss-mobile-bottom-shortcuts button:active,#boss-mobile-bottom-shortcuts a:active{background:#faf2ef}
+ body:has(.boss-mobile-drawer.is-open) #boss-mobile-bottom-shortcuts,body:has(.modal-overlay.active) #boss-mobile-bottom-shortcuts,body:has(#boss-mobile-cart-popup:not([hidden])) #boss-mobile-bottom-shortcuts,body:has(#boss-gift-overlay.open) #boss-mobile-bottom-shortcuts{display:none}
+}
+</style>
+<nav id="boss-mobile-bottom-shortcuts" aria-label="手機版快捷功能">
+ <button type="button" id="boss-shortcut-home" aria-label="返回首頁"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>返回首頁</span></button>
+ <button type="button" id="boss-shortcut-top" aria-label="返回頂部"><svg viewBox="0 0 24 24"><path d="m5 12 7-7 7 7M12 5v15"/></svg><span>返回頂部</span></button>
+ <button type="button" id="boss-shortcut-search" aria-label="搜尋商品"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><span>搜尋商品</span></button>
+ <a href="https://line.me/ti/p/4RwpD-atgZ" target="_blank" rel="noopener noreferrer" aria-label="聯絡客服"><svg viewBox="0 0 24 24"><path d="M4 13v-2a8 8 0 0 1 16 0v2M4 13h3v7H5a2 2 0 0 1-2-2v-3a2 2 0 0 1 1-2zm16 0h-3v7h2a2 2 0 0 0 2-2v-3a2 2 0 0 0-1-2z"/></svg><span>聯絡客服</span></a>
+</nav>
+<script id="boss-mobile-bottom-shortcuts-script">
+(()=>{
+ const top=()=>window.scrollTo({top:0,behavior:'smooth'});
+ document.getElementById('boss-shortcut-top').addEventListener('click',top);
+ document.getElementById('boss-shortcut-home').addEventListener('click',()=>{
+   if(typeof window.closeBossMobileDrawer==='function')window.closeBossMobileDrawer();
+   document.body.classList.remove('boss-mobile-category-view');
+   const tabs=[...document.querySelectorAll('.category-container .category-tab')];
+   const all=tabs.find(el=>el.textContent.trim().includes('全部商品'))||tabs[0];
+   if(all)all.click();
+   const search=document.getElementById('product-search-input');
+   if(search && search.value){search.value='';search.dispatchEvent(new Event('input',{bubbles:true}));}
+   top();
+ });
+ document.getElementById('boss-shortcut-search').addEventListener('click',()=>{
+   document.body.classList.remove('boss-mobile-category-view');
+   const search=document.getElementById('product-search-input');
+   if(!search)return;
+   search.scrollIntoView({behavior:'smooth',block:'center'});
+   setTimeout(()=>{try{search.focus({preventScroll:true})}catch(e){search.focus()}},350);
+ });
 })();
 </script>
 </body>
