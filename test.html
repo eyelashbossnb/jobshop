@@ -17177,6 +17177,31 @@ body.boss-checkout-view #boss-checkout-page{display:block}
        filterProducts();
      }catch(error){console.error('商品篩選失敗',error);}
      list.querySelectorAll('button').forEach(button=>button.classList.toggle('active',button===b));
+     // 電腦版專用：確保點擊後商品確實依原始 data-category 顯示，
+     // 避免舊版手機程式殘留的 inline display 狀態覆蓋分類。
+     if(window.matchMedia('(min-width:769px)').matches){
+       const syncDesktopCategory=()=>{
+         if(!document.body.classList.contains('boss-products-view'))return;
+         if(list.querySelector('button.active')!==b)return;
+         const items=document.querySelectorAll('#main-product-grid .product-item');
+         let shown=0;
+         items.forEach(item=>{
+           const visible=categoryCode==='all'||item.dataset.category===categoryCode;
+           item.style.setProperty('display',visible?'flex':'none','important');
+           if(visible)shown++;
+         });
+         const notice=document.getElementById('no-search-notice');
+         if(notice)notice.remove();
+         if(!shown){
+           const n=document.createElement('div');n.id='no-search-notice';n.className='no-search-results';
+           n.textContent='此分類目前沒有商品。';document.getElementById('main-product-grid')?.append(n);
+         }
+       };
+       // 首次與商品資料非同步完成後均保持相同分類。
+       requestAnimationFrame(syncDesktopCategory);
+       setTimeout(syncDesktopCategory,400);
+       setTimeout(syncDesktopCategory,1200);
+     }
      window.bossShowProducts(b.textContent.trim());
    });
    list.append(b);
