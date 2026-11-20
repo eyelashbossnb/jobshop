@@ -1442,6 +1442,16 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
  body.boss-mobile-products-page #boss-product-page-nav{display:none!important}
 }
 </style>
+<style id="boss-dealer-navigation-20261120">
+@media(min-width:769px){
+ #boss-desktop-side .boss-side-dealer-card{margin-top:10px;padding:15px 12px;border:1px solid var(--border-color);border-radius:12px;background:#fff;color:var(--text-main)}
+ #boss-desktop-side .boss-side-dealer-title{display:flex;align-items:center;gap:8px;font-size:14px}
+ #boss-desktop-side .boss-side-dealer-title svg{width:18px;height:18px;flex:none;color:#a36f61}
+ #boss-desktop-side .boss-side-dealer-card p{font-size:12px;color:#8e7a71;margin:10px 0}
+ #boss-desktop-side .boss-side-dealer-link{border:0;background:none;padding:0;color:#a36f61;text-align:left;cursor:pointer;font-size:12px;text-decoration:underline;text-underline-offset:3px}
+}
+@media(max-width:768px){.boss-mobile-dealer-entry{border-top:1px solid var(--border-color)!important;margin-top:8px!important}}
+</style>
 </head>
 <body>
 <header>
@@ -16856,6 +16866,12 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       if(searchRow&&productSearch)searchRow.append(productSearch);
       requestAnimationFrame(()=>window.scrollTo({top:0,behavior:'auto'}));
     };content.append(btn);});
+    // 授權經銷商：僅加在手機商品分類抽屜最後，不影響原分類按鈕。
+    const dealerBtn=document.createElement('button');
+    dealerBtn.type='button';dealerBtn.className='boss-mobile-drawer-category boss-mobile-dealer-entry';
+    dealerBtn.innerHTML='<span class="boss-cat-line-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18l-2-6H5l-2 6ZM5 10v11h14V10M9 21v-7h6v7M3 10c0 3 4 3 4 0 0 3 4 3 4 0 0 3 4 3 4 0 0 3 4 3 0"/></svg></span><span class="boss-cat-line-label">授權經銷商</span><span class="boss-cat-line-arrow">›</span>';
+    dealerBtn.addEventListener('click',()=>{closeDrawer();if(typeof window.bossOpenDealers==='function')window.bossOpenDealers();});
+    content.append(dealerBtn);
 
   }drawer.classList.add('is-open');backdrop.classList.add('is-open');}
   function closeDrawer(){drawer.classList.remove('is-open');backdrop.classList.remove('is-open');if(tools.parentElement!==header){header.append(tools);tools.style.display='';}}
@@ -17095,6 +17111,11 @@ body.boss-checkout-view #boss-checkout-page{display:block}
   const grid=document.createElement('div');grid.id='boss-desktop-home-grid';
   const sidebar=document.createElement('aside');sidebar.id='boss-desktop-side';
   sidebar.innerHTML='<a class="boss-side-catalog" target="_blank" rel="noopener noreferrer" href="https://heyzine.com/flip-book/a792795585.html"><img class="boss-side-catalog-thumb" src="https://i.ibb.co/rRWmDjvH/catalog-png.png" alt="睫老闆商品型錄封面" loading="lazy"><span class="boss-side-catalog-copy"><strong>睫老闆商品型錄</strong><small>點擊開啟電子型錄</small></span><span class="boss-side-catalog-arrow" aria-hidden="true">↗</span></a><div class="boss-side-categories"><h3>商品分類</h3></div>';
+  // 電腦版：商品分類下方獨立經銷商入口，沿用原經銷商名單視窗。
+  const dealerCard=document.createElement('section');dealerCard.className='boss-side-dealer-card';
+  dealerCard.innerHTML='<div class="boss-side-dealer-title"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18l-2-6H5l-2 6ZM5 10v11h14V10M9 21v-7h6v7M3 10c0 3 4 3 4 0 0 3 4 3 4 0 0 3 4 3 4 0 0 3 4 3 0"/></svg><strong>授權經銷商</strong></div><p>尋找鄰近的授權經銷商</p><button type="button" class="boss-side-dealer-link">查看經銷商名單 <span aria-hidden="true">↗</span></button>';
+  dealerCard.querySelector('button').addEventListener('click',()=>{if(typeof window.bossOpenDealers==='function')window.bossOpenDealers();});
+  sidebar.append(dealerCard);
   const body=document.createElement('div');body.className='boss-home-main';
   const catalogBlock=catalog?.parentElement;
   if(catalogBlock)catalogBlock.remove(); // VIP guide removed only from home, no other account features.
@@ -17536,5 +17557,25 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
 })();
 </script>
 
+
+<!-- 20261120 手機搜尋後點選現有細分項目：清除搜尋條件，交還原本分類函式處理 -->
+<script id="boss-mobile-search-to-subcategory-20261120">
+(function(){
+  document.addEventListener('click',function(event){
+    if(!window.matchMedia('(max-width:768px)').matches)return;
+    if(!document.body.classList.contains('boss-mobile-products-page'))return;
+    var tab=event.target.closest('button.sub-tab');
+    if(!tab)return;
+    var menu=tab.closest('.sub-category-menu');
+    if(!menu || !menu.id.startsWith('sub-category-'))return;
+    var input=document.getElementById('product-search-input');
+    if(!input || !input.value.trim())return;
+    // 搜尋關鍵字存在時，原始 filterProducts 會略過分類條件。
+    // 僅在使用者點選細分項目時清除搜尋，不攔截原有 onclick。
+    input.value='';
+    currentCategory=menu.id.slice('sub-category-'.length);
+  },true);
+})();
+</script>
 </body>
 </html>
