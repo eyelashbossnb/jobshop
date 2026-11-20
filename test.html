@@ -17529,22 +17529,12 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
     input.addEventListener('keydown',function(e){
       if(e.key==='Enter' && !e.isComposing){e.preventDefault();submitSearch();input.blur();}
     });
-    // 僅電腦版在既有搜尋框旁增加明確的搜尋按鈕；手機版保留既有圖示。
-    const btn=document.createElement('button');
-    btn.type='button';btn.id='boss-search-submit-button';btn.textContent='搜尋';
-    btn.setAttribute('aria-label','搜尋商品並顯示結果');
-    btn.addEventListener('click',submitSearch);
-    input.insertAdjacentElement('afterend',btn);
+
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
   else init();
 })();
 </script>
-<style id="boss-search-submit-button-style-20261120">
-@media(min-width:769px){
- #boss-search-submit-button{border:1px solid #e7a59b;border-radius:20px;background:white;color:#a46b5e;padding:8px 13px;cursor:pointer;font-size:13px;white-space:nowrap}
-}
-@media(max-width:768px){#boss-search-submit-button{display:none!important}}
-</style>
+
 </body>
 </html>
