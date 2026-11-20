@@ -16881,11 +16881,13 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       requestAnimationFrame(enforceMobileCategory);
       setTimeout(enforceMobileCategory,100);
       setTimeout(enforceMobileCategory,600);
-      // 子分類列跟隨目前選擇的主分類顯示，並保留原本細分篩選功能。
+      // 只顯示目前主分類對應的細分項目，避免舊分類選單殘留。
+      document.body.dataset.bossActiveMobileCategory=categoryCode||'all';
       const showSubcategories=()=>{
         if(!document.body.classList.contains('boss-mobile-products-page'))return;
+        if(document.body.dataset.bossActiveMobileCategory!==categoryCode)return;
         document.querySelectorAll('.sub-category-menu').forEach(menu=>{
-          menu.style.display=(categoryCode && menu.id==='sub-category-'+categoryCode)?'flex':'none';
+          menu.style.setProperty('display',menu.id==='sub-category-'+categoryCode?'flex':'none','important');
         });
       };
       requestAnimationFrame(showSubcategories);
@@ -16899,14 +16901,21 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
 
   }drawer.classList.add('is-open');backdrop.classList.add('is-open');}
   function closeDrawer(){drawer.classList.remove('is-open');backdrop.classList.remove('is-open');if(tools.parentElement!==header){header.append(tools);tools.style.display='';}}
-  // 細分項目點選後解除主分類的暫時顯示鎖定，交還原本 filterProducts 處理。
+  // 細分項目使用原始 filterSubCategory，並確保主分類狀態與細分列一致。
   document.addEventListener('click',function(e){
     const sub=e.target.closest('.sub-category-menu .sub-tab');
     if(!sub || !mobile() || !document.body.classList.contains('boss-mobile-products-page'))return;
+    const category=document.body.dataset.bossActiveMobileCategory;
+    const parent=sub.closest('.sub-category-menu');
+    if(!category || !parent || parent.id!=='sub-category-'+category)return;
     document.querySelectorAll('#main-product-grid .product-item').forEach(card=>{
       if(card.style.getPropertyPriority('display')==='important')card.style.removeProperty('display');
     });
-    setTimeout(()=>{if(typeof filterProducts==='function')filterProducts();},0);
+    // Inline onclick 先執行，再依正確主分類重新篩選。
+    setTimeout(()=>{
+      if(typeof currentCategory!=='undefined')currentCategory=category;
+      if(typeof filterProducts==='function')filterProducts();
+    },0);
   });
   // 會員選單按下任何原有功能後，先關閉抽屜，再讓原按鈕照常執行。
   drawer.addEventListener('click',e=>{const button=e.target.closest('#boss-mobile-drawer-content .nav-btn, #boss-mobile-drawer-content .logout-link, #boss-mobile-drawer-content .balance-clickable');if(button)closeDrawer();});
