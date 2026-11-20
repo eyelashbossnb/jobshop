@@ -17166,6 +17166,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
      if(!categoryCode)return;
      const search=document.getElementById('product-search-input');
      if(search){search.value='';search.dispatchEvent(new Event('input',{bubbles:true}));}
+     document.querySelectorAll('#main-product-grid .product-item').forEach(item=>item.style.removeProperty('display'));
      try{
        selectCategory(categoryCode,original);
        if(typeof toggleSaleMenu==='function')toggleSaleMenu(categoryCode==='sale');
@@ -17213,28 +17214,50 @@ body.boss-checkout-view #boss-checkout-page{display:block}
    });
    list.append(b);
   });
-  // 電腦版細分分類：在捕獲階段接管按鈕，避免舊版其他點擊事件重設為「全部」。
+  // 電腦版：細分項目直接以 data-category / data-sub 篩選商品。
+  // 與手機版隔離，且不再依賴會被其他腳本重設的 filterProducts 狀態。
   document.addEventListener('click',function(e){
-    if(!window.matchMedia('(min-width:769px)').matches)return;
-    if(!document.body.classList.contains('boss-products-view'))return;
-    const tab=e.target.closest('.sub-category-menu .sub-tab');
+    if(window.innerWidth<=768 || !document.body.classList.contains('boss-products-view'))return;
+    const tab=e.target.closest('button.sub-tab');
     if(!tab)return;
     const menu=tab.closest('.sub-category-menu');
-    if(!menu || menu.style.display==='none')return;
-    const selected=tab.getAttribute('onclick')?.match(/filterSubCategory\(['"]([^'"]+)['"]/);
-    if(!selected)return;
-    // 停止舊版重複處理；只讓這一次分類篩選生效。
-    e.preventDefault();e.stopImmediatePropagation();
-    const category=menu.id.replace('sub-category-','');
+    if(!menu || !menu.id.startsWith('sub-category-'))return;
+    const code=(tab.getAttribute('onclick')||'').match(/filterSubCategory\(\s*['"]([^'"]+)['"]/);
+    if(!code)return;
+    const category=menu.id.slice('sub-category-'.length);
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    const sub=code[1];
     const search=document.getElementById('product-search-input');
     if(search)search.value='';
     currentCategory=category;
-    currentSubCategory=selected[1];
+    currentSubCategory=sub;
     menu.querySelectorAll('.sub-tab').forEach(btn=>btn.classList.toggle('active',btn===tab));
-    document.querySelectorAll('#main-product-grid .product-item').forEach(item=>{
-      if(item.style.getPropertyPriority('display')==='important')item.style.removeProperty('display');
+    const grouped={
+      'dash-layered':['lash-layered','lash-kellis','lash-camellia'],
+      'dash-bloom':['lash-bloom','lash-yy','lash-clover3','lash-clover5','lash-w'],
+      'lashes':['lashes-jw','lashes-gz','lashes-zr','lashes-wt','lashes-tm'],
+      'sale-straight':['sale-fan','sale-mink','sale-real-mink','sale-l-plus'],
+      'sale-layered-bloom':['sale-kellis','sale-camellia','sale-maxia','sale-easy-bloom'],
+      'sale-color-group':['sale-5th-ave','sale-gradient'],
+      'sale-flat':['sale-pillow-swallow','sale-flat-new'],
+      'sale-tech':['sale-peacock','sale-tech']
+    };
+    let shown=0;
+    const grid=document.getElementById('main-product-grid');
+    grid?.querySelectorAll('.product-item').forEach(item=>{
+      const matchCat=category==='all'||item.dataset.category===category;
+      const matchSub=sub==='all'||(grouped[sub]||[sub]).includes(item.dataset.sub||'none');
+      const visible=matchCat&&matchSub;
+      item.style.setProperty('display',visible?'flex':'none','important');
+      if(visible)shown++;
     });
-    filterProducts();
+    document.getElementById('no-search-notice')?.remove();
+    if(!shown && grid){
+      const notice=document.createElement('div');
+      notice.id='no-search-notice';notice.className='no-search-results';
+      notice.textContent='此細分項目目前沒有商品。';grid.append(notice);
+    }
   },true);
   window.bossShowCheckout=function(){
     document.body.classList.remove('boss-products-view');
