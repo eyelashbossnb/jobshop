@@ -16851,36 +16851,13 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       }
       closeDrawer();
       document.body.classList.add('boss-mobile-category-view','boss-mobile-products-page');
-      // 記住使用者選取的分類；商品非同步載入完成後仍維持該分類。
+      // 手機主分類以原始 selectCategory / filterProducts 為唯一篩選來源。
+      // 清除舊版以 !important 鎖住商品的設定，避免細分項目無法切換。
       window.bossMobileSelectedCategory=categoryCode||null;
-      document.querySelectorAll('#main-product-grid .product-item').forEach(card=>card.style.removeProperty('display'));
-      if(categoryCode && typeof selectCategory==='function'){
-        const applySelected=()=>{
-          if(!document.body.classList.contains('boss-mobile-products-page'))return;
-          if(window.bossMobileSelectedCategory!==categoryCode)return;
-          if(typeof currentCategory!=='undefined')currentCategory=categoryCode;
-          if(typeof currentSubCategory!=='undefined')currentSubCategory='all';
-          if(typeof filterProducts==='function')filterProducts();
-        };
-        requestAnimationFrame(applySelected);
-        setTimeout(applySelected,350);
-      }
-      // 依選取的分類直接控制手機商品卡片可見性，避免其他導覽程式重設為全部商品。
-      // 不影響桌面版及原有子分類/關鍵字篩選。
-      const enforceMobileCategory=()=>{
-        if(!document.body.classList.contains('boss-mobile-products-page'))return;
-        if(window.bossMobileSelectedCategory!==categoryCode)return;
-        const search=document.getElementById('product-search-input');
-        if(search && search.value.trim())return;
-        const cards=document.querySelectorAll('#main-product-grid .product-item');
-        cards.forEach(card=>{
-          const match=categoryCode==='all'||card.getAttribute('data-category')===categoryCode;
-          card.style.setProperty('display',match?'flex':'none','important');
-        });
-      };
-      requestAnimationFrame(enforceMobileCategory);
-      setTimeout(enforceMobileCategory,100);
-      setTimeout(enforceMobileCategory,600);
+      document.querySelectorAll('#main-product-grid .product-item').forEach(card=>{
+        if(card.style.getPropertyPriority('display')==='important')card.style.removeProperty('display');
+      });
+      if(categoryCode && typeof filterProducts==='function')filterProducts();
       // 只顯示目前主分類對應的細分項目，避免舊分類選單殘留。
       document.body.dataset.bossActiveMobileCategory=categoryCode||'all';
       const showSubcategories=()=>{
@@ -16901,22 +16878,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
 
   }drawer.classList.add('is-open');backdrop.classList.add('is-open');}
   function closeDrawer(){drawer.classList.remove('is-open');backdrop.classList.remove('is-open');if(tools.parentElement!==header){header.append(tools);tools.style.display='';}}
-  // 細分項目使用原始 filterSubCategory，並確保主分類狀態與細分列一致。
-  document.addEventListener('click',function(e){
-    const sub=e.target.closest('.sub-category-menu .sub-tab');
-    if(!sub || !mobile() || !document.body.classList.contains('boss-mobile-products-page'))return;
-    const category=document.body.dataset.bossActiveMobileCategory;
-    const parent=sub.closest('.sub-category-menu');
-    if(!category || !parent || parent.id!=='sub-category-'+category)return;
-    document.querySelectorAll('#main-product-grid .product-item').forEach(card=>{
-      if(card.style.getPropertyPriority('display')==='important')card.style.removeProperty('display');
-    });
-    // Inline onclick 先執行，再依正確主分類重新篩選。
-    setTimeout(()=>{
-      if(typeof currentCategory!=='undefined')currentCategory=category;
-      if(typeof filterProducts==='function')filterProducts();
-    },0);
-  });
+  // 細分項目直接沿用原本 filterSubCategory 的 onclick。
+  // 不額外重設 currentSubCategory，避免點擊後被延遲回呼覆蓋。
   // 會員選單按下任何原有功能後，先關閉抽屜，再讓原按鈕照常執行。
   drawer.addEventListener('click',e=>{const button=e.target.closest('#boss-mobile-drawer-content .nav-btn, #boss-mobile-drawer-content .logout-link, #boss-mobile-drawer-content .balance-clickable');if(button)closeDrawer();});
   // 訂單查詢視窗的 X：明確關閉，不依賴其他側欄事件。
