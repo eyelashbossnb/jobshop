@@ -17213,17 +17213,29 @@ body.boss-checkout-view #boss-checkout-page{display:block}
    });
    list.append(b);
   });
-  // 電腦版：細分項目按下後，解除舊版商品強制顯示並沿用原始篩選。
+  // 電腦版細分分類：在捕獲階段接管按鈕，避免舊版其他點擊事件重設為「全部」。
   document.addEventListener('click',function(e){
     if(!window.matchMedia('(min-width:769px)').matches)return;
     if(!document.body.classList.contains('boss-products-view'))return;
     const tab=e.target.closest('.sub-category-menu .sub-tab');
     if(!tab)return;
+    const menu=tab.closest('.sub-category-menu');
+    if(!menu || menu.style.display==='none')return;
+    const selected=tab.getAttribute('onclick')?.match(/filterSubCategory\(['"]([^'"]+)['"]/);
+    if(!selected)return;
+    // 停止舊版重複處理；只讓這一次分類篩選生效。
+    e.preventDefault();e.stopImmediatePropagation();
+    const category=menu.id.replace('sub-category-','');
+    const search=document.getElementById('product-search-input');
+    if(search)search.value='';
+    currentCategory=category;
+    currentSubCategory=selected[1];
+    menu.querySelectorAll('.sub-tab').forEach(btn=>btn.classList.toggle('active',btn===tab));
     document.querySelectorAll('#main-product-grid .product-item').forEach(item=>{
       if(item.style.getPropertyPriority('display')==='important')item.style.removeProperty('display');
     });
-    if(typeof filterProducts==='function')filterProducts();
-  });
+    filterProducts();
+  },true);
   window.bossShowCheckout=function(){
     document.body.classList.remove('boss-products-view');
     document.body.classList.add('boss-checkout-view');
