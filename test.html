@@ -1427,6 +1427,21 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
   body.boss-checkout-view #boss-checkout-page .mobile-order-form-card{display:block!important;}
 }
 </style>
+<style id="boss-mobile-separated-product-page-20261120">
+/* 僅手機：首頁與分類商品頁分離，桌面版完全不變。 */
+@media(max-width:768px){
+ body.boss-mobile-products-page #boss-mobile-search-row{display:block!important;padding:12px 14px!important;margin:0!important;background:var(--bg-color)!important}
+ body.boss-mobile-products-page #boss-mobile-search-row #boss-announcement-bar{display:none!important}
+ body.boss-mobile-products-page #boss-mobile-search-row #product-search-input{display:block!important;position:static!important;width:100%!important;max-width:100%!important;height:44px!important;box-sizing:border-box!important;margin:0!important;border-radius:24px!important;background:#fff!important}
+ body.boss-mobile-products-page #boss-promo-test,
+ body.boss-mobile-products-page #banner-image-block,
+ body.boss-mobile-products-page #boss-home-event-images,
+ body.boss-mobile-products-page #boss-announcement-bar{display:none!important}
+ body.boss-mobile-products-page #boss-desktop-products-card{display:block!important;margin-top:0!important}
+ body.boss-mobile-products-page .main-container{margin-top:8px!important}
+ body.boss-mobile-products-page #boss-product-page-nav{display:none!important}
+}
+</style>
 </head>
 <body>
 <header>
@@ -11610,23 +11625,7 @@ function bossDownloadOrderPdf(index) {
         popup.document.write('<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>' +
           '睫老闆_訂單明細_' + bossPdfSafeName(order.id) +
           '</title><style>' + styles + '</style></head><body><main class="boss-pdf-page">' +
-          content + '</main>
-<style id="boss-mobile-separated-product-page-20261120">
-/* 僅手機：首頁與分類商品頁分離，桌面版完全不變。 */
-@media(max-width:768px){
- body.boss-mobile-products-page #boss-mobile-search-row{display:block!important;padding:12px 14px!important;margin:0!important;background:var(--bg-color)!important}
- body.boss-mobile-products-page #boss-mobile-search-row #boss-announcement-bar{display:none!important}
- body.boss-mobile-products-page #boss-mobile-search-row #product-search-input{display:block!important;position:static!important;width:100%!important;max-width:100%!important;height:44px!important;box-sizing:border-box!important;margin:0!important;border-radius:24px!important;background:#fff!important}
- body.boss-mobile-products-page #boss-promo-test,
- body.boss-mobile-products-page #banner-image-block,
- body.boss-mobile-products-page #boss-home-event-images,
- body.boss-mobile-products-page #boss-announcement-bar{display:none!important}
- body.boss-mobile-products-page #boss-desktop-products-card{display:block!important;margin-top:0!important}
- body.boss-mobile-products-page .main-container{margin-top:8px!important}
- body.boss-mobile-products-page #boss-product-page-nav{display:none!important}
-}
-</style>
-</body></html>');
+          content + '</main></body></html>');
         popup.document.close();
         popup.focus();
         // 讓列印頁完成排版與中文字型載入後再開啟列印視窗。
