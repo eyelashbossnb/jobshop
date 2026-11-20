@@ -17500,5 +17500,51 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
  #boss-home-event-images{position:static!important;gap:12px!important;margin:0 0 14px!important}
 }
 </style>
+
+<!-- 20261120: 僅新增搜尋送出時的商品頁跳轉，不改既有篩選與其他流程 -->
+<script id="boss-search-submit-navigation-only-20261120">
+(function(){
+  function init(){
+    const input=document.getElementById('product-search-input');
+    if(!input || input.dataset.bossSearchSubmitReady)return;
+    input.dataset.bossSearchSubmitReady='1';
+    function submitSearch(){
+      const keyword=input.value.trim();
+      if(!keyword)return;
+      // 保留既有的商品編號／品名篩選函式。
+      if(typeof filterProducts==='function')filterProducts();
+      if(window.matchMedia('(min-width:769px)').matches){
+        if(typeof window.bossShowProducts==='function')window.bossShowProducts('搜尋結果：'+keyword);
+        // 切換商品頁後再次篩選，避免其他分類事件重置顯示。
+        if(typeof filterProducts==='function')filterProducts();
+      }else{
+        document.body.classList.remove('boss-checkout-view','boss-mobile-category-view');
+        document.body.classList.add('boss-mobile-products-page');
+        const row=document.getElementById('boss-mobile-search-row');
+        if(row && input.parentElement!==row)row.appendChild(input);
+        if(typeof filterProducts==='function')filterProducts();
+        window.scrollTo({top:0,behavior:'instant'});
+      }
+    }
+    input.addEventListener('keydown',function(e){
+      if(e.key==='Enter' && !e.isComposing){e.preventDefault();submitSearch();input.blur();}
+    });
+    // 僅電腦版在既有搜尋框旁增加明確的搜尋按鈕；手機版保留既有圖示。
+    const btn=document.createElement('button');
+    btn.type='button';btn.id='boss-search-submit-button';btn.textContent='搜尋';
+    btn.setAttribute('aria-label','搜尋商品並顯示結果');
+    btn.addEventListener('click',submitSearch);
+    input.insertAdjacentElement('afterend',btn);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+  else init();
+})();
+</script>
+<style id="boss-search-submit-button-style-20261120">
+@media(min-width:769px){
+ #boss-search-submit-button{border:1px solid #e7a59b;border-radius:20px;background:white;color:#a46b5e;padding:8px 13px;cursor:pointer;font-size:13px;white-space:nowrap}
+}
+@media(max-width:768px){#boss-search-submit-button{display:none!important}}
+</style>
 </body>
 </html>
