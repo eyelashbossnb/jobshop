@@ -16878,8 +16878,26 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
 
   }drawer.classList.add('is-open');backdrop.classList.add('is-open');}
   function closeDrawer(){drawer.classList.remove('is-open');backdrop.classList.remove('is-open');if(tools.parentElement!==header){header.append(tools);tools.style.display='';}}
-  // 細分項目直接沿用原本 filterSubCategory 的 onclick。
-  // 不額外重設 currentSubCategory，避免點擊後被延遲回呼覆蓋。
+  // 手機細分項目：在原始 onclick 完成後，同步目前主分類與子分類。
+  // 避免舊版主分類篩選狀態覆寫子分類，且不改動桌面版事件。
+  document.addEventListener('click',function(event){
+    if(!window.matchMedia('(max-width:768px)').matches)return;
+    if(!document.body.classList.contains('boss-mobile-products-page'))return;
+    const tab=event.target.closest('.sub-category-menu .sub-tab');
+    if(!tab)return;
+    const menu=tab.closest('.sub-category-menu');
+    if(!menu)return;
+    const activeCategory=menu.id.replace(/^sub-category-/, '');
+    const selected=tab.getAttribute('onclick')?.match(/filterSubCategory\(['"]([^'"]+)['"]/)?.[1];
+    if(!selected)return;
+    // DOM click 在冒泡到 document 時，原按鈕的 onclick 已執行。
+    if(typeof currentCategory!=='undefined')currentCategory=activeCategory;
+    if(typeof currentSubCategory!=='undefined')currentSubCategory=selected;
+    document.querySelectorAll('#main-product-grid .product-item').forEach(card=>{
+      if(card.style.getPropertyPriority('display')==='important')card.style.removeProperty('display');
+    });
+    if(typeof filterProducts==='function')filterProducts();
+  });
   // 會員選單按下任何原有功能後，先關閉抽屜，再讓原按鈕照常執行。
   drawer.addEventListener('click',e=>{const button=e.target.closest('#boss-mobile-drawer-content .nav-btn, #boss-mobile-drawer-content .logout-link, #boss-mobile-drawer-content .balance-clickable');if(button)closeDrawer();});
   // 訂單查詢視窗的 X：明確關閉，不依賴其他側欄事件。
