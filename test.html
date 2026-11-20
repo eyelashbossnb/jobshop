@@ -1415,6 +1415,18 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
  body.boss-mobile-products-page #product-search-input{display:block!important}
 }
 </style>
+
+<style id="boss-mobile-checkout-only-in-checkout-view-20261120">
+@media(max-width:768px){
+  /* 首頁與分類頁不得顯示商品明細、運費優惠或收件結帳表單。 */
+  body:not(.boss-checkout-view) main.main-container .mobile-cart-card,
+  body:not(.boss-checkout-view) main.main-container .mobile-order-form-card{display:none!important;}
+  body:not(.boss-checkout-view) #boss-checkout-page{display:none!important;}
+  body.boss-checkout-view #boss-checkout-page{display:block!important;}
+  body.boss-checkout-view #boss-checkout-page .mobile-cart-card,
+  body.boss-checkout-view #boss-checkout-page .mobile-order-form-card{display:block!important;}
+}
+</style>
 </head>
 <body>
 <header>
@@ -17073,7 +17085,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
   const promo=document.getElementById('boss-promo-test');
   const productCard=document.getElementById('main-product-grid')?.closest('.card');
   const categories=document.querySelector('.category-container');
-  if(!main||!home||!cart||!form||!catalog||!announce||!banner||!productCard||!categories)return;
+  if(!main||!home||!cart||!form||!announce||!banner||!productCard||!categories)return;
   const page=document.createElement('section');page.id='boss-checkout-page';
   page.innerHTML='<div class="boss-checkout-heading"><h1>結帳確認</h1><button type="button" class="boss-back-shopping">← 返回購物</button></div><div class="boss-checkout-columns"></div>';
   main.after(page);
@@ -17085,7 +17097,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
   const sidebar=document.createElement('aside');sidebar.id='boss-desktop-side';
   sidebar.innerHTML='<a class="boss-side-catalog" target="_blank" rel="noopener noreferrer" href="https://heyzine.com/flip-book/a792795585.html"><img class="boss-side-catalog-thumb" src="https://i.ibb.co/rRWmDjvH/catalog-png.png" alt="睫老闆商品型錄封面" loading="lazy"><span class="boss-side-catalog-copy"><strong>睫老闆商品型錄</strong><small>點擊開啟電子型錄</small></span><span class="boss-side-catalog-arrow" aria-hidden="true">↗</span></a><div class="boss-side-categories"><h3>商品分類</h3></div>';
   const body=document.createElement('div');body.className='boss-home-main';
-  const catalogBlock=catalog.parentElement;
+  const catalogBlock=catalog?.parentElement;
   if(catalogBlock)catalogBlock.remove(); // VIP guide removed only from home, no other account features.
   home.insertBefore(grid,home.firstChild);grid.append(sidebar,body);
   // 首頁順序：最新消息 → 限時優惠活動 → 形象圖 → VIP／滿額贈／免運說明
