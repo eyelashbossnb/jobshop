@@ -1387,6 +1387,26 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
   #boss-product-page-nav #boss-product-return-home {display:none!important;}
 }
 </style>
+
+<style id="boss-mobile-home-product-separation-fix">
+@media(max-width:768px){
+ body:not(.boss-mobile-products-page):not(.boss-checkout-view) #product-search-input,
+ body:not(.boss-mobile-products-page):not(.boss-checkout-view) #boss-mobile-product-list-card {display:none!important}
+ body.boss-mobile-products-page #boss-announcement-bar,
+ body.boss-mobile-products-page #boss-promo-test,
+ body.boss-mobile-products-page #banner-image-block,
+ body.boss-mobile-products-page #boss-home-event-images {display:none!important}
+ body.boss-mobile-products-page #boss-mobile-product-list-card {display:block!important}
+ body.boss-mobile-products-page #boss-mobile-search-row #product-search-input {display:block!important;width:calc(100% - 28px)!important;margin:10px 14px!important}
+ body.boss-mobile-products-page #boss-product-page-nav {display:none!important}
+}
+</style>
+<script id="boss-mobile-home-product-separation-init">
+(function(){
+ function init(){const card=document.querySelector('.category-container')?.closest('.card');if(card)card.id='boss-mobile-product-list-card';}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
 </head>
 <body>
 <header>
@@ -16800,9 +16820,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       const input=document.getElementById('product-search-input');
       if(input) input.value='';
       const match=(original.getAttribute('onclick')||'').match(/selectCategory\(['"]([^'"]+)['"]/);
-      if(match && typeof window.selectCategory==='function') window.selectCategory(match[1],original);
-      else original.click();
-      if(typeof window.filterProducts==='function') window.filterProducts();
+      // 直接觸發原始分類按鈕，保留分類篩選及特殊分類的既有處理。
+      original.click();
       closeDrawer();
       document.body.classList.add('boss-mobile-category-view','boss-mobile-products-page');
       // 手機分類頁只顯示搜尋與商品；保留原始分類篩選，不移動商品 DOM。
