@@ -16881,6 +16881,15 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       requestAnimationFrame(enforceMobileCategory);
       setTimeout(enforceMobileCategory,100);
       setTimeout(enforceMobileCategory,600);
+      // 子分類列跟隨目前選擇的主分類顯示，並保留原本細分篩選功能。
+      const showSubcategories=()=>{
+        if(!document.body.classList.contains('boss-mobile-products-page'))return;
+        document.querySelectorAll('.sub-category-menu').forEach(menu=>{
+          menu.style.display=(categoryCode && menu.id==='sub-category-'+categoryCode)?'flex':'none';
+        });
+      };
+      requestAnimationFrame(showSubcategories);
+      setTimeout(showSubcategories,150);
       // 手機分類頁只顯示搜尋與商品；保留原始分類篩選，不移動商品 DOM。
       const searchRow=document.getElementById('boss-mobile-search-row');
       const productSearch=document.getElementById('product-search-input');
@@ -16890,6 +16899,15 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
 
   }drawer.classList.add('is-open');backdrop.classList.add('is-open');}
   function closeDrawer(){drawer.classList.remove('is-open');backdrop.classList.remove('is-open');if(tools.parentElement!==header){header.append(tools);tools.style.display='';}}
+  // 細分項目點選後解除主分類的暫時顯示鎖定，交還原本 filterProducts 處理。
+  document.addEventListener('click',function(e){
+    const sub=e.target.closest('.sub-category-menu .sub-tab');
+    if(!sub || !mobile() || !document.body.classList.contains('boss-mobile-products-page'))return;
+    document.querySelectorAll('#main-product-grid .product-item').forEach(card=>{
+      if(card.style.getPropertyPriority('display')==='important')card.style.removeProperty('display');
+    });
+    setTimeout(()=>{if(typeof filterProducts==='function')filterProducts();},0);
+  });
   // 會員選單按下任何原有功能後，先關閉抽屜，再讓原按鈕照常執行。
   drawer.addEventListener('click',e=>{const button=e.target.closest('#boss-mobile-drawer-content .nav-btn, #boss-mobile-drawer-content .logout-link, #boss-mobile-drawer-content .balance-clickable');if(button)closeDrawer();});
   // 訂單查詢視窗的 X：明確關閉，不依賴其他側欄事件。
