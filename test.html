@@ -1403,10 +1403,18 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 </style>
 <script id="boss-mobile-home-product-separation-init">
 (function(){
- function init(){const card=document.querySelector('.category-container')?.closest('.card');if(card)card.id='boss-mobile-product-list-card';}
+ function init(){const card=document.getElementById('main-product-grid')?.closest('.card');if(card)card.id='boss-mobile-product-list-card';}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
+<style id="boss-mobile-final-home-products-20261120">
+@media(max-width:768px){
+ body:not(.boss-mobile-products-page):not(.boss-checkout-view) .card:has(#main-product-grid){display:none!important}
+ body.boss-mobile-products-page .card:has(#main-product-grid){display:block!important}
+ body:not(.boss-mobile-products-page):not(.boss-checkout-view) #product-search-input{display:none!important}
+ body.boss-mobile-products-page #product-search-input{display:block!important}
+}
+</style>
 </head>
 <body>
 <header>
@@ -16820,8 +16828,15 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       const input=document.getElementById('product-search-input');
       if(input) input.value='';
       const match=(original.getAttribute('onclick')||'').match(/selectCategory\(['"]([^'"]+)['"]/);
-      // 直接觸發原始分類按鈕，保留分類篩選及特殊分類的既有處理。
-      original.click();
+      // 原始按鈕 click 可能被其他導覽監聽器覆寫；直接執行分類函式。
+      const categoryCode=match?.[1];
+      if(categoryCode && typeof selectCategory==='function'){
+        selectCategory(categoryCode,original);
+        if(typeof toggleSaleMenu==='function')toggleSaleMenu(categoryCode==='sale');
+        if(typeof filterProducts==='function')filterProducts();
+      }else{
+        original.click();
+      }
       closeDrawer();
       document.body.classList.add('boss-mobile-category-view','boss-mobile-products-page');
       // 手機分類頁只顯示搜尋與商品；保留原始分類篩選，不移動商品 DOM。
@@ -16888,7 +16903,6 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
    const tabs=[...document.querySelectorAll('.category-container .category-tab')];
    const all=tabs.find(el=>el.textContent.trim().includes('全部商品'))||tabs[0];
    if(all)all.click();
-   const search=document.getElementById('product-search-input');
    if(search && search.value){search.value='';search.dispatchEvent(new Event('input',{bubbles:true}));}
    top();
  });
