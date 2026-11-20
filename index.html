@@ -13279,6 +13279,19 @@ function addToCart(productId) {
     }
     
     if (productConfig[productId]?._isWelfare) max = Number(productConfig[productId].max) || 0;
+    else if (['S3', 'S4', 'S5'].includes(productId)) {
+        // 與商品頁顯示庫存使用同一筆已同步數據，避免重複拼接編號造成模糊查詢誤判為 0。
+        const stockDisplay = document.getElementById(`stock-text-${productId}`);
+        const displayedNumber = stockDisplay && stockDisplay.querySelector('span')
+            ? Number(stockDisplay.querySelector('span').textContent.trim()) : NaN;
+        const syncedMax = Number(productConfig[productId]?.max);
+        if (Number.isFinite(displayedNumber) && displayedNumber >= 0) max = displayedNumber;
+        else if (Number.isFinite(syncedMax) && syncedMax >= 0) max = syncedMax;
+        if (max <= 0) {
+            alert('此商品目前沒有可購買的現貨庫存，請稍後再試。');
+            return;
+        }
+    }
     else if (productName && productId !== "STORE_ADJUST") {
         let currentStock = getStockFromDatabase(productId + productName);
         if (currentStock === null) currentStock = getStockFromDatabase(productName);
