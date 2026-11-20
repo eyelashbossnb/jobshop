@@ -1379,6 +1379,14 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
   }
 }
 </style>
+
+<style id="boss-mobile-hide-duplicate-home-button-20261120">
+/* 手機商品分類頁不顯示上方返回首頁；統一使用既有底部快捷導覽。 */
+@media (max-width:768px){
+  #boss-product-return-home,
+  #boss-product-page-nav #boss-product-return-home {display:none!important;}
+}
+</style>
 </head>
 <body>
 <header>
@@ -11562,7 +11570,23 @@ function bossDownloadOrderPdf(index) {
         popup.document.write('<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>' +
           '睫老闆_訂單明細_' + bossPdfSafeName(order.id) +
           '</title><style>' + styles + '</style></head><body><main class="boss-pdf-page">' +
-          content + '</main></body></html>');
+          content + '</main>
+<style id="boss-mobile-separated-product-page-20261120">
+/* 僅手機：首頁與分類商品頁分離，桌面版完全不變。 */
+@media(max-width:768px){
+ body.boss-mobile-products-page #boss-mobile-search-row{display:block!important;padding:12px 14px!important;margin:0!important;background:var(--bg-color)!important}
+ body.boss-mobile-products-page #boss-mobile-search-row #boss-announcement-bar{display:none!important}
+ body.boss-mobile-products-page #boss-mobile-search-row #product-search-input{display:block!important;position:static!important;width:100%!important;max-width:100%!important;height:44px!important;box-sizing:border-box!important;margin:0!important;border-radius:24px!important;background:#fff!important}
+ body.boss-mobile-products-page #boss-promo-test,
+ body.boss-mobile-products-page #banner-image-block,
+ body.boss-mobile-products-page #boss-home-event-images,
+ body.boss-mobile-products-page #boss-announcement-bar{display:none!important}
+ body.boss-mobile-products-page #boss-desktop-products-card{display:block!important;margin-top:0!important}
+ body.boss-mobile-products-page .main-container{margin-top:8px!important}
+ body.boss-mobile-products-page #boss-product-page-nav{display:none!important}
+}
+</style>
+</body></html>');
         popup.document.close();
         popup.focus();
         // 讓列印頁完成排版與中文字型載入後再開啟列印視窗。
@@ -16780,9 +16804,12 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       else original.click();
       if(typeof window.filterProducts==='function') window.filterProducts();
       closeDrawer();
-      document.body.classList.add('boss-mobile-category-view');
-      const target=document.getElementById('main-product-grid')?.closest('.card');
-      if(target)requestAnimationFrame(()=>{const top=target.getBoundingClientRect().top+window.scrollY-76;window.scrollTo({top:Math.max(0,top),behavior:'auto'});});
+      document.body.classList.add('boss-mobile-category-view','boss-mobile-products-page');
+      // 手機分類頁只顯示搜尋與商品；保留原始分類篩選，不移動商品 DOM。
+      const searchRow=document.getElementById('boss-mobile-search-row');
+      const productSearch=document.getElementById('product-search-input');
+      if(searchRow&&productSearch)searchRow.append(productSearch);
+      requestAnimationFrame(()=>window.scrollTo({top:0,behavior:'auto'}));
     };content.append(btn);});
 
   }drawer.classList.add('is-open');backdrop.classList.add('is-open');}
@@ -16833,7 +16860,12 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
  document.getElementById('boss-shortcut-top').addEventListener('click',top);
  document.getElementById('boss-shortcut-home').addEventListener('click',()=>{
    if(typeof window.closeBossMobileDrawer==='function')window.closeBossMobileDrawer();
-   document.body.classList.remove('boss-mobile-category-view');
+   document.body.classList.remove('boss-mobile-category-view','boss-mobile-products-page');
+   if(typeof window.bossShowHome==='function')window.bossShowHome();
+   // 返回首頁後，搜尋框還原至原本的首頁位置。
+   const search=document.getElementById('product-search-input');
+   const events=document.getElementById('boss-home-event-images');
+   if(search&&events)events.after(search);
    const tabs=[...document.querySelectorAll('.category-container .category-tab')];
    const all=tabs.find(el=>el.textContent.trim().includes('全部商品'))||tabs[0];
    if(all)all.click();
@@ -17112,7 +17144,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
     window.scrollTo({top:0,behavior:'instant'});
   };
   window.bossShowHome=function(){
-    document.body.classList.remove('boss-checkout-view','boss-products-view');
+    document.body.classList.remove('boss-checkout-view','boss-products-view','boss-mobile-products-page','boss-mobile-category-view');
     window.scrollTo({top:0,behavior:'instant'});
   };
   // Preserve the old names used by existing buttons, but route them to checkout view.
