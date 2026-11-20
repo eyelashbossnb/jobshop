@@ -1379,6 +1379,18 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
   }
 }
 </style>
+
+<style id="boss-mobile-home-compact-20261120">
+@media(max-width:768px){
+ header{margin-bottom:0!important;padding-bottom:0!important}
+ #boss-mobile-search-row.boss-mobile-search-row{display:block!important;padding:0 12px 0!important;margin:0!important;min-height:0!important;height:auto!important;background:var(--bg-color)!important}
+ #boss-mobile-search-row #boss-announcement-bar.boss-mobile-announcement{margin:4px 0 10px!important;padding:10px 12px!important;border:1px solid var(--border-color)!important;border-radius:12px!important;min-height:42px!important;box-sizing:border-box!important}
+ #boss-mobile-search-row #boss-promo-test{display:block!important;margin:0 0 12px!important;padding:0!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+ #boss-mobile-search-row #boss-promo-test .boss-promo-box{margin:0!important}
+ body.boss-mobile-category-view #boss-mobile-search-row #boss-promo-test{display:none!important}
+ #banner-image-block{margin-top:0!important;margin-bottom:12px!important}
+}
+</style>
 </head>
 <body>
 <header>
@@ -16738,24 +16750,11 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
   const backdrop=document.createElement('div');backdrop.className='boss-mobile-drawer-backdrop';backdrop.onclick=closeDrawer;
   const drawer=document.createElement('aside');drawer.className='boss-mobile-drawer';drawer.id='boss-mobile-drawer';drawer.innerHTML='<div class="boss-mobile-drawer-head"><span id="boss-mobile-drawer-title">商品分類</span><button type="button" aria-label="關閉選單" style="border:0;background:transparent;font-size:25px">×</button></div><div id="boss-mobile-drawer-content"></div>';
   drawer.querySelector('.boss-mobile-drawer-head button').onclick=closeDrawer;document.body.append(backdrop,drawer);
-  const searchAnchor=document.createComment('original mobile search'),announceAnchor=document.createComment('original announcement'),navAnchor=document.createComment('original mobile nav');
-  const promo=document.getElementById('boss-promo-test');
-  const promoAnchor=document.createComment('original promo position');
-  if(promo)promo.before(promoAnchor);
-  search.before(searchAnchor);announce.before(announceAnchor);nav.before(navAnchor);
+  const searchAnchor=document.createComment('original mobile search'),announceAnchor=document.createComment('original announcement'),navAnchor=document.createComment('original mobile nav'),promoAnchor=document.createComment('original promotion');
+  search.before(searchAnchor);announce.before(announceAnchor);nav.before(navAnchor);const promoOriginal=document.getElementById('boss-promo-test');if(promoOriginal)promoOriginal.before(promoAnchor);
   function relocate(){
-   if(mobile()){
-    row.append(announce);announce.classList.add('boss-mobile-announcement');
-    if(promo)row.append(promo);
-    const eventImages=document.getElementById('boss-home-event-images');
-    const banner=document.getElementById('banner-image-block');
-    if(eventImages)eventImages.after(search);else if(banner)banner.after(search);else row.after(search);
-    header.append(nav);
-   }else{
-    searchAnchor.after(search);announceAnchor.after(announce);
-    if(promo)promoAnchor.after(promo);
-    document.body.classList.remove('boss-mobile-category-view');announce.classList.remove('boss-mobile-announcement');navAnchor.after(nav);closeDrawer();
-   }
+   if(mobile()){row.append(announce);announce.classList.add('boss-mobile-announcement');const promo=document.getElementById('boss-promo-test');if(promo)row.append(promo);const events=document.getElementById('boss-home-event-images');if(events)events.after(search);else row.after(search);header.append(nav);}
+   else{searchAnchor.after(search);announceAnchor.after(announce);if(promoOriginal)promoAnchor.after(promoOriginal);document.body.classList.remove('boss-mobile-category-view');announce.classList.remove('boss-mobile-announcement');navAnchor.after(nav);closeDrawer();}
   }
   window.openBossMobileDrawer=openDrawer;
   function openDrawer(type){if(!mobile())return;toggleBossMobileCart(false);const content=drawer.querySelector('#boss-mobile-drawer-content');drawer.querySelector('#boss-mobile-drawer-title').textContent=type==='member'?'會員中心':'商品分類';content.replaceChildren();if(type==='member'){
@@ -17151,7 +17150,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
     if(announce.parentElement===body)home.insertBefore(announce,grid);
     if(banner.parentElement===body)home.insertBefore(banner,grid);
     if(bossEvents&&bossEvents.parentElement===body)home.insertBefore(bossEvents,grid);
-    if(promo&&promo.parentElement===body)home.insertBefore(promo,grid);
+    if(promo){const mobileRow=document.getElementById('boss-mobile-search-row');if(mobileRow)mobileRow.append(promo);else if(promo.parentElement===body)home.insertBefore(promo,grid);}
     if(productCard.parentElement===body)home.append(productCard);
     if(cart.parentElement===cols)main.append(cart);
     if(form.parentElement===cols)main.append(form);
@@ -17337,17 +17336,5 @@ body.boss-products-view #boss-home-event-images,
 body.boss-checkout-view #boss-home-event-images{display:none!important}
 </style>
 
-
-<!-- 2026-11-19 手機首頁：最新消息與限時活動緊鄰，電腦版不變 -->
-<style id="boss-mobile-home-spacing-084321">
-@media(max-width:768px){
- #boss-mobile-search-row{padding:8px 12px 0!important;margin:0!important;min-height:0!important;height:auto!important}
- #boss-mobile-search-row #boss-announcement-bar{margin:0 0 10px!important;min-height:42px!important;border:1px solid var(--border-color)!important;border-radius:14px!important;padding:9px 12px!important}
- #boss-mobile-search-row #boss-promo-test{display:block!important;width:100%!important;margin:0 0 12px!important;padding:0!important}
- #boss-mobile-search-row #boss-promo-test .boss-promo-box{margin:0!important}
- #banner-image-block{margin-top:0!important;margin-bottom:12px!important}
- #boss-home-event-images{gap:12px!important;margin:0 0 12px!important}
-}
-</style>
 </body>
 </html>
