@@ -1452,6 +1452,10 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 }
 @media(max-width:768px){.boss-mobile-dealer-entry{border-top:1px solid var(--border-color)!important;margin-top:8px!important}}
 </style>
+<style id="boss-hide-mobile-footer-dealer">
+/* 手機版：經銷商入口已移至分類選單，頁尾不重複顯示 */
+@media (max-width:768px){.boss-footer-five .boss-footer-dealer-col{display:none!important;}}
+</style>
 </head>
 <body>
 <header>
@@ -16574,7 +16578,7 @@ else bossShippingChanged();
       <button type="button" onclick="bossOpenLegal(5)">海外地區配送</button>
       <button type="button" onclick="bossOpenLegal(6)">優惠券使用說明</button>
     </section>
-    <section class="boss-footer-col"><h3>授權經銷商</h3>
+    <section class="boss-footer-col boss-footer-dealer-col"><h3>授權經銷商</h3>
       <button type="button" class="boss-dealer-open" onclick="bossOpenDealers()">查看授權經銷商名單 ↗</button>
     </section>
     <section class="boss-footer-col"><h3>直營門市</h3>
