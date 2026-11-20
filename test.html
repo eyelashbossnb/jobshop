@@ -17259,6 +17259,15 @@ body.boss-checkout-view #boss-checkout-page{display:block}
     }
   },true);
   window.bossShowCheckout=function(){
+    // Ensure checkout cards are inside the visible checkout page.
+    // Another layout initializer may have moved them back to main.
+    const checkoutCols=document.querySelector('#boss-checkout-page .boss-checkout-columns');
+    const checkoutCart=document.querySelector('.mobile-cart-card');
+    const checkoutForm=document.querySelector('.mobile-order-form-card');
+    if(checkoutCols){
+      if(checkoutCart&&checkoutCart.parentElement!==checkoutCols)checkoutCols.appendChild(checkoutCart);
+      if(checkoutForm&&checkoutForm.parentElement!==checkoutCols)checkoutCols.appendChild(checkoutForm);
+    }
     document.body.classList.remove('boss-products-view');
     document.body.classList.add('boss-checkout-view');
     if(typeof window.toggleBossMobileCart==='function')window.toggleBossMobileCart(false);
