@@ -16881,6 +16881,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       requestAnimationFrame(enforceMobileCategory);
       setTimeout(enforceMobileCategory,100);
       setTimeout(enforceMobileCategory,600);
+      if(typeof window.bossRenderMobileSubcategories==='function')window.bossRenderMobileSubcategories(categoryCode);
       // 手機分類頁只顯示搜尋與商品；保留原始分類篩選，不移動商品 DOM。
       const searchRow=document.getElementById('boss-mobile-search-row');
       const productSearch=document.getElementById('product-search-input');
@@ -17444,5 +17445,50 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
  #boss-home-event-images{position:static!important;gap:12px!important;margin:0 0 14px!important}
 }
 </style>
+
+<style id="boss-mobile-subcategories-only-20261120">
+@media(max-width:768px){
+  body.boss-mobile-products-page #boss-mobile-subcategories{display:flex!important;align-items:center;gap:9px;overflow-x:auto;white-space:nowrap;scrollbar-width:thin;padding:12px 14px;margin:0 0 12px;background:#fff;border:1px solid var(--border-color);border-radius:12px;box-sizing:border-box;max-width:100%;}
+  #boss-mobile-subcategories .boss-sub-label{flex:none;font-size:13px;font-weight:600;color:var(--text-main)}
+  #boss-mobile-subcategories .sub-tab{flex:none;white-space:nowrap}
+}
+@media(min-width:769px){#boss-mobile-subcategories{display:none!important}}
+body:not(.boss-mobile-products-page) #boss-mobile-subcategories{display:none!important}
+</style>
+<script id="boss-mobile-subcategories-only-script-20261120">
+(function(){
+  function render(category){
+    if(!window.matchMedia('(max-width:768px)').matches)return;
+    const card=document.getElementById('main-product-grid')?.closest('.card');
+    if(!card)return;
+    let bar=document.getElementById('boss-mobile-subcategories');
+    if(!bar){bar=document.createElement('div');bar.id='boss-mobile-subcategories';bar.setAttribute('aria-label','商品細分項目');card.insertBefore(bar,card.firstChild)}
+    bar.replaceChildren();
+    const original=document.getElementById('sub-category-'+category);
+    if(!original){bar.style.display='none';return}
+    bar.style.removeProperty('display');
+    const label=document.createElement('span');label.className='boss-sub-label';label.textContent='細分項目 ｜';bar.append(label);
+    original.querySelectorAll('.sub-tab').forEach(source=>{
+      const button=document.createElement('button');button.type='button';button.className='sub-tab';button.textContent=source.textContent;
+      if(source.classList.contains('active'))button.classList.add('active');
+      button.addEventListener('click',()=>{
+        if(!document.body.classList.contains('boss-mobile-products-page'))return;
+        if(typeof currentCategory!=='undefined' && currentCategory!==category)return;
+        const match=(source.getAttribute('onclick')||'').match(/filterSubCategory\(['"]([^'"]+)['"]/);
+        if(!match)return;
+        const search=document.getElementById('product-search-input');if(search)search.value='';
+        document.querySelectorAll('#main-product-grid .product-item').forEach(item=>{
+          if(item.style.getPropertyPriority('display')==='important')item.style.removeProperty('display');
+        });
+        if(typeof filterSubCategory==='function')filterSubCategory(match[1],source);
+        bar.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
+        button.classList.add('active');
+      });
+      bar.append(button);
+    });
+  }
+  window.bossRenderMobileSubcategories=render;
+})();
+</script>
 </body>
 </html>
