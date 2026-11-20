@@ -17177,6 +17177,12 @@ body.boss-checkout-view #boss-checkout-page{display:block}
        filterProducts();
      }catch(error){console.error('商品篩選失敗',error);}
      list.querySelectorAll('button').forEach(button=>button.classList.toggle('active',button===b));
+     // 電腦版細分項目使用原有 DOM；只顯示所選主分類的細分選單。
+     if(window.matchMedia('(min-width:769px)').matches){
+       document.querySelectorAll('.sub-category-menu').forEach(menu=>{
+         menu.style.display=menu.id==='sub-category-'+categoryCode?'flex':'none';
+       });
+     }
      // 電腦版專用：確保點擊後商品確實依原始 data-category 顯示，
      // 避免舊版手機程式殘留的 inline display 狀態覆蓋分類。
      if(window.matchMedia('(min-width:769px)').matches){
@@ -17187,7 +17193,9 @@ body.boss-checkout-view #boss-checkout-page{display:block}
          let shown=0;
          items.forEach(item=>{
            const visible=categoryCode==='all'||item.dataset.category===categoryCode;
-           item.style.setProperty('display',visible?'flex':'none','important');
+           // 不使用 !important，讓細分項目的 filterProducts 可更新顯示。
+           item.style.removeProperty('display');
+           item.style.display=visible?'flex':'none';
            if(visible)shown++;
          });
          const notice=document.getElementById('no-search-notice');
@@ -17199,12 +17207,22 @@ body.boss-checkout-view #boss-checkout-page{display:block}
        };
        // 首次與商品資料非同步完成後均保持相同分類。
        requestAnimationFrame(syncDesktopCategory);
-       setTimeout(syncDesktopCategory,400);
-       setTimeout(syncDesktopCategory,1200);
+       // 非同步商品完成後由原始 filterProducts 負責更新；避免覆蓋細分項目。
      }
      window.bossShowProducts(b.textContent.trim());
    });
    list.append(b);
+  });
+  // 電腦版：細分項目按下後，解除舊版商品強制顯示並沿用原始篩選。
+  document.addEventListener('click',function(e){
+    if(!window.matchMedia('(min-width:769px)').matches)return;
+    if(!document.body.classList.contains('boss-products-view'))return;
+    const tab=e.target.closest('.sub-category-menu .sub-tab');
+    if(!tab)return;
+    document.querySelectorAll('#main-product-grid .product-item').forEach(item=>{
+      if(item.style.getPropertyPriority('display')==='important')item.style.removeProperty('display');
+    });
+    if(typeof filterProducts==='function')filterProducts();
   });
   window.bossShowCheckout=function(){
     document.body.classList.remove('boss-products-view');
