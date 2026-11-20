@@ -16852,7 +16852,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       closeDrawer();
       document.body.classList.add('boss-mobile-category-view','boss-mobile-products-page');
       // 記住使用者選取的分類；商品非同步載入完成後仍維持該分類。
-      window.bossMobileSelectedCategory=categoryCode||null;\n      document.querySelectorAll('#main-product-grid .product-item').forEach(card=>card.style.removeProperty('display'));
+      window.bossMobileSelectedCategory=categoryCode||null;
+      document.querySelectorAll('#main-product-grid .product-item').forEach(card=>card.style.removeProperty('display'));
       if(categoryCode && typeof selectCategory==='function'){
         const applySelected=()=>{
           if(!document.body.classList.contains('boss-mobile-products-page'))return;
