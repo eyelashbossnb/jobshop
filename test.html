@@ -16851,6 +16851,19 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')bossCloseLeg
       }
       closeDrawer();
       document.body.classList.add('boss-mobile-category-view','boss-mobile-products-page');
+      // 記住使用者選取的分類；商品非同步載入完成後仍維持該分類。
+      window.bossMobileSelectedCategory=categoryCode||null;
+      if(categoryCode && typeof selectCategory==='function'){
+        const applySelected=()=>{
+          if(!document.body.classList.contains('boss-mobile-products-page'))return;
+          if(window.bossMobileSelectedCategory!==categoryCode)return;
+          if(typeof currentCategory!=='undefined')currentCategory=categoryCode;
+          if(typeof currentSubCategory!=='undefined')currentSubCategory='all';
+          if(typeof filterProducts==='function')filterProducts();
+        };
+        requestAnimationFrame(applySelected);
+        setTimeout(applySelected,350);
+      }
       // 手機分類頁只顯示搜尋與商品；保留原始分類篩選，不移動商品 DOM。
       const searchRow=document.getElementById('boss-mobile-search-row');
       const productSearch=document.getElementById('product-search-input');
