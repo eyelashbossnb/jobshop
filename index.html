@@ -17426,7 +17426,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
    }catch(err){console.error('購物車預覽更新失敗',err);items.textContent='購物車資料載入中';}
   }
   wrap.addEventListener('mouseenter',refresh);
-  wrap.addEventListener('focusin',e=>{if(!e.target.closest('.boss-preview-stepper'))refresh();});
+  wrap.addEventListener('focusin',e=>{if(e.target.closest('.boss-desktop-cart-trigger'))refresh();});
   wrap.querySelector('.boss-desktop-cart-trigger').addEventListener('click',()=>window.bossShowCheckout&&window.bossShowCheckout());
   wrap.querySelector('.boss-preview-checkout').addEventListener('click',()=>window.bossShowCheckout&&window.bossShowCheckout());
   document.addEventListener('click',e=>{if(e.target.closest('button[onclick*="addToCart"]'))setTimeout(refresh,100)});
