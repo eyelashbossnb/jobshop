@@ -17378,28 +17378,55 @@ body.boss-checkout-view #boss-checkout-page{display:block}
   if(!nav||document.getElementById('boss-desktop-cart-trigger'))return;
   const wrap=document.createElement('div');
   wrap.className='boss-desktop-cart-wrap';
-  wrap.innerHTML='<button type="button" class="boss-desktop-cart-trigger" id="boss-desktop-cart-trigger" aria-label="購物車，前往結帳">🛒 購物車 <span id="boss-desktop-cart-count">0</span></button><div class="boss-desktop-cart-preview"><div class="boss-preview-items">購物車目前是空的</div><button type="button" class="boss-preview-checkout">前往結帳 ❯</button></div>';
+  wrap.innerHTML='<button type="button" class="boss-desktop-cart-trigger" id="boss-desktop-cart-trigger" aria-label="購物車，前往結帳">🛒 購物車 <span id="boss-desktop-cart-count">0</span></button><div class="boss-desktop-cart-preview"><div class="boss-preview-head"><strong>我的購物車</strong><span class="boss-preview-count"></span></div><div class="boss-preview-items">購物車目前是空的</div><div class="boss-preview-total"><span>購物車商品總金額</span><strong>$0</strong></div><button type="button" class="boss-preview-checkout">前往結帳 ❯</button></div>';
   const orderButton=nav.querySelector('button[onclick*="toggleOrderModal"]');
   if(orderButton)nav.insertBefore(wrap,orderButton);else nav.append(wrap);
+  const money=n=>'$'+Number(n||0).toLocaleString('en-US');
   function refresh(){
    const items=wrap.querySelector('.boss-preview-items');
    const counter=wrap.querySelector('#boss-desktop-cart-count');
+   const countLabel=wrap.querySelector('.boss-preview-count');
+   const totalLabel=wrap.querySelector('.boss-preview-total strong');
    try{
-    const ids=Object.keys(cart||{}).filter(id=>Number(cart[id])>0);
-    counter.textContent=ids.reduce((sum,id)=>sum+(Number(cart[id])||0),0);
-    if(!ids.length){items.textContent='購物車目前是空的';return;}
+    // 沿用原始會員折扣／活動價格計算，不另外建立價格規則。
+    if(typeof updateCartSummary==='function')updateCartSummary();
+    const ids=Object.keys(cart||{}).filter(id=>Number(cart[id])>0 && productConfig[id]);
+    const count=ids.reduce((sum,id)=>sum+(Number(cart[id])||0),0);
+    counter.textContent=count;
+    countLabel.textContent='共 '+count+' 件商品';
     items.replaceChildren();
+    let total=0;
+    if(!ids.length){items.textContent='購物車目前是空的';totalLabel.textContent='$0';return;}
     ids.forEach(id=>{
-      const p=productConfig[id];if(!p)return;
-      const row=document.createElement('div');row.className='boss-preview-item';
-      const name=document.createElement('span');name.textContent=(p.name||id).replace(/\\s+/g,' ').trim();
-      const qty=document.createElement('span');qty.textContent='× '+cart[id];
-      row.append(name,qty);items.append(row);
+     const p=productConfig[id],qty=Number(cart[id])||0,price=Number(p.price)||0;
+     total+=price*qty;
+     const row=document.createElement('div');row.className='boss-preview-item';
+     const name=document.createElement('div');name.className='boss-preview-name';name.textContent=(p.name||id).replace(/\s+/g,' ').trim();
+     const controls=document.createElement('div');controls.className='boss-preview-controls';
+     const unit=document.createElement('span');unit.className='boss-preview-unit';unit.textContent='單價 '+money(price);
+     const actions=document.createElement('div');actions.className='boss-preview-actions';
+     const stepper=document.createElement('div');stepper.className='boss-preview-stepper';
+     const minus=document.createElement('button');minus.type='button';minus.textContent='−';minus.setAttribute('aria-label','減少 '+name.textContent+' 數量');
+     const input=document.createElement('input');input.type='number';input.min='1';input.step='1';input.inputMode='numeric';input.value=qty;input.setAttribute('aria-label',name.textContent+' 數量');
+     const plus=document.createElement('button');plus.type='button';plus.textContent='+';plus.setAttribute('aria-label','增加 '+name.textContent+' 數量');
+     minus.addEventListener('click',()=>{changeCartItemQty(id,-1);refresh();});
+     plus.addEventListener('click',()=>{changeCartItemQty(id,1);refresh();});
+     input.addEventListener('change',()=>{setCartItemQty(id,input);refresh();});
+     input.addEventListener('keydown',e=>{if(e.key==='Enter')input.blur();});
+     stepper.append(minus,input,plus);
+     const remove=document.createElement('button');remove.type='button';remove.className='boss-preview-remove';remove.textContent='♧';remove.innerHTML='&#128465;';remove.title='刪除商品';remove.setAttribute('aria-label','刪除 '+name.textContent);
+     remove.addEventListener('click',async()=>{await removeCartItem(id);refresh();});
+     actions.append(stepper,remove);controls.append(unit,actions);
+     const subtotal=document.createElement('div');subtotal.className='boss-preview-subtotal';
+     const sublabel=document.createElement('span');sublabel.textContent='商品小計';
+     const subvalue=document.createElement('strong');subvalue.textContent=money(price*qty);
+     subtotal.append(sublabel,subvalue);row.append(name,controls,subtotal);items.append(row);
     });
-   }catch(err){items.textContent='購物車資料載入中';}
+    totalLabel.textContent=money(total);
+   }catch(err){console.error('購物車預覽更新失敗',err);items.textContent='購物車資料載入中';}
   }
   wrap.addEventListener('mouseenter',refresh);
-  wrap.addEventListener('focusin',refresh);
+  wrap.addEventListener('focusin',e=>{if(!e.target.closest('.boss-preview-stepper'))refresh();});
   wrap.querySelector('.boss-desktop-cart-trigger').addEventListener('click',()=>window.bossShowCheckout&&window.bossShowCheckout());
   wrap.querySelector('.boss-preview-checkout').addEventListener('click',()=>window.bossShowCheckout&&window.bossShowCheckout());
   document.addEventListener('click',e=>{if(e.target.closest('button[onclick*="addToCart"]'))setTimeout(refresh,100)});
@@ -17468,9 +17495,23 @@ body.boss-checkout-view #boss-checkout-page{display:block}
 </script>
 <style id="boss-desktop-preview-polish">
 @media(min-width:769px){
-.boss-desktop-cart-preview .boss-preview-item{align-items:flex-start}
-.boss-desktop-cart-preview .boss-preview-item span:first-child{flex:1;min-width:0;overflow-wrap:anywhere;line-height:1.65}
-.boss-desktop-cart-preview .boss-preview-item span:last-child{flex:none}
+ .boss-desktop-cart-preview .boss-preview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid #f0e6e0;font-size:15px}
+ .boss-desktop-cart-preview .boss-preview-count{color:#99877d;font-size:12px}
+ .boss-desktop-cart-preview .boss-preview-items{max-height:340px;overflow:auto}
+ .boss-desktop-cart-preview .boss-preview-item{display:block;padding:13px 0;border-bottom:1px solid #f0e6e0}
+ .boss-desktop-cart-preview .boss-preview-name{font-size:13px;line-height:1.65;overflow-wrap:anywhere;color:#4a3f35;margin-bottom:9px}
+ .boss-desktop-cart-preview .boss-preview-controls{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+ .boss-desktop-cart-preview .boss-preview-unit{font-size:12px;color:#8a7e72;white-space:nowrap}
+ .boss-desktop-cart-preview .boss-preview-actions{display:flex;align-items:center;gap:9px;margin-left:auto}
+ .boss-desktop-cart-preview .boss-preview-stepper{display:flex;align-items:center;border:1px solid #eee3dd;background:#faf7f5;border-radius:22px;overflow:hidden;height:30px}
+ .boss-desktop-cart-preview .boss-preview-stepper button{border:0;background:transparent;width:29px;height:30px;cursor:pointer;color:#4a3f35;font-size:15px}
+ .boss-desktop-cart-preview .boss-preview-stepper input{width:38px;text-align:center;border:0;background:transparent;font-size:12px;color:#4a3f35;outline:0;-moz-appearance:textfield}
+ .boss-desktop-cart-preview .boss-preview-stepper input::-webkit-inner-spin-button,.boss-desktop-cart-preview .boss-preview-stepper input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+ .boss-desktop-cart-preview .boss-preview-remove{border:0;background:transparent;color:#c97a7a;font-size:19px;cursor:pointer;padding:4px}
+ .boss-desktop-cart-preview .boss-preview-subtotal{display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-top:7px;font-size:12px;color:#8a7e72}
+ .boss-desktop-cart-preview .boss-preview-subtotal strong{font-size:14px;color:#4a3f35}
+ .boss-desktop-cart-preview .boss-preview-total{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:13px;font-size:13px}
+ .boss-desktop-cart-preview .boss-preview-total strong{font-size:18px;color:#4a3f35}
 }
 </style>
 
