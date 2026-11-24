@@ -1164,7 +1164,7 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
 
 /* 2026-11-17 五欄式頁尾與授權經銷商 */
 .boss-footer-five{max-width:1200px;margin:26px auto 0;padding:34px 20px 25px;border-top:1px solid var(--border-color);box-sizing:border-box}
-.boss-footer-grid{display:grid;grid-template-columns:1.05fr 1fr 1.15fr 1.15fr 1.65fr;gap:18px;text-align:left}
+.boss-footer-grid{display:grid;grid-template-columns:1.05fr 1fr 1.15fr 1.65fr;gap:18px;text-align:left}
 .boss-footer-col{min-width:0}
 .boss-footer-col h3{font-size:14px;color:var(--text-main);margin:0 0 14px;font-weight:700}
 .boss-footer-col p,.boss-footer-col a,.boss-footer-col button,.boss-footer-col .boss-dealer-entry{font-size:12px;line-height:1.9;color:var(--text-muted)}
@@ -16591,9 +16591,6 @@ else bossShippingChanged();
       <button type="button" onclick="bossOpenLegal(5)">海外地區配送</button>
       <button type="button" onclick="bossOpenLegal(6)">優惠券使用說明</button>
     </section>
-    <section class="boss-footer-col boss-footer-dealer-col"><h3>授權經銷商</h3>
-      <button type="button" class="boss-dealer-open" onclick="bossOpenDealers()">查看授權經銷商名單 ↗</button>
-    </section>
     <section class="boss-footer-col"><h3>直營門市</h3>
       <div class="boss-footer-store"><strong class="boss-store-title">桃園經國門市<a class="boss-store-arrow" href="https://share.google/oMJJxIOimQRAc5kvm" target="_blank" rel="noopener noreferrer" title="開啟 Google 地圖導航" aria-label="桃園經國門市 Google 地圖導航">↗</a></strong><p>桃園市桃園區經國路859號9樓之1</p><p><a href="tel:033588280">03-3588-280</a></p><p>週一至週五 08:30–17:30</p></div>
       <div class="boss-footer-store"><strong class="boss-store-title">台中一中門市<a class="boss-store-arrow" href="https://share.google/42mqefQQMWCDpUt12" target="_blank" rel="noopener noreferrer" title="開啟 Google 地圖導航" aria-label="台中一中門市 Google 地圖導航">↗</a></strong><p>台中市北區一中街160-12號2樓</p><p><a href="tel:0919047333">0919-047-333</a></p><p>週二至週日 13:00–21:00（週一公休）</p></div>
@@ -17269,6 +17266,11 @@ body.boss-checkout-view #boss-checkout-page{display:block}
     if(search)search.value='';
     currentCategory=category;
     currentSubCategory=sub;
+    // 恢復原有假睫毛購買須知與系列選單（電腦版細分攔截事件）。
+    if(category==='makeup' && typeof toggleLashesMenu==='function'){
+      if(sub==='lashes')toggleLashesMenu(true);
+      else if(!sub.startsWith('lashes-'))toggleLashesMenu(false);
+    }
     menu.querySelectorAll('.sub-tab').forEach(btn=>btn.classList.toggle('active',btn===tab));
     const grouped={
       'dash-layered':['lash-layered','lash-kellis','lash-camellia'],
