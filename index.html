@@ -13384,6 +13384,32 @@ function getOrderDisplayProductId(itemId) {
     return (pInfo && pInfo.displayId) ? pInfo.displayId : itemId;
 }
 
+function bossCartThumbnail(id) {
+    const keys = [String(id)];
+    const info = productConfig[id] || {};
+    if (info.displayId) keys.push(String(info.displayId));
+    let base = String(id);
+    while (base.includes('_')) { base = base.slice(0, base.lastIndexOf('_')); keys.push(base); }
+    let url = '';
+    for (const key of keys) {
+        const card = document.querySelector('.product-item[data-id="' + CSS.escape(key) + '"]');
+        const photo = card && card.querySelector('img.boss-product-photo, img');
+        url = (photo && (photo.getAttribute('src') || photo.getAttribute('data-src'))) || (typeof IMAGE_URLS !== 'undefined' && IMAGE_URLS[key]) || '';
+        if (url && /^https?:\/\//i.test(url)) break;
+        url = '';
+    }
+    const thumb = document.createElement('span');
+    thumb.className = 'boss-cart-thumb';
+    thumb.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="2"/><path d="m3 17 6-6 4 4 3-3 5 5"/></svg>';
+    if (url) {
+        const img = document.createElement('img');
+        img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
+        img.setAttribute('onerror', "this.style.display='none'");
+        img.src = url; thumb.append(img);
+    }
+    return thumb;
+}
+
 function renderCart() {
     const container = document.getElementById('cart-items-container');
     if (!container) return;
@@ -13408,6 +13434,7 @@ function renderCart() {
             const itemHtml = `
                 <div class="cart-item">
                     <div class="cart-item-info">
+                        ${bossCartThumbnail(id).outerHTML}
                         <span class="cart-item-name">${pInfo.name}</span>
                     </div>
                     <div class="cart-item-actions">
@@ -17423,7 +17450,7 @@ body.boss-checkout-view #boss-checkout-page{display:block}
      const subtotal=document.createElement('div');subtotal.className='boss-preview-subtotal';
      const sublabel=document.createElement('span');sublabel.textContent='商品小計';
      const subvalue=document.createElement('strong');subvalue.textContent=money(price*qty);
-     subtotal.append(sublabel,subvalue);row.append(name,controls,subtotal);items.append(row);
+     subtotal.append(sublabel,subvalue);const body=document.createElement('div');body.className='boss-preview-thumb-body';body.append(name,controls,subtotal);row.append(bossCartThumbnail(id),body);items.append(row);
     });
     totalLabel.textContent=money(total);
    }catch(err){console.error('購物車預覽更新失敗',err);items.textContent='購物車資料載入中';}
@@ -17638,5 +17665,14 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
   },true);
 })();
 </script>
+<style id="boss-cart-thumbnail-style">
+.boss-cart-thumb{position:relative;display:inline-flex;align-items:center;justify-content:center;width:65px;height:65px;flex:0 0 65px;border:1px solid var(--border-color);border-radius:8px;background:#faf7f5;color:#b8a398;overflow:hidden;box-sizing:border-box}
+.boss-cart-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff}
+.boss-desktop-cart-preview .boss-preview-item{display:flex;align-items:flex-start;gap:12px}
+.boss-preview-thumb-body{flex:1;min-width:0}
+.cart-item-info{flex-direction:row;align-items:center;gap:10px;min-width:0}
+.cart-item-info .cart-item-name{min-width:0;overflow-wrap:anywhere}
+@media(max-width:768px){.boss-cart-thumb{width:50px;height:50px;flex-basis:50px}.cart-item-info{gap:8px}.boss-mobile-cart-popup-items .cart-item-info{align-items:center}}
+</style>
 </body>
 </html>
