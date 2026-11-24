@@ -11984,6 +11984,7 @@ function bossSyncHongKongShipping(){
     });
     if(hk){select.value = 'sf-hk';}
     else if(select.value === 'sf-hk'){select.value = '';}
+    if (typeof bossShippingChanged === 'function' && (hk || bossPreviousShippingType === 'sf-hk')) bossShippingChanged();
     if(typeof updateCartSummary === 'function') updateCartSummary();
 }
 // 指定會員配送方式維持原設定；付款方式另依會員等級管理。
@@ -16524,7 +16525,7 @@ function bossShippingChanged() {
     bossShippingDrafts[bossPreviousShippingType] = field.value;
   }
   if (bossPreviousShippingType !== type) {
-    field.value = bossShippingDrafts[type] || '';
+    field.value = bossShippingDrafts[type] || (type === 'sf-hk' && !bossPreviousShippingType ? field.value : '');
   }
   bossPreviousShippingType = type;
   group.style.display = type === 'store-pickup' ? 'none' : '';
