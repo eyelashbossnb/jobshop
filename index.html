@@ -17266,6 +17266,11 @@ body.boss-checkout-view #boss-checkout-page{display:block}
     if(search)search.value='';
     currentCategory=category;
     currentSubCategory=sub;
+    // 恢復原有假睫毛購買須知與系列選單（電腦版細分攔截事件）。
+    if(category==='makeup' && typeof toggleLashesMenu==='function'){
+      if(sub==='lashes')toggleLashesMenu(true);
+      else if(!sub.startsWith('lashes-'))toggleLashesMenu(false);
+    }
     menu.querySelectorAll('.sub-tab').forEach(btn=>btn.classList.toggle('active',btn===tab));
     const grouped={
       'dash-layered':['lash-layered','lash-kellis','lash-camellia'],
