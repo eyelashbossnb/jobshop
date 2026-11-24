@@ -6,7 +6,7 @@
     <title>睫老闆官方網站｜專業美睫材料・熱蠟・紋繡用品</title>
     <!-- SEO：搜尋引擎與社群分享資訊 -->
     <meta name="description" content="睫老闆美妝百貨提供專業美睫黑膠、嫁接睫毛、美睫耗材、熱蠟除毛、紋繡材料及美容保養用品，滿足美睫師、美容師與美業店家的採購需求。">
-   <meta name="robots" content="noindex, nofollow">
+ <meta name="robots" content="noindex, nofollow">
     <link rel="canonical" href="https://eyelashbossnb.github.io/jobshop/">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="zh_TW">
@@ -11639,16 +11639,7 @@ function bossDownloadOrderPdf(index) {
         popup.document.write('<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>' +
           '睫老闆_訂單明細_' + bossPdfSafeName(order.id) +
           '</title><style>' + styles + '</style></head><body><main class="boss-pdf-page">' +
-          content + '</main><style id="boss-cart-thumbnail-style">
-.boss-cart-thumb{position:relative;display:inline-flex;align-items:center;justify-content:center;width:65px;height:65px;flex:0 0 65px;border:1px solid var(--border-color);border-radius:8px;background:#faf7f5;color:#b8a398;overflow:hidden;box-sizing:border-box}
-.boss-cart-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff}
-.boss-desktop-cart-preview .boss-preview-item{display:flex;align-items:flex-start;gap:12px}
-.boss-preview-thumb-body{flex:1;min-width:0}
-.cart-item-info{flex-direction:row;align-items:center;gap:10px;min-width:0}
-.cart-item-info .cart-item-name{min-width:0;overflow-wrap:anywhere}
-@media(max-width:768px){.boss-cart-thumb{width:50px;height:50px;flex-basis:50px}.cart-item-info{gap:8px}.boss-mobile-cart-popup-items .cart-item-info{align-items:center}}
-</style>
-</body></html>');
+          content + '</main></body></html>');
         popup.document.close();
         popup.focus();
         // 讓列印頁完成排版與中文字型載入後再開啟列印視窗。
