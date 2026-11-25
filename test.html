@@ -17704,5 +17704,38 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
  document.addEventListener('click',function(e){const t=e.target.closest('.boss-cart-thumb[data-detail-id], .product-item .product-name, .product-item .boss-product-photo, .product-item > img');if(!t)return;const card=t.closest('.product-item[data-id]');const id=t.dataset.detailId||(card&&card.dataset.id);if(!id)return;e.preventDefault();e.stopImmediatePropagation();open(id,card);},true);
 })();
 </script>
+
+<style id="boss-pigment-style">
+#main-product-grid .boss-pigment-hidden{display:none!important}
+.boss-pigment-options .spec-btn:disabled{opacity:.45;cursor:not-allowed}
+</style>
+<script id="boss-pigment-script">
+(function(){
+ const groups=['color-10ml','color-3ml'].map(sub=>Array.from(document.querySelectorAll('#main-product-grid .product-item[data-sub="'+sub+'"]'))).filter(g=>g.length);
+ const selected=new Map();
+ function available(card){const stock=card.querySelector('.product-stock span');const n=stock?Number(stock.textContent.trim()):NaN;return Number.isFinite(n)&&n>0;}
+ function sync(group,search){
+   const visible=group.filter(c=>c.style.display!=='none');
+   let active=selected.get(group)||group[0];
+   if(search&&visible.length&&!visible.includes(active))active=visible[0];
+   selected.set(group,active);
+   group.forEach(c=>{c.classList.toggle('boss-pigment-hidden',c!==active);c.querySelectorAll('.boss-pigment-options button').forEach(b=>{const target=group.find(x=>x.dataset.id===b.dataset.sku);b.classList.toggle('active',target===active);b.setAttribute('aria-pressed',String(target===active));});});
+ }
+ groups.forEach(group=>{
+   group.forEach(card=>{
+     const name=card.querySelector('.product-name');if(!name)return;
+     name.textContent=card.dataset.sub==='color-10ml'?'德國頂級植萃美顏色乳 10ML':'德國頂級植萃美顏色乳 3ML';
+     const box=document.createElement('div');box.className='lash-variant-container boss-pigment-options';
+     const title=document.createElement('div');title.className='variant-title';title.textContent='顏色：';box.append(title);
+     const tabs=document.createElement('div');tabs.className='btn-tabs-container';box.append(tabs);
+     group.forEach(target=>{const b=document.createElement('button');b.type='button';b.className='spec-btn';b.dataset.sku=target.dataset.id;b.textContent=target.dataset.name.replace(/^.*?ML乳?[-－]\s*/i,'');b.onclick=()=>{card.querySelector('.quantity-input').value=0;target.querySelector('.quantity-input').value=0;selected.set(group,target);target.style.setProperty('display','flex','important');sync(group,false);};tabs.append(b);});
+     name.after(box);
+     const add=card.querySelector('button.btn');if(add)add.addEventListener('click',e=>{if(!available(card)){e.preventDefault();e.stopImmediatePropagation();alert('此色號庫存尚未確認或已售完，暫時無法購買。');}},true);
+   });sync(group,false);
+ });
+ const original=filterProducts;filterProducts=function(){original.apply(this,arguments);groups.forEach(g=>sync(g,true));};
+ // Keep all original SKU nodes for stock, pricing, cart and product details.
+})();
+</script>
 </body>
 </html>
