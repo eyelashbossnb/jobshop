@@ -17935,5 +17935,32 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
  // Keep all original SKU nodes for stock, pricing, cart and product details.
 })();
 </script>
+<style>#main-product-grid .boss-sale-variant-hidden{display:none!important}</style>
+<script id="boss-sale-variant-script">
+(function(){
+const definitions=[[[2, 3], "頂級人造水貂絲-J翹度單尺寸", "顏色", ["黑色", "咖啡色"]], [[4, 5], "凱莉絲花園-J翹度單尺寸", "顏色", ["黑色", "咖啡色"]], [[10, 24], "法式輕柔孔雀羽-3根", "顏色", ["黑色", "咖啡色"]], [[11, 13], "法式輕柔孔雀羽-5根", "顏色", ["黑色", "咖啡色"]], [[14, 15], "Easy花", "款式", ["2L", "3L"]], [[20, 21], "一代美瞳線超輕量扁毛", "顏色", ["黑色", "咖啡色"]], [[22, 23], "一代法式輕柔孔雀羽", "顏色", ["黑色", "咖啡色"]]];
+const groups=definitions.map(([ids,name,label,labels])=>{
+ const cards=ids.map(id=>document.querySelector('#main-product-grid .product-item[data-id="W'+id+'_UP"]'));
+ if(cards.some(c=>!c))return null;
+ const anchor=document.createComment('sale variant position');cards[0].before(anchor);
+ const group={cards,anchor,active:cards[0],eligible:[]};
+ cards.forEach(card=>{
+  const title=card.querySelector('.product-name');title.textContent=name;
+  const box=document.createElement('div');box.className='lash-variant-container boss-sale-variant-options';
+  const heading=document.createElement('div');heading.className='variant-title';heading.textContent=label+'：';box.append(heading);
+  const tabs=document.createElement('div');tabs.className='btn-tabs-container';box.append(tabs);
+  cards.forEach((target,i)=>{const b=document.createElement('button');b.type='button';b.className='spec-btn';b.textContent=labels[i];b.dataset.sku=target.dataset.id;b.onclick=()=>{cards.forEach(c=>{const input=c.querySelector('.quantity-input');if(input)input.value=0;});group.active=target;sync(group);};tabs.append(b);});
+  const specs=card.querySelector('.lash-variant-container');if(specs)specs.before(box);else title.after(box);
+ });return group;
+}).filter(Boolean);
+function sync(g){
+ if(g.anchor.nextSibling!==g.active)g.anchor.parentNode.insertBefore(g.active,g.anchor.nextSibling);
+ g.cards.forEach(c=>{c.classList.toggle('boss-sale-variant-hidden',c!==g.active);c.style.display=g.eligible.length&&c===g.active?'flex':'none';c.querySelectorAll('.boss-sale-variant-options button').forEach(b=>{const active=b.dataset.sku===g.active.dataset.id;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});});
+}
+const original=filterProducts;
+filterProducts=function(){original.apply(this,arguments);groups.forEach(g=>{g.eligible=g.cards.filter(c=>c.style.display!=='none');if(g.eligible.length&&!g.eligible.includes(g.active))g.active=g.eligible[0];sync(g);});};
+filterProducts();
+})();
+</script>
 </body>
 </html>
