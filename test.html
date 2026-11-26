@@ -17935,7 +17935,7 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
  // Keep all original SKU nodes for stock, pricing, cart and product details.
 })();
 </script>
-<style>#main-product-grid .boss-sale-variant-hidden{display:none!important}</style>
+<style>#main-product-grid .boss-sale-variant-hidden{display:none!important}.boss-sale-variant-options{overflow-anchor:none}.boss-sale-photo-space{height:180px;margin-bottom:12px;flex:none}@media(max-width:768px){.boss-sale-photo-space{height:120px}}#main-product-grid:has(.boss-sale-variant-options){overflow-anchor:none}</style>
 <script id="boss-sale-variant-script">
 (function(){
 const definitions=[[[2, 3], "頂級人造水貂絲-J翹度單尺寸", "顏色", ["黑色", "咖啡色"]], [[4, 5], "凱莉絲花園-J翹度單尺寸", "顏色", ["黑色", "咖啡色"]], [[10, 24], "法式輕柔孔雀羽-3根", "顏色", ["黑色", "咖啡色"]], [[11, 13], "法式輕柔孔雀羽-5根", "顏色", ["黑色", "咖啡色"]], [[14, 15], "Easy花", "款式", ["2L", "3L"]], [[20, 21], "一代美瞳線超輕量扁毛", "顏色", ["黑色", "咖啡色"]], [[22, 23], "一代法式輕柔孔雀羽", "顏色", ["黑色", "咖啡色"]]];
@@ -17943,22 +17943,27 @@ const groups=definitions.map(([ids,name,label,labels])=>{
  const cards=ids.map(id=>document.querySelector('#main-product-grid .product-item[data-id="W'+id+'_UP"]'));
  if(cards.some(c=>!c))return null;
  const anchor=document.createComment('sale variant position');cards[0].before(anchor);
+ // Keep both SKU nodes adjacent permanently; switching never moves DOM nodes.
+ cards[0].after(cards[1]);
  const group={cards,anchor,active:cards[0],eligible:[]};
  cards.forEach(card=>{
   const title=card.querySelector('.product-name');title.textContent=name;
+  const url=IMAGE_URLS[card.dataset.id];
+  if(url&&!card.querySelector('.boss-product-photo')){const img=document.createElement('img');img.className='boss-product-photo';img.src=url;img.alt=card.dataset.name;img.loading='lazy';img.decoding='async';card.prepend(img);}
+  if(cards.some(c=>IMAGE_URLS[c.dataset.id]||c.querySelector('img'))&&!card.querySelector('.boss-product-photo, img')){const spacer=document.createElement('div');spacer.className='boss-sale-photo-space';spacer.setAttribute('aria-hidden','true');card.prepend(spacer);}
   const box=document.createElement('div');box.className='lash-variant-container boss-sale-variant-options';
   const heading=document.createElement('div');heading.className='variant-title';heading.textContent=label+'：';box.append(heading);
   const tabs=document.createElement('div');tabs.className='btn-tabs-container';box.append(tabs);
-  cards.forEach((target,i)=>{const b=document.createElement('button');b.type='button';b.className='spec-btn';b.textContent=labels[i];b.dataset.sku=target.dataset.id;b.onclick=()=>{cards.forEach(c=>{const input=c.querySelector('.quantity-input');if(input)input.value=0;});group.active=target;sync(group);};tabs.append(b);});
+  cards.forEach((target,i)=>{const b=document.createElement('button');b.type='button';b.className='spec-btn';b.textContent=labels[i];b.dataset.sku=target.dataset.id;b.onclick=(event)=>{event.preventDefault();event.stopPropagation();if(group.active===target)return;const top=card.getBoundingClientRect().top;cards.forEach(c=>{const input=c.querySelector('.quantity-input');if(input)input.value=0;});group.active=target;sync(group);const delta=target.getBoundingClientRect().top-top;if(Math.abs(delta)>1)window.scrollBy({top:delta,behavior:'instant'});};tabs.append(b);});
   const specs=card.querySelector('.lash-variant-container');if(specs)specs.before(box);else title.after(box);
  });return group;
 }).filter(Boolean);
 function sync(g){
- if(g.anchor.nextSibling!==g.active)g.anchor.parentNode.insertBefore(g.active,g.anchor.nextSibling);
- g.cards.forEach(c=>{c.classList.toggle('boss-sale-variant-hidden',c!==g.active);c.style.display=g.eligible.length&&c===g.active?'flex':'none';c.querySelectorAll('.boss-sale-variant-options button').forEach(b=>{const active=b.dataset.sku===g.active.dataset.id;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});});
+ // Adjacent cards occupy the same grid position; no DOM relocation on selection.
+ g.cards.forEach(c=>{c.classList.toggle('boss-sale-variant-hidden',c!==g.active);c.style.setProperty('display',g.eligible.length&&c===g.active?'flex':'none','important');c.querySelectorAll('.boss-sale-variant-options button').forEach(b=>{const active=b.dataset.sku===g.active.dataset.id;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});});
 }
 const original=filterProducts;
-filterProducts=function(){original.apply(this,arguments);groups.forEach(g=>{g.eligible=g.cards.filter(c=>c.style.display!=='none');if(g.eligible.length&&!g.eligible.includes(g.active))g.active=g.eligible[0];sync(g);});};
+filterProducts=function(){groups.forEach(g=>g.cards.forEach(c=>c.style.removeProperty('display')));original.apply(this,arguments);const query=(document.getElementById('product-search-input')?.value||'').trim();groups.forEach(g=>{g.eligible=g.cards.filter(c=>c.style.display!=='none');if(query&&g.eligible.length&&!g.eligible.includes(g.active))g.active=g.eligible[0];sync(g);});};
 filterProducts();
 })();
 </script>
