@@ -12570,6 +12570,8 @@ function filterProducts() {
             } else if (currentSubCategory === 'dash-bloom') {
                 matchesSubCategory = (productSub === 'lash-bloom' ||
                     productSub === 'lash-yy' || productSub === 'lash-clover3' || productSub === 'lash-clover5' || productSub === 'lash-w');
+            } else if (currentSubCategory === 'nail-brush') {
+                matchesSubCategory = ['nail-round', 'nail-angle', 'nail-flat', 'nail-liner', 'nail-art'].includes(productSub);
             } else if (currentSubCategory === 'lashes') {
                 // 假睫毛「顯示全部」需涵蓋所有系列，而非尋找不存在的 data-sub=lashes。
                 matchesSubCategory = ['lashes-jw', 'lashes-gz', 'lashes-zr', 'lashes-wt', 'lashes-tm'].includes(productSub);
@@ -17406,11 +17408,15 @@ body.boss-checkout-view #boss-checkout-page{display:block}
       if(sub==='lashes')toggleLashesMenu(true);
       else if(!sub.startsWith('lashes-'))toggleLashesMenu(false);
     }
+    if(category==='nail' && typeof toggleNailBrushMenu==='function'){
+      toggleNailBrushMenu(['nail-brush','nail-round','nail-angle','nail-flat','nail-liner','nail-art'].includes(sub));
+    }
     menu.querySelectorAll('.sub-tab').forEach(btn=>btn.classList.toggle('active',btn===tab));
     const grouped={
       'dash-layered':['lash-layered','lash-kellis','lash-camellia'],
       'dash-bloom':['lash-bloom','lash-yy','lash-clover3','lash-clover5','lash-w'],
       'lashes':['lashes-jw','lashes-gz','lashes-zr','lashes-wt','lashes-tm'],
+      'nail-brush':['nail-round','nail-angle','nail-flat','nail-liner','nail-art'],
       'sale-straight':['sale-fan','sale-mink','sale-real-mink','sale-l-plus'],
       'sale-layered-bloom':['sale-kellis','sale-camellia','sale-maxia','sale-easy-bloom'],
       'sale-color-group':['sale-5th-ave','sale-gradient'],
