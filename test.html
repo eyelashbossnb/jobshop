@@ -17787,6 +17787,8 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
 (function(){
  const groups=['color-10ml','color-3ml','oriental-brow','oriental-lip','pe','tl','tk-ring','tk-silicone','tk-cup','td-7','td-10','td-14','td-18','td-28',"merge-a101","merge-a107","merge-a110","merge-a124","merge-a151","merge-a166","merge-a192","merge-a212","merge-b72","merge-tl41","merge-tl48","merge-tl57","merge-tg1","merge-tg6","merge-tg11","merge-tf2","merge-tf5","merge-tf21","merge-tf23","merge-tf29","merge-f100", "merge-fb50", "merge-fb51", "merge-d19", "merge-d61", "merge-d71", "merge-d77", "merge-d81","merge-f2","merge-f5","merge-f8","merge-tj1","merge-tj4","merge-tj12","merge-tf11","merge-tf18","merge-tf35","merge-tf40", "merge-a59", "merge-tc1", "merge-tl28", "merge-d1", "merge-d10", "merge-d13", "merge-d15", "merge-d16", "merge-d152", "merge-d157", "merge-d158", "merge-d161", "merge-d171", "merge-d172", "merge-d173", "merge-d180", "merge-d181", "merge-d182", "merge-d183"].map(sub=>Array.from(document.querySelectorAll('#main-product-grid .product-item[data-pigment-size="'+sub.replace('color-','')+'"]'))).filter(g=>g.length);
  const selected=new Map();
+ const groupAnchors=new Map();
+ groups.forEach(group=>{const anchor=document.createComment("fixed merged product position");group[0].parentNode.insertBefore(anchor,group[0]);groupAnchors.set(group,anchor);});
  function available(card){const stock=card.querySelector('.product-stock span');const n=stock?Number(stock.textContent.trim()):NaN;return Number.isFinite(n)&&n>0;}
  function sync(group,search){
    const query=(document.getElementById('product-search-input')?.value||'').trim().toLowerCase();
@@ -17794,6 +17796,8 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
    let active=selected.get(group)||group[0];
    if(search&&visible.length&&!visible.includes(active))active=visible[0];
    selected.set(group,active);
+   const anchor=groupAnchors.get(group);
+   if(anchor && anchor.parentNode && anchor.nextSibling!==active) anchor.parentNode.insertBefore(active,anchor.nextSibling);
    group.forEach(c=>{c.classList.toggle('boss-pigment-hidden',c!==active);c.style.setProperty('display',visible.length&&c===active?'flex':'none','important');c.querySelectorAll('.boss-pigment-options button').forEach(b=>{const target=group.find(x=>x.dataset.id===b.dataset.sku);b.classList.toggle('active',target===active);b.setAttribute('aria-pressed',String(target===active));});});
  }
  groups.forEach(group=>{
