@@ -17911,6 +17911,12 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
 <script id="boss-pigment-script">
 (function(){
  const groups=['color-10ml','color-3ml','oriental-brow','oriental-lip','pe','tl','tk-ring','tk-silicone','tk-cup','td-7','td-10','td-14','td-18','td-28',"merge-a101","merge-a107","merge-a110","merge-a124","merge-a151","merge-a166","merge-a192","merge-a212","merge-b72","merge-tl41","merge-tl48","merge-tl57","merge-tg1","merge-tg6","merge-tg11","merge-tf2","merge-tf5","merge-tf21","merge-tf23","merge-tf29","merge-f100", "merge-fb50", "merge-fb51", "merge-d19", "merge-d61", "merge-d71", "merge-d77", "merge-d81","merge-f2","merge-f5","merge-f8","merge-tj1","merge-tj4","merge-tj12","merge-tf11","merge-tf18","merge-tf35","merge-tf40", "merge-a59", "merge-tc1", "merge-tl28", "merge-d1", "merge-d10", "merge-d13", "merge-d15", "merge-d16", "merge-d152", "merge-d157", "merge-d158", "merge-d161", "merge-d171", "merge-d172", "merge-d173", "merge-d180", "merge-d181", "merge-d182", "merge-d183","merge-te1","merge-te3","merge-te7","merge-te9","merge-te15","merge-te22","merge-te24","merge-te28","merge-te30","merge-te32","merge-te18","merge-th3","merge-th6","merge-th13","merge-th22","merge-th26","merge-g8","merge-g15","merge-g25","merge-g36","merge-g43","merge-g86","merge-g102","merge-g111","merge-g118","merge-g127","merge-g180","merge-g211","merge-g217","merge-q11","merge-q31","merge-q37","merge-q44","merge-b42"].map(sub=>Array.from(document.querySelectorAll('#main-product-grid .product-item[data-pigment-size="'+sub.replace('color-','')+'"]'))).filter(g=>g.length);
+ // 機器專用針片：同組規格共用最小商品編號的排序值。
+ const needleCards=Array.from(document.querySelectorAll('#main-product-grid .product-item[data-sub="combo-needle"]'));
+ const skuNumber=c=>Number((c.dataset.id.match(/^TF(\d+)$/i)||[])[1]);
+ needleCards.forEach(c=>{const n=skuNumber(c);if(Number.isFinite(n))c.dataset.needleSort=String(n);});
+ groups.forEach(group=>{const members=group.filter(c=>needleCards.includes(c));const nums=members.map(skuNumber).filter(Number.isFinite);if(nums.length)members.forEach(c=>c.dataset.needleSort=String(Math.min(...nums)));});
+ function sortNeedleCards(){const active=currentCategory==='brows'&&currentSubCategory==='combo-needle'&&!(document.getElementById('product-search-input')?.value||'').trim();needleCards.forEach(c=>{if(active&&c.dataset.needleSort)c.style.order=c.dataset.needleSort;else c.style.removeProperty('order');});}
  const selected=new Map();
  const groupAnchors=new Map();
  groups.forEach(group=>{const anchor=document.createComment("fixed merged product position");group[0].parentNode.insertBefore(anchor,group[0]);groupAnchors.set(group,anchor);});
@@ -17938,7 +17944,7 @@ body.boss-checkout-view #boss-home-event-images{display:none!important}
    });sync(group,false);
  });
  window.bossSyncPigments=()=>groups.forEach(g=>sync(g,true));
- const original=filterProducts;filterProducts=function(){original.apply(this,arguments);window.bossSyncPigments();};
+ const original=filterProducts;filterProducts=function(){original.apply(this,arguments);window.bossSyncPigments();sortNeedleCards();};
  // Keep all original SKU nodes for stock, pricing, cart and product details.
 })();
 </script>
