@@ -2967,10 +2967,10 @@ a.boss-announcement-item:hover{color:var(--accent-color);text-decoration:underli
                 </div>
 
                 <!-- 出清五折：W6_UP -->
-                <div class="product-item" data-id="W6_UP" data-name="奢華手工真貂毛" data-category="sale" data-sub="sale-real-mink" data-lash="true" data-origin-price="720" data-base-price="720" data-price="720" data-selected-curl="" data-selected-thickness="" data-selected-length="">
+                <div class="product-item" data-id="W6_UP" data-name="奢華手工真貂毛-單尺寸" data-category="sale" data-sub="sale-real-mink" data-lash="true" data-origin-price="720" data-base-price="720" data-price="720" data-selected-curl="" data-selected-thickness="" data-selected-length="">
                     <div>
                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px;">商品編號：W6_UP</div>
-                        <div class="product-name">奢華手工真貂毛</div>
+                        <div class="product-name">奢華手工真貂毛-單尺寸</div>
                         <div class="lash-variant-container">
                             <div class="variant-group">
                                 <div class="variant-title">翹度：</div>
@@ -14114,12 +14114,12 @@ function updateLashVariantStockDisplay(productId) {
             matchedKey = clearanceMatch.key;
         }
     } else if (productId === 'E23_UP') {
-        // 現有試算表 A 欄：奢華手工真貂毛 (J-單一粗度-MIX 8-14mm)
+        // 現有試算表 A 欄：奢華手工真貂毛-單尺寸 (J-單一粗度-MIX 8-14mm)
         // 依完整中文品名、捲度及長度精確比對，絕不誤抓其他睫毛。
         const chosenCurl = String(curl || '').trim().toUpperCase();
         const chosenLength = String(length || '').replace(/\s/g, '').toUpperCase();
         if (/^[JBCD]$/.test(chosenCurl) && chosenLength === 'MIX8-14') {
-            const e23Pattern = new RegExp('^奢華手工真貂毛\\s*[（(]\\s*' + chosenCurl + '\\s*[-－–—]\\s*單一粗度\\s*[-－–—]\\s*MIX\\s*8\\s*[-－–—]\\s*14\\s*mm\\s*[)）]$', 'i');
+            const e23Pattern = new RegExp('^奢華手工真貂毛-單尺寸\\s*[（(]\\s*' + chosenCurl + '\\s*[-－–—]\\s*單一粗度\\s*[-－–—]\\s*MIX\\s*8\\s*[-－–—]\\s*14\\s*mm\\s*[)）]$', 'i');
             const foundKey = Object.keys(globalInventoryData || {}).find(k => e23Pattern.test(k));
             if (foundKey) {
                 matchedKey = foundKey;
